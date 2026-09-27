@@ -68,6 +68,7 @@ class NoLimit:
 
 
 NO_LIMIT = NoLimit()
+CREDIT_WAIT = 1800  # seconds a call waits for the account's credit to be topped up
 
 
 def limiter(n):
@@ -149,6 +150,27 @@ class ClaudeConversation(_Base):
         self.client = client
         self.cache = {'type': 'ephemeral', 'ttl': ttl}
 
+    async def _stream(self, messages):
+        """One streamed request. When the account is out of credit (as happens while auto-reload
+        catches up with a large batch), wait and retry for up to CREDIT_WAIT seconds, so the game
+        pauses instead of failing."""
+        waited = 0
+        while True:
+            try:
+                async with self.client.messages.stream(
+                        model=self.model, max_tokens=self.max_tokens,
+                        system=[{'type': 'text', 'text': self.system, 'cache_control': self.cache}],
+                        messages=messages, cache_control=self.cache,
+                        thinking={'type': 'adaptive', 'display': 'summarized'},
+                        output_config={'effort': self.effort,
+                                       'format': {'type': 'json_schema', 'schema': self.schema}}) as stream:
+                    return await stream.get_final_message()
+            except anthropic.APIStatusError as e:
+                if 'credit balance' not in str(e) or waited >= CREDIT_WAIT:
+                    raise
+                await asyncio.sleep(30)
+                waited += 30
+
     async def send(self, text, meta=None, commit=True) -> Reply:
         """One turn. With commit=False (a probe) the turn is a fork: neither the question nor
         the reply is added to the conversation."""
@@ -161,14 +183,7 @@ class ClaudeConversation(_Base):
             self.ledger.check()
             start = time.monotonic()
             async with (self.semaphore if commit else NO_LIMIT):  # probes never wait behind game turns
-                async with self.client.messages.stream(
-                        model=self.model, max_tokens=self.max_tokens,
-                        system=[{'type': 'text', 'text': self.system, 'cache_control': self.cache}],
-                        messages=messages, cache_control=self.cache,
-                        thinking={'type': 'adaptive', 'display': 'summarized'},
-                        output_config={'effort': self.effort,
-                                       'format': {'type': 'json_schema', 'schema': self.schema}}) as stream:
-                    r = await stream.get_final_message()
+                r = await self._stream(messages)
             usage = r.usage.model_dump(exclude_none=True)
             spent = cost(self.model, usage)
             self.ledger.add(spent, label=self.label)
