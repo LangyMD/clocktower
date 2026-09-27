@@ -12,9 +12,9 @@ of the earlier `botc/` lab (kept alongside for reference).
   no legal option is ever ruled out; otherwise it follows a style, weighted like an experienced
   human Storyteller: the Drunk usually believes they are an information role; bluffs usually include
   an information role (and an Outsider in Baron games) and rarely the Drunk's apparent character;
-  impaired players usually get information from one consistent false picture (a framed good player
-  plays the Demon, the real Demon looks clean), and when they are misled the information is really
-  false (and never self-revealing), though 20% of Drunks get true information all game; the Spy
+  impaired players usually get information from one consistent false world (a framed good player
+  is the Demon, the real Demon looks good), answered as a working ability would answer there, though
+  20% of Drunks get true information all game; the Spy
   usually registers good, as a bluff, an in-play or another good character; the Recluse sometimes
   registers evil, as a Minion or the Imp; the red herring is usually a Townsfolk; an Investigator's
   second player is usually good. It is free, instant and reproducible, and keeps the Storyteller

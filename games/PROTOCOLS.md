@@ -54,7 +54,7 @@ Batch x1 (Sept 27): seven model pairings on seeds 6000–6009 (Opus 5.5, Sonnet 
 see `python -m clocktower analyze games/v5/x1-*/game-*`). Astra vs Astra was stopped after 5 games
 (its first run was throttled by an 8-thread limit on OpenAI requests and discarded).
 
-## v6 — current (Sept 27)
+## v6 (Sept 27)
 Changes from v5, after reading 61 v5 games (seven model pairings) and auditing the rules and the
 Storyteller against 2,750 simulated games:
 - Night order: the Poisoner, Monk and Imp choose first; the Fortune Teller and Butler are woken
@@ -80,3 +80,28 @@ Storyteller against 2,750 simulated games:
 - Runs: no request cap (every game and seat at once); every game in an experiment has its own
   seed; teams can have their own effort (`--good-effort`, `--evil-effort`). OpenAI reasoning
   summaries use `concise`, the only setting that reliably returns text (logging only).
+
+Grid g1 (Sept 27–28): Opus 5.5 high, Opus 5.5 low, Sonnet 5, GPT-6 Astra, GPT-6 Sol; all 20
+good-vs-evil pairings, 5 games each, seeds 20000–20099. The Anthropic account ran out of credit
+twice mid-run: the first time, seats silently passed and 84 games were discarded and rerun; after
+that a failed seat stopped its game (then waited for credit) and stopped games were rerun.
+
+## v7 — draft, not yet run
+Changes from v6, after 8 readers went through the g1 games and a second rules/Storyteller audit
+(6,000 simulated games):
+- Storyteller misinformation comes from one coherent false world (a framed good player is the
+  Demon, one other player the Minion, the real Demon looks good) and is what a working ability
+  would show there. v6 moved every misinformed value off the truth, which made it close to the
+  opposite of the truth: a misinformed Fortune Teller's answers were inverted, and a known Drunk's
+  Chef/Empath numbers could be read backwards. Now misinformed results look like real ones (some
+  are true where the false world agrees with the real one) and cannot be inverted.
+- A misinformed Librarian is never told "zero Outsiders" (nine players always have some); a
+  misinformed Investigator is shown the Baron only in a Baron game; a Spy registering as a good
+  character is never shown as the recipient's own character.
+- Butler: may vote yes only if their master has already voted yes (their hand is up); otherwise the
+  vote is a no, and only the Butler is told why. v6 accepted a yes before the master voted and then
+  dropped it from the count, so the public roll and the total disagreed, which confirmed Butlers.
+  A poisoned Butler sees the same prompt.
+- The Spy sees the Grimoire (characters, status, reminders) but no longer the verbatim information
+  given that night. A red herring is set whenever anyone believes they are the Fortune Teller (the
+  Drunk too). Vote remarks may be 60 words. Turn prompts no longer say "group w of N".

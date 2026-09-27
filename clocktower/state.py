@@ -58,7 +58,7 @@ POLICY = {
     'drunk_truthful': 0.2,    # per game: the Drunk gets true information (else it follows a false picture)
     'poisoned_false': 0.8,    # per night: a poisoned player's information follows a false picture (else true)
     'false_vouch_evil': 0.7,  # a misinformed Washerwoman's pair includes an evil player (else any player)
-    'false_zero': 0.1,        # a misinformed Librarian is told there are zero Outsiders
+    'false_zero': 0.0,        # a misinformed Librarian is told there are zero Outsiders (9 players always have some)
     # registration
     'spy_evil': 0.25,         # the Spy registers as evil
     'recluse_evil': 0.4,      # the Recluse registers as evil
@@ -195,9 +195,11 @@ class Grimoire:
         return {False}
 
     def decoy(self, p, r):
-        """The false picture that an impaired player's information follows, fixed per player so it
-        stays consistent from night to night: a framed good player plays the Demon, one other
-        non-Demon player the Minion, and the real Demon looks good."""
+        """The false world an impaired player's information comes from, fixed per player so it stays
+        consistent from night to night: a framed good player is the Demon, one other non-Demon player
+        the Minion, and everyone else (the real Demon included) is good. Misinformed results are what
+        a working ability would show in that world, so they look like real results: never inverted,
+        and sometimes true where the false world agrees with the real one."""
         if p.name not in self.decoys:
             others = [q for q in self.players if q is not p]
             framed = r.choice([q for q in others if not q.evil])
@@ -226,9 +228,9 @@ class Grimoire:
                 out.add(q.name)
         return out
 
-    def fake_good(self, r, kinds=(TOWNSFOLK,)):
+    def fake_good(self, r, kinds=(TOWNSFOLK,), avoid=()):
         """A good character to show for an evil player: a Demon bluff, one in play, or another."""
-        pool = [c for k in kinds for c in k]
+        pool = [c for k in kinds for c in k if c not in avoid]
         bluffs = [c for c in pool if c in self.bluffs]
         in_play = [c for c in pool if c in self.in_play() and c not in bluffs]
         other = [c for c in pool if c not in bluffs and c not in in_play]
@@ -366,7 +368,8 @@ def pair_choice(g, p, ability):
                 if r.random() < POLICY['false_zero']:
                     return {'players': [], 'character': None}
                 return false_pair(r, r.choice(evil + [framed]), [g.fake_good(r, (OUTSIDERS,)) for _ in range(6)])
-            return false_pair(r, framed, MINIONS)  # frame a good player
+            minions = MINIONS if 'Baron' in g.in_play() else [m for m in MINIONS if m != 'Baron']
+            return false_pair(r, framed, minions)  # frame a good player
         real = [(q.name, q.character) for q in g.players if q is not p and q.character in group]
         mis = []  # a misregistering Spy (as a Townsfolk or Outsider) or Recluse (as a Minion)
         for q in g.players:
@@ -375,8 +378,8 @@ def pair_choice(g, p, ability):
             options = g.registers_as(q) & set(group)
             if not options:
                 continue
-            if q.character == 'Spy':
-                mis.append((q.name, g.fake_good(r, (group,))))
+            if q.character == 'Spy':  # never the recipient's own character (that would point at the Spy)
+                mis.append((q.name, g.fake_good(r, (group,), avoid=(p.shown,))))
             else:
                 mis.append((q.name, r.choice(sorted(options))))
         pool = mis if mis and (not real or r.random() < POLICY['misregister_pair']) else real
@@ -388,15 +391,6 @@ def pair_choice(g, p, ability):
             avoid = {q.name for q in g.players if q.evil}  # the second player is a good one
         return {'players': _pair(r, n, others, avoid), 'character': c}
     return Choice(f'{ability}:{p.name}', values, style)
-
-
-def _off(value, sober, plausible):
-    """Misinformation must be false: if `value` is something a working ability could show, move to
-    the nearest plausible value that it could not (if there is one)."""
-    if value not in sober:
-        return value
-    other = [x for x in plausible if x not in sober]
-    return min(other, key=lambda x: (abs(x - value), x)) if other else value
 
 
 def _pairs(ring, evil):
@@ -412,7 +406,7 @@ def chef_choice(g, p):
 
     def style(r):
         if g.impaired(p) and g.misinformed(p, r):
-            return {'number': _off(_pairs(ring, g.decoy(p, r)[1]), possible, range(0, 3))}
+            return {'number': _pairs(ring, g.decoy(p, r)[1])}
         return {'number': _pairs(ring, g.sample_evil(r))}
     return Choice(f'Chef:{p.name}', [{'number': x} for x in values], style)
 
@@ -424,8 +418,7 @@ def empath_choice(g, p):
 
     def style(r):
         if g.impaired(p) and g.misinformed(p, r):
-            n = sum(1 for q in nb if q.name in g.decoy(p, r)[1])
-            return {'number': _off(n, possible, range(0, len(nb) + 1))}
+            return {'number': sum(1 for q in nb if q.name in g.decoy(p, r)[1])}
         evil = g.sample_evil(r)
         return {'number': sum(1 for q in nb if q.name in evil)}
     return Choice(f'Empath:{p.name}', [{'number': x} for x in values], style)
@@ -438,10 +431,9 @@ def fortune_teller_choice(g, p, targets):
     values = [True, False] if impaired else sorted(possible)
 
     def style(r):
-        if impaired and g.misinformed(p, r):  # both decoy evils read as the Demon, so the Drunk still sees YESes
-            _, evil = g.decoy(p, r)
-            yes = any(t in evil or t == g.red_herring for t in targets)
-            return {'yes': (not yes) if possible == {yes} else yes}
+        if impaired and g.misinformed(p, r):  # in the false world the framed player is the Demon
+            framed, _ = g.decoy(p, r)
+            return {'yes': any(t in (framed, g.red_herring) for t in targets)}
         if len(possible) == 1:
             return {'yes': next(iter(possible))}
         return {'yes': r.random() < POLICY['recluse_evil']}

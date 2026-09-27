@@ -216,11 +216,17 @@ class DayTests(unittest.TestCase):
         vote = next(e for e in g.events if e['kind'] == 'vote' and e['data']['voter'] == H)
         self.assertFalse(vote['data']['yes'])  # shown as a no: nothing public reveals the Butler
         g = self.prepared(BASE, self.nominate(C, D, yes=[A, B, C, E, H]))
-        g.g.master = I  # votes after the Butler, and votes no: the Butler's yes silently doesn't count
+        g.g.master = I  # votes after the Butler: their hand isn't up yet, so the Butler cannot vote yes
         run(g.nominations())
+        vote = next(e for e in g.events if e['kind'] == 'vote' and e['data']['voter'] == H)
+        self.assertFalse(vote['data']['yes'])
         result = next(e for e in g.events if e['kind'] == 'vote_result')
-        self.assertEqual(result['data']['votes'], 4)
-        self.assertNotIn('voided', result['data'])
+        self.assertEqual(result['data']['votes'], 4)  # the public roll and the count always agree
+        g = self.prepared(BASE, self.nominate(C, D, yes=[A, B, C, E, F, H]))
+        g.g.master = F  # votes before the Butler, and votes yes: the Butler may vote
+        run(g.nominations())
+        vote = next(e for e in g.events if e['kind'] == 'vote' and e['data']['voter'] == H)
+        self.assertTrue(vote['data']['yes'])
 
     def test_whispers_are_private_and_speech_waits_for_the_town_square(self):
         def policy(name, req):
@@ -566,24 +572,33 @@ class V6Tests(unittest.TestCase):
         run(g.vote(C, None, 0))
         self.assertEqual(sum(e['data']['yes'] for e in g.events if e['kind'] == 'vote'), 9)
 
-    def test_misinformation_is_false(self):
+    def test_misinformation_follows_one_false_world(self):
+        """A misinformed player gets what a working ability would show in their false world (a framed
+        good player is the Demon): consistent, never simply the opposite of the truth, and never
+        self-revealing."""
         from clocktower.state import empath_choice, fortune_teller_choice, character_choice
         chars = ['Imp', 'Poisoner', 'Monk', 'Drunk', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        yes = 0
         with policy(any=0, drunk_truthful=0):
-            for seed in range(100):
+            for seed in range(300):
                 r = random.Random(seed)
                 g = Grimoire(NAMES, chars, drunk_as='Empath')
-                self.assertNotEqual(empath_choice(g, g[D]).options(r)['number'], 0)  # true answer is 0
+                framed, evil = g.decoy(g[D], r)
+                want = sum(1 for q in g.neighbours(g[D]) if q.name in evil)
+                self.assertEqual(empath_choice(g, g[D]).options(r)['number'], want)
                 g = Grimoire(NAMES, chars, drunk_as='Fortune Teller')
                 g.red_herring = F
-                self.assertTrue(fortune_teller_choice(g, g[D], [C, E]).options(r)['yes'])  # true answer is no
+                framed, _ = g.decoy(g[D], r)
+                targets = r.sample([x for x in NAMES if x != D], 2)
+                got = fortune_teller_choice(g, g[D], targets).options(r)['yes']
+                self.assertEqual(got, any(t in (framed, F) for t in targets))
+                yes += got
                 g = Grimoire(NAMES, chars, drunk_as='Undertaker')
-                shown = character_choice(g, g[D], 'Undertaker', C).options(r)['character']
-                self.assertNotIn(shown, ('Monk', 'Imp'))  # never the truth, never an impossible "Imp"
+                self.assertNotEqual(character_choice(g, g[D], 'Undertaker', C).options(r)['character'], 'Imp')
                 g = Grimoire(NAMES, chars, drunk_as='Washerwoman')
                 v = pair_choice(g, g[D], 'Washerwoman').options(r)
                 self.assertNotEqual(v['character'], 'Washerwoman')
-                self.assertTrue(all(g[x].character != v['character'] for x in v['players']))
+        self.assertLess(yes, 150)  # random pairs mostly read NO, as for a working Fortune Teller
 
     def test_bluffs_rarely_include_the_drunks_character(self):
         from clocktower.state import pick_bluffs

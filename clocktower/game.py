@@ -27,7 +27,7 @@ from .state import (POLICY, Grimoire, bluffs_choice, character_choice, chef_choi
                     fortune_teller_choice, info_text, mayor_choice, norm, pair_choice, random_setup, red_herring_choice,
                     setup_error, yes_choice)
 NAMES = ['Alex', 'Blair', 'Casey', 'Drew', 'Ellis', 'Frankie', 'Gray', 'Harper', 'Indigo']
-WORDS = {'beat': 150, 'whisper': 150, 'nominate': 150, 'defense': 200, 'comment': 150, 'vote': 40}
+WORDS = {'beat': 150, 'whisper': 150, 'nominate': 150, 'defense': 200, 'comment': 150, 'vote': 60}
 
 NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
     'Poisoner': (1, 'Choose a player to poison tonight and tomorrow.', True),
@@ -177,7 +177,7 @@ class Game:
         drunk = g.with_character('Drunk')
         if drunk:
             drunk.shown = self.decide(drunk_as_choice([c for c in TOWNSFOLK if c not in in_play]))['character']
-        if 'Fortune Teller' in in_play:
+        if any(p.shown == 'Fortune Teller' for p in g.players):  # the Drunk-as-Fortune-Teller too
             g.red_herring = self.decide(red_herring_choice(g))['players'][0]
         g.bluffs = self.decide(bluffs_choice([c for c in GOOD if c not in in_play], 'Baron' in in_play,
                                              drunk.shown if drunk else None))['characters']
@@ -309,15 +309,13 @@ class Game:
                     info.append((p, role, character_choice(g, p, 'Undertaker', g.executed_death),
                                  g.executed_death))
 
-        given = []
         for p, role, c, target in info:
             text = info_text(role, self.decide(c), target)
             self.emit('info', {'text': f'Night {n} — {role}: {text}'}, [p.name])
-            given.append(f'{role} ({p.name}): {text}')
         spy = g.with_character('Spy')
         if spy and spy.alive:
             self.emit('info', {'text': f'Night {n} — Spy: you look at the Grimoire.\n'
-                                       + g.grimoire_text([f'Information given tonight: {x}' for x in given])}, [spy.name])
+                                       + g.grimoire_text()}, [spy.name])
 
         self.phase = 'day'
         self.emit('header', {'text': f'Day {n}'})
@@ -358,7 +356,7 @@ class Game:
         for w, wave in enumerate(waves, start=1):
             requests = {}
             for name in wave:
-                prompt = f'{head} — your turn (group {w} of {len(waves)}). {tail}'
+                prompt = f'{head} — your turn. {tail}'
                 if not g[name].alive:
                     prompt += ' (You are dead, but you can still ' + ('whisper.)' if private else 'talk.)')
                 requests[name] = Request(kind, prompt, n, beat=beat, alive=g[name].alive,
@@ -474,10 +472,14 @@ class Game:
             lines.append(f'Yes so far: {", ".join(yes) if yes else "none"} ({len(yes)}).')
             if not p.alive:
                 lines.append('You are dead: voting yes uses your one ghost vote.')
-            if g.works(p, 'Butler') and g.master:
-                seen = (f'they voted {"yes" if g.master in yes else "no"}' if g.master in voted
-                        else 'they vote after you')
-                lines.append(f'Your master is {g.master} ({seen}): your vote only counts if they vote yes.')
+            if p.character == 'Butler' and p.alive and g.master:  # poisoned or not: the Butler can't tell
+                if g.master in yes:
+                    seen = 'they voted yes, so you may vote'
+                elif g.master in voted:
+                    seen = 'they voted no, so you may not vote yes'
+                else:
+                    seen = 'they vote after you, so their hand is not up and you may not vote yes'
+                lines.append(f'Your master is {g.master} ({seen}).')
             lines.append('Set `vote` to true or false; `say` may hold a very short remark (optional; don\'t just restate your vote).')
             a = await self.ask(voter, Request('vote', ' '.join(lines), n, options=[nominee]))
             if not isinstance(a.get('vote'), bool):  # no vote given: ask once more rather than assume no
@@ -486,9 +488,9 @@ class Game:
                                                   options=[nominee]))
             v = a.get('vote') is True
             remark = clip(a.get('say'), WORDS['vote'])
-            if v and g.works(p, 'Butler') and g.master in voted and g.master not in yes:
-                v, remark = False, ''  # the Butler cannot raise their hand when their master has not
-                self.emit('notice', {'text': f'(Your master {g.master} did not vote yes, so you cannot vote.)'}, [voter])
+            if v and g.works(p, 'Butler') and g.master and g.master not in yes:
+                v, remark = False, ''  # a Butler may only raise their hand while their master's is up
+                self.emit('notice', {'text': f'(Your master {g.master} has not voted yes, so you cannot vote.)'}, [voter])
             ghost = v and not p.alive
             if ghost:
                 p.ghost_vote = False
@@ -496,12 +498,6 @@ class Game:
             voted.add(voter)
             if v:
                 yes.append(voter)
-        butler = g.with_character('Butler')
-        if butler and g.works(butler, 'Butler') and butler.name in yes and g.master not in yes:
-            # voted before their master, who then did not vote: the Storyteller does not count it (not announced)
-            yes.remove(butler.name)
-            self.emit('text', {'text': f'({butler.name}, the Butler, voted before their master, who then did not '
-                                       'vote yes, so the vote did not count.)'}, 'audit')
         count = len(yes)
         if count >= needed and count > top:
             block, top, outcome = nominee, count, 'block'
