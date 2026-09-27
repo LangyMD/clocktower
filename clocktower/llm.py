@@ -116,8 +116,13 @@ class ClaudeConversation(_Base):
         self.client = client
         self.cache = {'type': 'ephemeral', 'ttl': ttl}
 
-    async def send(self, text, meta=None) -> Reply:
-        self.messages.append({'role': 'user', 'content': text})
+    async def send(self, text, meta=None, commit=True) -> Reply:
+        """One turn. With commit=False (a probe) the turn is a fork: neither the question nor
+        the reply is added to the conversation."""
+        user = {'role': 'user', 'content': text}
+        if commit:
+            self.messages.append(user)
+        messages = self.messages if commit else [*self.messages, user]
         refusals = truncations = 0
         for attempt in range(4):
             self.ledger.check()
@@ -126,7 +131,7 @@ class ClaudeConversation(_Base):
                 async with self.client.messages.stream(
                         model=self.model, max_tokens=self.max_tokens,
                         system=[{'type': 'text', 'text': self.system, 'cache_control': self.cache}],
-                        messages=self.messages, cache_control=self.cache,
+                        messages=messages, cache_control=self.cache,
                         thinking={'type': 'adaptive', 'display': 'summarized'},
                         output_config={'effort': self.effort,
                                        'format': {'type': 'json_schema', 'schema': self.schema}}) as stream:
@@ -152,7 +157,8 @@ class ClaudeConversation(_Base):
                 action = json.loads(out)
             except json.JSONDecodeError:
                 continue
-            self.messages.append({'role': 'assistant', 'content': [b.model_dump(exclude_none=True) for b in r.content]})
+            if commit:
+                self.messages.append({'role': 'assistant', 'content': [b.model_dump(exclude_none=True) for b in r.content]})
             return Reply(action, thinking)
         return Reply({})
 
@@ -193,12 +199,15 @@ class OpenAIConversation(_Base):
                     raise RuntimeError(f'OpenAI transport error: {e}') from e
             await asyncio.sleep(min(2 ** attempt, 60) + random.random())
 
-    async def send(self, text, meta=None) -> Reply:
-        self.messages.append({'role': 'user', 'content': [self._block(text)]})
+    async def send(self, text, meta=None, commit=True) -> Reply:
+        user = {'role': 'user', 'content': [self._block(text)]}
+        if commit:
+            self.messages.append(user)
+        messages = self.messages if commit else [*self.messages, user]
         truncations = 0
         for attempt in range(4):
             self.ledger.check()
-            body = {'model': self.model, 'store': False, 'max_output_tokens': self.max_tokens, 'input': self.messages,
+            body = {'model': self.model, 'store': False, 'max_output_tokens': self.max_tokens, 'input': messages,
                     'text': {'format': {'type': 'json_schema', 'name': 'game_action', 'strict': True,
                                         'schema': self.schema}},
                     'reasoning': {'effort': self.effort, 'summary': 'auto', 'context': 'all_turns'},
@@ -242,7 +251,8 @@ class OpenAIConversation(_Base):
                 action = json.loads(out)
             except json.JSONDecodeError:
                 continue
-            self.messages.extend(output)
+            if commit:
+                self.messages.extend(output)
             return Reply(action, thinking)
         return Reply({})
 

@@ -2,8 +2,8 @@
 
 Each game directory holds `events.jsonl` (every event, with who could see it), `transcript.md`
 (omniscient replay with summarized thinking), `conversations/` (each seat's full API conversation),
-`calls.jsonl` (per-call usage and cost), `config.json` (settings, including `protocol`) and
-`result.json`. The current version is `PROTOCOL` in `clocktower/cli.py`; bump it (and add a section
+`calls.jsonl` (per-call usage and cost), `config.json` (settings, including `protocol`),
+`result.json` and, from v5 on, `probes.jsonl` (belief probes; see below). The current version is `PROTOCOL` in `clocktower/cli.py`; bump it (and add a section
 here) whenever a change affects how games play.
 
 ## v1 — development (Sept 25–26, 2026)
@@ -40,3 +40,12 @@ weights only (20% of Drunks get true information all game; the Spy can register 
 character; the Recluse can register as the Imp; a misinformed Washerwoman sometimes shows only
 good players; a misinformed Librarian is sometimes told zero Outsiders). The LLM Storyteller
 option is removed.
+
+Telemetry (does not change play, so no version bump): from Sept 27, v5 games also record belief
+probes. At dawn of day 1 and just before each day's nominations, every seat answers an
+out-of-game question on a fork of its conversation (same model, effort, thinking and schema, so it
+reads from cache); the question and answer never enter the seat's conversation, and its pending
+events stay pending. Good seats give P(evil), P(Demon) and a character guess for every other
+player; evil seats predict what the good players believe; everyone states their claim and a
+one-line plan. `tests/` checks that probes leave every seat's turns identical. Scores:
+`python -m clocktower analyze`.

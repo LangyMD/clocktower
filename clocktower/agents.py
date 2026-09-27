@@ -31,6 +31,10 @@ class ModelSeat:
     async def act(self, text, request: Request) -> Reply:
         return await self.conversation.send(text, {'kind': request.kind, 'day': request.day, 'beat': request.beat})
 
+    async def probe(self, text, meta) -> Reply:
+        """An out-of-game question on a fork of the conversation (see probe.py)."""
+        return await self.conversation.send(text, {'kind': 'probe', **meta}, commit=False)
+
 
 LINES = ['I have info, will share soon.', 'Who wants to claim first?', 'I trust Alex for now.',
          'That claim sounds off to me.', 'Let us not rush an execution.', 'I think we should nominate today.']

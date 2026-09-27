@@ -20,6 +20,7 @@ from pathlib import Path
 from .agents import Request, ScriptedStoryteller
 from .characters import FIRST_NIGHT, GOOD, MINIONS, OTHER_NIGHTS, TOWNSFOLK, card
 from .llm import BudgetExceeded, Reply
+from . import probe
 from .prompts import dawn_narration
 from .render import render
 from .state import (POLICY, Grimoire, bluffs_choice, character_choice, chef_choice, drunk_as_choice, empath_choice,
@@ -49,9 +50,11 @@ def fmt(value):
 
 class Game:
     def __init__(self, seats, storyteller=None, *, names=NAMES, seed=None, private_beats=3, public_beats=3, max_days=10,
-                 waves=3, characters=None, minion=None, out=None, seat_factory=None):
+                 waves=3, characters=None, minion=None, out=None, seat_factory=None, probes=True):
         """`seats` maps names to seats; alternatively `seat_factory(name, team)` creates them once the
-        characters are dealt (so, for example, the evil team can use a different model). Every day has
+        characters are dealt (so, for example, the evil team can use a different model). `probes` asks
+        seats that support it for their beliefs at dawn of day 1 and before each day's nominations,
+        outside the game (probe.py). Every day has
         `private_beats` of private time and `public_beats` of town square. `minion` forces the Minion
         character of a random setup (batches rotate it so every Minion is covered). The Storyteller
         defaults to the scripted one (state.POLICY)."""
@@ -72,6 +75,7 @@ class Game:
         self.executed_today = False
         self.starting = None
         self.addressed = set()  # players named in the last town-square beat
+        self.probes, self.probe_tasks, self.probe_log = probes, [], []
 
     # ---- logging -----------------------------------------------------------------------
     def _write(self, filename, line):
@@ -94,6 +98,35 @@ class Game:
     def record_call(self, record):
         self.calls.append(record)
         self._write('calls.jsonl', json.dumps(record))
+
+    # ---- belief probes (outside the game) ---------------------------------------------------------
+    def probe(self, point):
+        """Fork a belief question to every seat that supports it. Runs in the background on a snapshot
+        (the seat's conversation and its pending events, which stay pending), so play never waits."""
+        if not self.probes:
+            return
+        for p in self.g.players:
+            seat = self.seats.get(p.name)
+            if not hasattr(seat, 'probe'):
+                continue
+            pending = '\n'.join(self.buf[p.name]).strip()
+            text = (pending + '\n\n' if pending else '') + '>>> ' + probe.prompt(p.evil)
+            meta = {'day': self.day, 'point': point}
+            record = {**meta, 'player': p.name, 'character': p.character, 'shown': p.shown,
+                      'team': 'evil' if p.evil else 'good', 'alive': p.alive,
+                      'truth': {q.name: {'character': q.character, 'evil': q.evil} for q in self.g.players}}
+            self.probe_tasks.append(asyncio.create_task(self._probe(seat, text, meta, record)))
+
+    async def _probe(self, seat, text, meta, record):
+        try:
+            reply = await seat.probe(text, meta)
+        except Exception as e:  # a failed probe never touches the game
+            record.update(error=repr(e))
+        else:
+            say = (reply.action or {}).get('say') or ''
+            record.update(raw=say, thinking=reply.thinking, **probe.parse(say, self.names))
+        self.probe_log.append(record)
+        self._write('probes.jsonl', json.dumps(record))
 
     # ---- asking seats and the Storyteller ------------------------------------------------------
     async def ask(self, name, request: Request) -> dict:
@@ -278,6 +311,8 @@ class Game:
         self.emit('header', {'text': f'Day {n}'})
         self.emit('dawn', {'day': n, 'deaths': [d.name for d in deaths],
                            'narration': dawn_narration(self.rng, [d.name for d in deaths])})
+        if first:
+            self.probe('dawn')
 
     # ---- day ---------------------------------------------------------------------------------
     def whispers(self, name, action):
@@ -515,6 +550,7 @@ class Game:
                 await self.beat(n, k, private)
                 if g.winner:
                     return
+        self.probe('nominations')
         await self.nominations()
         if g.winner:
             return
@@ -542,6 +578,8 @@ class Game:
                 n += 1
         except BudgetExceeded as e:
             stopped = f'budget: {e}'
+        if self.probe_tasks:
+            await asyncio.gather(*self.probe_tasks)
         g = self.g
         if g and g.winner:
             self.emit('game_over', {'winner': g.winner, 'reason': g.reason})

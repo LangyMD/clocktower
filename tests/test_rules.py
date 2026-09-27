@@ -443,5 +443,78 @@ class WholeGameTests(unittest.TestCase):
             self.assertLessEqual(delivered, events - pending + 8 * len(turns), f'{name} received repeated content')
 
 
+
+class ProbeTests(unittest.TestCase):
+    def test_parse(self):
+        from clocktower.probe import parse
+        text = ('Alex | 80% | 60 | Imp\n`Blair (dead)` | 10% | 0% | Chef\nnoise\nClaim | Empath\nPlan | Push Alex | today')
+        out = parse(text, NAMES)
+        self.assertEqual(out['players']['Alex'], {'evil': 0.8, 'demon': 0.6, 'character': 'Imp'})
+        self.assertEqual(out['players']['Blair']['evil'], 0.1)
+        self.assertEqual((out['claim'], out['plan']), ('Empath', 'Push Alex | today'))
+
+    def test_probes_leave_the_game_unchanged(self):
+        """Same seed with and without probes: identical events and identical turns for every seat."""
+        def play(probes):
+            seen, asked = [], []
+
+            class Probed(RandomSeat):
+                async def act(self, text, request):
+                    seen.append((self.name, text))
+                    return await super().act(text, request)
+
+                async def probe(self, text, meta):
+                    asked.append((self.name, meta['point'], text))
+                    return Reply({**BLANK, 'say': 'Alex | 50 | 20 | Chef\nClaim | none\nPlan | wait'})
+
+            seats = {n: Probed(n, random.Random(i), NAMES) for i, n in enumerate(NAMES)}
+            g = Game(seats, ScriptedStoryteller(random.Random(3)), seed=5, probes=probes)
+            run(g.run())
+            return [(e['kind'], e['data']) for e in g.events], seen, asked, g
+        events, seen, _, _ = play(False)
+        events2, seen2, asked, g = play(True)
+        self.assertEqual(events, events2)
+        self.assertEqual(seen, seen2)
+        points = [p for _, p, _ in asked]
+        self.assertEqual(points.count('dawn'), 9)
+        self.assertGreaterEqual(points.count('nominations'), 9)
+        self.assertEqual(len(g.probe_log), len(asked))
+        self.assertTrue(all(r['players']['Alex']['evil'] == 0.5 for r in g.probe_log))
+
+    def test_claude_fork_does_not_touch_the_conversation(self):
+        from types import SimpleNamespace as NS
+        from clocktower.llm import ClaudeConversation, Ledger
+        sent = []
+
+        class Stream:
+            def __init__(self, **kw):
+                sent.append(kw['messages'])
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *a):
+                return False
+
+            async def get_final_message(self):
+                usage = NS(model_dump=lambda **k: {'input_tokens': 1, 'output_tokens': 1})
+                block = NS(type='text', text='{"say": "hi"}', model_dump=lambda **k: {'type': 'text', 'text': '{"say": "hi"}'})
+                return NS(usage=usage, content=[block], stop_reason='end_turn', stop_details=None)
+
+        import tempfile, pathlib
+        client = NS(messages=NS(stream=lambda **kw: Stream(**kw)))
+        ledger = Ledger(pathlib.Path(tempfile.mkdtemp()) / 'l.jsonl')
+        c = ClaudeConversation(client, 'sys', {}, label='Alex', ledger=ledger, semaphore=asyncio.Semaphore(1))
+        run(c.send('turn 1'))
+        before = [dict(m) for m in c.messages]
+        reply = run(c.send('probe?', commit=False))
+        self.assertEqual(reply.action, {'say': 'hi'})
+        self.assertEqual(c.messages, before)
+        self.assertEqual(sent[-1], before + [{'role': 'user', 'content': 'probe?'}])
+        run(c.send('turn 2'))
+        self.assertEqual(sent[-1][:len(before)], before)
+        self.assertEqual(len(c.messages), 4)
+
+
 if __name__ == '__main__':
     unittest.main()

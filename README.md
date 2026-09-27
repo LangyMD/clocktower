@@ -84,6 +84,11 @@ Each game writes to `games/<time>-<seed>/`:
 - `calls.jsonl` — every API call: seat, decision, latency, tokens, cost, thinking summary, output
 - `conversations/` — each seat's full conversation
 - `result.json` — winner, cost, token totals
+- `probes.jsonl` — belief probes: at dawn of day 1 and before each day's nominations, each seat is
+  asked (on a fork of its conversation that is then thrown away, so play is unaffected) for P(evil),
+  P(Demon) and a character guess per player (evil seats predict what the good players believe),
+  its claim and a one-line plan. `python -m clocktower analyze games/v5/*/game-*` scores them by
+  model pairing, with win rates and voting accuracy. `--no-probes` turns them off.
 
 ## Code
 
@@ -99,4 +104,6 @@ Each game writes to `games/<time>-<seed>/`:
 | `agents.py` | Model, random (tests) and human seats; the scripted Storyteller |
 | `web.py` | Local browser UI for a human seat |
 | `watch.py`, `viewer/` | Spectator app: library, Grimoire circle, chronicle, playback, live-follow, per-seat views |
+| `probe.py` | Belief probes (out-of-game forks of each seat's conversation) |
+| `analyze.py` | Win rates, voting and probe scores by model pairing |
 | `cli.py` | `run`, `play`, `sim` |

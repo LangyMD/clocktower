@@ -6,6 +6,7 @@
     python -m clocktower play --seat Casey            # you play Casey in the browser
     python -m clocktower sim --games 20               # random players, no API calls
     python -m clocktower report games/*               # summarise finished games
+    python -m clocktower analyze games/v5/*/game-*    # win rates and belief-probe scores by model pairing
     python -m clocktower replay games/X --view Casey  # re-read a game from one seat (or public/omniscient)
     python -m clocktower watch                        # spectator app at http://127.0.0.1:8800
     python -m clocktower site                         # the spectator app as static files in site/, to publish
@@ -52,7 +53,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     characters = args.characters.split(',') if args.characters else None
     game = Game({}, None, seed=seed, private_beats=args.private_beats,
                 public_beats=args.public_beats, max_days=args.days, waves=args.waves, characters=characters,
-                minion=minion, out=out)
+                minion=minion, out=out, probes=getattr(args, 'probes', False))
     if env is None:  # sim: random players, no API
         rng = random.Random(seed + 1)
         game.seats = {n: RandomSeat(n, random.Random(rng.random()), NAMES) for n in NAMES}
@@ -79,7 +80,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'seed': seed,
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
-              'max_days': args.days, 'human': human, 'characters': characters,
+              'max_days': args.days, 'human': human, 'characters': characters, 'probes': args.probes,
               'player_prompt_sha': hashlib.sha256(PLAYER_SYSTEM.encode()).hexdigest()[:12]}
     (out / 'config.json').write_text(json.dumps(config, indent=2))
     return game, convs
@@ -150,6 +151,8 @@ def main(argv=None):
     sub = ap.add_subparsers(dest='command', required=True)
     rp = sub.add_parser('report')
     rp.add_argument('paths', nargs='+')
+    an = sub.add_parser('analyze')
+    an.add_argument('paths', nargs='+')
     wp = sub.add_parser('watch')
     wp.add_argument('--port', type=int, default=8800)
     wp.add_argument('--games', default=str(GAMES))
@@ -180,6 +183,8 @@ def main(argv=None):
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
             p.add_argument('--concurrency', type=int, default=12, help='API requests in flight')
+            p.add_argument('--no-probes', dest='probes', action='store_false',
+                           help='skip the out-of-game belief probes (probes.jsonl)')
             p.add_argument('--workspace', default=os.environ.get('ANTHROPIC_WORKSPACE_ID', DEFAULT_WORKSPACE))
         if name == 'run':
             p.add_argument('--parallel', type=int, default=0, help='games at once in a batch (0 = all)')
@@ -191,6 +196,9 @@ def main(argv=None):
     if args.command == 'report':
         from .report import main as report
         report(args.paths)
+    elif args.command == 'analyze':
+        from .analyze import main as analyze
+        analyze(args.paths)
     elif args.command == 'watch':
         from .watch import serve as watch
         watch(args.games, args.port)
