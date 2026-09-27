@@ -1,0 +1,68 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 3,
+  "seed": 20035,
+  "starting": {
+    "Alex": "Saint",
+    "Blair": "Slayer",
+    "Casey": "Imp",
+    "Drew": "Undertaker",
+    "Ellis": "Recluse",
+    "Frankie": "Virgin",
+    "Gray": "Fortune Teller",
+    "Harper": "Poisoner",
+    "Indigo": "Monk"
+  },
+  "final": {
+    "Alex": "Saint",
+    "Blair": "Slayer",
+    "Casey": "Imp",
+    "Drew": "Undertaker",
+    "Ellis": "Recluse",
+    "Frankie": "Virgin",
+    "Gray": "Fortune Teller",
+    "Harper": "Poisoner",
+    "Indigo": "Monk"
+  },
+  "bluffs": [
+    "Investigator",
+    "Soldier",
+    "Mayor"
+  ],
+  "red_herring": "Blair",
+  "drunk_as": null,
+  "cost": 2.5052,
+  "calls": 288,
+  "tokens": {
+    "input": 1081,
+    "cache_read": 3632181,
+    "cache_write": 189666,
+    "output": 64087
+  },
+  "seconds": 654.8,
+  "errors": [
+    "Gray: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVufDpstsYCy4DYaUj'}\")",
+    "Drew: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVvZ3p7U5GYcaTsG5P'}\")",
+    "Gray: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVvZntQ3aK2F9SH3vQ'}\")",
+    "Blair: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVva3BPkQ9YqayMoGe'}\")",
+    "Alex: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVwcYGhG5NGGWmbcGG'}\")",
+    "Frankie: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVweGyjnvJLsBtpgUL'}\")",
+    "Indigo: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVweH1WSJPgZR8iHhz'}\")",
+    "Ellis: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVxZ6Sqv5S6fvmuuye'}\")",
+    "Drew: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWPm9wxXfHfws9PTC6'}\")",
+    "Alex: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWPr7uZrU3UqFUShm9'}\")"
+  ],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "gpt-6-sol",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "gpt-6-sol",
+    "Indigo": "claude-opus-5-5"
+  }
+}

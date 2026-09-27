@@ -50,6 +50,10 @@ player; evil seats predict what the good players believe; everyone states their 
 one-line plan. `tests/` checks that probes leave every seat's turns identical. Scores:
 `python -m clocktower analyze`.
 
+Batch x1 (Sept 27): seven model pairings on seeds 6000–6009 (Opus 5.5, Sonnet 5, GPT-6 Astra;
+see `python -m clocktower analyze games/v5/x1-*/game-*`). Astra vs Astra was stopped after 5 games
+(its first run was throttled by an 8-thread limit on OpenAI requests and discarded).
+
 ## v6 — current (Sept 27)
 Changes from v5, after reading 61 v5 games (seven model pairings) and auditing the rules and the
 Storyteller against 2,750 simulated games:
