@@ -1,0 +1,61 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 2,
+  "seed": 20093,
+  "starting": {
+    "Alex": "Saint",
+    "Blair": "Imp",
+    "Casey": "Butler",
+    "Drew": "Investigator",
+    "Ellis": "Monk",
+    "Frankie": "Drunk",
+    "Gray": "Baron",
+    "Harper": "Recluse",
+    "Indigo": "Chef"
+  },
+  "final": {
+    "Alex": "Saint",
+    "Blair": "Imp",
+    "Casey": "Butler",
+    "Drew": "Investigator",
+    "Ellis": "Monk",
+    "Frankie": "Drunk",
+    "Gray": "Baron",
+    "Harper": "Recluse",
+    "Indigo": "Chef"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Washerwoman",
+    "Empath"
+  ],
+  "red_herring": null,
+  "drunk_as": "Undertaker",
+  "cost": 1.7184,
+  "calls": 206,
+  "tokens": {
+    "input": 574,
+    "cache_read": 1924708,
+    "cache_write": 173328,
+    "output": 89896
+  },
+  "seconds": 741.3,
+  "errors": [
+    "Gray: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhUY8ds26Jk3GmHhvig'}\")",
+    "Gray: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWYzHjijZme49SZ2cE'}\")",
+    "Blair: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUiBrUbGB68HTCgKYfV1'}\")"
+  ],
+  "models": {
+    "Alex": "gpt-6-sol",
+    "Blair": "claude-sonnet-5",
+    "Casey": "gpt-6-sol",
+    "Drew": "gpt-6-sol",
+    "Ellis": "gpt-6-sol",
+    "Frankie": "gpt-6-sol",
+    "Gray": "claude-sonnet-5",
+    "Harper": "gpt-6-sol",
+    "Indigo": "gpt-6-sol"
+  }
+}
