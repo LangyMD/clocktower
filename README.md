@@ -1,23 +1,23 @@
 # Clocktower
 
 Blood on the Clocktower (Trouble Brewing, nine players) played by language models over text,
-with a scripted Storyteller (or optionally an LLM one) and optional human seats. A clean rewrite
+with a scripted Storyteller and optional human seats. A clean rewrite
 of the earlier `botc/` lab (kept alongside for reference).
 
 ## How a game works
 
-- **Setup.** A uniformly random legal set of nine characters is dealt at random (`--setup
-  storyteller` lets an LLM Storyteller choose instead).
-- **Storyteller.** By default a scripted policy (`state.POLICY`, `game.pick_bluffs`) that does
-  what experienced human Storytellers do, with randomness: the Drunk believes they are an
-  information role more often than not; bluffs include an information role to fake (and an
-  Outsider in Baron games, occasionally the Drunk's apparent role); drunk and poisoned players
-  get information from one consistent false picture per player (a framed good player plays the
-  Demon, the real Demon looks clean, a drunk Washerwoman vouches for an evil player as one of
-  the Demon's bluffs); the Spy usually registers good and the Recluse sometimes evil. It is
-  free, instant and reproducible, and keeps the Storyteller from confounding model comparisons.
-  `--storyteller model` uses an LLM Storyteller instead (it tended to repeat itself and to undo
-  evil's misinformation).
+- **Setup.** A uniformly random legal set of nine characters is dealt at random.
+- **Storyteller.** A scripted policy (`state.POLICY`). Every Storyteller decision is a `Choice`
+  over all its legal values: 10% of the time the Storyteller picks uniformly among them, so no
+  legal option is ever ruled out; otherwise it follows a style, weighted like an experienced human
+  Storyteller: the Drunk usually believes they are an information role; bluffs usually include an
+  information role (and an Outsider in Baron games); impaired players usually get information from
+  one consistent false picture (a framed good player plays the Demon, the real Demon looks clean),
+  though 20% of Drunks get true information all game; the Spy usually registers good, as a bluff,
+  an in-play or another good character; the Recluse sometimes registers evil, as a Minion or the
+  Imp. It is free, instant and reproducible, and keeps the Storyteller from confounding model
+  comparisons. (An LLM Storyteller was tried in v1–v2; it repeated itself and undid evil's
+  misinformation.)
 - **Night.** Players with night abilities choose in parallel. The engine resolves them in the
   official night order.
 - **Day = private time, then the town square.** Every day is the same: 3 beats of private time
@@ -25,19 +25,22 @@ of the earlier `botc/` lab (kept alongside for reference).
   each beat every player gets one turn, in a random order, in groups of three (`--waves`); a group acts simultaneously and later groups see
   earlier ones. In private time a turn is up to three whispers, each to one or two players;
   whispers are completely private (nobody else sees the words or that they happened). In the
-  town square a turn is public speech (or a Slayer shot), there is no whispering, and players
+  town square a turn is public speech (and optionally a Slayer shot), there is no whispering, and players
   named in one beat go first in the next so they can answer. Nominations
   open after the last town-square beat.
-- **Nominations.** Each round, living players who haven't nominated may nominate (with an
-  accusation) or pass. One nomination is taken, the nominee defends, then votes go clockwise
-  one at a time, starting from the nominee's left, with a running tally. Standard thresholds,
+- **Nominations.** Rounds until one brings no nomination. Each round, every living player who
+  hasn't nominated today is asked at once to nominate (with an accusation) or pass; if several
+  nominate, one is taken at random. The nominee defends, everyone (the dead too) gets one comment
+  turn in the usual groups, then votes go clockwise one at a time, starting from the nominee's
+  left, with a running tally. The Slayer can shoot on any public turn (town square, the call for
+  nominations, comments). Standard thresholds,
   ties, ghost votes, Butler, Virgin, Slayer, Saint, Mayor and Scarlet Woman rules apply. (A
   Butler who tries to vote after their master voted no is shown as voting no; nothing announces
   the Butler.)
 
 ## Models, memory and cost
 
-Every seat (and an LLM Storyteller, if used) is one append-only model conversation. Claude models go through
+Every seat is one append-only model conversation. Claude models go through
 the Anthropic SDK; `gpt-*` models (e.g. `--model gpt-6-astra`) through the OpenAI Responses API
 with encrypted reasoning carried forward (Flex tier). Defaults: `claude-opus-5-5`, players at `high`
 effort.
@@ -50,7 +53,7 @@ effort.
   state dumps or history is re-sent; `tests/` checks this.
 - **Caching.** The system prompt is identical for every seat (so it caches across seats). Every
   request reads the whole earlier conversation from cache and writes only the new turn.
-- **One fixed JSON schema** per role (players / Storyteller), so the request prefix never changes.
+- **One fixed JSON schema** for every player decision, so the request prefix never changes.
 - **Spend** goes to `games/ledger.jsonl`; `--budget` (default $300) stops play when it's reached.
 - **Mixed tables.** `--good-model` / `--evil-model` pick a model per team; seats are created once
   characters are dealt, and each game's `result.json` records the model at every seat.
@@ -87,13 +90,13 @@ Each game writes to `games/<time>-<seed>/`:
 | File | What it does |
 |---|---|
 | `characters.py` | Trouble Brewing characters, ability text, night order |
-| `state.py` | Grimoire, registration, deaths and victory, legal Storyteller choices |
+| `state.py` | Grimoire, registration, deaths and victory, Storyteller choices and policy |
 | `game.py` | Setup, nights, beats, nominations, votes |
 | `render.py` | What each viewer sees of each event |
-| `prompts.py` | Player and Storyteller system prompts |
-| `schema.py` | The two fixed output schemas |
+| `prompts.py` | Player system prompt, dawn narration |
+| `schema.py` | The fixed output schema |
 | `llm.py` | Claude and OpenAI conversations, caching, prices, cost ledger |
-| `agents.py` | Model, random (tests) and human seats |
+| `agents.py` | Model, random (tests) and human seats; the scripted Storyteller |
 | `web.py` | Local browser UI for a human seat |
 | `watch.py`, `viewer/` | Spectator app: library, Grimoire circle, chronicle, playback, live-follow, per-seat views |
 | `cli.py` | `run`, `play`, `sim` |

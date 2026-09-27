@@ -1,9 +1,8 @@
-"""One fixed output schema for players and one for the Storyteller.
+"""One fixed output schema for every player decision.
 
 Every decision uses the same schema, so it never changes the request prefix; the
 prompt says which fields matter and the engine validates the rest.
 """
-from .characters import ALL
 
 
 def _obj(props):
@@ -23,23 +22,4 @@ def player_schema(names):
         'vote': _nullable({'type': 'boolean'}),
         'targets': {'type': 'array', 'items': name},
         'slayer_shot': _nullable(name),
-    })
-
-
-def storyteller_schema(names):
-    name = {'type': 'string', 'enum': list(names)}
-    character = {'type': 'string', 'enum': list(ALL)}
-    return _obj({
-        'characters': {'type': 'array', 'items': character},
-        'drunk_as': _nullable(character),
-        'red_herring': _nullable(name),
-        'bluffs': {'type': 'array', 'items': character},
-        'decisions': {'type': 'array', 'items': _obj({
-            'id': {'type': 'string'},
-            'players': {'type': 'array', 'items': name},
-            'character': _nullable(character),
-            'number': _nullable({'type': 'integer'}),
-            'yes': _nullable({'type': 'boolean'}),
-        })},
-        'narration': {'type': 'string'},
     })

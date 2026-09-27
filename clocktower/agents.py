@@ -1,34 +1,27 @@
-"""Seats and Storytellers.
+"""Seats and the Storyteller.
 
 A seat receives the text of everything it saw since its last turn plus a prompt,
-and returns an action dict (the JSON schema in schema.py). Claude seats, scripted
-random seats (for tests) and human seats all implement the same `act`.
+and returns an action dict (the JSON schema in schema.py). Model seats, random
+seats (for tests) and human seats all implement the same `act`.
 """
 from __future__ import annotations
 import asyncio
 import random
 from dataclasses import dataclass, field
-from typing import Callable
 
 from .llm import Reply
 
 
 @dataclass
 class Request:
-    kind: str                   # night | ravenkeeper | beat | nominate | defense | vote
+    kind: str                   # night | ravenkeeper | beat | nominate | defense | comment | vote
     prompt: str
     day: int
     beat: int | None = None
     n_targets: int = 0          # night choices
     options: list = field(default_factory=list)   # legal targets / nominees
     alive: bool = True
-    mode: str = ''              # beats: 'private' (whispers only) or 'public' (town square only)
-
-
-@dataclass
-class STRequest:
-    kind: str                   # characters | setup | decisions
-    fallback: Callable[[random.Random], dict]   # a complete legal answer (scripted Storyteller)
+    mode: str = ''              # 'private' (whispers only) or 'public' (speech only)
 
 
 class ModelSeat:
@@ -37,14 +30,6 @@ class ModelSeat:
 
     async def act(self, text, request: Request) -> Reply:
         return await self.conversation.send(text, {'kind': request.kind, 'day': request.day, 'beat': request.beat})
-
-
-class ModelStoryteller:
-    def __init__(self, conversation):
-        self.conversation = conversation
-
-    async def decide(self, text, request: STRequest) -> Reply:
-        return await self.conversation.send(text, {'kind': request.kind})
 
 
 LINES = ['I have info, will share soon.', 'Who wants to claim first?', 'I trust Alex for now.',
@@ -71,6 +56,8 @@ class RandomSeat:
             if request.options and r.random() < 0.4:
                 a['nominate'] = r.choice(request.options)
                 a['say'] = 'You seem suspicious.'
+        elif request.kind == 'comment':
+            if r.random() < 0.3: a['say'] = r.choice(LINES)
         elif request.kind == 'defense':
             a['say'] = 'I am good, I promise.'
         elif request.kind == 'vote':
@@ -85,11 +72,8 @@ class ScriptedStoryteller:
     def __init__(self, rng: random.Random):
         self.rng = rng
 
-    async def decide(self, text, request: STRequest) -> Reply:
-        return Reply(request.fallback(self.rng))
-
-
-RandomStoryteller = ScriptedStoryteller
+    def choose(self, choice):
+        return choice.options(self.rng)
 
 
 class HumanSeat:

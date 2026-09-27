@@ -32,4 +32,11 @@ bounce to anyone); a drunk Fortune Teller's false picture has two "evil" players
 v4 plus a fixed day: 3 private beats, 3 town-square beats, then nominations, every day. No
 early end (v4 ended the town square when most living players called for nominations or a beat
 was silent, which cut 20 of 34 v3 days short); `call_nominations` is gone, and day 1 no longer
-has its own private-beat setting.
+has its own private-beat setting. Nominations gain a comment turn for everyone between the defense
+and the vote; remarks during the call for nominations are gone (only accusations are heard). The
+Slayer can shoot on any public turn, not just the town square. The scripted Storyteller rules
+nothing legal out: 10% of each decision is uniform over all legal values, and the style is
+weights only (20% of Drunks get true information all game; the Spy can register as an in-play
+character; the Recluse can register as the Imp; a misinformed Washerwoman sometimes shows only
+good players; a misinformed Librarian is sometimes told zero Outsiders). The LLM Storyteller
+option is removed.

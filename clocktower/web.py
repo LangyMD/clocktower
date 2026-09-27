@@ -144,7 +144,7 @@ function renderForm() {
   }
   prompt.className = ''; prompt.textContent = pending.prompt.replace(/`/g, '');
   const k = pending.kind; let h = '';
-  if (k === 'beat' && pending.mode !== 'private') {
+  if ((k === 'beat' && pending.mode !== 'private') || k === 'comment') {
     h += `<textarea id="say" placeholder="Say something to the town (or leave blank)"></textarea>
       <div class="row"><span class="hint">Slayer shot</span><select id="shot">${options(others(), true)}</select></div>`;
   }
@@ -155,7 +155,8 @@ function renderForm() {
     h += `<div class="row"><button class="link" onclick="const r=[...document.querySelectorAll('[id^=wrow]')].find(x=>x.hidden); if(r) r.hidden=false; if(!document.querySelector('[id^=wrow][hidden]')) this.remove()">+ another whisper</button></div>`;
   } else if (k === 'nominate') {
     h += `<div class="row"><span class="hint">Nominate</span><select id="nom">${options(pending.options, true)}</select></div>
-      <textarea id="say" placeholder="Accusation (if nominating) or a short remark"></textarea>`;
+      <textarea id="say" placeholder="Accusation (if nominating)"></textarea>
+      <div class="row"><span class="hint">Slayer shot</span><select id="shot">${options(others(), true)}</select></div>`;
   } else if (k === 'defense') {
     h += `<textarea id="say" placeholder="Your defense"></textarea>`;
   } else if (k === 'vote') {
@@ -178,8 +179,8 @@ async function send(extra) {
       const to = [val(`wto${i}a`), val(`wto${i}b`)].filter(Boolean), text = val(`wtext${i}`);
       if (to.length && text) a.whispers.push({to: [...new Set(to)], text});
     }
-    a.slayer_shot = val('shot') || null;
   }
+  a.slayer_shot = val('shot') || null;
   if (pending.kind === 'nominate') a.nominate = val('nom') || null;
   if (pending.kind === 'night' || pending.kind === 'ravenkeeper') {
     a.targets = [...document.querySelectorAll('input[name=t]:checked')].map(x => x.value);

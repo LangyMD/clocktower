@@ -17,17 +17,16 @@ import re
 import time
 from pathlib import Path
 
-from .agents import Request, STRequest
-from .characters import FIRST_NIGHT, GOOD, MINIONS, OTHER_NIGHTS, OUTSIDERS, TOWNSFOLK, card
+from .agents import Request, ScriptedStoryteller
+from .characters import FIRST_NIGHT, GOOD, MINIONS, OTHER_NIGHTS, TOWNSFOLK, card
 from .llm import BudgetExceeded, Reply
 from .prompts import dawn_narration
 from .render import render
-from .state import (POLICY, Grimoire, character_choice, chef_choice, empath_choice, fortune_teller_choice, info_text,
-                    mayor_choice, norm, pair_choice, random_setup, setup_error, yes_choice)
-
-INFO_ROLES = {'Washerwoman', 'Librarian', 'Investigator', 'Chef', 'Empath', 'Fortune Teller', 'Undertaker', 'Ravenkeeper'}
+from .state import (POLICY, Grimoire, bluffs_choice, character_choice, chef_choice, drunk_as_choice, empath_choice,
+                    fortune_teller_choice, info_text, mayor_choice, norm, pair_choice, random_setup, red_herring_choice,
+                    setup_error, yes_choice)
 NAMES = ['Alex', 'Blair', 'Casey', 'Drew', 'Ellis', 'Frankie', 'Gray', 'Harper', 'Indigo']
-WORDS = {'beat': 100, 'whisper': 100, 'nominate': 120, 'defense': 150, 'vote': 30, 'narration': 80}
+WORDS = {'beat': 100, 'whisper': 100, 'nominate': 120, 'defense': 150, 'comment': 100, 'vote': 30}
 
 NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
     'Poisoner': (1, 'Choose a player to poison tonight and tomorrow.', True),
@@ -48,35 +47,21 @@ def fmt(value):
     return {k: v for k, v in norm(value).items() if v not in (None, [])}
 
 
-def pick_bluffs(r, options, baron):
-    """Three Demon bluffs that suit the setup: at least one information role (so evil can invent
-    checkable results) and an Outsider when the Baron is in play (the town can count Outsiders).
-    The rest are drawn uniformly from every legal option (the Drunk's apparent role included)."""
-    info = [c for c in options if c in INFO_ROLES]
-    outsiders = [c for c in options if c in OUTSIDERS]
-    picks = []
-    if info:
-        picks.append(r.choice(info))
-    if baron and outsiders:
-        picks.append(r.choice(outsiders))
-    rest = [c for c in options if c not in picks]
-    return (picks + r.sample(rest, 3 - len(picks)))[:3] if len(rest) >= 3 - len(picks) else r.sample(options, 3)
-
-
 class Game:
-    def __init__(self, seats, storyteller, *, names=NAMES, seed=None, private_beats=3, public_beats=3, max_days=10,
-                 waves=3, characters=None, setup='random', minion=None, out=None, seat_factory=None):
+    def __init__(self, seats, storyteller=None, *, names=NAMES, seed=None, private_beats=3, public_beats=3, max_days=10,
+                 waves=3, characters=None, minion=None, out=None, seat_factory=None):
         """`seats` maps names to seats; alternatively `seat_factory(name, team)` creates them once the
         characters are dealt (so, for example, the evil team can use a different model). Every day has
         `private_beats` of private time and `public_beats` of town square. `minion` forces the Minion
-        character of a random setup (batches rotate it so every Minion is covered)."""
-        self.seats, self.st, self.names, self.seat_factory = seats, storyteller, list(names), seat_factory
+        character of a random setup (batches rotate it so every Minion is covered). The Storyteller
+        defaults to the scripted one (state.POLICY)."""
+        self.seats, self.names, self.seat_factory = seats, list(names), seat_factory
         self.meta = {}
         self.seed = seed if seed is not None else random.randrange(2 ** 32)
         self.rng = random.Random(self.seed)
+        self.st = storyteller or ScriptedStoryteller(random.Random(self.seed ^ 0x5eed))
         self.private_beats, self.public_beats, self.minion = private_beats, public_beats, minion
         self.max_days, self.waves, self.forced = max_days, waves, characters
-        self.setup_mode = setup  # 'random': a uniformly drawn legal setup; 'storyteller': the Storyteller picks
         self.out = Path(out) if out else None
         if self.out:
             self.out.mkdir(parents=True, exist_ok=True)
@@ -84,7 +69,6 @@ class Game:
         self.day, self.phase = 0, 'setup'
         self.events, self.calls, self.errors = [], [], []
         self.buf = {n: [] for n in self.names}
-        self.st_buf = []
         self.executed_today = False
         self.starting = None
         self.addressed = set()  # players named in the last town-square beat
@@ -104,14 +88,8 @@ class Game:
             text = render(ev, n, dead)
             if text is not None:
                 self.buf[n].append(text)
-        text = render(ev, 'storyteller', dead)
-        if text is not None:
-            self.st_buf.append(text)
         self._write('events.jsonl', json.dumps(ev))
         self._write('transcript.md', render(ev, 'omniscient', dead))
-
-    def st_note(self, text):
-        self.emit('text', {'text': text}, 'st')
 
     def record_call(self, record):
         self.calls.append(record)
@@ -139,126 +117,36 @@ class Game:
         results = await asyncio.gather(*(self.ask(n, requests[n]) for n in names))
         return dict(zip(names, results))
 
-    async def st_ask(self, prompt, request: STRequest) -> dict:
-        text = '\n'.join(self.st_buf).strip()
-        self.st_buf = []
-        text = (text + '\n\n' if text else '') + '>>> ' + prompt
-        try:
-            reply = await self.st.decide(text, request)
-        except BudgetExceeded:
-            raise
-        except Exception as e:
-            self.errors.append(f'Storyteller: {e!r}')
-            self.emit('text', {'text': f'[error] Storyteller: {e!r}'}, 'audit')
-            reply = Reply({})
-        if reply.thinking:
-            self.emit('thinking', {'player': 'Storyteller', 'kind': request.kind, 'text': reply.thinking}, 'audit')
-        return reply.action or {}
-
-    async def decide(self, choices, context, narrate=None):
-        """Ask the Storyteller for every non-automatic choice (and optional dawn narration)."""
-        ask = [c for c in choices if not c.auto]
-        values = {c.id: c.default for c in choices}
-        if not ask and narrate is None:
-            return values, ''
-        lines = [context, '', 'Grimoire:', self.g.grimoire_text()]
-        if ask:
-            lines += ['', 'Decisions needed (one entry in `decisions` per id):']
-            lines += [f'- id "{c.id}": {c.description}' for c in ask]
-        if narrate is not None:
-            lines += ['', 'Also write `narration`: one or two sentences for dawn. '
-                      + (f"Deaths to announce: {', '.join(narrate)}." if narrate else 'Nobody died.')]
-
-        def fallback(r):
-            return {'decisions': [{'id': c.id, **norm(c.options(r))} for c in ask],
-                    'narration': dawn_narration(r, narrate) if narrate is not None else ''}
-
-        out = await self.st_ask('\n'.join(lines), STRequest('decisions', fallback))
-        got = {d.get('id'): d for d in out.get('decisions') or [] if isinstance(d, dict)}
-        for c in choices:
-            if c.auto:
-                continue
-            v = got.get(c.id)
-            ok = v is not None and c.legal(v)
-            values[c.id] = norm(v) if ok else c.default
-            self.emit('st_choice', {'id': c.id, 'value': fmt(values[c.id]), 'valid': ok}, 'audit')
-            if not ok:
-                self.st_note(f'(Your decision "{c.id}" was missing or illegal, so the default was used: {fmt(c.default)}.)')
-        return values, clip(out.get('narration'), WORDS['narration'])
+    def decide(self, choice):
+        """The Storyteller's value for a Choice. Choices with one legal value need no decision."""
+        if choice.auto:
+            return choice.values[0]
+        value = norm(self.st.choose(choice))
+        if not choice.legal(value):
+            raise ValueError(f'illegal Storyteller value for {choice.id}: {value}')
+        self.emit('st_choice', {'id': choice.id, 'value': fmt(value), 'valid': True}, 'audit')
+        return value
 
     # ---- setup -------------------------------------------------------------------------------
     async def setup(self):
         names, seating = self.names, ', '.join(self.names)
         if self.forced:
-            chars = list(self.forced)
-        elif self.setup_mode == 'random':
+            chars = list(self.forced)  # a forced setup (tests, --characters) keeps its seating order
+        else:
             chars = random_setup(self.rng, self.minion)
             self.rng.shuffle(chars)
-        else:
-            suggestion = random_setup(self.rng, self.minion)
-            out = await self.st_ask(
-                f'A new game is about to begin. The nine players, clockwise: {seating}.\n'
-                'Choose the nine characters in play (`characters`): the Imp, one Minion, and 5 Townsfolk with 2 '
-                'Outsiders, or 3 Townsfolk with 4 Outsiders if the Baron is in play. For variety, here is a '
-                f'randomly drawn legal setup you may use as-is or change: {", ".join(suggestion)}.',
-                STRequest('characters', lambda r: {'characters': suggestion}))
-            chars = out.get('characters') or []
-            err = setup_error(chars)
-            if err:
-                self.st_note(f'(Your setup was not legal — {err} — so the suggested setup was used.)')
-                chars = suggestion
-            chars = list(chars)
-            self.rng.shuffle(chars)  # dealt at random, as from the bag
         err = setup_error(chars)
         if err:
             raise ValueError(err)
-        self.g = g = Grimoire(names, chars)  # a forced setup (tests, --characters) keeps its seating order
+        self.g = g = Grimoire(names, chars)
 
         in_play = set(chars)
         drunk = g.with_character('Drunk')
-        has_ft = 'Fortune Teller' in in_play
-        drunk_opts = [c for c in TOWNSFOLK if c not in in_play]
-        bluff_opts = [c for c in GOOD if c not in in_play]
-        self.rng.shuffle(bluff_opts)
-        good = [p.name for p in g.players if not p.evil]
-
-
-        def fallback(r):  # the scripted Storyteller's setup
-            d = None
-            if drunk:  # a Drunk who thinks they have information is the most interesting Drunk
-                d = r.choices(drunk_opts, [3 if c in INFO_ROLES else 1 for c in drunk_opts])[0]
-            return {'drunk_as': d, 'red_herring': r.choice(good) if has_ft else None,
-                    'bluffs': pick_bluffs(r, bluff_opts, 'Baron' in in_play)}
-
-        asks = []
         if drunk:
-            asks.append(f'`drunk_as`: the Townsfolk the Drunk ({drunk.name}) believes they are, one not in play: '
-                        f'{", ".join(drunk_opts)}.')
-        if has_ft:
-            asks.append('`red_herring`: a good player who registers as a Demon to the Fortune Teller.')
-        suggested = pick_bluffs(self.rng, bluff_opts, 'Baron' in in_play)
-        asks.append(f'`bluffs`: three good characters not in play, shown to the Imp as safe bluffs. Options: '
-                    f'{", ".join(bluff_opts)}. A random draw you may use or change: {", ".join(suggested)}.')
-        out = await self.st_ask('The characters have been dealt:\n' + g.grimoire_text() + '\n\nNow choose:\n- '
-                                + '\n- '.join(asks), STRequest('setup', fallback))
-        fb = fallback(self.rng)
-        if drunk:
-            d = out.get('drunk_as')
-            if d not in drunk_opts:
-                self.st_note(f'(drunk_as was not legal; {fb["drunk_as"]} was used.)')
-                d = fb['drunk_as']
-            drunk.shown = d
-        if has_ft:
-            rh = out.get('red_herring')
-            if rh not in good:
-                self.st_note(f'(red_herring was not a good player; {fb["red_herring"]} was used.)')
-                rh = fb['red_herring']
-            g.red_herring = rh
-        bluffs = list(out.get('bluffs') or [])
-        if len(set(bluffs)) != 3 or not set(bluffs) <= set(bluff_opts):
-            self.st_note(f'(bluffs were not legal; {", ".join(fb["bluffs"])} were used.)')
-            bluffs = fb['bluffs']
-        g.bluffs = bluffs
+            drunk.shown = self.decide(drunk_as_choice([c for c in TOWNSFOLK if c not in in_play]))['character']
+        if 'Fortune Teller' in in_play:
+            g.red_herring = self.decide(red_herring_choice([p.name for p in g.players if not p.evil]))['players'][0]
+        g.bluffs = self.decide(bluffs_choice([c for c in GOOD if c not in in_play], 'Baron' in in_play))['characters']
         self.starting = {p.name: p.character for p in g.players}
         if self.seat_factory:
             self.seats = {p.name: self.seat_factory(p.name, 'evil' if p.evil else 'good') for p in g.players}
@@ -299,7 +187,6 @@ class Game:
                 self.emit('becomes', {'player': heir.name, 'character': 'Imp'}, 'audit')
                 self.emit('notice', {'text': 'The Demon has died — and because you are the Scarlet Woman, you are '
                                              'now the Imp! From the next night you choose who dies.'}, [heir.name])
-                self.st_note(f'{heir.name} (Scarlet Woman) has become the Imp.')
 
     async def night(self, n):
         g, names, first = self.g, self.names, n == 1
@@ -347,13 +234,10 @@ class Game:
                     self.emit('becomes', {'player': heir.name, 'character': 'Imp'}, 'audit')
                     self.emit('notice', {'text': f'Night {n}: the Imp killed themselves, and you are now the Imp! '
                                                  'From tomorrow night you choose who dies.'}, [heir.name])
-                    self.st_note(f'{imp.name} (Imp) killed themselves; {heir.name} is now the Imp.')
             elif target.alive and not g.works(target, 'Soldier') and target.name != g.protected:
                 victim = target
                 if g.works(target, 'Mayor'):
-                    c = mayor_choice(g, target, imp)
-                    values, _ = await self.decide([c], f'Night {n}: the Imp ({imp.name}) attacks the Mayor.')
-                    victim = g[norm(values[c.id])['players'][0]]
+                    victim = g[self.decide(mayor_choice(g, target, imp))['players'][0]]
                 self.kill(victim, 'demon')
                 deaths.append(victim)
 
@@ -363,36 +247,28 @@ class Game:
                 req = Request('ravenkeeper', f'Night {n}: you were killed in the night. Ravenkeeper: choose a player '
                                              'to learn their character (`targets`).', n, n_targets=1, options=names)
                 t = self.targets(d.name, await self.ask(d.name, req), req)[0]
-                info.append((d, 'Ravenkeeper', character_choice(g, d, 'Ravenkeeper', t, self.rng), t))
+                info.append((d, 'Ravenkeeper', character_choice(g, d, 'Ravenkeeper', t), t))
         for role in (FIRST_NIGHT if first else OTHER_NIGHTS):
             for p in g.players:
                 if not p.alive or p.shown != role:
                     continue
                 if role in ('Washerwoman', 'Librarian', 'Investigator'):
-                    info.append((p, role, pair_choice(g, p, role, self.rng), None))
+                    info.append((p, role, pair_choice(g, p, role), None))
                 elif role == 'Chef':
-                    info.append((p, role, chef_choice(g, p, self.rng), None))
+                    info.append((p, role, chef_choice(g, p), None))
                 elif role == 'Empath':
-                    info.append((p, role, empath_choice(g, p, self.rng), None))
+                    info.append((p, role, empath_choice(g, p), None))
                 elif role == 'Fortune Teller' and p.name in chosen:
-                    info.append((p, role, fortune_teller_choice(g, p, chosen[p.name], self.rng), chosen[p.name]))
+                    info.append((p, role, fortune_teller_choice(g, p, chosen[p.name]), chosen[p.name]))
                 elif role == 'Undertaker' and g.executed_death:
-                    info.append((p, role, character_choice(g, p, 'Undertaker', g.executed_death, self.rng),
+                    info.append((p, role, character_choice(g, p, 'Undertaker', g.executed_death),
                                  g.executed_death))
 
-        values, narration = await self.decide(
-            [c for _, _, c, _ in info],
-            f'Night {n}. Player choices: '
-            + ('; '.join(f'{name} ({g[name].shown}) chose {", ".join(t)}' for name, t in chosen.items()) or 'none')
-            + f'. Deaths tonight: {", ".join(d.name for d in deaths) or "none"}.',
-            narrate=[d.name for d in deaths])
         given = []
         for p, role, c, target in info:
-            text = info_text(role, values[c.id], target)
+            text = info_text(role, self.decide(c), target)
             self.emit('info', {'text': f'Night {n} — {role}: {text}'}, [p.name])
             given.append(f'{role} ({p.name}): {text}')
-        if given:
-            self.st_note(f'Information given on night {n}:\n' + '\n'.join(given))
         spy = g.with_character('Spy')
         if spy and spy.alive:
             self.emit('info', {'text': f'Night {n} — Spy: you look at the Grimoire.\n'
@@ -400,7 +276,8 @@ class Game:
 
         self.phase = 'day'
         self.emit('header', {'text': f'Day {n}'})
-        self.emit('dawn', {'day': n, 'deaths': [d.name for d in deaths], 'narration': narration})
+        self.emit('dawn', {'day': n, 'deaths': [d.name for d in deaths],
+                           'narration': dawn_narration(self.rng, [d.name for d in deaths])})
 
     # ---- day ---------------------------------------------------------------------------------
     def whispers(self, name, action):
@@ -414,35 +291,20 @@ class Game:
                 out.append({'to': to, 'text': text})
         return out
 
-    async def beat(self, n, k, private):
-        """Everyone gets one turn, in a random order, a wave of a few players at a time.
-        Players in a wave act simultaneously; later waves see what earlier waves said.
-        In private time players can only whisper; in the town square they can only speak."""
+    async def turns(self, n, order, kind, head, tail, words, beat=None, private=False):
+        """One turn each for `order`, a wave of a few players at a time: a wave acts simultaneously
+        and later waves see what earlier ones said. A private turn is whispers; a public turn is
+        speech plus, for anyone claiming to be the Slayer, a shot."""
         g = self.g
-        total = self.private_beats if private else self.public_beats
-        order = list(self.names)
-        self.rng.shuffle(order)
-        if not private and k > 1:  # whoever was just named or asked gets to answer first
-            order.sort(key=lambda x: x not in self.addressed)
-        self.addressed = set()
         size = math.ceil(len(order) / self.waves)
         waves = [order[i:i + size] for i in range(0, len(order), size)]
-        self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
         for w, wave in enumerate(waves, start=1):
             requests = {}
             for name in wave:
-                if private:
-                    prompt = (f'Day {n}, private time {k} of {total} — your turn (group {w} of {len(waves)}). '
-                              'Whisper to anyone you like (up to three whispers), or no one. Nobody can address the town '
-                              'until the town square.')
-                else:
-                    prompt = (f'Day {n}, town square {k} of {total} — your turn (group {w} of {len(waves)}). '
-                              'Say something to the town, or nothing. No whispering now.')
+                prompt = f'{head} — your turn (group {w} of {len(waves)}). {tail}'
                 if not g[name].alive:
                     prompt += ' (You are dead, but you can still ' + ('whisper.)' if private else 'talk.)')
-                if not private and k == total:
-                    prompt += ' This is the last beat before nominations.'
-                requests[name] = Request('beat', prompt, n, beat=k, alive=g[name].alive,
+                requests[name] = Request(kind, prompt, n, beat=beat, alive=g[name].alive,
                                          mode='private' if private else 'public')
             acts = await self.ask_many(requests)
             if private:
@@ -451,18 +313,42 @@ class Game:
                         self.emit('whisper', {'from': name, **msg}, [name, *msg['to']])
                 continue
             for name in wave:
-                say = clip(acts[name].get('say'), WORDS['beat'])
+                say = clip(acts[name].get('say'), words)
                 if say:
                     self.emit('say', {'speaker': name, 'text': say})
                     self.addressed |= {x for x in self.names if x != name and re.search(rf'\b{x}\b', say)}
-            for name in wave:
-                t = acts[name].get('slayer_shot')
-                if t in self.names and t != name:
-                    await self.slayer(name, t)
-                    if g.winner:
-                        return
+            self.shots(wave, acts)
+            if g.winner:
+                return
 
-    async def slayer(self, shooter, target):
+    async def beat(self, n, k, private):
+        """Everyone gets one turn, in a random order. In private time players can only whisper;
+        in the town square they can only speak, and whoever was just named answers first."""
+        total = self.private_beats if private else self.public_beats
+        order = list(self.names)
+        self.rng.shuffle(order)
+        if not private and k > 1:
+            order.sort(key=lambda x: x not in self.addressed)
+        self.addressed = set()
+        self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
+        if private:
+            tail = ('Whisper to anyone you like (up to three whispers), or no one. Nobody can address the town '
+                    'until the town square.')
+        else:
+            tail = 'Say something to the town, or nothing. No whispering now.'
+            if k == total:
+                tail += ' This is the last beat before nominations.'
+        await self.turns(n, order, 'beat', f'Day {n}, {"private time" if private else "town square"} {k} of {total}',
+                         tail, WORDS['beat'], beat=k, private=private)
+
+    def shots(self, names, acts):
+        """Slayer shots taken on these public turns, in order."""
+        for name in names:
+            t = acts[name].get('slayer_shot')
+            if t in self.names and t != name and not self.g.winner:
+                self.slayer(name, t)
+
+    def slayer(self, shooter, target):
         g = self.g
         s, t = g[shooter], g[target]
         died = False
@@ -472,11 +358,7 @@ class Game:
                 if t.character == 'Imp':
                     died = True
                 elif t.character == 'Recluse' and not g.is_poisoned(t):
-                    c = yes_choice(f'Slayer:{t.name}', f'The Slayer ({s.name}) shot the Recluse ({t.name}). Does the '
-                                                       'Recluse register as the Demon (and die)? Use yes=true/false.',
-                                   POLICY['recluse_slain'])
-                    values, _ = await self.decide([c], f'Day {self.day}: a Slayer shot.')
-                    died = bool(norm(values[c.id])['yes'])
+                    died = self.decide(yes_choice(f'Slayer:{t.name}', POLICY['recluse_slain']))['yes']
         self.emit('slayer', {'shooter': shooter, 'target': target, 'died': died})
         if died:
             self.kill(t, 'slayer')
@@ -495,7 +377,7 @@ class Game:
                 g.winner, g.reason = 'evil', f'{name} was the Saint, and the Saint was executed.'
         g.check_victory()
 
-    async def virgin(self, nominator, nominee):
+    def virgin(self, nominator, nominee):
         """Returns True if the Virgin's ability executed the nominator."""
         g, v = self.g, self.g[nominee]
         if v.character != 'Virgin' or g.virgin_used:
@@ -506,11 +388,7 @@ class Game:
         nom = g[nominator]
         townsfolk = nom.character in TOWNSFOLK
         if nom.character == 'Spy' and not g.is_poisoned(nom):
-            c = yes_choice(f'Virgin:{nominator}', f'The Spy ({nominator}) nominated the Virgin ({nominee}). Does the '
-                                                  'Spy register as a Townsfolk (and get executed)? Use yes=true/false.',
-                           POLICY['spy_virgin'])
-            values, _ = await self.decide([c], f'Day {self.day}: the Virgin is nominated.')
-            townsfolk = bool(norm(values[c.id])['yes'])
+            townsfolk = self.decide(yes_choice(f'Virgin:{nominator}', POLICY['spy_virgin']))['yes']
         if not townsfolk:
             return False
         self.emit('virgin', {'nominator': nominator, 'nominee': nominee})
@@ -575,6 +453,10 @@ class Game:
         return block, top
 
     async def nominations(self):
+        """Rounds until a call gets no nomination. Each round: every living player who hasn't
+        nominated today is asked at once whether to nominate (if several do, one is taken at random,
+        as when hands go up together); then the accusation, the defense, one round of comments from
+        everyone, and the clockwise vote."""
         g, n = self.g, self.day
         self.phase = 'nominations'
         self.emit('nominations_open', {})
@@ -588,20 +470,14 @@ class Game:
             status = (f'{block} is on the block with {top} votes.' if block else
                       f'Nobody is on the block (an earlier vote tied at {top}).' if top else 'Nobody is on the block yet.')
             prompt = (f'Day {n}, nominations. {status} Already nominated today: {", ".join(sorted(nominees)) or "nobody"}. '
-                      'You may nominate someone (set `nominate`; your `say` is the accusation), or not. If you are '
-                      'not nominating, leave `say` empty unless you have something important to add. No whispering now.')
+                      'You may nominate someone (set `nominate`; your `say` is the accusation), or pass. Only '
+                      'nominations are heard now: everyone can comment after the defense. No whispering now.')
             acts = await self.ask_many({name: Request('nominate', prompt, n, options=options) for name in eligible})
-            noms, remarks = [], []
-            for name in eligible:
-                a = acts[name]
-                say = clip(a.get('say'), WORDS['nominate'])
-                if a.get('nominate') in options:
-                    noms.append((name, a['nominate'], say))
-                elif say:
-                    remarks.append((name, say))
-            self.rng.shuffle(remarks)
-            for name, say in remarks:
-                self.emit('say', {'speaker': name, 'text': say})
+            self.shots(eligible, acts)
+            if g.winner:
+                return
+            noms = [(name, acts[name]['nominate'], clip(acts[name].get('say'), WORDS['nominate']))
+                    for name in eligible if acts[name].get('nominate') in options]
             if not noms:
                 break
             nominator, nominee, accusation = self.rng.choice(noms)
@@ -612,11 +488,17 @@ class Game:
             nominators.add(nominator)
             nominees.add(nominee)
             self.emit('nomination', {'nominator': nominator, 'nominee': nominee, 'text': accusation})
-            if await self.virgin(nominator, nominee):
+            if self.virgin(nominator, nominee):
                 return
             d = await self.ask(nominee, Request('defense', f'Day {n}: {nominator} has nominated you. '
                                                            'Give your defense in `say`.', n))
             self.emit('defense', {'nominee': nominee, 'text': clip(d.get('say'), WORDS['defense'])})
+            order = list(self.names)
+            self.rng.shuffle(order)
+            await self.turns(n, order, 'comment', f'Day {n}, comments on the nomination of {nominee}',
+                             'Say something to the town before the vote, or nothing. No whispering now.', WORDS['comment'])
+            if g.winner:
+                return
             block, top = await self.vote(nominee, block, top)
         if g.winner:
             return

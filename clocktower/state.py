@@ -1,18 +1,17 @@
 """Grimoire state and Trouble Brewing rules.
 
-The Grimoire holds the truth. Anything the Storyteller gets to decide (information
-for impaired players, Spy/Recluse registration, Mayor bounces, setup) is expressed
-as a Choice: a description, a legality check, a safe default and a policy. The
-policy is the scripted Storyteller: what an experienced human Storyteller would
-usually do, with some randomness (see POLICY). The engine never applies an illegal
-Storyteller choice.
+The Grimoire holds the truth. Everything the Storyteller decides (setup details,
+information for impaired players, Spy/Recluse registration, Mayor bounces) is a
+Choice: the full list of legal values plus the scripted Storyteller's style (see
+POLICY). The Storyteller sometimes picks uniformly among all legal values, so no
+legal option is ever ruled out; the engine never applies an illegal value.
 """
 from __future__ import annotations
-from dataclasses import dataclass, field
-from itertools import product
+from dataclasses import dataclass
+from itertools import combinations, product
 import random
 from typing import Callable
-from .characters import (ALL, DEMONS, GOOD, MINIONS, OUTSIDERS, TOWNSFOLK,
+from .characters import (ALL, DEMONS, INFO_ROLES, MINIONS, OUTSIDERS, TOWNSFOLK,
                          is_evil_character, kind)
 
 
@@ -51,28 +50,60 @@ def random_setup(rng, minion=None):
     return rng.sample(TOWNSFOLK, tf) + rng.sample(OUTSIDERS, os_) + [minion, 'Imp']
 
 
-# How the scripted Storyteller uses its discretion.
+# How the scripted Storyteller uses its discretion. Every number is a judgment call about
+# what an experienced human Storyteller tends to do; none of them rules a legal option out.
 POLICY = {
-    'poisoned_false': 0.8,    # a poisoned player gets false information (a Drunk always does)
+    'any': 0.1,               # any decision: pick uniformly among all legal values
+    # impaired players
+    'drunk_truthful': 0.2,    # per game: the Drunk gets true information (else it follows a false picture)
+    'poisoned_false': 0.8,    # per night: a poisoned player's information follows a false picture (else true)
+    'false_vouch_evil': 0.7,  # a misinformed Washerwoman's pair includes an evil player (else any player)
+    'false_zero': 0.1,        # a misinformed Librarian is told there are zero Outsiders
+    # registration
     'spy_evil': 0.25,         # the Spy registers as evil
-    'recluse_evil': 0.4,      # the Recluse registers as evil (or as a Minion/Demon)
+    'recluse_evil': 0.4,      # the Recluse registers as evil
+    'recluse_as_imp': 0.3,    # a Recluse registering as an evil character registers as the Imp (else a Minion)
+    'as_bluff': 0.5,          # an evil player shown as a good character is shown as a Demon bluff,
+    'as_in_play': 0.2,        # or as a good character in play (else one not in play)
     'misregister_pair': 0.3,  # a Washerwoman/Librarian/Investigator is shown a misregistering Spy/Recluse
-    'mayor_bounce': 0.5,      # an attack on the Mayor kills someone else
     'recluse_slain': 0.2,     # the Slayer's shot kills the Recluse
     'spy_virgin': 0.2,        # the Spy registers as a Townsfolk to the Virgin
+    # other
+    'mayor_bounce': 0.5,      # an attack on the Mayor kills someone else
+    'drunk_info_weight': 3,   # the Drunk believes they are an information role, 3x as likely as another
 }
 
 
-@dataclass
+def norm(value):
+    """A Storyteller value: any of players, character, number, yes, characters."""
+    value = value or {}
+    return {'players': list(value.get('players') or []), 'character': value.get('character'),
+            'number': value.get('number'), 'yes': value.get('yes'),
+            'characters': list(value.get('characters') or [])}
+
+
+def _key(v):
+    v = norm(v)
+    return tuple(sorted(v['players'])), v['character'], v['number'], v['yes'], tuple(sorted(v['characters']))
+
+
 class Choice:
-    """A decision the Storyteller makes. Values are dicts with any of:
-    players (list[str]), character (str|None), number (int|None), yes (bool|None)."""
-    id: str
-    description: str
-    legal: Callable[[dict], bool]
-    default: dict
-    options: Callable[[random.Random], dict]    # the scripted Storyteller's (legal) choice
-    auto: bool = False                           # only one legal value: no need to ask
+    """A decision the Storyteller makes: every legal value, and the scripted style."""
+
+    def __init__(self, id, values, style: Callable[[random.Random], dict]):
+        self.id, self.values, self.style = id, [norm(v) for v in values], style
+        self.keys = {_key(v) for v in self.values}
+        self.auto = len(self.keys) == 1  # only one legal value: nothing to decide
+
+    def legal(self, value):
+        return _key(value) in self.keys
+
+    def options(self, r):
+        """The scripted Storyteller's pick: uniform over every legal value with probability
+        POLICY['any'], otherwise the style (which is always legal)."""
+        if self.auto or r.random() < POLICY['any']:
+            return r.choice(self.values)
+        return norm(self.style(r))
 
 
 class Grimoire:
@@ -89,6 +120,7 @@ class Grimoire:
         self.day = 0
         self.executed_death = None  # who died by execution today (Undertaker)
         self.decoys = {}            # impaired player -> the false picture their information follows
+        self.truthful = {}          # Drunk -> whether their information is true this game
         self.winner = None
         self.reason = None
 
@@ -169,8 +201,13 @@ class Grimoire:
         return self.decoys[p.name]
 
     def misinformed(self, p, r):
-        """Whether the scripted Storyteller gives this impaired player false information now."""
-        return p.character == 'Drunk' or (self.is_poisoned(p) and r.random() < POLICY['poisoned_false'])
+        """Whether the scripted Storyteller gives this impaired player false information now. The
+        Drunk's is decided once per game, so their story stays consistent either way."""
+        if p.character == 'Drunk':
+            if p.name not in self.truthful:
+                self.truthful[p.name] = r.random() < POLICY['drunk_truthful']
+            return not self.truthful[p.name]
+        return self.is_poisoned(p) and r.random() < POLICY['poisoned_false']
 
     def sample_evil(self, r):
         """Who registers as evil this time, under the scripted Storyteller's registration policy."""
@@ -185,9 +222,18 @@ class Grimoire:
         return out
 
     def fake_good(self, r, kinds=(TOWNSFOLK,)):
-        """A good character not in play for an evil player to register as: a Demon bluff if possible."""
-        pool = [c for k in kinds for c in k if c not in self.in_play()]
-        return r.choice([c for c in self.bluffs if c in pool] or pool)
+        """A good character to show for an evil player: a Demon bluff, one in play, or another."""
+        pool = [c for k in kinds for c in k]
+        bluffs = [c for c in pool if c in self.bluffs]
+        in_play = [c for c in pool if c in self.in_play() and c not in bluffs]
+        other = [c for c in pool if c not in bluffs and c not in in_play]
+        groups = [(x, w) for x, w in ((bluffs, POLICY['as_bluff']), (in_play, POLICY['as_in_play']),
+                                      (other, 1 - POLICY['as_bluff'] - POLICY['as_in_play'])) if x]
+        return r.choice(r.choices([x for x, _ in groups], [w for _, w in groups])[0])
+
+    def evil_character(self, r):
+        """An evil character to show for a Recluse."""
+        return 'Imp' if r.random() < POLICY['recluse_as_imp'] else r.choice(MINIONS)
 
     def in_play(self):
         return {q.character for q in self.players} | {q.shown for q in self.players}
@@ -232,19 +278,35 @@ class Grimoire:
         return '\n'.join(lines)
 
 
-# ---- information choices -----------------------------------------------------------
-# A value is normalised to {'players': [...], 'character': str|None, 'number': int|None, 'yes': bool|None}.
+# ---- Storyteller choices -----------------------------------------------------------
 
-def norm(value):
-    value = value or {}
-    return {'players': list(value.get('players') or []), 'character': value.get('character'),
-            'number': value.get('number'), 'yes': value.get('yes')}
+def drunk_as_choice(options):
+    """The Townsfolk the Drunk believes they are (one not in play)."""
+    w = [POLICY['drunk_info_weight'] if c in INFO_ROLES else 1 for c in options]
+    return Choice('drunk_as', [{'character': c} for c in options], lambda r: {'character': r.choices(options, w)[0]})
 
 
-def _status(g, p):
-    if p.character == 'Drunk': return 'DRUNK (their ability does not work; any information is allowed)'
-    if g.is_poisoned(p): return 'POISONED (their ability does not work; any information is allowed)'
-    return 'sober and healthy (information must be true, within registration)'
+def red_herring_choice(good):
+    return Choice('red_herring', [{'players': [x]} for x in good], lambda r: {'players': [r.choice(good)]})
+
+
+def pick_bluffs(r, options, baron):
+    """Three Demon bluffs that suit the setup: an information role (so evil can invent checkable
+    results) and an Outsider when the Baron is in play (the town can count Outsiders)."""
+    picks = []
+    info = [c for c in options if c in INFO_ROLES]
+    outsiders = [c for c in options if c in OUTSIDERS]
+    if info:
+        picks.append(r.choice(info))
+    if baron and outsiders:
+        picks.append(r.choice([c for c in outsiders if c not in picks]))
+    return picks + r.sample([c for c in options if c not in picks], 3 - len(picks))
+
+
+def bluffs_choice(options, baron):
+    """Three good characters not in play, shown to the Imp."""
+    return Choice('bluffs', [{'characters': list(c)} for c in combinations(options, 3)],
+                  lambda r: {'characters': pick_bluffs(r, options, baron)})
 
 
 def _pair(r, first, others):
@@ -253,31 +315,27 @@ def _pair(r, first, others):
     return pair
 
 
-def pair_choice(g, p, ability, rng):
+def pair_choice(g, p, ability):
     """Washerwoman / Librarian / Investigator starting information."""
     group = {'Washerwoman': TOWNSFOLK, 'Librarian': OUTSIDERS, 'Investigator': MINIONS}[ability]
     others = [q.name for q in g.players if q is not p]
     impaired = g.impaired(p)
+    values = [{'players': [a, b], 'character': c} for a, b in combinations(others, 2) for c in group
+              if impaired or any(c in g.registers_as(g[x]) for x in (a, b))]
+    if ability == 'Librarian' and (impaired or not any(g.registers_as(q) <= set(OUTSIDERS) for q in g.players)):
+        values.append({'players': [], 'character': None})  # "zero Outsiders in play"
 
-    def legal(v):
-        v = norm(v)
-        if ability == 'Librarian' and not v['players'] and v['character'] is None:
-            # "zero Outsiders": legal if impaired, or if nobody must register as an Outsider
-            return impaired or not any(g.registers_as(q) <= set(OUTSIDERS) for q in g.players)
-        a = v['players']
-        if len(a) != 2 or len(set(a)) != 2 or not set(a) <= set(others) or v['character'] not in group:
-            return False
-        return impaired or any(v['character'] in g.registers_as(g[x]) for x in a)
-
-    def options(r):
+    def style(r):
         if impaired and g.misinformed(p, r):
             framed, _ = g.decoy(p, r)
             evil = [q.name for q in g.players if q.evil and q is not p]
-            if ability == 'Washerwoman':  # vouch for an evil player, as one of the Demon's bluffs if possible
-                return {'players': _pair(r, r.choice(evil), others), 'character': g.fake_good(r)}
+            if ability == 'Washerwoman':  # usually vouch for an evil player
+                shown = r.choice(evil) if evil and r.random() < POLICY['false_vouch_evil'] else r.choice(others)
+                return {'players': _pair(r, shown, others), 'character': g.fake_good(r)}
             if ability == 'Librarian':
-                return {'players': _pair(r, r.choice(evil + [framed]), others),
-                        'character': g.fake_good(r, (OUTSIDERS,)) if set(OUTSIDERS) - g.in_play() else r.choice(OUTSIDERS)}
+                if r.random() < POLICY['false_zero']:
+                    return {'players': [], 'character': None}
+                return {'players': _pair(r, r.choice(evil + [framed]), others), 'character': g.fake_good(r, (OUTSIDERS,))}
             return {'players': _pair(r, framed, others), 'character': r.choice(MINIONS)}  # frame a good player
         real = [(q.name, q.character) for q in g.players if q is not p and q.character in group]
         mis = [(q.name, c) for q in g.players if q is not p and q.character in ('Spy', 'Recluse') and q.character not in group
@@ -287,91 +345,61 @@ def pair_choice(g, p, ability, rng):
             return {'players': [], 'character': None}
         n, c = r.choice(pool)
         return {'players': _pair(r, n, others), 'character': c}
-
-    default = options(rng)
-    label = {'Washerwoman': 'Townsfolk', 'Librarian': 'Outsider', 'Investigator': 'Minion'}[ability]
-    actual = sorted(f'{q.name} ({q.character})' for q in g.players if q is not p and q.character in group)
-    optional = sorted(q.name for q in g.players if q is not p and q.character in ('Spy', 'Recluse')
-                      and g.registers_as(q) & set(group) and q.character not in group)
-    desc = (f"{ability} {p.name} is {_status(g, p)}. Show two players (not {p.name}) and a {label} "
-            f"character such that one of them registers as that character.")
-    if actual: desc += f" In play: {', '.join(actual)}."
-    if optional: desc += f" May also misregister: {', '.join(optional)}."
-    if ability == 'Librarian':
-        desc += ' Use players=[] and character=null for "zero Outsiders in play".'
-    desc += ' Use players=[a, b] and character=<name>.'
-    return Choice(f'{ability}:{p.name}', desc, legal, default, options)
-
-
-def _number_choice(cid, desc, possible, impaired, domain, policy, rng):
-    legal = (lambda v: norm(v)['number'] in domain) if impaired else (lambda v: norm(v)['number'] in possible)
-    return Choice(cid, desc, legal, policy(rng), policy, auto=(not impaired and len(possible) == 1))
+    return Choice(f'{ability}:{p.name}', values, style)
 
 
 def _pairs(ring, evil):
     return sum(1 for i in range(len(ring)) if ring[i].name in evil and ring[(i + 1) % len(ring)].name in evil)
 
 
-def chef_choice(g, p, rng):
+def chef_choice(g, p):
     ring = g.players
-    values = set()
+    possible = set()
     for combo in product(*[sorted(g.registers_evil(q)) for q in ring]):
-        values.add(sum(1 for i in range(len(ring)) if combo[i] and combo[(i + 1) % len(ring)]))
-    truth = sum(1 for i in range(len(ring)) if ring[i].evil and ring[(i + 1) % len(ring)].evil)
-    desc = (f"Chef {p.name} is {_status(g, p)}. Actual pairs of adjacent evil players: {truth}."
-            + (f" With Spy/Recluse registration the sober answer may be any of {sorted(values)}." if len(values) > 1 else ''))
+        possible.add(sum(1 for i in range(len(ring)) if combo[i] and combo[(i + 1) % len(ring)]))
+    values = range(0, 5) if g.impaired(p) else sorted(possible)
 
-    def policy(r):
+    def style(r):
         if g.impaired(p) and g.misinformed(p, r):
             return {'number': _pairs(ring, g.decoy(p, r)[1])}
         return {'number': _pairs(ring, g.sample_evil(r))}
-    return _number_choice(f'Chef:{p.name}', desc, values, g.impaired(p), set(range(0, 5)), policy, rng)
+    return Choice(f'Chef:{p.name}', [{'number': x} for x in values], style)
 
 
-def empath_choice(g, p, rng):
+def empath_choice(g, p):
     nb = g.neighbours(p)
-    values = {sum(c) for c in product(*[sorted(g.registers_evil(q)) for q in nb])}
-    truth = sum(1 for q in nb if q.evil)
-    desc = (f"Empath {p.name} is {_status(g, p)}. Living neighbours: "
-            f"{', '.join(f'{q.name} ({q.character})' for q in nb)}; actually evil: {truth}."
-            + (f" With registration the sober answer may be any of {sorted(values)}." if len(values) > 1 else ''))
+    possible = {sum(c) for c in product(*[sorted(g.registers_evil(q)) for q in nb])}
+    values = [0, 1, 2] if g.impaired(p) else sorted(possible)
 
-    def policy(r):
+    def style(r):
         evil = g.decoy(p, r)[1] if g.impaired(p) and g.misinformed(p, r) else g.sample_evil(r)
         return {'number': sum(1 for q in nb if q.name in evil)}
-    return _number_choice(f'Empath:{p.name}', desc, values, g.impaired(p), {0, 1, 2}, policy, rng)
+    return Choice(f'Empath:{p.name}', [{'number': x} for x in values], style)
 
 
-def fortune_teller_choice(g, p, targets, rng):
+def fortune_teller_choice(g, p, targets):
     ts = [g[t] for t in targets]
-    values = {any(c) for c in product(*[sorted(g.registers_demon_to_ft(q)) for q in ts])}
+    possible = {any(c) for c in product(*[sorted(g.registers_demon_to_ft(q)) for q in ts])}
     impaired = g.impaired(p)
-    desc = (f"Fortune Teller {p.name} is {_status(g, p)}. Chose {targets[0]} ({ts[0].character}) and "
-            f"{targets[1]} ({ts[1].character}); red herring is {g.red_herring}. "
-            f"Sober answer: {'YES' if values == {True} else 'NO' if values == {False} else 'YES or NO (Recluse)'}. Use yes=true/false.")
-    legal = (lambda v: isinstance(norm(v)['yes'], bool)) if impaired else (lambda v: norm(v)['yes'] in values)
+    values = [True, False] if impaired else sorted(possible)
 
-    def policy(r):
+    def style(r):
         if impaired and g.misinformed(p, r):  # both decoy evils read as the Demon, so the Drunk still sees YESes
             _, evil = g.decoy(p, r)
             return {'yes': any(t in evil or t == g.red_herring for t in targets)}
-        if len(values) == 1:
-            return {'yes': next(iter(values))}
+        if len(possible) == 1:
+            return {'yes': next(iter(possible))}
         return {'yes': r.random() < POLICY['recluse_evil']}
-    return Choice(f'Fortune Teller:{p.name}', desc, legal, policy(rng), policy, auto=(not impaired and len(values) == 1))
+    return Choice(f'Fortune Teller:{p.name}', [{'yes': x} for x in values], style)
 
 
-def character_choice(g, p, ability, target, rng):
+def character_choice(g, p, ability, target):
     """Undertaker (executed player) and Ravenkeeper (chosen player)."""
     t = g[target]
-    possible = g.registers_as(t)
     impaired = g.impaired(p)
-    desc = (f"{ability} {p.name} is {_status(g, p)}. Learns the character of {t.name}, who is the {t.character}."
-            + (f" {t.name} may misregister as any of: {', '.join(sorted(possible - {t.character}))}." if len(possible) > 1 else '')
-            + ' Use character=<name>.')
-    legal = (lambda v: norm(v)['character'] in ALL) if impaired else (lambda v: norm(v)['character'] in possible)
+    values = ALL if impaired else sorted(g.registers_as(t))
 
-    def policy(r):
+    def style(r):
         if impaired and g.misinformed(p, r):
             framed, evil = g.decoy(p, r)
             if t.evil:
@@ -379,32 +407,26 @@ def character_choice(g, p, ability, target, rng):
             if t.name in evil:
                 return {'character': 'Imp' if t.name == framed else r.choice(MINIONS)}
             return {'character': t.shown}
-        if len(possible) == 1:
-            return {'character': t.character}
-        if t.character == 'Spy' and r.random() > POLICY['spy_evil']:
+        if t.character == 'Spy' and len(values) > 1 and r.random() > POLICY['spy_evil']:
             return {'character': g.fake_good(r, (TOWNSFOLK, OUTSIDERS))}
-        if t.character == 'Recluse' and r.random() < POLICY['recluse_evil']:
-            return {'character': r.choice(MINIONS)}
+        if t.character == 'Recluse' and len(values) > 1 and r.random() < POLICY['recluse_evil']:
+            return {'character': g.evil_character(r)}
         return {'character': t.character}
-    return Choice(f'{ability}:{p.name}', desc, legal, {'character': t.character}, policy,
-                  auto=(not impaired and len(possible) == 1))
+    return Choice(f'{ability}:{p.name}', [{'character': c} for c in values], style)
 
 
-def yes_choice(cid, desc, chance=0.5, default=False):
-    return Choice(cid, desc, lambda v: isinstance(norm(v)['yes'], bool), {'yes': default},
-                  lambda r: {'yes': r.random() < chance})
+def yes_choice(cid, chance):
+    return Choice(cid, [{'yes': True}, {'yes': False}], lambda r: {'yes': r.random() < chance})
 
 
 def mayor_choice(g, mayor, imp):
-    victims = [q.name for q in g.living() if q is not imp and not (g.works(q, 'Soldier')) and q.name != g.protected]
-    desc = (f"The Imp attacked the Mayor ({mayor.name}), who is healthy. Choose who dies: the Mayor, or another "
-            f"player instead. Options: {', '.join(victims)}. Use players=[<name>].")
-    legal = lambda v: len(norm(v)['players']) == 1 and norm(v)['players'][0] in victims
+    """Who dies when the Imp attacks a healthy Mayor: the Mayor, or someone else instead."""
+    victims = [q.name for q in g.living() if q is not imp and not g.works(q, 'Soldier') and q.name != g.protected]
     others = [n for n in victims if n != mayor.name]
 
-    def policy(r):
+    def style(r):
         return {'players': [r.choice(others) if others and r.random() < POLICY['mayor_bounce'] else mayor.name]}
-    return Choice(f'Mayor:{mayor.name}', desc, legal, {'players': [mayor.name]}, policy)
+    return Choice(f'Mayor:{mayor.name}', [{'players': [x]} for x in victims], style)
 
 
 def info_text(ability, value, target=None):

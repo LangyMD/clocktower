@@ -21,12 +21,12 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from .agents import HumanSeat, ModelSeat, ModelStoryteller, RandomSeat, ScriptedStoryteller
+from .agents import HumanSeat, ModelSeat, RandomSeat
 from .characters import MINIONS
 from .game import NAMES, Game
 from .llm import MODEL, Ledger, conversation, make_client
-from .prompts import PLAYER_SYSTEM, STORYTELLER_SYSTEM
-from .schema import player_schema, storyteller_schema
+from .prompts import PLAYER_SYSTEM
+from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
@@ -52,11 +52,10 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     characters = args.characters.split(',') if args.characters else None
     game = Game({}, None, seed=seed, private_beats=args.private_beats,
                 public_beats=args.public_beats, max_days=args.days, waves=args.waves, characters=characters,
-                setup=args.setup, minion=minion, out=out)
-    if env is None:  # sim: random players and Storyteller, no API
+                minion=minion, out=out)
+    if env is None:  # sim: random players, no API
         rng = random.Random(seed + 1)
         game.seats = {n: RandomSeat(n, random.Random(rng.random()), NAMES) for n in NAMES}
-        game.st = ScriptedStoryteller(random.Random(rng.random()))
         return game, []
     ttl = '1h' if human else '5m'  # a human can take longer than five minutes between turns
     convs = []
@@ -75,23 +74,13 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
         return ModelSeat(c)
 
     game.seat_factory = seat
-    if args.storyteller == 'model':
-        c = conversation(env.client, STORYTELLER_SYSTEM, storyteller_schema(NAMES), label='Storyteller', ledger=env.ledger,
-                         semaphore=env.semaphore, on_call=game.record_call, model=args.st_model, effort=args.st_effort,
-                         max_tokens=args.max_output, ttl=ttl)
-        game.st = ModelStoryteller(c)
-        convs.append(('Storyteller', c))
-    else:
-        game.st = ScriptedStoryteller(random.Random(seed ^ 0x5eed))
     config = {'protocol': PROTOCOL, 'model': args.model, 'good_model': args.good_model, 'evil_model': args.evil_model,
-              'player_effort': args.effort, 'max_output_tokens': args.max_output, 'storyteller': args.storyteller,
-              'storyteller_model': args.st_model if args.storyteller == 'model' else None,
-              'storyteller_effort': args.st_effort if args.storyteller == 'model' else None, 'seed': seed,
+              'player_effort': args.effort, 'max_output_tokens': args.max_output, 'storyteller': 'scripted',
+              'seed': seed,
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
-              'max_days': args.days, 'human': human, 'characters': characters, 'setup': args.setup,
-              'player_prompt_sha': hashlib.sha256(PLAYER_SYSTEM.encode()).hexdigest()[:12],
-              'storyteller_prompt_sha': hashlib.sha256(STORYTELLER_SYSTEM.encode()).hexdigest()[:12]}
+              'max_days': args.days, 'human': human, 'characters': characters,
+              'player_prompt_sha': hashlib.sha256(PLAYER_SYSTEM.encode()).hexdigest()[:12]}
     (out / 'config.json').write_text(json.dumps(config, indent=2))
     return game, convs
 
@@ -138,7 +127,7 @@ async def run_batch(args):
     numbers = parse_only(args.only) if args.only else range(1, args.games + 1)
 
     async def one(k):  # game k always gets seed base + k - 1 (and a Minion by rotation), so it can be rerun alone
-        minion = MINIONS[(k - 1) % len(MINIONS)] if args.setup == 'random' and not args.characters else None
+        minion = MINIONS[(k - 1) % len(MINIONS)] if not args.characters else None
         async with limit:
             return await play_one(args, base + k - 1, root / f'game-{k:02d}', env, minion=minion)
 
@@ -179,8 +168,6 @@ def main(argv=None):
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=10, help='stop after this many days')
         p.add_argument('--characters', help='comma-separated forced setup, in seating order (tests)')
-        p.add_argument('--setup', choices=['random', 'storyteller'], default='random',
-                       help='deal a random legal setup, or let the Storyteller choose the characters')
         p.add_argument('--out')
         if name in ('run', 'sim'):
             p.add_argument('--games', type=int, default=1)
@@ -191,10 +178,6 @@ def main(argv=None):
             p.add_argument('--effort', default='high', help='player reasoning effort (same for every model)')
             p.add_argument('--max-output', type=int, default=16000,
                            help='per-turn output ceiling, thinking included, identical for every model')
-            p.add_argument('--storyteller', choices=['scripted', 'model'], default='scripted',
-                           help='scripted policy (default) or an AI Storyteller (--st-model)')
-            p.add_argument('--st-model', default=MODEL, help='Storyteller model')
-            p.add_argument('--st-effort', default='high', help='Storyteller effort')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
             p.add_argument('--concurrency', type=int, default=12, help='API requests in flight')
             p.add_argument('--workspace', default=os.environ.get('ANTHROPIC_WORKSPACE_ID', DEFAULT_WORKSPACE))

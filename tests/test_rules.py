@@ -5,7 +5,7 @@ import unittest
 from clocktower.agents import RandomSeat, ScriptedStoryteller
 from clocktower.game import NAMES, Game
 from clocktower.llm import Reply
-from clocktower.state import Grimoire, chef_choice, pair_choice, setup_error
+from clocktower.state import POLICY, Grimoire, chef_choice, pair_choice, setup_error
 
 A, B, C, D, E, F, G, H, I = NAMES
 BLANK = {'say': '', 'whispers': [], 'nominate': None, 'vote': None, 'targets': [], 'slayer_shot': None}
@@ -27,13 +27,22 @@ class Storyteller:
         self.decisions = decisions or {}
         self.rng = random.Random(0)
 
-    async def decide(self, text, request):
-        if request.kind == 'decisions':
-            out = request.fallback(self.rng)
-            for d in out['decisions']:
-                d.update(self.decisions.get(d['id'], {}))
-            return Reply(out)
-        return Reply(request.fallback(self.rng))
+    def choose(self, choice):
+        return {**choice.options(self.rng), **self.decisions.get(choice.id, {})}
+
+
+class policy:
+    """Temporarily override POLICY numbers."""
+
+    def __init__(self, **kw):
+        self.kw, self.old = kw, {}
+
+    def __enter__(self):
+        self.old = {k: POLICY[k] for k in self.kw}
+        POLICY.update(self.kw)
+
+    def __exit__(self, *exc):
+        POLICY.update(self.old)
 
 
 def game(characters, policy=lambda n, r: None, decisions=None, **kw):
@@ -239,6 +248,31 @@ class DayTests(unittest.TestCase):
         self.assertEqual(results[1]['outcome'], 'tie')
         self.assertTrue(g.g[D].alive and g.g[F].alive)
 
+    def test_nomination_has_accusation_defense_comments_then_votes(self):
+        def policy(name, req):
+            if req.kind == 'nominate' and name == C and req.options and D in req.options:
+                return {'nominate': D, 'say': 'Suspicious.'}
+            if req.kind == 'comment':
+                return {'say': f'{name} comments.'}
+        g = self.prepared(BASE, policy)
+        run(g.nominations())
+        kinds = [e['kind'] for e in g.events if e['kind'] in ('nomination', 'defense', 'say', 'vote')]
+        self.assertEqual(kinds[:2], ['nomination', 'defense'])
+        self.assertEqual(kinds[2:11], ['say'] * 9)  # everyone, the dead too, comments once
+        self.assertEqual(kinds[11:], ['vote'] * 9)
+
+    def test_slayer_can_shoot_during_nominations(self):
+        chars = ['Imp', 'Poisoner', 'Slayer', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Recluse']
+        def policy(name, req):
+            if req.kind == 'nominate' and name == D and req.options and E in req.options:
+                return {'nominate': E}
+            if req.kind == 'comment' and name == C:
+                return {'slayer_shot': A}
+        g = self.prepared(chars, policy)
+        run(g.nominations())
+        self.assertEqual(g.g.winner, 'good')
+        self.assertFalse(any(e['kind'] == 'vote' for e in g.events))
+
     def test_every_day_runs_all_beats_even_when_silent(self):
         g = self.prepared(BASE, lambda n, r: None)  # nobody ever says or whispers anything
         run(g.daytime(1))
@@ -266,29 +300,29 @@ class InformationTests(unittest.TestCase):
     def test_chef_with_recluse_can_see_extra_pair(self):
         chars = ['Imp', 'Recluse', 'Chef', 'Empath', 'Monk', 'Washerwoman', 'Soldier', 'Poisoner', 'Saint']
         g = Grimoire(NAMES, chars)
-        c = chef_choice(g, g[C], random.Random(0))
+        c = chef_choice(g, g[C])
         self.assertTrue(c.legal({'number': 0}) and c.legal({'number': 1}))
         self.assertFalse(c.legal({'number': 2}))
         self.assertFalse(c.auto)
 
     def test_washerwoman_pair_must_contain_the_townsfolk(self):
         g = Grimoire(NAMES, BASE)
-        c = pair_choice(g, g[F], 'Washerwoman', random.Random(0))
+        c = pair_choice(g, g[F], 'Washerwoman')
         self.assertTrue(c.legal({'players': [C, A], 'character': 'Monk'}))
         self.assertFalse(c.legal({'players': [B, A], 'character': 'Monk'}))
         self.assertFalse(c.legal({'players': [F, C], 'character': 'Monk'}))  # never shown themselves
-        self.assertTrue(c.legal(c.default))
+        self.assertTrue(c.legal(c.options(random.Random(0))))
 
     def test_drunk_washerwoman_can_be_told_anything(self):
         chars = ['Imp', 'Poisoner', 'Monk', 'Empath', 'Chef', 'Drunk', 'Soldier', 'Butler', 'Saint']
         g = Grimoire(NAMES, chars, drunk_as='Washerwoman')
-        c = pair_choice(g, g[F], 'Washerwoman', random.Random(0))
+        c = pair_choice(g, g[F], 'Washerwoman')
         self.assertTrue(c.legal({'players': [B, A], 'character': 'Mayor'}))
 
     def test_spy_can_register_as_townsfolk(self):
         chars = ['Imp', 'Spy', 'Monk', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
         g = Grimoire(NAMES, chars)
-        c = pair_choice(g, g[F], 'Washerwoman', random.Random(0))
+        c = pair_choice(g, g[F], 'Washerwoman')
         self.assertTrue(c.legal({'players': [B, A], 'character': 'Mayor'}))
 
 
@@ -308,10 +342,10 @@ class ScriptedStorytellerTests(unittest.TestCase):
             choices = []
             for p in (q for q in g.players if not q.evil):
                 for ability in ('Washerwoman', 'Librarian', 'Investigator'):
-                    choices.append(pair_choice(g, p, ability, r))
-                choices += [chef_choice(g, p, r), empath_choice(g, p, r),
-                            fortune_teller_choice(g, p, r.sample(NAMES, 2), r),
-                            character_choice(g, p, 'Undertaker', r.choice(NAMES), r)]
+                    choices.append(pair_choice(g, p, ability))
+                choices += [chef_choice(g, p), empath_choice(g, p),
+                            fortune_teller_choice(g, p, r.sample(NAMES, 2)),
+                            character_choice(g, p, 'Undertaker', r.choice(NAMES))]
             mayor = next(q for q in g.players if not q.evil and q.character != 'Soldier')
             choices.append(mayor_choice(g, mayor, g.demon()))
             for c in choices:
@@ -324,7 +358,8 @@ class ScriptedStorytellerTests(unittest.TestCase):
         g = Grimoire(NAMES, chars, drunk_as='Empath')
         r = random.Random(5)
         from clocktower.state import empath_choice
-        answers = {empath_choice(g, g[D], r).options(r)['number'] for _ in range(20)}
+        with policy(any=0, drunk_truthful=0):
+            answers = {empath_choice(g, g[D]).options(r)['number'] for _ in range(20)}
         self.assertEqual(len(answers), 1)
         framed, evil = g.decoy(g[D], r)
         self.assertFalse(g[framed].evil)
@@ -335,9 +370,44 @@ class ScriptedStorytellerTests(unittest.TestCase):
         g = Grimoire(NAMES, chars, drunk_as='Washerwoman')
         g.bluffs = ['Virgin', 'Slayer', 'Recluse']
         r = random.Random(2)
-        v = pair_choice(g, g[D], 'Washerwoman', r).options(r)
+        with policy(any=0, drunk_truthful=0, false_vouch_evil=1, as_bluff=1):
+            v = pair_choice(g, g[D], 'Washerwoman').options(r)
         self.assertTrue({A, B} & set(v['players']))
         self.assertIn(v['character'], ('Virgin', 'Slayer'))
+
+
+    def test_nothing_legal_is_ruled_out(self):
+        from clocktower.state import character_choice, empath_choice
+        r = random.Random(0)
+        # a drunk Empath can be told any number, a sober Undertaker can see the Recluse as the Imp,
+        # and the Spy can register as a good character that is in play
+        chars = ['Imp', 'Spy', 'Monk', 'Drunk', 'Chef', 'Washerwoman', 'Soldier', 'Recluse', 'Saint']
+        g = Grimoire(NAMES, chars, drunk_as='Empath')
+        c = empath_choice(g, g[D])
+        self.assertEqual({c.options(r)['number'] for _ in range(2000)}, {0, 1, 2})
+        c = character_choice(g, g[E], 'Undertaker', H)
+        self.assertIn('Imp', {c.options(r)['character'] for _ in range(2000)})
+        c = character_choice(g, g[E], 'Undertaker', B)
+        self.assertTrue({'Monk', 'Chef', 'Washerwoman'} & {c.options(r)['character'] for _ in range(2000)})
+        # every legal value has a chance, and only legal values are drawn
+        c = pair_choice(g, g[F], 'Washerwoman')
+        with policy(any=1):
+            seen = {tuple(sorted(v['players'])) + (v['character'],) for v in (c.options(r) for _ in range(20000))}
+        self.assertTrue(all(c.legal({'players': list(k[:2]), 'character': k[2]}) for k in seen))
+        self.assertEqual(len(seen), len(c.keys))
+
+    def test_the_drunk_is_sometimes_told_the_truth_all_game(self):
+        from clocktower.state import empath_choice
+        chars = ['Imp', 'Poisoner', 'Monk', 'Drunk', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        truthful = 0
+        with policy(any=0):
+            for seed in range(200):
+                g = Grimoire(NAMES, chars, drunk_as='Empath')
+                r = random.Random(seed)
+                answers = {empath_choice(g, g[D]).options(r)['number'] for _ in range(5)}
+                self.assertEqual(len(answers), 1)  # consistent either way
+                truthful += answers == {0}  # the Drunk's real neighbours are good
+        self.assertTrue(20 < truthful < 120, truthful)
 
 
 class WholeGameTests(unittest.TestCase):

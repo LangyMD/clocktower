@@ -27,9 +27,11 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
 - Each day: private time (3 beats, whispers only, invisible to others, up to 3 whispers per turn)
   then the town square (3 beats, public only), then nominations. Same every day, fixed length: no
   early ends, no call-for-nominations. Dead players talk and whisper; only the living nominate.
-- The Storyteller is scripted (`state.POLICY`, `game.pick_bluffs`); an LLM Storyteller is optional
-  (`--storyteller model`). Never exclude a legal Storyteller option; express style only as weights
-  in POLICY, and say which numbers are judgment calls.
+- The Storyteller is scripted (`state.POLICY`); the LLM Storyteller was removed. Never exclude a
+  legal Storyteller option: every decision is a `Choice` over all legal values with a uniform floor
+  (`POLICY['any']`), and style is expressed only as weights in POLICY (all judgment calls).
+- Nominations: each round everyone eligible is asked at once; one nomination is taken; accusation,
+  defense, one comment turn for everyone, then the clockwise vote. Slayer shots on any public turn.
 - Equal budget across models: same effort and per-turn output ceiling.
 - Planned rating: a good Elo and an evil Elo per model, from homogeneous-team matchups (one model
   plays evil, another good), paired seeds, Bradley–Terry fit.

@@ -7,6 +7,7 @@ MINIONS = ['Poisoner', 'Spy', 'Scarlet Woman', 'Baron']
 DEMONS = ['Imp']
 ALL = TOWNSFOLK + OUTSIDERS + MINIONS + DEMONS
 GOOD = TOWNSFOLK + OUTSIDERS
+INFO_ROLES = {'Washerwoman', 'Librarian', 'Investigator', 'Chef', 'Empath', 'Fortune Teller', 'Undertaker', 'Ravenkeeper'}
 
 ABILITY = {
     'Washerwoman': 'You start knowing that 1 of 2 players is a particular Townsfolk.',
