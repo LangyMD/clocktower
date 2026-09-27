@@ -25,7 +25,7 @@ from pathlib import Path
 from .agents import HumanSeat, ModelSeat, RandomSeat
 from .characters import MINIONS
 from .game import NAMES, Game
-from .llm import MODEL, Ledger, conversation, make_client
+from .llm import MODEL, Ledger, conversation, limiter, make_client
 from .prompts import PLAYER_SYSTEM
 from .schema import player_schema
 
@@ -41,12 +41,12 @@ class Shared:
     """One client, spend ledger and request limit for every game in this process."""
     client: object
     ledger: Ledger
-    semaphore: asyncio.Semaphore
+    semaphore: object  # an asyncio.Semaphore, or llm.NoLimit
 
 
 def shared(args):
     os.environ.setdefault('ANTHROPIC_WORKSPACE_ID', args.workspace)
-    return Shared(make_client(), Ledger(GAMES / 'ledger.jsonl', cap=args.budget), asyncio.Semaphore(args.concurrency))
+    return Shared(make_client(), Ledger(GAMES / 'ledger.jsonl', cap=args.budget), limiter(args.concurrency))
 
 
 def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
@@ -183,7 +183,9 @@ def main(argv=None):
             p.add_argument('--max-output', type=int, default=16000,
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
-            p.add_argument('--concurrency', type=int, default=12, help='API requests in flight')
+            p.add_argument('--concurrency', type=int, default=0,
+                           help='cap on API requests in flight (0 = no cap: every game and seat runs at once; '
+                                'rate limits are handled by retries)')
             p.add_argument('--flex', action='store_true',
                            help='OpenAI Flex tier (half price, but throttled under load: calls can take minutes)')
             p.add_argument('--no-probes', dest='probes', action='store_false',

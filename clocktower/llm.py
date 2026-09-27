@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import anthropic
+from concurrent.futures import ThreadPoolExecutor
 
 MODEL = 'claude-opus-5-5'
 
@@ -55,6 +56,27 @@ def cost(model, usage, factor=1.0):
                      + p['output'] * usage.get('output_tokens', 0)) / 1e6
 
 
+class NoLimit:
+    """Stands in for a semaphore when requests are not limited (the default)."""
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc):
+        return False
+
+
+def limiter(n):
+    """A request limit: n in flight at once, or none for n <= 0."""
+    return asyncio.Semaphore(n) if n and n > 0 else NoLimit()
+
+
+# OpenAI calls are blocking urllib requests on threads. asyncio's default pool has only
+# min(32, cpus + 4) threads (8 on a 4-CPU machine), which silently capped a whole batch at
+# 8 requests in flight, so they get their own large pool.
+HTTP_POOL = ThreadPoolExecutor(max_workers=1024, thread_name_prefix='openai')
+
+
 class BudgetExceeded(RuntimeError):
     pass
 
@@ -86,7 +108,9 @@ def make_client():
         headers['anthropic-workspace-id'] = workspace
     # Claude Code on the web keeps ANTHROPIC_API_KEY for itself, so the key can live under another name
     key = os.environ.get('ANTHROPIC_API_KEY') or os.environ.get('MY_ANTHROPIC_API_KEY')
-    return anthropic.AsyncAnthropic(api_key=key, default_headers=headers, max_retries=8, timeout=900)
+    http = anthropic.DefaultAsyncHttpxClient(limits=anthropic.DEFAULT_CONNECTION_LIMITS.__class__(
+        max_connections=4000, max_keepalive_connections=1000, keepalive_expiry=30))
+    return anthropic.AsyncAnthropic(api_key=key, default_headers=headers, max_retries=8, timeout=900, http_client=http)
 
 
 @dataclass
@@ -189,7 +213,7 @@ class OpenAIConversation(_Base):
     async def _request(self, body):
         for attempt in range(10):
             try:
-                return await asyncio.to_thread(self._post, body)
+                return await asyncio.get_running_loop().run_in_executor(HTTP_POOL, self._post, body)
             except urllib.error.HTTPError as e:
                 detail = e.read().decode(errors='replace')[:2000]
                 if e.code not in (408, 409, 429, 500, 502, 503, 504) or attempt == 9 or 'insufficient_quota' in detail:

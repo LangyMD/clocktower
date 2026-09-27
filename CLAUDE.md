@@ -10,9 +10,9 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
   the user stores it as `MY_ANTHROPIC_API_KEY`; `make_client` reads either), `OPENAI_API_KEY` (for `gpt-*` models). The
   Anthropic key is not workspace-scoped, so every request sends `anthropic-workspace-id`
   (`ANTHROPIC_WORKSPACE_ID`, default in `cli.py`). Without it the API returns a 400.
-- A batch: `python -m clocktower run --games 10 --seed N --concurrency 30 --out games/v5/NAME` (games go
-  under the current protocol version, `PROTOCOL` in `cli.py`; see `games/PROTOCOLS.md`). All games run
-  in parallel; game k uses seed N+k-1 and rotates the Minion. Opus 5.5 games cost ~$3–4 and take
+- A batch: `python -m clocktower run --games 10 --seed N --out games/v5/NAME` (games go
+  under the current protocol version, `PROTOCOL` in `cli.py`; see `games/PROTOCOLS.md`). All games and seats run
+  in parallel with no request cap (`--concurrency 0`; rate limits are retried); game k uses seed N+k-1 and rotates the Minion. Opus 5.5 games cost ~$3–4 and take
   10–20 minutes. Spend is logged in `games/ledger.jsonl` with a cap (`--budget`, default $1000; the
   user has said the budget can grow).
 - After a batch: `python -m clocktower report games/v5/NAME/*`, commit the whole batch directory
