@@ -27,7 +27,7 @@ from .state import (POLICY, Grimoire, bluffs_choice, character_choice, chef_choi
                     fortune_teller_choice, info_text, mayor_choice, norm, pair_choice, random_setup, red_herring_choice,
                     setup_error, yes_choice)
 NAMES = ['Alex', 'Blair', 'Casey', 'Drew', 'Ellis', 'Frankie', 'Gray', 'Harper', 'Indigo']
-WORDS = {'beat': 100, 'whisper': 100, 'nominate': 120, 'defense': 150, 'comment': 100, 'vote': 30}
+WORDS = {'beat': 150, 'whisper': 150, 'nominate': 150, 'defense': 200, 'comment': 150, 'vote': 40}
 
 NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
     'Poisoner': (1, 'Choose a player to poison tonight and tomorrow.', True),
@@ -41,7 +41,7 @@ NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
 def clip(text, words):
     text = ' '.join((text or '').split())
     w = text.split(' ')
-    return text if len(w) <= words else ' '.join(w[:words]) + '…'
+    return text if len(w) <= words else ' '.join(w[:words]) + '… [cut off]'
 
 
 def fmt(value):
@@ -178,8 +178,9 @@ class Game:
         if drunk:
             drunk.shown = self.decide(drunk_as_choice([c for c in TOWNSFOLK if c not in in_play]))['character']
         if 'Fortune Teller' in in_play:
-            g.red_herring = self.decide(red_herring_choice([p.name for p in g.players if not p.evil]))['players'][0]
-        g.bluffs = self.decide(bluffs_choice([c for c in GOOD if c not in in_play], 'Baron' in in_play))['characters']
+            g.red_herring = self.decide(red_herring_choice(g))['players'][0]
+        g.bluffs = self.decide(bluffs_choice([c for c in GOOD if c not in in_play], 'Baron' in in_play,
+                                             drunk.shown if drunk else None))['characters']
         self.starting = {p.name: p.character for p in g.players}
         if self.seat_factory:
             self.seats = {p.name: self.seat_factory(p.name, 'evil' if p.evil else 'good') for p in g.players}
@@ -227,19 +228,26 @@ class Game:
         g.poisoned = g.protected = None
         self.emit('header', {'text': f'Night {n}'})
 
-        requests = {}
-        for p in g.living():
-            if p.shown not in NIGHT_ACTIONS or (first and p.shown in ('Monk', 'Imp')):
-                continue
-            k, text, may_self = NIGHT_ACTIONS[p.shown]
-            options = [x for x in names if may_self or x != p.name]
-            requests[p.name] = Request('night', f'Night {n} — {p.shown}: {text} Put your choice in `targets`.', n,
-                                       n_targets=k, options=options)
-        acts = await self.ask_many(requests)
         chosen = {}
-        for name, req in requests.items():
-            chosen[name] = self.targets(name, acts[name], req)
-            self.emit('night_choice', {'player': name, 'role': g[name].shown, 'targets': chosen[name]}, 'audit')
+
+        async def wake(roles):
+            """Ask the living players with these (apparent) night abilities for their choices, at once."""
+            requests = {}
+            for p in g.living():
+                if p.shown not in roles or (first and p.shown in ('Monk', 'Imp')):
+                    continue
+                k, text, may_self = NIGHT_ACTIONS[p.shown]
+                options = [x for x in names if may_self or x != p.name]
+                requests[p.name] = Request('night', f'Night {n} — {p.shown}: {text} Put your choice in `targets`.', n,
+                                           n_targets=k, options=options)
+            acts = await self.ask_many(requests)
+            for name, req in requests.items():
+                chosen[name] = self.targets(name, acts[name], req)
+                self.emit('night_choice', {'player': name, 'role': g[name].shown, 'targets': chosen[name]}, 'audit')
+
+        # Official night order: the Poisoner, Monk and Imp act before the Fortune Teller and Butler, so
+        # a player killed tonight is never woken to choose. (Night 1 has no kill: one round.)
+        await wake(('Poisoner', 'Monk', 'Imp') if not first else tuple(NIGHT_ACTIONS))
 
         def choice_of(character):
             p = g.with_character(character)
@@ -251,18 +259,18 @@ class Game:
         monk, t = choice_of('Monk')
         if t and g.works(monk, 'Monk'):
             g.protected = t
-        butler, t = choice_of('Butler')
-        g.master = t if butler and butler.alive else None
 
         deaths = []
         imp, t = choice_of('Imp')
         if imp and t and not g.is_poisoned(imp):
             target = g[t]
-            if target is imp:
+            if target is imp and imp.name != g.protected:  # a Monk-protected Imp cannot die, so no starpass
                 self.kill(imp, 'starpass')
                 deaths.append(imp)
                 heir = next((q for q in g.living() if q.character in MINIONS), None)
                 if heir:
+                    if heir.character == 'Poisoner':
+                        g.poisoned = None  # the Poisoner's poison ends when they stop being the Poisoner
                     heir.character = heir.shown = 'Imp'
                     self.emit('becomes', {'player': heir.name, 'character': 'Imp'}, 'audit')
                     self.emit('notice', {'text': f'Night {n}: the Imp killed themselves, and you are now the Imp! '
@@ -273,6 +281,10 @@ class Game:
                     victim = g[self.decide(mayor_choice(g, target, imp))['players'][0]]
                 self.kill(victim, 'demon')
                 deaths.append(victim)
+        if not first:
+            await wake(('Fortune Teller', 'Butler'))
+        butler, t = choice_of('Butler')
+        g.master = t if butler and butler.alive else None
 
         info = []  # (recipient, ability, choice, target for the message)
         for d in deaths:
@@ -316,14 +328,24 @@ class Game:
 
     # ---- day ---------------------------------------------------------------------------------
     def whispers(self, name, action):
-        out = []
-        for w in (action.get('whispers') or [])[:3]:
-            if not isinstance(w, dict):
-                continue
-            to = [t for t in dict.fromkeys(w.get('to') or []) if t in self.names and t != name][:2]
+        """Up to three whispers, each to one or two players. Anything beyond that is dropped, and the
+        sender is told (so they don't believe a player heard what they never received)."""
+        out, dropped = [], []
+        sent = [w for w in (action.get('whispers') or []) if isinstance(w, dict)]
+        for i, w in enumerate(sent):
+            to = [t for t in dict.fromkeys(w.get('to') or []) if t in self.names and t != name]
             text = clip(w.get('text'), WORDS['whisper'])
-            if to and text:
-                out.append({'to': to, 'text': text})
+            if not (to and text):
+                continue
+            if i >= 3:
+                dropped.append(f'your whisper to {", ".join(to)} was not sent (at most three whispers a turn)')
+                continue
+            if len(to) > 2:
+                dropped.append(f'your whisper to {", ".join(to)} went only to {to[0]} and {to[1]} '
+                               '(a whisper goes to one or two players)')
+            out.append({'to': to[:2], 'text': text})
+        if dropped:
+            self.emit('notice', {'text': '(' + '; '.join(dropped).capitalize() + '.)'}, [name])
         return out
 
     async def turns(self, n, order, kind, head, tail, words, beat=None, private=False):
@@ -458,15 +480,19 @@ class Game:
                 lines.append(f'Your master is {g.master} ({seen}): your vote only counts if they vote yes.')
             lines.append('Set `vote` to true or false; `say` may hold a very short remark (optional; don\'t just restate your vote).')
             a = await self.ask(voter, Request('vote', ' '.join(lines), n, options=[nominee]))
+            if not isinstance(a.get('vote'), bool):  # no vote given: ask once more rather than assume no
+                a = await self.ask(voter, Request('vote', 'Your vote was missing. Set `vote` to true (yes) or '
+                                                          f'false (no): should {nominee} be executed?', n,
+                                                  options=[nominee]))
             v = a.get('vote') is True
+            remark = clip(a.get('say'), WORDS['vote'])
             if v and g.works(p, 'Butler') and g.master in voted and g.master not in yes:
-                v = False  # the Butler cannot raise their hand when their master has not
+                v, remark = False, ''  # the Butler cannot raise their hand when their master has not
                 self.emit('notice', {'text': f'(Your master {g.master} did not vote yes, so you cannot vote.)'}, [voter])
             ghost = v and not p.alive
             if ghost:
                 p.ghost_vote = False
-            self.emit('vote', {'voter': voter, 'nominee': nominee, 'yes': v, 'ghost': ghost,
-                               'text': clip(a.get('say'), WORDS['vote'])})
+            self.emit('vote', {'voter': voter, 'nominee': nominee, 'yes': v, 'ghost': ghost, 'text': remark})
             voted.add(voter)
             if v:
                 yes.append(voter)
@@ -518,8 +544,9 @@ class Game:
             nominator, nominee, accusation = self.rng.choice(noms)
             for other, t, _ in noms:
                 if other != nominator:
-                    self.emit('notice', {'text': f'(Your nomination of {t} was not taken: {nominator} nominated '
-                                                 f'{nominee} first. You can nominate again later.)'}, [other])
+                    self.emit('notice', {'text': f'(Your nomination of {t} was not taken: several players nominated at '
+                                                 f'once, and {nominator}\'s nomination of {nominee} was picked at '
+                                                 'random. You can nominate again later.)'}, [other])
             nominators.add(nominator)
             nominees.add(nominee)
             self.emit('nomination', {'nominator': nominator, 'nominee': nominee, 'text': accusation})

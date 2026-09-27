@@ -31,7 +31,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v5'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
+PROTOCOL = 'v6'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -67,16 +67,18 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
             game.meta['models'][name] = 'human'
             return HumanSeat(name)
         model = {'good': args.good_model, 'evil': args.evil_model}[team] or args.model
+        effort = {'good': args.good_effort, 'evil': args.evil_effort}[team] or args.effort
         game.meta['models'][name] = model
         c = conversation(env.client, PLAYER_SYSTEM, player_schema(NAMES), label=name, ledger=env.ledger,
-                         semaphore=env.semaphore, on_call=game.record_call, model=model, effort=args.effort,
+                         semaphore=env.semaphore, on_call=game.record_call, model=model, effort=effort,
                          max_tokens=args.max_output, ttl=ttl, flex=args.flex)
         convs.append((name, c))
         return ModelSeat(c)
 
     game.seat_factory = seat
     config = {'protocol': PROTOCOL, 'model': args.model, 'good_model': args.good_model, 'evil_model': args.evil_model,
-              'player_effort': args.effort, 'max_output_tokens': args.max_output, 'storyteller': 'scripted',
+              'player_effort': args.effort, 'good_effort': args.good_effort or args.effort,
+              'evil_effort': args.evil_effort or args.effort, 'max_output_tokens': args.max_output, 'storyteller': 'scripted',
               'seed': seed,
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
@@ -180,7 +182,9 @@ def main(argv=None):
             p.add_argument('--good-model', help='model for the good team (default --model)')
             p.add_argument('--evil-model', help='model for the evil team (default --model)')
             p.add_argument('--effort', default='high', help='player reasoning effort (same for every model)')
-            p.add_argument('--max-output', type=int, default=16000,
+            p.add_argument('--good-effort', help='reasoning effort for the good team (default --effort)')
+            p.add_argument('--evil-effort', help='reasoning effort for the evil team (default --effort)')
+            p.add_argument('--max-output', type=int, default=8000,
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
             p.add_argument('--concurrency', type=int, default=0,

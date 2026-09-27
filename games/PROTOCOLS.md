@@ -28,7 +28,7 @@ beat; batches rotate the Minion; the scripted Storyteller no longer excludes any
 Saint or Drunk can be the red herring, the Drunk's apparent role can be a bluff, a Mayor kill can
 bounce to anyone); a drunk Fortune Teller's false picture has two "evil" players.
 
-## v5 — current
+## v5
 v4 plus a fixed day: 3 private beats, 3 town-square beats, then nominations, every day. No
 early end (v4 ended the town square when most living players called for nominations or a beat
 was silent, which cut 20 of 34 v3 days short); `call_nominations` is gone, and day 1 no longer
@@ -49,3 +49,30 @@ events stay pending. Good seats give P(evil), P(Demon) and a character guess for
 player; evil seats predict what the good players believe; everyone states their claim and a
 one-line plan. `tests/` checks that probes leave every seat's turns identical. Scores:
 `python -m clocktower analyze`.
+
+## v6 — current (Sept 27)
+Changes from v5, after reading 61 v5 games (seven model pairings) and auditing the rules and the
+Storyteller against 2,750 simulated games:
+- Night order: the Poisoner, Monk and Imp choose first; the Fortune Teller and Butler are woken
+  after the kill, so a player killed that night is never asked to choose (v5 asked everyone at
+  once, and a Fortune Teller killed that night "chose" and heard nothing, which read as a lie).
+- Starpass: a Monk-protected Imp cannot starpass; poison ends when the Poisoner becomes the Imp.
+- Interface: whispers to more than two players (or beyond three a turn) tell the sender what was
+  dropped; a blocked Butler's vote remark is not shown; a vote with neither yes nor no is asked
+  again; speech caps rise (turn 150 words, defense 200) and a cut line ends "[cut off]"; the
+  nomination notice says the pick among simultaneous nominations was random.
+- Player prompt: the night order, and that nothing is revealed when a player dies.
+- Storyteller: misinformation is false (when the style misleads an impaired player, a value a
+  working ability could show is moved to the nearest plausible one it could not; in v5 about half
+  of drunk/poisoned Chef, Empath, Fortune Teller and Undertaker results were true). A misinformed
+  Undertaker is never shown "Imp", and impaired players are never shown their own character.
+  The uniform floor drops from 10% to 3% (still over every legal value). The Drunk's apparent
+  character is among the Demon bluffs 5% of the time (v5: 32% of Drunk games), the Drunk 5%. An
+  Investigator's second player is good 90% of the time; a Mayor bounce lands on the Minion 5%;
+  the red herring is a Townsfolk other than the Fortune Teller 85%. A Spy registering to a
+  Washerwoman or Librarian as a good character uses the bluff / in-play / other weights.
+- Budget: the per-turn output ceiling is 8K tokens (v5: 16K), identical for every model. It cuts
+  runaway thinking loops (0.2% of Sonnet 5 turns went past 8K) and no Opus or Astra turn.
+- Runs: no request cap (every game and seat at once); every game in an experiment has its own
+  seed; teams can have their own effort (`--good-effort`, `--evil-effort`). OpenAI reasoning
+  summaries use `concise`, the only setting that reliably returns text (logging only).

@@ -39,6 +39,13 @@ def mean(xs):
     return statistics.mean(xs) if xs else None
 
 
+def _entrant(config, team):
+    """A team's model, with its effort when it isn't the default 'high' (e.g. 'claude-opus-5-5@low')."""
+    model = config.get(f'{team}_model') or config.get('model')
+    effort = config.get(f'{team}_effort') or config.get('player_effort') or 'high'
+    return model if effort == 'high' else f'{model}@{effort}'
+
+
 def game_metrics(path):
     path = Path(path)
     if not (path / 'result.json').exists():
@@ -54,8 +61,7 @@ def game_metrics(path):
         if e['kind'] == 'vote' and team.get(e['data']['voter']) == 'good':
             votes[team.get(e['data']['nominee'])].append(e['data']['yes'])
     m = {'game': str(path), 'seed': result.get('seed'), 'winner': result.get('winner'), 'days': result.get('days'),
-         'good_model': config.get('good_model') or config.get('model'),
-         'evil_model': config.get('evil_model') or config.get('model'), 'cost': result.get('cost', 0),
+         'good_model': _entrant(config, 'good'), 'evil_model': _entrant(config, 'evil'), 'cost': result.get('cost', 0),
          'executions': len(executed), 'evil_executed': sum(team.get(p) == 'evil' for _, p in executed),
          'yes_on_evil': mean(votes['evil']), 'yes_on_good': mean(votes['good']),
          'errors': len(result.get('errors') or []), 'probe_cost': 0.0}
@@ -106,14 +112,14 @@ def main(paths):
     cells = defaultdict(list)
     for m in rows:
         cells[(m['good_model'], m['evil_model'])].append(m)
-    print(f"{'good model':<18} {'evil model':<18} {'n':>3} {'evil win':>9} {'95% CI':>11} {'days':>5} "
+    print(f"{'good model':<22} {'evil model':<22} {'n':>3} {'evil win':>9} {'95% CI':>11} {'days':>5} "
           f"{'evil exec':>9} {'yes→evil':>8} {'yes→good':>8} {'demon%':>7} {'brier':>6} {'tom':>6} {'$/game':>7}")
     for (gm, em), ms in sorted(cells.items()):
         done = [m for m in ms if m['winner'] in ('good', 'evil')]
         k = sum(m['winner'] == 'evil' for m in done)
         lo, hi = wilson(k, len(done))
         ex = sum(m['executions'] for m in ms)
-        print(f"{gm:<18} {em:<18} {len(ms):>3} {k:>3}/{len(done):<3}  {100 * lo:3.0f}–{100 * hi:3.0f}% "
+        print(f"{gm:<22} {em:<22} {len(ms):>3} {k:>3}/{len(done):<3}  {100 * lo:3.0f}–{100 * hi:3.0f}% "
               f"{mean([m['days'] for m in ms]):5.1f} "
               f"{fmt(sum(m['evil_executed'] for m in ms) / ex if ex else None, True):>9} "
               f"{fmt(mean([m['yes_on_evil'] for m in ms]), True):>8} {fmt(mean([m['yes_on_good'] for m in ms]), True):>8} "

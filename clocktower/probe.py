@@ -28,7 +28,8 @@ EVIL = ('In `say`, write one line for each player, yourself included, in seating
         'believes this player is`.')
 
 TAIL = ('Then a line `Claim | the character you have told other players you are, or none`, and a line '
-        '`Plan | one sentence: what you are trying to do next, and why`. Leave every other field empty.')
+        '`Plan | one sentence: what you are trying to do next, and why`. All of these lines go in `say` '
+        '(it must not be empty); leave the other fields empty.')
 
 
 def prompt(evil):

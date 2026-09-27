@@ -7,18 +7,21 @@ of the earlier `botc/` lab (kept alongside for reference).
 ## How a game works
 
 - **Setup.** A uniformly random legal set of nine characters is dealt at random.
-- **Storyteller.** A scripted policy (`state.POLICY`). Every Storyteller decision is a `Choice`
-  over all its legal values: 10% of the time the Storyteller picks uniformly among them, so no
-  legal option is ever ruled out; otherwise it follows a style, weighted like an experienced human
-  Storyteller: the Drunk usually believes they are an information role; bluffs usually include an
-  information role (and an Outsider in Baron games); impaired players usually get information from
-  one consistent false picture (a framed good player plays the Demon, the real Demon looks clean),
-  though 20% of Drunks get true information all game; the Spy usually registers good, as a bluff,
-  an in-play or another good character; the Recluse sometimes registers evil, as a Minion or the
-  Imp. It is free, instant and reproducible, and keeps the Storyteller from confounding model
-  comparisons. (An LLM Storyteller was tried in v1–v2; it repeated itself and undid evil's
-  misinformation.)
-- **Night.** Players with night abilities choose in parallel. The engine resolves them in the
+- **Storyteller.** A scripted policy (`state.POLICY`), no LLM. Every Storyteller decision is a
+  `Choice` over all its legal values: 3% of the time the Storyteller picks uniformly among them, so
+  no legal option is ever ruled out; otherwise it follows a style, weighted like an experienced
+  human Storyteller: the Drunk usually believes they are an information role; bluffs usually include
+  an information role (and an Outsider in Baron games) and rarely the Drunk's apparent character;
+  impaired players usually get information from one consistent false picture (a framed good player
+  plays the Demon, the real Demon looks clean), and when they are misled the information is really
+  false (and never self-revealing), though 20% of Drunks get true information all game; the Spy
+  usually registers good, as a bluff, an in-play or another good character; the Recluse sometimes
+  registers evil, as a Minion or the Imp; the red herring is usually a Townsfolk; an Investigator's
+  second player is usually good. It is free, instant and reproducible, and keeps the Storyteller
+  from confounding model comparisons. (An LLM Storyteller was tried in v1–v2; it repeated itself and
+  undid evil's misinformation.)
+- **Night.** The Poisoner, Monk and Imp choose in parallel; then, after the kill, the Fortune
+  Teller and Butler (so nobody killed tonight is woken). The engine resolves abilities in the
   official night order.
 - **Day = private time, then the town square.** Every day is the same: 3 beats of private time
   (`--private-beats`), then 3 of town square (`--public-beats`), then nominations; nothing ends a part early. In
@@ -45,7 +48,7 @@ the Anthropic SDK; `gpt-*` models (e.g. `--model gpt-6-astra`) through the OpenA
 with encrypted reasoning carried forward (standard tier; `--flex` for half-price Flex, which is throttled under load). Defaults: `claude-opus-5-5`, players at `high`
 effort.
 - **Equal budget.** Every model gets the same effort level and the same per-turn output ceiling
-  (`--max-output`, thinking included, default 16K). A truncated turn is retried once at the same
+  (`--max-output`, thinking included, default 8K). A truncated turn is retried once at the same
   ceiling, never given more room. Models still differ in price per token.
 - **Memory is the model's own.** Each turn appends only what that seat saw since its last
   turn, plus a one-line prompt. The model's replies, including its thinking blocks, stay in
@@ -54,8 +57,9 @@ effort.
 - **Caching.** The system prompt is identical for every seat (so it caches across seats). Every
   request reads the whole earlier conversation from cache and writes only the new turn.
 - **One fixed JSON schema** for every player decision, so the request prefix never changes.
-- **Spend** goes to `games/ledger.jsonl`; `--budget` (default $300) stops play when it's reached.
-- **Mixed tables.** `--good-model` / `--evil-model` pick a model per team; seats are created once
+- **Spend** goes to `games/ledger.jsonl`; `--budget` (default $1000) stops play when it's reached.
+- **No queue.** Every game and seat runs at once (`--concurrency 0`); rate limits are retried.
+- **Mixed tables.** `--good-model` / `--evil-model` (and `--good-effort` / `--evil-effort`) pick a model per team; seats are created once
   characters are dealt, and each game's `result.json` records the model at every seat.
 
 ## Running

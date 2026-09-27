@@ -43,6 +43,7 @@ PRICES = {
     # OpenAI list prices as recorded by the earlier lab (botc/costs.py); Flex is half price.
     'gpt-6-astra': _price(10, 50, read=1, write_5m=12.5, write_1h=12.5),
     'gpt-5.6-sol': _price(4, 20, read=0.4, write_5m=5, write_1h=5),
+    'gpt-6-sol': _price(2, 10, read=0.2, write_5m=2.5, write_1h=2.5),  # Sept 2026 list price
 }
 
 
@@ -64,6 +65,9 @@ class NoLimit:
 
     async def __aexit__(self, *exc):
         return False
+
+
+NO_LIMIT = NoLimit()
 
 
 def limiter(n):
@@ -121,7 +125,7 @@ class Reply:
 
 class _Base:
     def __init__(self, system, schema, *, label, ledger, semaphore, on_call=None, model=MODEL, effort='high',
-                 max_tokens=16000):
+                 max_tokens=8000):
         self.system, self.schema = system, schema
         self.label, self.ledger, self.semaphore, self.on_call = label, ledger, semaphore, on_call
         self.model, self.effort, self.max_tokens = model, effort, max_tokens
@@ -151,7 +155,7 @@ class ClaudeConversation(_Base):
         for attempt in range(4):
             self.ledger.check()
             start = time.monotonic()
-            async with self.semaphore:
+            async with (self.semaphore if commit else NO_LIMIT):  # probes never wait behind game turns
                 async with self.client.messages.stream(
                         model=self.model, max_tokens=self.max_tokens,
                         system=[{'type': 'text', 'text': self.system, 'cache_control': self.cache}],
@@ -234,13 +238,13 @@ class OpenAIConversation(_Base):
             body = {'model': self.model, 'store': False, 'max_output_tokens': self.max_tokens, 'input': messages,
                     'text': {'format': {'type': 'json_schema', 'name': 'game_action', 'strict': True,
                                         'schema': self.schema}},
-                    'reasoning': {'effort': self.effort, 'summary': 'auto', 'context': 'all_turns'},
+                    'reasoning': {'effort': self.effort, 'summary': 'concise', 'context': 'all_turns'},
                     'prompt_cache_key': f'clocktower:{self.label}:{id(self) % 10 ** 8}',
                     'prompt_cache_options': {'mode': 'explicit', 'ttl': '30m'}}
             if self.flex:
                 body['service_tier'] = 'flex'
             start = time.monotonic()
-            async with self.semaphore:
+            async with (self.semaphore if commit else NO_LIMIT):
                 raw = await self._request(body)
             u = raw.get('usage') or {}
             d = u.get('input_tokens_details') or {}

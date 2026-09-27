@@ -82,14 +82,18 @@ class SetupTests(unittest.TestCase):
         self.assertFalse(any('Your Minion' in t for t in g.buf[C]))
 
 
+def play_nights(characters, choices_by_night, decisions=None):
+    g = game(characters, decisions=decisions)
+    run(g.setup())
+    for n, choices in enumerate(choices_by_night, start=1):
+        g.seats = {x: Seat(x, night_targets(choices), g.texts) for x in NAMES}
+        run(g.night(n))
+    return g
+
+
 class NightTests(unittest.TestCase):
-    def play_nights(self, characters, choices_by_night, decisions=None):
-        g = game(characters, decisions=decisions)
-        run(g.setup())
-        for n, choices in enumerate(choices_by_night, start=1):
-            g.seats = {x: Seat(x, night_targets(choices), g.texts) for x in NAMES}
-            run(g.night(n))
-        return g
+    def play_nights(self, *a, **kw):
+        return play_nights(*a, **kw)
 
     def test_monk_protects_unless_poisoned(self):
         g = self.play_nights(BASE, [{B: [E]}, {A: [D], C: [D], B: [E]}])
@@ -514,6 +518,91 @@ class ProbeTests(unittest.TestCase):
         run(c.send('turn 2'))
         self.assertEqual(sent[-1][:len(before)], before)
         self.assertEqual(len(c.messages), 4)
+
+
+class V6Tests(unittest.TestCase):
+    """Night order, starpass edge cases, and a Storyteller whose misinformation is really false."""
+
+    def test_a_fortune_teller_killed_tonight_is_not_woken(self):
+        chars = ['Imp', 'Poisoner', 'Fortune Teller', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        g = game(chars)
+        run(g.setup())
+        run(g.night(1))
+        g.seats = {x: Seat(x, night_targets({A: [C], B: [E], C: [A, B], H: [D]}), g.texts) for x in NAMES}
+        g.texts.clear()
+        run(g.night(2))
+        self.assertFalse(g.g[C].alive)
+        self.assertFalse([k for n, k, _ in g.texts if n == C and k == 'night'])
+        self.assertTrue([k for n, k, _ in g.texts if n == H and k == 'night'])  # the Butler still chooses
+
+    def test_a_monk_protected_imp_cannot_starpass(self):
+        chars = ['Imp', 'Poisoner', 'Monk', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        g = play_nights(chars, [{B: [E]}, {A: [A], B: [E], C: [A]}])
+        self.assertTrue(g.g[A].alive)
+        self.assertEqual(g.g[A].character, 'Imp')
+
+    def test_poison_ends_when_the_poisoner_becomes_the_imp(self):
+        g = play_nights(BASE, [{B: [E]}, {A: [A], B: [D]}])
+        self.assertEqual(g.g[B].character, 'Imp')
+        self.assertIsNone(g.g.poisoned)
+
+    def test_extra_whisper_recipients_are_reported_to_the_sender(self):
+        g = game(BASE)
+        run(g.setup())
+        out = g.whispers(A, {'whispers': [{'to': [B, C, D], 'text': 'hi'}]})
+        self.assertEqual(out, [{'to': [B, C], 'text': 'hi'}])
+        self.assertTrue(any('went only to' in t for t in g.buf[A]))
+
+    def test_a_missing_vote_is_asked_again(self):
+        asked = []
+
+        def pol(name, req):
+            if req.kind == 'vote':
+                asked.append(name)
+                return {'vote': None} if asked.count(name) == 1 else {'vote': True}
+        g = game(BASE, pol)
+        run(g.setup())
+        g.day = 1
+        run(g.vote(C, None, 0))
+        self.assertEqual(sum(e['data']['yes'] for e in g.events if e['kind'] == 'vote'), 9)
+
+    def test_misinformation_is_false(self):
+        from clocktower.state import empath_choice, fortune_teller_choice, character_choice
+        chars = ['Imp', 'Poisoner', 'Monk', 'Drunk', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        with policy(any=0, drunk_truthful=0):
+            for seed in range(100):
+                r = random.Random(seed)
+                g = Grimoire(NAMES, chars, drunk_as='Empath')
+                self.assertNotEqual(empath_choice(g, g[D]).options(r)['number'], 0)  # true answer is 0
+                g = Grimoire(NAMES, chars, drunk_as='Fortune Teller')
+                g.red_herring = F
+                self.assertTrue(fortune_teller_choice(g, g[D], [C, E]).options(r)['yes'])  # true answer is no
+                g = Grimoire(NAMES, chars, drunk_as='Undertaker')
+                shown = character_choice(g, g[D], 'Undertaker', C).options(r)['character']
+                self.assertNotIn(shown, ('Monk', 'Imp'))  # never the truth, never an impossible "Imp"
+                g = Grimoire(NAMES, chars, drunk_as='Washerwoman')
+                v = pair_choice(g, g[D], 'Washerwoman').options(r)
+                self.assertNotEqual(v['character'], 'Washerwoman')
+                self.assertTrue(all(g[x].character != v['character'] for x in v['players']))
+
+    def test_bluffs_rarely_include_the_drunks_character(self):
+        from clocktower.state import pick_bluffs
+        from clocktower.characters import GOOD
+        options = [c for c in GOOD if c not in ('Monk', 'Empath', 'Chef', 'Soldier', 'Butler', 'Saint', 'Drunk')]
+        options.append('Drunk')
+        hits = sum('Fortune Teller' in pick_bluffs(random.Random(i), options, False, 'Fortune Teller')
+                   for i in range(2000))
+        self.assertLess(hits, 60)
+
+    def test_the_investigator_partner_is_usually_good(self):
+        chars = ['Imp', 'Poisoner', 'Investigator', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        g = Grimoire(NAMES, chars)
+        both = 0
+        with policy(any=0):
+            for i in range(1000):
+                v = pair_choice(g, g[C], 'Investigator').options(random.Random(i))
+                both += set(v['players']) == {A, B}
+        self.assertLess(both, 30)
 
 
 if __name__ == '__main__':
