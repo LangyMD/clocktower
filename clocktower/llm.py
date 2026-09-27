@@ -85,6 +85,11 @@ class BudgetExceeded(RuntimeError):
     pass
 
 
+class SeatFailed(RuntimeError):
+    """A seat's API call failed after all retries (e.g. no credit, auth, a bad request): the game
+    stops rather than letting the seat silently pass, which would corrupt the result."""
+
+
 class Ledger:
     """Append-only record of API spend, shared by every game that points at it."""
 

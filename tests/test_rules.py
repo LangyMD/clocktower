@@ -605,5 +605,17 @@ class V6Tests(unittest.TestCase):
         self.assertLess(both, 30)
 
 
+    def test_a_failing_seat_stops_the_game(self):
+        class Broken(RandomSeat):
+            async def act(self, text, request):
+                if request.kind == 'beat':
+                    raise RuntimeError('credit balance is too low')
+                return await super().act(text, request)
+        seats = {n: (Broken if n == C else RandomSeat)(n, random.Random(i), NAMES) for i, n in enumerate(NAMES)}
+        result = run(Game(seats, ScriptedStoryteller(random.Random(1)), seed=3).run())
+        self.assertIsNone(result['winner'])
+        self.assertIn('seat failed', result['stopped'])
+
+
 if __name__ == '__main__':
     unittest.main()

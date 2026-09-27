@@ -19,7 +19,7 @@ from pathlib import Path
 
 from .agents import Request, ScriptedStoryteller
 from .characters import FIRST_NIGHT, GOOD, MINIONS, OTHER_NIGHTS, TOWNSFOLK, card
-from .llm import BudgetExceeded, Reply
+from .llm import BudgetExceeded, Reply, SeatFailed
 from . import probe
 from .prompts import dawn_narration
 from .render import render
@@ -137,10 +137,10 @@ class Game:
             reply = await self.seats[name].act(text, request)
         except BudgetExceeded:
             raise
-        except Exception as e:  # a failed seat passes rather than crashing the table
+        except Exception as e:  # after the client's own retries: stop the game, never play on without a seat
             self.errors.append(f'{name}: {e!r}')
             self.emit('text', {'text': f'[error] {name}: {e!r}'}, 'audit')
-            reply = Reply({})
+            raise SeatFailed(f'{name}: {e!r}') from e
         if reply.thinking:
             self.emit('thinking', {'player': name, 'kind': request.kind, 'text': reply.thinking}, 'audit')
         return reply.action or {}
@@ -605,6 +605,8 @@ class Game:
                 n += 1
         except BudgetExceeded as e:
             stopped = f'budget: {e}'
+        except SeatFailed as e:
+            stopped = f'seat failed: {str(e)[:300]}'
         if self.probe_tasks:
             await asyncio.gather(*self.probe_tasks)
         g = self.g
