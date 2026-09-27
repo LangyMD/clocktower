@@ -1,0 +1,57 @@
+{
+  "winner": null,
+  "reason": "stopped after day 1",
+  "stopped": "stopped after day 1",
+  "days": 1,
+  "seed": 4242,
+  "starting": {
+    "Alex": "Butler",
+    "Blair": "Recluse",
+    "Casey": "Imp",
+    "Drew": "Drunk",
+    "Ellis": "Washerwoman",
+    "Frankie": "Saint",
+    "Gray": "Investigator",
+    "Harper": "Baron",
+    "Indigo": "Virgin"
+  },
+  "final": {
+    "Alex": "Butler",
+    "Blair": "Recluse",
+    "Casey": "Imp",
+    "Drew": "Drunk",
+    "Ellis": "Washerwoman",
+    "Frankie": "Saint",
+    "Gray": "Investigator",
+    "Harper": "Baron",
+    "Indigo": "Virgin"
+  },
+  "bluffs": [
+    "Fortune Teller",
+    "Soldier",
+    "Empath"
+  ],
+  "red_herring": null,
+  "drunk_as": "Fortune Teller",
+  "cost": 1.0332,
+  "calls": 83,
+  "tokens": {
+    "input": 332,
+    "cache_read": 597104,
+    "cache_write": 77821,
+    "output": 26165
+  },
+  "seconds": 217.0,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}

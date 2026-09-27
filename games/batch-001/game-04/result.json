@@ -1,0 +1,46 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 2,
+  "seed": 1003,
+  "starting": {
+    "Alex": "Empath",
+    "Blair": "Recluse",
+    "Casey": "Fortune Teller",
+    "Drew": "Poisoner",
+    "Ellis": "Slayer",
+    "Frankie": "Undertaker",
+    "Gray": "Imp",
+    "Harper": "Drunk",
+    "Indigo": "Washerwoman"
+  },
+  "final": {
+    "Alex": "Empath",
+    "Blair": "Recluse",
+    "Casey": "Fortune Teller",
+    "Drew": "Poisoner",
+    "Ellis": "Slayer",
+    "Frankie": "Undertaker",
+    "Gray": "Imp",
+    "Harper": "Drunk",
+    "Indigo": "Washerwoman"
+  },
+  "bluffs": [
+    "Monk",
+    "Soldier",
+    "Chef"
+  ],
+  "red_herring": "Ellis",
+  "drunk_as": "Investigator",
+  "cost": 1.737,
+  "calls": 151,
+  "tokens": {
+    "input": 604,
+    "cache_read": 1486454,
+    "cache_write": 125105,
+    "output": 40586
+  },
+  "seconds": 396.3,
+  "errors": []
+}

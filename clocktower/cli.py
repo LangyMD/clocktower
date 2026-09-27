@@ -1,0 +1,230 @@
+"""Command line: run AI games, play as a human, simulate, or summarise.
+
+    python -m clocktower run                          # nine Claude players, scripted Storyteller
+    python -m clocktower run --days 1                 # stop after the first day (smoke test)
+    python -m clocktower run --games 6 --parallel 3   # a batch, three games at a time
+    python -m clocktower play --seat Casey            # you play Casey in the browser
+    python -m clocktower sim --games 20               # random players, no API calls
+    python -m clocktower report games/*               # summarise finished games
+    python -m clocktower replay games/X --view Casey  # re-read a game from one seat (or public/omniscient)
+    python -m clocktower watch                        # spectator app at http://127.0.0.1:8800
+"""
+from __future__ import annotations
+import argparse
+import asyncio
+import hashlib
+import json
+import os
+import random
+import time
+from dataclasses import dataclass
+from pathlib import Path
+
+from .agents import HumanSeat, ModelSeat, ModelStoryteller, RandomSeat, ScriptedStoryteller
+from .characters import MINIONS
+from .game import NAMES, Game
+from .llm import MODEL, Ledger, conversation, make_client
+from .prompts import PLAYER_SYSTEM, STORYTELLER_SYSTEM
+from .schema import player_schema, storyteller_schema
+
+ROOT = Path(__file__).resolve().parent.parent
+GAMES = ROOT / 'games'
+DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
+
+
+@dataclass
+class Shared:
+    """One client, spend ledger and request limit for every game in this process."""
+    client: object
+    ledger: Ledger
+    semaphore: asyncio.Semaphore
+
+
+def shared(args):
+    os.environ.setdefault('ANTHROPIC_WORKSPACE_ID', args.workspace)
+    return Shared(make_client(), Ledger(GAMES / 'ledger.jsonl', cap=args.budget), asyncio.Semaphore(args.concurrency))
+
+
+def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
+    characters = args.characters.split(',') if args.characters else None
+    game = Game({}, None, seed=seed, private_beats=(args.private_beats, args.later_private_beats),
+                public_beats=args.public_beats, max_days=args.days, waves=args.waves, characters=characters,
+                setup=args.setup, minion=minion, out=out)
+    if env is None:  # sim: random players and Storyteller, no API
+        rng = random.Random(seed + 1)
+        game.seats = {n: RandomSeat(n, random.Random(rng.random()), NAMES) for n in NAMES}
+        game.st = ScriptedStoryteller(random.Random(rng.random()))
+        return game, []
+    ttl = '1h' if human else '5m'  # a human can take longer than five minutes between turns
+    convs = []
+    game.meta['models'] = {}
+
+    def seat(name, team):  # called once the characters are dealt
+        if name == human:
+            game.meta['models'][name] = 'human'
+            return HumanSeat(name)
+        model = {'good': args.good_model, 'evil': args.evil_model}[team] or args.model
+        game.meta['models'][name] = model
+        c = conversation(env.client, PLAYER_SYSTEM, player_schema(NAMES), label=name, ledger=env.ledger,
+                         semaphore=env.semaphore, on_call=game.record_call, model=model, effort=args.effort,
+                         max_tokens=args.max_output, ttl=ttl)
+        convs.append((name, c))
+        return ModelSeat(c)
+
+    game.seat_factory = seat
+    if args.storyteller == 'model':
+        c = conversation(env.client, STORYTELLER_SYSTEM, storyteller_schema(NAMES), label='Storyteller', ledger=env.ledger,
+                         semaphore=env.semaphore, on_call=game.record_call, model=args.st_model, effort=args.st_effort,
+                         max_tokens=args.max_output, ttl=ttl)
+        game.st = ModelStoryteller(c)
+        convs.append(('Storyteller', c))
+    else:
+        game.st = ScriptedStoryteller(random.Random(seed ^ 0x5eed))
+    config = {'model': args.model, 'good_model': args.good_model, 'evil_model': args.evil_model,
+              'player_effort': args.effort, 'max_output_tokens': args.max_output, 'storyteller': args.storyteller,
+              'storyteller_model': args.st_model if args.storyteller == 'model' else None,
+              'storyteller_effort': args.st_effort if args.storyteller == 'model' else None, 'seed': seed,
+              'private_beats': [args.private_beats, args.later_private_beats], 'public_beats': args.public_beats,
+              'whispers': 'private', 'waves': args.waves, 'minion': minion,
+              'max_days': args.days, 'human': human, 'characters': characters, 'setup': args.setup,
+              'player_prompt_sha': hashlib.sha256(PLAYER_SYSTEM.encode()).hexdigest()[:12],
+              'storyteller_prompt_sha': hashlib.sha256(STORYTELLER_SYSTEM.encode()).hexdigest()[:12]}
+    (out / 'config.json').write_text(json.dumps(config, indent=2))
+    return game, convs
+
+
+def save_conversations(game, convs):
+    if not game.out:
+        return
+    d = game.out / 'conversations'
+    d.mkdir(exist_ok=True)
+    for name, c in convs:
+        (d / f'{name}.json').write_text(json.dumps({'system': c.system, 'messages': c.messages}, indent=1))
+
+
+def summary(result, out):
+    t = result['tokens']
+    print(f"\n{(result['winner'] or 'no winner').upper()} — {result['reason']}  (days: {result['days']})")
+    print(f"cost ${result['cost']:.2f} over {result['calls']} calls, {result['seconds'] / 60:.1f} min; tokens: "
+          f"{t['cache_read'] / 1e6:.2f}M cached, {t['cache_write'] / 1e6:.2f}M written, {t['input'] / 1e3:.0f}K uncached, "
+          f"{t['output'] / 1e3:.0f}K output")
+    print(f'logs: {out}')
+
+
+async def play_one(args, seed, out, env, human=None, serve=None, minion=None):
+    game, convs = build(args, seed, out, env, human, minion)
+    if serve:
+        serve(game)
+    try:
+        result = await game.run()
+    finally:
+        save_conversations(game, convs)
+    summary(result, game.out)
+    return result
+
+
+async def run_batch(args):
+    env = shared(args)
+    base = args.seed if args.seed is not None else random.randrange(2 ** 32)
+    stamp = time.strftime('%Y%m%d-%H%M%S')
+    if args.games == 1:
+        out = Path(args.out) if args.out else GAMES / f'{stamp}-{base}'
+        return [await play_one(args, base, out, env)]
+    root = Path(args.out) if args.out else GAMES / f'batch-{stamp}'
+    limit = asyncio.Semaphore(args.parallel or args.games)
+    numbers = parse_only(args.only) if args.only else range(1, args.games + 1)
+
+    async def one(k):  # game k always gets seed base + k - 1 (and a Minion by rotation), so it can be rerun alone
+        minion = MINIONS[(k - 1) % len(MINIONS)] if args.setup == 'random' and not args.characters else None
+        async with limit:
+            return await play_one(args, base + k - 1, root / f'game-{k:02d}', env, minion=minion)
+
+    results = await asyncio.gather(*(one(k) for k in numbers))
+    from .report import main as report
+    report(sorted(str(p) for p in root.iterdir() if p.is_dir()))
+    return results
+
+
+def parse_only(spec):
+    out = []
+    for part in spec.split(','):
+        a, _, b = part.partition('-')
+        out += range(int(a), int(b or a) + 1)
+    return out
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog='clocktower')
+    sub = ap.add_subparsers(dest='command', required=True)
+    rp = sub.add_parser('report')
+    rp.add_argument('paths', nargs='+')
+    wp = sub.add_parser('watch')
+    wp.add_argument('--port', type=int, default=8800)
+    wp.add_argument('--games', default=str(GAMES))
+    rv = sub.add_parser('replay')
+    rv.add_argument('path')
+    rv.add_argument('--view', default='omniscient', help='a player name, public, or omniscient')
+    rv.add_argument('--thinking', action='store_true', help='include thinking (omniscient or that player)')
+    for name in ('run', 'play', 'sim'):
+        p = sub.add_parser(name)
+        p.add_argument('--seed', type=int)
+        p.add_argument('--private-beats', type=int, default=3, help='whisper-only beats at the start of day 1')
+        p.add_argument('--later-private-beats', type=int, default=3, help='whisper-only beats on later days')
+        p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
+        p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
+        p.add_argument('--days', type=int, default=10, help='stop after this many days')
+        p.add_argument('--characters', help='comma-separated forced setup, in seating order (tests)')
+        p.add_argument('--setup', choices=['random', 'storyteller'], default='random',
+                       help='deal a random legal setup, or let the Storyteller choose the characters')
+        p.add_argument('--out')
+        if name in ('run', 'sim'):
+            p.add_argument('--games', type=int, default=1)
+        if name != 'sim':
+            p.add_argument('--model', default=MODEL, help='player model')
+            p.add_argument('--good-model', help='model for the good team (default --model)')
+            p.add_argument('--evil-model', help='model for the evil team (default --model)')
+            p.add_argument('--effort', default='high', help='player reasoning effort (same for every model)')
+            p.add_argument('--max-output', type=int, default=16000,
+                           help='per-turn output ceiling, thinking included, identical for every model')
+            p.add_argument('--storyteller', choices=['scripted', 'model'], default='scripted',
+                           help='scripted policy (default) or an AI Storyteller (--st-model)')
+            p.add_argument('--st-model', default=MODEL, help='Storyteller model')
+            p.add_argument('--st-effort', default='high', help='Storyteller effort')
+            p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
+            p.add_argument('--concurrency', type=int, default=12, help='API requests in flight')
+            p.add_argument('--workspace', default=os.environ.get('ANTHROPIC_WORKSPACE_ID', DEFAULT_WORKSPACE))
+        if name == 'run':
+            p.add_argument('--parallel', type=int, default=0, help='games at once in a batch (0 = all)')
+            p.add_argument('--only', help='run just these game numbers of the batch, e.g. 13,14,16-20')
+        if name == 'play':
+            p.add_argument('--seat', default='Casey', choices=NAMES)
+            p.add_argument('--port', type=int, default=8765)
+    args = ap.parse_args(argv)
+    if args.command == 'report':
+        from .report import main as report
+        report(args.paths)
+    elif args.command == 'watch':
+        from .watch import serve as watch
+        watch(args.games, args.port)
+    elif args.command == 'replay':
+        from .report import replay
+        replay(args.path, args.view, args.thinking)
+    elif args.command == 'run':
+        asyncio.run(run_batch(args))
+    elif args.command == 'play':
+        from .web import serve
+
+        async def go():
+            seed = args.seed if args.seed is not None else random.randrange(2 ** 32)
+            out = Path(args.out) if args.out else GAMES / f'{time.strftime("%Y%m%d-%H%M%S")}-{seed}-human'
+            return await play_one(args, seed, out, shared(args), human=args.seat,
+                                  serve=lambda g: serve(g, args.seat, args.port))
+        asyncio.run(go())
+    else:
+        base = args.seed if args.seed is not None else random.randrange(2 ** 32)
+        results = []
+        for i in range(args.games):
+            game, _ = build(args, base + i, None)
+            results.append(asyncio.run(game.run()))
+        wins = {w: sum(r['winner'] == w for r in results) for w in ('good', 'evil', None)}
+        print(f'{args.games} random games: {wins}')

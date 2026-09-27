@@ -1,0 +1,57 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 3,
+  "seed": 3014,
+  "starting": {
+    "Alex": "Imp",
+    "Blair": "Fortune Teller",
+    "Casey": "Drunk",
+    "Drew": "Poisoner",
+    "Ellis": "Chef",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Librarian",
+    "Harper": "Saint",
+    "Indigo": "Slayer"
+  },
+  "final": {
+    "Alex": "Imp",
+    "Blair": "Fortune Teller",
+    "Casey": "Drunk",
+    "Drew": "Poisoner",
+    "Ellis": "Chef",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Librarian",
+    "Harper": "Saint",
+    "Indigo": "Slayer"
+  },
+  "bluffs": [
+    "Soldier",
+    "Investigator",
+    "Washerwoman"
+  ],
+  "red_herring": "Gray",
+  "drunk_as": "Empath",
+  "cost": 3.5558,
+  "calls": 242,
+  "tokens": {
+    "input": 968,
+    "cache_read": 3617112,
+    "cache_write": 230123,
+    "output": 83895
+  },
+  "seconds": 798.8,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}

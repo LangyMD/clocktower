@@ -1,0 +1,57 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 4,
+  "seed": 5002,
+  "starting": {
+    "Alex": "Scarlet Woman",
+    "Blair": "Washerwoman",
+    "Casey": "Imp",
+    "Drew": "Recluse",
+    "Ellis": "Butler",
+    "Frankie": "Virgin",
+    "Gray": "Mayor",
+    "Harper": "Monk",
+    "Indigo": "Undertaker"
+  },
+  "final": {
+    "Alex": "Scarlet Woman",
+    "Blair": "Washerwoman",
+    "Casey": "Imp",
+    "Drew": "Recluse",
+    "Ellis": "Butler",
+    "Frankie": "Virgin",
+    "Gray": "Mayor",
+    "Harper": "Monk",
+    "Indigo": "Undertaker"
+  },
+  "bluffs": [
+    "Chef",
+    "Empath",
+    "Soldier"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 3.8465,
+  "calls": 261,
+  "tokens": {
+    "input": 1044,
+    "cache_read": 4109509,
+    "cache_write": 217309,
+    "output": 96695
+  },
+  "seconds": 825.1,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}

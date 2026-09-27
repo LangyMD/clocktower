@@ -1,0 +1,57 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 3,
+  "seed": 3005,
+  "starting": {
+    "Alex": "Librarian",
+    "Blair": "Poisoner",
+    "Casey": "Monk",
+    "Drew": "Fortune Teller",
+    "Ellis": "Recluse",
+    "Frankie": "Imp",
+    "Gray": "Chef",
+    "Harper": "Drunk",
+    "Indigo": "Undertaker"
+  },
+  "final": {
+    "Alex": "Librarian",
+    "Blair": "Poisoner",
+    "Casey": "Monk",
+    "Drew": "Fortune Teller",
+    "Ellis": "Recluse",
+    "Frankie": "Imp",
+    "Gray": "Chef",
+    "Harper": "Drunk",
+    "Indigo": "Undertaker"
+  },
+  "bluffs": [
+    "Soldier",
+    "Ravenkeeper",
+    "Virgin"
+  ],
+  "red_herring": "Alex",
+  "drunk_as": "Empath",
+  "cost": 6.6879,
+  "calls": 260,
+  "tokens": {
+    "input": 784,
+    "cache_read": 3229779,
+    "cache_write": 260590,
+    "output": 140052
+  },
+  "seconds": 1820.9,
+  "errors": [],
+  "models": {
+    "Alex": "gpt-6-astra",
+    "Blair": "gpt-6-astra",
+    "Casey": "gpt-6-astra",
+    "Drew": "gpt-6-astra",
+    "Ellis": "gpt-6-astra",
+    "Frankie": "gpt-6-astra",
+    "Gray": "gpt-6-astra",
+    "Harper": "gpt-6-astra",
+    "Indigo": "gpt-6-astra"
+  }
+}

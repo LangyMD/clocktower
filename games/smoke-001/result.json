@@ -1,0 +1,46 @@
+{
+  "winner": null,
+  "reason": "stopped after day 1",
+  "stopped": "stopped after day 1",
+  "days": 1,
+  "seed": 101,
+  "starting": {
+    "Alex": "Recluse",
+    "Blair": "Ravenkeeper",
+    "Casey": "Spy",
+    "Drew": "Monk",
+    "Ellis": "Fortune Teller",
+    "Frankie": "Drunk",
+    "Gray": "Imp",
+    "Harper": "Mayor",
+    "Indigo": "Washerwoman"
+  },
+  "final": {
+    "Alex": "Recluse",
+    "Blair": "Ravenkeeper",
+    "Casey": "Spy",
+    "Drew": "Monk",
+    "Ellis": "Fortune Teller",
+    "Frankie": "Drunk",
+    "Gray": "Imp",
+    "Harper": "Mayor",
+    "Indigo": "Washerwoman"
+  },
+  "bluffs": [
+    "Soldier",
+    "Undertaker",
+    "Chef"
+  ],
+  "red_herring": "Blair",
+  "drunk_as": "Empath",
+  "cost": 1.2204,
+  "calls": 102,
+  "tokens": {
+    "input": 408,
+    "cache_read": 865101,
+    "cache_write": 107166,
+    "output": 25494
+  },
+  "seconds": 174.9,
+  "errors": []
+}

@@ -1,0 +1,12 @@
+{
+  "model": "claude-opus-5-5",
+  "player_effort": "medium",
+  "storyteller_effort": "high",
+  "seed": 101,
+  "max_beats": 6,
+  "max_days": 1,
+  "human": null,
+  "characters": null,
+  "player_prompt_sha": "b69516b41865",
+  "storyteller_prompt_sha": "7952f471cc70"
+}

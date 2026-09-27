@@ -1,0 +1,57 @@
+{
+  "winner": "evil",
+  "reason": "Harper was the Saint, and the Saint was executed.",
+  "stopped": null,
+  "days": 3,
+  "seed": 5000,
+  "starting": {
+    "Alex": "Spy",
+    "Blair": "Undertaker",
+    "Casey": "Butler",
+    "Drew": "Fortune Teller",
+    "Ellis": "Monk",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Librarian",
+    "Harper": "Saint",
+    "Indigo": "Imp"
+  },
+  "final": {
+    "Alex": "Spy",
+    "Blair": "Undertaker",
+    "Casey": "Butler",
+    "Drew": "Fortune Teller",
+    "Ellis": "Monk",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Librarian",
+    "Harper": "Saint",
+    "Indigo": "Imp"
+  },
+  "bluffs": [
+    "Washerwoman",
+    "Empath",
+    "Virgin"
+  ],
+  "red_herring": "Harper",
+  "drunk_as": null,
+  "cost": 2.6719,
+  "calls": 239,
+  "tokens": {
+    "input": 956,
+    "cache_read": 3225896,
+    "cache_write": 166602,
+    "output": 59492
+  },
+  "seconds": 607.4,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}
