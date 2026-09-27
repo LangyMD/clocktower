@@ -1,0 +1,59 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 2,
+  "seed": 20064,
+  "starting": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Chef",
+    "Casey": "Recluse",
+    "Drew": "Poisoner",
+    "Ellis": "Slayer",
+    "Frankie": "Imp",
+    "Gray": "Monk",
+    "Harper": "Saint",
+    "Indigo": "Soldier"
+  },
+  "final": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Chef",
+    "Casey": "Recluse",
+    "Drew": "Poisoner",
+    "Ellis": "Slayer",
+    "Frankie": "Imp",
+    "Gray": "Monk",
+    "Harper": "Saint",
+    "Indigo": "Soldier"
+  },
+  "bluffs": [
+    "Fortune Teller",
+    "Empath",
+    "Undertaker"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 7.6064,
+  "calls": 304,
+  "tokens": {
+    "input": 984,
+    "cache_read": 3217817,
+    "cache_write": 179395,
+    "output": 80448
+  },
+  "seconds": 1016.4,
+  "errors": [
+    "Frankie: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVKzurwGoqAptEjC5U'}\")"
+  ],
+  "models": {
+    "Alex": "gpt-6-astra",
+    "Blair": "gpt-6-astra",
+    "Casey": "gpt-6-astra",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "gpt-6-astra",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "gpt-6-astra",
+    "Harper": "gpt-6-astra",
+    "Indigo": "gpt-6-astra"
+  }
+}
