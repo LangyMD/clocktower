@@ -68,6 +68,7 @@ export ANTHROPIC_API_KEY=...            # the default workspace id is in cli.py 
 .venv/bin/python -m clocktower sim --games 100      # random players, no API calls
 .venv/bin/python -m clocktower report games/batch-001/*               # outcomes, cost, speech, thinking
 .venv/bin/python -m clocktower watch                                   # spectator app, http://127.0.0.1:8800
+.venv/bin/python -m clocktower site                                    # the same app as static files (site/), published as an Artifact
 .venv/bin/python -m clocktower replay games/X --view public           # what the town saw
 .venv/bin/python -m clocktower replay games/X --view Casey --thinking # one seat, with its reasoning
 .venv/bin/python -m unittest discover -s tests

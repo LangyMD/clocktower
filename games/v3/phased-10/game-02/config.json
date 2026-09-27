@@ -1,0 +1,22 @@
+{
+  "model": "claude-opus-5-5",
+  "good_model": null,
+  "evil_model": null,
+  "player_effort": "high",
+  "max_output_tokens": 16000,
+  "storyteller": "scripted",
+  "storyteller_model": null,
+  "storyteller_effort": null,
+  "seed": 5001,
+  "private_beats": 3,
+  "public_beats": 3,
+  "whispers": "private",
+  "waves": 3,
+  "max_days": 10,
+  "human": null,
+  "characters": null,
+  "setup": "random",
+  "player_prompt_sha": "239e2becb6dc",
+  "storyteller_prompt_sha": "f7cea67d95d2",
+  "protocol": "v3"
+}

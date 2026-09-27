@@ -8,6 +8,7 @@
     python -m clocktower report games/*               # summarise finished games
     python -m clocktower replay games/X --view Casey  # re-read a game from one seat (or public/omniscient)
     python -m clocktower watch                        # spectator app at http://127.0.0.1:8800
+    python -m clocktower site                         # the spectator app as static files in site/, to publish
 """
 from __future__ import annotations
 import argparse
@@ -29,6 +30,8 @@ from .schema import player_schema, storyteller_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
+PROTOCOL = 'v4'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
+RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
 
@@ -80,7 +83,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
         convs.append(('Storyteller', c))
     else:
         game.st = ScriptedStoryteller(random.Random(seed ^ 0x5eed))
-    config = {'model': args.model, 'good_model': args.good_model, 'evil_model': args.evil_model,
+    config = {'protocol': PROTOCOL, 'model': args.model, 'good_model': args.good_model, 'evil_model': args.evil_model,
               'player_effort': args.effort, 'max_output_tokens': args.max_output, 'storyteller': args.storyteller,
               'storyteller_model': args.st_model if args.storyteller == 'model' else None,
               'storyteller_effort': args.st_effort if args.storyteller == 'model' else None, 'seed': seed,
@@ -128,9 +131,9 @@ async def run_batch(args):
     base = args.seed if args.seed is not None else random.randrange(2 ** 32)
     stamp = time.strftime('%Y%m%d-%H%M%S')
     if args.games == 1:
-        out = Path(args.out) if args.out else GAMES / f'{stamp}-{base}'
+        out = Path(args.out) if args.out else RUNS / f'{stamp}-{base}'
         return [await play_one(args, base, out, env)]
-    root = Path(args.out) if args.out else GAMES / f'batch-{stamp}'
+    root = Path(args.out) if args.out else RUNS / f'batch-{stamp}'
     limit = asyncio.Semaphore(args.parallel or args.games)
     numbers = parse_only(args.only) if args.only else range(1, args.games + 1)
 
@@ -161,6 +164,9 @@ def main(argv=None):
     wp = sub.add_parser('watch')
     wp.add_argument('--port', type=int, default=8800)
     wp.add_argument('--games', default=str(GAMES))
+    sp = sub.add_parser('site')
+    sp.add_argument('--games', default=str(GAMES))
+    sp.add_argument('--out', default=str(ROOT / 'site'))
     rv = sub.add_parser('replay')
     rv.add_argument('path')
     rv.add_argument('--view', default='omniscient', help='a player name, public, or omniscient')
@@ -206,6 +212,9 @@ def main(argv=None):
     elif args.command == 'watch':
         from .watch import serve as watch
         watch(args.games, args.port)
+    elif args.command == 'site':
+        from .site import build
+        build(args.games, args.out)
     elif args.command == 'replay':
         from .report import replay
         replay(args.path, args.view, args.thinking)
@@ -216,7 +225,7 @@ def main(argv=None):
 
         async def go():
             seed = args.seed if args.seed is not None else random.randrange(2 ** 32)
-            out = Path(args.out) if args.out else GAMES / f'{time.strftime("%Y%m%d-%H%M%S")}-{seed}-human'
+            out = Path(args.out) if args.out else RUNS / f'{time.strftime("%Y%m%d-%H%M%S")}-{seed}-human'
             return await play_one(args, seed, out, shared(args), human=args.seat,
                                   serve=lambda g: serve(g, args.seat, args.port))
         asyncio.run(go())

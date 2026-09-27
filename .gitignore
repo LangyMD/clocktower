@@ -1,7 +1,4 @@
 .venv/
 __pycache__/
 *.egg-info/
-# raw API conversations (large; encrypted reasoning) and per-call logs stay local
-games/**/conversations/
-games/**/calls.jsonl
-games/logs/
+site/

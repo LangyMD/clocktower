@@ -16,10 +16,36 @@ const S = {
   seats: [], setup: null,
 };
 
+// ---------------------------------------------------------------- data
+// Served by `clocktower watch` (live, /api/...) or published as static files by `clocktower site`
+// (data/index.json plus one bundle per batch; no live games).
+const STATIC = !!window.CLOCKTOWER_STATIC;
+const bundles = new Map();
+const bundleName = (batch) => `data/${(batch || 'single').replaceAll('/', '--')}.json`;
+
+async function getGames() {
+  return (await fetch(STATIC ? 'data/index.json' : '/api/games')).json();
+}
+
+async function getGame(id, since) {
+  if (!STATIC) return (await fetch(`/api/game?id=${encodeURIComponent(id)}&since=${since}`)).json();
+  const g = S.games.find((x) => x.id === id);
+  if (!g) return null;
+  if (!bundles.has(g.batch)) bundles.set(g.batch, (await fetch(bundleName(g.batch))).json());
+  const game = (await bundles.get(g.batch))[id];
+  return since ? { ...game, events: [] } : game;
+}
+
+// Links look like #v2~opus-20~game-01 (older #game=v2/opus-20/game-01 links still work).
+function hashId() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  return h.startsWith('game=') ? h.slice(5) : h.replaceAll('~', '/');
+}
+
 // ---------------------------------------------------------------- library
 async function loadLibrary() {
   try {
-    S.games = await (await fetch('/api/games')).json();
+    S.games = await getGames();
   } catch { return; }
   const groups = new Map();
   const recency = (g) => (g.live ? 1e12 : 0) + g.updated;
@@ -72,7 +98,9 @@ async function openGame(id) {
   stop();
   clearInterval(S.poller);
   Object.assign(S, { id, events: [], shown: [], pos: 0, setup: null, seats: [] });
-  const data = await (await fetch(`/api/game?id=${encodeURIComponent(id)}&since=0`)).json();
+  const data = await getGame(id, 0);
+  if (!data) return;
+  try { history.replaceState(null, '', '#' + id.replaceAll('/', '~')); } catch {}
   S.events = data.events;
   S.summary = data.summary;
   S.result = data.result;
@@ -92,7 +120,7 @@ async function openGame(id) {
 
 async function poll() {
   if (!S.id) return;
-  const data = await (await fetch(`/api/game?id=${encodeURIComponent(S.id)}&since=${S.events.length}`)).json();
+  const data = await getGame(S.id, S.events.length);
   if (!data || !data.events) return;
   const atEnd = S.pos >= S.shown.length;
   S.events.push(...data.events);
@@ -536,9 +564,9 @@ document.addEventListener('keydown', (e) => {
 });
 
 loadLibrary().then(() => {
-  const params = new URLSearchParams(location.hash.slice(1));
-  const id = params.get('game') || (S.games.find((g) => g.live) || S.games.find((g) => g.finished) || {}).id;
+  const wanted = hashId();
+  const id = (S.games.find((g) => g.id === wanted) || S.games.find((g) => g.live) || S.games.find((g) => g.finished) || {}).id;
   if (id) openGame(id);
 });
-setInterval(loadLibrary, 15000);
-window.addEventListener('hashchange', () => { const id = new URLSearchParams(location.hash.slice(1)).get('game'); if (id && id !== S.id) openGame(id); });
+if (!STATIC) setInterval(loadLibrary, 15000);
+window.addEventListener('hashchange', () => { const id = hashId(); if (id && id !== S.id) openGame(id); });

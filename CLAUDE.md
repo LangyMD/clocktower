@@ -9,12 +9,17 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
 - Keys come from the environment: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` (for `gpt-*` models). The
   Anthropic key is not workspace-scoped, so every request sends `anthropic-workspace-id`
   (`ANTHROPIC_WORKSPACE_ID`, default in `cli.py`). Without it the API returns a 400.
-- A batch: `python -m clocktower run --games 10 --seed N --concurrency 30 --out games/NAME`. All games run
+- A batch: `python -m clocktower run --games 10 --seed N --concurrency 30 --out games/v4/NAME` (games go
+  under the current protocol version, `PROTOCOL` in `cli.py`; see `games/PROTOCOLS.md`). All games run
   in parallel; game k uses seed N+k-1 and rotates the Minion. Opus 5.5 games cost ~$3–4 and take
   10–20 minutes. Spend is logged in `games/ledger.jsonl` with a cap (`--budget`, default $1000; the
   user has said the budget can grow).
-- After a batch: `python -m clocktower report games/NAME/*`, then commit `games/NAME` (conversations
-  and calls.jsonl are gitignored) and push, so results survive the session.
+- After a batch: `python -m clocktower report games/v4/NAME/*`, commit the whole batch directory
+  (transcripts, events, conversations, calls) and push, so results survive the session. Then
+  republish the viewer: `python -m clocktower site` builds `site/`; publish `site/index.html` with the
+  Artifact tool, `url: https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH`, and every other file under
+  `site/` in `files` (same relative paths). That keeps the one viewer link the user has.
+- When a change affects how games play, bump `PROTOCOL` and add a section to `games/PROTOCOLS.md`.
 
 ## Design decisions the user made (don't undo without asking)
 - Memory is the model's own carried-over reasoning; no notebook, no state re-sent.
