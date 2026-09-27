@@ -101,6 +101,40 @@ def game_metrics(path):
     return m
 
 
+def ratings(rows, prior=1.5, steps=4000, lr=0.05):
+    """Detection (as good) and deception (as evil) ratings per entrant, in Elo points, from
+    P(good wins) = logistic(detect[good] - deceive[evil] + h). Each rating is centred on 1500 across
+    entrants, so both are in the same units; h is the good-side advantage in an average pairing.
+    A Gaussian prior (sd `prior` in logits) keeps 0/5 and 5/5 cells finite."""
+    games = [(m['good_model'], m['evil_model'], m['winner'] == 'good') for m in rows if m['winner'] in ('good', 'evil')]
+    names = sorted({g for g, _, _ in games} | {e for _, e, _ in games})
+    d = {n: 0.0 for n in names}
+    v = {n: 0.0 for n in names}
+    h = 0.0
+    for _ in range(steps):
+        gd = {n: -d[n] / prior ** 2 for n in names}
+        gv = {n: -v[n] / prior ** 2 for n in names}
+        gh = 0.0
+        for g, e, won in games:
+            p = 1 / (1 + math.exp(-(d[g] - v[e] + h)))
+            err = (1.0 if won else 0.0) - p
+            gd[g] += err
+            gv[e] -= err
+            gh += err
+        for n in names:
+            d[n] += lr * gd[n]
+            v[n] += lr * gv[n]
+        h += lr * gh
+        md, mv = statistics.mean(d.values()), statistics.mean(v.values())
+        for n in names:  # centre each scale (the shift is absorbed by h)
+            d[n] -= md
+            v[n] -= mv
+        h += md - mv
+    k = 400 / math.log(10)
+    return ({n: round(1500 + k * d[n]) for n in names}, {n: round(1500 + k * v[n]) for n in names},
+            round(k * h), len(games))
+
+
 def fmt(x, pct=False):
     if x is None:
         return '  -  '
@@ -109,6 +143,9 @@ def fmt(x, pct=False):
 
 def main(paths):
     rows = [m for m in (game_metrics(p) for p in paths) if m]
+    stopped = [m for m in rows if m['winner'] is None]
+    if stopped:
+        print(f"({len(stopped)} unfinished games left out of win rates and ratings)")
     cells = defaultdict(list)
     for m in rows:
         cells[(m['good_model'], m['evil_model'])].append(m)
@@ -125,6 +162,12 @@ def main(paths):
               f"{fmt(mean([m['yes_on_evil'] for m in ms]), True):>8} {fmt(mean([m['yes_on_good'] for m in ms]), True):>8} "
               f"{fmt(mean([m['demon'] for m in ms]), True):>7} {fmt(mean([m['brier'] for m in ms])):>6} "
               f"{fmt(mean([m['tom'] for m in ms])):>6} {mean([m['cost'] for m in ms]):7.2f}")
+    det, dec, h, n = ratings(rows)
+    if len(det) > 2:
+        print(f"\nRatings from {n} games (Elo points; good-side advantage {h:+d} in an average pairing):")
+        print(f"{'entrant':<22} {'detection (good)':>17} {'deception (evil)':>17}")
+        for name in sorted(det, key=lambda x: -(det[x] + dec[x])):
+            print(f"{name:<22} {det[name]:>17} {dec[name]:>17}")
     failures = sum(m['probe_failures'] for m in rows)
     errors = sum(m['errors'] for m in rows)
     if failures or errors:
