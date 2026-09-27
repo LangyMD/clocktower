@@ -16,5 +16,6 @@
   "human": null,
   "characters": null,
   "probes": true,
+  "openai_tier": "default",
   "player_prompt_sha": "f9ceb04f77fe"
 }

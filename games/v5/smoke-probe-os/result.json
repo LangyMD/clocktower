@@ -1,0 +1,57 @@
+{
+  "winner": null,
+  "reason": "stopped after day 1",
+  "stopped": "stopped after day 1",
+  "days": 1,
+  "seed": 777,
+  "starting": {
+    "Alex": "Imp",
+    "Blair": "Mayor",
+    "Casey": "Fortune Teller",
+    "Drew": "Virgin",
+    "Ellis": "Saint",
+    "Frankie": "Empath",
+    "Gray": "Recluse",
+    "Harper": "Spy",
+    "Indigo": "Monk"
+  },
+  "final": {
+    "Alex": "Imp",
+    "Blair": "Mayor",
+    "Casey": "Fortune Teller",
+    "Drew": "Virgin",
+    "Ellis": "Saint",
+    "Frankie": "Empath",
+    "Gray": "Recluse",
+    "Harper": "Spy",
+    "Indigo": "Monk"
+  },
+  "bluffs": [
+    "Librarian",
+    "Slayer",
+    "Chef"
+  ],
+  "red_herring": "Drew",
+  "drunk_as": null,
+  "cost": 1.667,
+  "calls": 136,
+  "tokens": {
+    "input": 482,
+    "cache_read": 1285035,
+    "cache_write": 133322,
+    "output": 54794
+  },
+  "seconds": 434.0,
+  "errors": [],
+  "models": {
+    "Alex": "claude-sonnet-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "claude-sonnet-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}
