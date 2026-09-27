@@ -1,0 +1,57 @@
+{
+  "winner": "evil",
+  "reason": "Indigo was the Saint, and the Saint was executed.",
+  "stopped": null,
+  "days": 2,
+  "seed": 6007,
+  "starting": {
+    "Alex": "Fortune Teller",
+    "Blair": "Drunk",
+    "Casey": "Recluse",
+    "Drew": "Baron",
+    "Ellis": "Virgin",
+    "Frankie": "Butler",
+    "Gray": "Imp",
+    "Harper": "Empath",
+    "Indigo": "Saint"
+  },
+  "final": {
+    "Alex": "Fortune Teller",
+    "Blair": "Drunk",
+    "Casey": "Recluse",
+    "Drew": "Baron",
+    "Ellis": "Virgin",
+    "Frankie": "Butler",
+    "Gray": "Imp",
+    "Harper": "Empath",
+    "Indigo": "Saint"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Librarian",
+    "Slayer"
+  ],
+  "red_herring": "Indigo",
+  "drunk_as": "Chef",
+  "cost": 2.1689,
+  "calls": 260,
+  "tokens": {
+    "input": 520,
+    "cache_read": 3147570,
+    "cache_write": 192296,
+    "output": 105762
+  },
+  "seconds": 946.9,
+  "errors": [],
+  "models": {
+    "Alex": "claude-sonnet-5",
+    "Blair": "claude-sonnet-5",
+    "Casey": "claude-sonnet-5",
+    "Drew": "claude-sonnet-5",
+    "Ellis": "claude-sonnet-5",
+    "Frankie": "claude-sonnet-5",
+    "Gray": "claude-sonnet-5",
+    "Harper": "claude-sonnet-5",
+    "Indigo": "claude-sonnet-5"
+  }
+}
