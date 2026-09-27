@@ -12,6 +12,7 @@ A truncated turn is retried once at the same ceiling rather than given more room
 """
 from __future__ import annotations
 import asyncio
+import http.client
 import json
 import os
 import random
@@ -242,8 +243,8 @@ class OpenAIConversation(_Base):
                 detail = e.read().decode(errors='replace')[:2000]
                 if e.code not in (408, 409, 429, 500, 502, 503, 504) or attempt == 9 or 'insufficient_quota' in detail:
                     raise RuntimeError(f'OpenAI HTTP {e.code}: {detail}') from e
-            except (TimeoutError, urllib.error.URLError) as e:
-                if attempt == 9:
+            except (TimeoutError, urllib.error.URLError, ConnectionError, http.client.HTTPException) as e:
+                if attempt == 9:  # dropped connections (RemoteDisconnected) and timeouts are retried
                     raise RuntimeError(f'OpenAI transport error: {e}') from e
             await asyncio.sleep(min(2 ** attempt, 60) + random.random())
 
