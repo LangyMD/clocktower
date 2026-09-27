@@ -1,0 +1,61 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 2,
+  "seed": 20083,
+  "starting": {
+    "Alex": "Investigator",
+    "Blair": "Baron",
+    "Casey": "Mayor",
+    "Drew": "Recluse",
+    "Ellis": "Drunk",
+    "Frankie": "Imp",
+    "Gray": "Butler",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Saint"
+  },
+  "final": {
+    "Alex": "Investigator",
+    "Blair": "Baron",
+    "Casey": "Mayor",
+    "Drew": "Recluse",
+    "Ellis": "Drunk",
+    "Frankie": "Imp",
+    "Gray": "Butler",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Saint"
+  },
+  "bluffs": [
+    "Chef",
+    "Fortune Teller",
+    "Washerwoman"
+  ],
+  "red_herring": null,
+  "drunk_as": "Undertaker",
+  "cost": 2.1156,
+  "calls": 249,
+  "tokens": {
+    "input": 799,
+    "cache_read": 2606428,
+    "cache_write": 187781,
+    "output": 85112
+  },
+  "seconds": 812.5,
+  "errors": [
+    "Blair: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWiM7Cbxp8btYtfYkm'}\")",
+    "Frankie: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUiC2FDHVejsn2rN8iFu'}\")",
+    "Blair: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUiCUajig2h28WS5CTXY'}\")"
+  ],
+  "models": {
+    "Alex": "gpt-6-sol",
+    "Blair": "claude-opus-5-5",
+    "Casey": "gpt-6-sol",
+    "Drew": "gpt-6-sol",
+    "Ellis": "gpt-6-sol",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "gpt-6-sol",
+    "Harper": "gpt-6-sol",
+    "Indigo": "gpt-6-sol"
+  }
+}
