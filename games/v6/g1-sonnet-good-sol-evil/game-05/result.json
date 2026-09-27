@@ -1,0 +1,57 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 3,
+  "seed": 20059,
+  "starting": {
+    "Alex": "Washerwoman",
+    "Blair": "Butler",
+    "Casey": "Fortune Teller",
+    "Drew": "Poisoner",
+    "Ellis": "Imp",
+    "Frankie": "Saint",
+    "Gray": "Chef",
+    "Harper": "Investigator",
+    "Indigo": "Empath"
+  },
+  "final": {
+    "Alex": "Washerwoman",
+    "Blair": "Butler",
+    "Casey": "Fortune Teller",
+    "Drew": "Poisoner",
+    "Ellis": "Imp",
+    "Frankie": "Saint",
+    "Gray": "Chef",
+    "Harper": "Investigator",
+    "Indigo": "Empath"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Soldier",
+    "Undertaker"
+  ],
+  "red_herring": "Alex",
+  "drunk_as": null,
+  "cost": 3.6748,
+  "calls": 353,
+  "tokens": {
+    "input": 786,
+    "cache_read": 5944351,
+    "cache_write": 300908,
+    "output": 173209
+  },
+  "seconds": 1349.7,
+  "errors": [],
+  "models": {
+    "Alex": "claude-sonnet-5",
+    "Blair": "claude-sonnet-5",
+    "Casey": "claude-sonnet-5",
+    "Drew": "gpt-6-sol",
+    "Ellis": "gpt-6-sol",
+    "Frankie": "claude-sonnet-5",
+    "Gray": "claude-sonnet-5",
+    "Harper": "claude-sonnet-5",
+    "Indigo": "claude-sonnet-5"
+  }
+}

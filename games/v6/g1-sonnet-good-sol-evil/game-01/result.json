@@ -1,0 +1,57 @@
+{
+  "winner": "evil",
+  "reason": "Blair was the Saint, and the Saint was executed.",
+  "stopped": null,
+  "days": 3,
+  "seed": 20055,
+  "starting": {
+    "Alex": "Slayer",
+    "Blair": "Saint",
+    "Casey": "Imp",
+    "Drew": "Washerwoman",
+    "Ellis": "Empath",
+    "Frankie": "Investigator",
+    "Gray": "Recluse",
+    "Harper": "Poisoner",
+    "Indigo": "Monk"
+  },
+  "final": {
+    "Alex": "Slayer",
+    "Blair": "Saint",
+    "Casey": "Imp",
+    "Drew": "Washerwoman",
+    "Ellis": "Empath",
+    "Frankie": "Investigator",
+    "Gray": "Recluse",
+    "Harper": "Poisoner",
+    "Indigo": "Monk"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Chef",
+    "Virgin"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 2.8595,
+  "calls": 281,
+  "tokens": {
+    "input": 628,
+    "cache_read": 3853961,
+    "cache_write": 256593,
+    "output": 144598
+  },
+  "seconds": 985.4,
+  "errors": [],
+  "models": {
+    "Alex": "claude-sonnet-5",
+    "Blair": "claude-sonnet-5",
+    "Casey": "gpt-6-sol",
+    "Drew": "claude-sonnet-5",
+    "Ellis": "claude-sonnet-5",
+    "Frankie": "claude-sonnet-5",
+    "Gray": "claude-sonnet-5",
+    "Harper": "gpt-6-sol",
+    "Indigo": "claude-sonnet-5"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "winner": "evil",
+  "reason": "Ellis was the Saint, and the Saint was executed.",
+  "stopped": null,
+  "days": 2,
+  "seed": 20048,
+  "starting": {
+    "Alex": "Imp",
+    "Blair": "Mayor",
+    "Casey": "Recluse",
+    "Drew": "Soldier",
+    "Ellis": "Saint",
+    "Frankie": "Drunk",
+    "Gray": "Butler",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Baron"
+  },
+  "final": {
+    "Alex": "Imp",
+    "Blair": "Mayor",
+    "Casey": "Recluse",
+    "Drew": "Soldier",
+    "Ellis": "Saint",
+    "Frankie": "Drunk",
+    "Gray": "Butler",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Baron"
+  },
+  "bluffs": [
+    "Empath",
+    "Virgin",
+    "Slayer"
+  ],
+  "red_herring": null,
+  "drunk_as": "Librarian",
+  "cost": 2.7628,
+  "calls": 259,
+  "tokens": {
+    "input": 634,
+    "cache_read": 3652781,
+    "cache_write": 226998,
+    "output": 128107
+  },
+  "seconds": 869.9,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-sonnet-5",
+    "Casey": "claude-sonnet-5",
+    "Drew": "claude-sonnet-5",
+    "Ellis": "claude-sonnet-5",
+    "Frankie": "claude-sonnet-5",
+    "Gray": "claude-sonnet-5",
+    "Harper": "claude-sonnet-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}
