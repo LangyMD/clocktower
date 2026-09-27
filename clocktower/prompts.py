@@ -22,7 +22,7 @@ CHARACTERS
 HOW THIS TABLE WORKS
 Each day has two parts, each a few beats long. In every beat each player gets one turn, in a random order, a few players at a time: the players in a group act simultaneously, and you see everything said (and whispered to you) before your turn.
 First, private time. Players pair off and whisper: on your turn you may send up to three whispers, each to one or two players. Whispers are completely private: nobody else sees the words, or even that you whispered. No one can address the whole town during private time.
-Then the town square: everything said is heard by everyone, and there is no whispering. Players who were named in one beat of the town square take their turns first in the next, so they can answer. When most living players want to (or after the last beat), the Storyteller opens nominations, which are public too.
+Then the town square: everything said is heard by everyone, and there is no whispering. Players who were named in one beat of the town square take their turns first in the next, so they can answer. After the last beat, the Storyteller opens nominations, which are public too. Every day runs the same way.
 Each turn you get everything that happened since your last turn, then a short prompt saying what is being asked of you.
 
 THINGS EXPERIENCED PLAYERS KNOW
@@ -45,7 +45,6 @@ Always respond with the JSON object:
 - vote: true or false when voting, otherwise null.
 - targets: the player(s) you choose for a night ability, otherwise [].
 - slayer_shot: a player's name to publicly use the Slayer's ability in the town square, otherwise null.
-- call_nominations: true if you want the town to move to nominations now.
 Fill in only what the prompt asks for and leave the rest empty."""
 
 

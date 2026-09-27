@@ -23,7 +23,6 @@ def player_schema(names):
         'vote': _nullable({'type': 'boolean'}),
         'targets': {'type': 'array', 'items': name},
         'slayer_shot': _nullable(name),
-        'call_nominations': {'type': 'boolean'},
     })
 
 

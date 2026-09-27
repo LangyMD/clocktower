@@ -60,13 +60,12 @@ class RandomSeat:
     async def act(self, text, request: Request) -> Reply:
         r, others = self.rng, [n for n in self.names if n != self.name]
         a = {'say': '', 'whispers': [], 'nominate': None, 'vote': None, 'targets': [],
-             'slayer_shot': None, 'call_nominations': False}
+             'slayer_shot': None}
         if request.kind in ('night', 'ravenkeeper'):
             a['targets'] = r.sample(request.options, min(request.n_targets, len(request.options)))
         elif request.kind == 'beat':
             if r.random() < 0.5: a['say'] = r.choice(LINES)
             if r.random() < 0.3: a['whispers'] = [{'to': [r.choice(others)], 'text': 'psst, what are you?'}]
-            a['call_nominations'] = r.random() < 0.3
             if r.random() < 0.03: a['slayer_shot'] = r.choice(others)
         elif request.kind == 'nominate':
             if request.options and r.random() < 0.4:

@@ -22,8 +22,14 @@ Each day: 3 private beats (whispers only, invisible to others, up to 2 per turn)
 town-square beats (public only), then nominations. Scripted Storyteller policy (consistent false
 picture for impaired players). Butler leak fixed. `phased-10`: good 6, evil 4.
 
-## v4 — current
+## v4
 v3 plus: up to 3 whispers per turn; players named in the town square answer first in the next
 beat; batches rotate the Minion; the scripted Storyteller no longer excludes any legal option (the
 Saint or Drunk can be the red herring, the Drunk's apparent role can be a bluff, a Mayor kill can
 bounce to anyone); a drunk Fortune Teller's false picture has two "evil" players.
+
+## v5 — current
+v4 plus a fixed day: 3 private beats, 3 town-square beats, then nominations, every day. No
+early end (v4 ended the town square when most living players called for nominations or a beat
+was silent, which cut 20 of 34 v3 days short); `call_nominations` is gone, and day 1 no longer
+has its own private-beat setting.

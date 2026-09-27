@@ -64,18 +64,17 @@ def pick_bluffs(r, options, baron):
 
 
 class Game:
-    def __init__(self, seats, storyteller, *, names=NAMES, seed=None, private_beats=(3, 3), public_beats=3, max_days=10,
+    def __init__(self, seats, storyteller, *, names=NAMES, seed=None, private_beats=3, public_beats=3, max_days=10,
                  waves=3, characters=None, setup='random', minion=None, out=None, seat_factory=None):
-        """`private_beats` is (day 1, later days): day 1 needs more time for first claims. `minion`
-        forces the Minion character of a random setup (batches rotate it so every Minion is covered)."""
         """`seats` maps names to seats; alternatively `seat_factory(name, team)` creates them once the
-        characters are dealt (so, for example, the evil team can use a different model)."""
+        characters are dealt (so, for example, the evil team can use a different model). Every day has
+        `private_beats` of private time and `public_beats` of town square. `minion` forces the Minion
+        character of a random setup (batches rotate it so every Minion is covered)."""
         self.seats, self.st, self.names, self.seat_factory = seats, storyteller, list(names), seat_factory
         self.meta = {}
         self.seed = seed if seed is not None else random.randrange(2 ** 32)
         self.rng = random.Random(self.seed)
-        self.private_beats = private_beats if isinstance(private_beats, tuple) else (private_beats, private_beats)
-        self.public_beats, self.minion = public_beats, minion
+        self.private_beats, self.public_beats, self.minion = private_beats, public_beats, minion
         self.max_days, self.waves, self.forced = max_days, waves, characters
         self.setup_mode = setup  # 'random': a uniformly drawn legal setup; 'storyteller': the Storyteller picks
         self.out = Path(out) if out else None
@@ -418,10 +417,9 @@ class Game:
     async def beat(self, n, k, private):
         """Everyone gets one turn, in a random order, a wave of a few players at a time.
         Players in a wave act simultaneously; later waves see what earlier waves said.
-        In private time players can only whisper; in the town square they can only speak.
-        Returns True when this part of the day should end early."""
+        In private time players can only whisper; in the town square they can only speak."""
         g = self.g
-        total = self.private_beats[0 if n == 1 else 1] if private else self.public_beats
+        total = self.private_beats if private else self.public_beats
         order = list(self.names)
         self.rng.shuffle(order)
         if not private and k > 1:  # whoever was just named or asked gets to answer first
@@ -430,7 +428,6 @@ class Game:
         size = math.ceil(len(order) / self.waves)
         waves = [order[i:i + size] for i in range(0, len(order), size)]
         self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
-        active, calls = False, 0
         for w, wave in enumerate(waves, start=1):
             requests = {}
             for name in wave:
@@ -439,7 +436,7 @@ class Game:
                               'Whisper to anyone you like (up to three whispers), or no one. Nobody can address the town '
                               'until the town square.')
                 else:
-                    prompt = (f'Day {n}, town square {k} of at most {total} — your turn (group {w} of {len(waves)}). '
+                    prompt = (f'Day {n}, town square {k} of {total} — your turn (group {w} of {len(waves)}). '
                               'Say something to the town, or nothing. No whispering now.')
                 if not g[name].alive:
                     prompt += ' (You are dead, but you can still ' + ('whisper.)' if private else 'talk.)')
@@ -452,22 +449,18 @@ class Game:
                 for name in wave:
                     for msg in self.whispers(name, acts[name]):
                         self.emit('whisper', {'from': name, **msg}, [name, *msg['to']])
-                        active = True
                 continue
             for name in wave:
                 say = clip(acts[name].get('say'), WORDS['beat'])
                 if say:
                     self.emit('say', {'speaker': name, 'text': say})
                     self.addressed |= {x for x in self.names if x != name and re.search(rf'\b{x}\b', say)}
-                    active = True
             for name in wave:
                 t = acts[name].get('slayer_shot')
                 if t in self.names and t != name:
                     await self.slayer(name, t)
                     if g.winner:
-                        return True
-            calls += sum(1 for x in wave if g[x].alive and acts[x].get('call_nominations') is True)
-        return not active or calls * 2 > g.alive_count()
+                        return
 
     async def slayer(self, shooter, target):
         g = self.g
@@ -635,13 +628,11 @@ class Game:
     async def daytime(self, n):
         g = self.g
         g.executed_death, self.executed_today = None, False
-        for private, total in ((True, self.private_beats[0 if n == 1 else 1]), (False, self.public_beats)):
+        for private, total in ((True, self.private_beats), (False, self.public_beats)):
             for k in range(1, total + 1):
-                done = await self.beat(n, k, private)
+                await self.beat(n, k, private)
                 if g.winner:
                     return
-                if done:
-                    break
         await self.nominations()
         if g.winner:
             return

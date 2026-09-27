@@ -20,14 +20,14 @@ of the earlier `botc/` lab (kept alongside for reference).
   evil's misinformation).
 - **Night.** Players with night abilities choose in parallel. The engine resolves them in the
   official night order.
-- **Day = private time, then the town square.** Private time is 3 beats (`--private-beats`;
-  `--later-private-beats` can shorten it after day 1); the town square is 3 (`--public-beats`). In
+- **Day = private time, then the town square.** Every day is the same: 3 beats of private time
+  (`--private-beats`), then 3 of town square (`--public-beats`), then nominations; nothing ends a part early. In
   each beat every player gets one turn, in a random order, in groups of three (`--waves`); a group acts simultaneously and later groups see
   earlier ones. In private time a turn is up to three whispers, each to one or two players;
   whispers are completely private (nobody else sees the words or that they happened). In the
   town square a turn is public speech (or a Slayer shot), there is no whispering, and players
   named in one beat go first in the next so they can answer. Nominations
-  open after the last beat, when most living players ask for them, or when a beat is silent.
+  open after the last town-square beat.
 - **Nominations.** Each round, living players who haven't nominated may nominate (with an
   accusation) or pass. One nomination is taken, the nominee defends, then votes go clockwise
   one at a time, starting from the nominee's left, with a running tally. Standard thresholds,

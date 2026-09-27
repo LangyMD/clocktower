@@ -30,7 +30,7 @@ from .schema import player_schema, storyteller_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v4'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
+PROTOCOL = 'v5'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -50,7 +50,7 @@ def shared(args):
 
 def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     characters = args.characters.split(',') if args.characters else None
-    game = Game({}, None, seed=seed, private_beats=(args.private_beats, args.later_private_beats),
+    game = Game({}, None, seed=seed, private_beats=args.private_beats,
                 public_beats=args.public_beats, max_days=args.days, waves=args.waves, characters=characters,
                 setup=args.setup, minion=minion, out=out)
     if env is None:  # sim: random players and Storyteller, no API
@@ -87,7 +87,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'player_effort': args.effort, 'max_output_tokens': args.max_output, 'storyteller': args.storyteller,
               'storyteller_model': args.st_model if args.storyteller == 'model' else None,
               'storyteller_effort': args.st_effort if args.storyteller == 'model' else None, 'seed': seed,
-              'private_beats': [args.private_beats, args.later_private_beats], 'public_beats': args.public_beats,
+              'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
               'max_days': args.days, 'human': human, 'characters': characters, 'setup': args.setup,
               'player_prompt_sha': hashlib.sha256(PLAYER_SYSTEM.encode()).hexdigest()[:12],
@@ -174,8 +174,7 @@ def main(argv=None):
     for name in ('run', 'play', 'sim'):
         p = sub.add_parser(name)
         p.add_argument('--seed', type=int)
-        p.add_argument('--private-beats', type=int, default=3, help='whisper-only beats at the start of day 1')
-        p.add_argument('--later-private-beats', type=int, default=3, help='whisper-only beats on later days')
+        p.add_argument('--private-beats', type=int, default=3, help='whisper-only beats each day')
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=10, help='stop after this many days')
@@ -213,8 +212,8 @@ def main(argv=None):
         from .watch import serve as watch
         watch(args.games, args.port)
     elif args.command == 'site':
-        from .site import build
-        build(args.games, args.out)
+        from .site import build as build_site
+        build_site(args.games, args.out)
     elif args.command == 'replay':
         from .report import replay
         replay(args.path, args.view, args.thinking)

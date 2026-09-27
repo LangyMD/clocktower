@@ -146,8 +146,7 @@ function renderForm() {
   const k = pending.kind; let h = '';
   if (k === 'beat' && pending.mode !== 'private') {
     h += `<textarea id="say" placeholder="Say something to the town (or leave blank)"></textarea>
-      <div class="row"><label><input type="checkbox" id="calln"> Ready for nominations</label>
-      <span class="hint">Slayer shot</span><select id="shot">${options(others(), true)}</select></div>`;
+      <div class="row"><span class="hint">Slayer shot</span><select id="shot">${options(others(), true)}</select></div>`;
   }
   if (k === 'beat' && pending.mode !== 'public') {
     for (const i of [0, 1, 2]) h += `<div class="row" id="wrow${i}" ${i ? 'hidden' : ''}><span class="hint">Whisper</span>
@@ -173,14 +172,12 @@ function renderForm() {
 
 function val(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
 async function send(extra) {
-  const a = {say: val('say'), whispers: [], nominate: null, vote: null, targets: [], slayer_shot: null, call_nominations: false};
+  const a = {say: val('say'), whispers: [], nominate: null, vote: null, targets: [], slayer_shot: null};
   if (pending.kind === 'beat') {
     for (const i of [0, 1, 2]) {
       const to = [val(`wto${i}a`), val(`wto${i}b`)].filter(Boolean), text = val(`wtext${i}`);
       if (to.length && text) a.whispers.push({to: [...new Set(to)], text});
     }
-    const calln = document.getElementById('calln');
-    a.call_nominations = !!(calln && calln.checked);
     a.slayer_shot = val('shot') || null;
   }
   if (pending.kind === 'nominate') a.nominate = val('nom') || null;

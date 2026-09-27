@@ -84,7 +84,9 @@ def make_client():
     workspace = os.environ.get('ANTHROPIC_WORKSPACE_ID')
     if workspace:
         headers['anthropic-workspace-id'] = workspace
-    return anthropic.AsyncAnthropic(default_headers=headers, max_retries=8, timeout=900)
+    # Claude Code on the web keeps ANTHROPIC_API_KEY for itself, so the key can live under another name
+    key = os.environ.get('ANTHROPIC_API_KEY') or os.environ.get('MY_ANTHROPIC_API_KEY')
+    return anthropic.AsyncAnthropic(api_key=key, default_headers=headers, max_retries=8, timeout=900)
 
 
 @dataclass

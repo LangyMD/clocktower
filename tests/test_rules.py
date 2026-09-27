@@ -8,8 +8,7 @@ from clocktower.llm import Reply
 from clocktower.state import Grimoire, chef_choice, pair_choice, setup_error
 
 A, B, C, D, E, F, G, H, I = NAMES
-BLANK = {'say': '', 'whispers': [], 'nominate': None, 'vote': None, 'targets': [], 'slayer_shot': None,
-         'call_nominations': False}
+BLANK = {'say': '', 'whispers': [], 'nominate': None, 'vote': None, 'targets': [], 'slayer_shot': None}
 
 
 class Seat:
@@ -240,12 +239,19 @@ class DayTests(unittest.TestCase):
         self.assertEqual(results[1]['outcome'], 'tie')
         self.assertTrue(g.g[D].alive and g.g[F].alive)
 
+    def test_every_day_runs_all_beats_even_when_silent(self):
+        g = self.prepared(BASE, lambda n, r: None)  # nobody ever says or whispers anything
+        run(g.daytime(1))
+        beats = [e['data']['text'] for e in g.events if e['kind'] == 'header' and '·' in e['data']['text']]
+        self.assertEqual(beats, [f'Day 1 · private time {k}' for k in (1, 2, 3)]
+                         + [f'Day 1 · town square {k}' for k in (1, 2, 3)])
+
     def test_mayor_wins_with_three_alive_and_no_execution(self):
         chars = ['Imp', 'Poisoner', 'Mayor', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
         g = self.prepared(chars, lambda n, r: None)
         for x in (D, E, F, G, H, I):
             g.g.die(g.g[x])
-        g.private_beats, g.public_beats = (1, 1), 1
+        g.private_beats, g.public_beats = 1, 1
         run(g.daytime(3))
         self.assertEqual(g.g.winner, 'good')
 
