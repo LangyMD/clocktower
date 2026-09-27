@@ -1,0 +1,60 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 2,
+  "seed": 20094,
+  "starting": {
+    "Alex": "Butler",
+    "Blair": "Imp",
+    "Casey": "Saint",
+    "Drew": "Poisoner",
+    "Ellis": "Monk",
+    "Frankie": "Mayor",
+    "Gray": "Slayer",
+    "Harper": "Virgin",
+    "Indigo": "Chef"
+  },
+  "final": {
+    "Alex": "Butler",
+    "Blair": "Imp",
+    "Casey": "Saint",
+    "Drew": "Poisoner",
+    "Ellis": "Monk",
+    "Frankie": "Mayor",
+    "Gray": "Slayer",
+    "Harper": "Virgin",
+    "Indigo": "Chef"
+  },
+  "bluffs": [
+    "Washerwoman",
+    "Ravenkeeper",
+    "Fortune Teller"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 0.9171,
+  "calls": 121,
+  "tokens": {
+    "input": 336,
+    "cache_read": 655546,
+    "cache_write": 93345,
+    "output": 55200
+  },
+  "seconds": 415.8,
+  "errors": [
+    "Blair: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhW8YN9vtqSfRfcwfkc'}\")",
+    "Drew: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhW8fJohzo9usucgnJK'}\")"
+  ],
+  "models": {
+    "Alex": "gpt-6-sol",
+    "Blair": "claude-sonnet-5",
+    "Casey": "gpt-6-sol",
+    "Drew": "claude-sonnet-5",
+    "Ellis": "gpt-6-sol",
+    "Frankie": "gpt-6-sol",
+    "Gray": "gpt-6-sol",
+    "Harper": "gpt-6-sol",
+    "Indigo": "gpt-6-sol"
+  }
+}

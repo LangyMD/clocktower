@@ -1,0 +1,65 @@
+{
+  "winner": null,
+  "reason": "stopped after day 2",
+  "stopped": "stopped after day 2",
+  "days": 2,
+  "seed": 999,
+  "starting": {
+    "Alex": "Soldier",
+    "Blair": "Virgin",
+    "Casey": "Monk",
+    "Drew": "Ravenkeeper",
+    "Ellis": "Recluse",
+    "Frankie": "Poisoner",
+    "Gray": "Imp",
+    "Harper": "Mayor",
+    "Indigo": "Drunk"
+  },
+  "final": {
+    "Alex": "Soldier",
+    "Blair": "Virgin",
+    "Casey": "Monk",
+    "Drew": "Ravenkeeper",
+    "Ellis": "Recluse",
+    "Frankie": "Poisoner",
+    "Gray": "Imp",
+    "Harper": "Mayor",
+    "Indigo": "Drunk"
+  },
+  "bluffs": [
+    "Investigator",
+    "Slayer",
+    "Washerwoman"
+  ],
+  "red_herring": null,
+  "drunk_as": "Fortune Teller",
+  "cost": 1.6891,
+  "calls": 225,
+  "tokens": {
+    "input": 847,
+    "cache_read": 2192740,
+    "cache_write": 132192,
+    "output": 41793
+  },
+  "seconds": 411.1,
+  "errors": [
+    "Blair: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVst4Uk9X2RLMS3VJx'}\")",
+    "Harper: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhVtUHVG3aYazctee98'}\")",
+    "Drew: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWKyChqL7YTrNskhHm'}\")",
+    "Alex: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWL3AiP1BppDpCZfy2'}\")",
+    "Casey: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWL5A7hcGyJh8UeagE'}\")",
+    "Ellis: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWLwk33figaDXXFE79'}\")",
+    "Indigo: BadRequestError(\"Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CfUhWLxV3PTDpcdkT21xf'}\")"
+  ],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "gpt-6-sol",
+    "Gray": "gpt-6-sol",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}
