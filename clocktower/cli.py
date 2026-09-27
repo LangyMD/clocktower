@@ -70,7 +70,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
         game.meta['models'][name] = model
         c = conversation(env.client, PLAYER_SYSTEM, player_schema(NAMES), label=name, ledger=env.ledger,
                          semaphore=env.semaphore, on_call=game.record_call, model=model, effort=args.effort,
-                         max_tokens=args.max_output, ttl=ttl)
+                         max_tokens=args.max_output, ttl=ttl, flex=args.flex)
         convs.append((name, c))
         return ModelSeat(c)
 
@@ -81,6 +81,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
               'max_days': args.days, 'human': human, 'characters': characters, 'probes': args.probes,
+              'openai_tier': 'flex' if args.flex else 'default',
               'player_prompt_sha': hashlib.sha256(PLAYER_SYSTEM.encode()).hexdigest()[:12]}
     (out / 'config.json').write_text(json.dumps(config, indent=2))
     return game, convs
@@ -183,6 +184,8 @@ def main(argv=None):
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
             p.add_argument('--concurrency', type=int, default=12, help='API requests in flight')
+            p.add_argument('--flex', action='store_true',
+                           help='OpenAI Flex tier (half price, but throttled under load: calls can take minutes)')
             p.add_argument('--no-probes', dest='probes', action='store_false',
                            help='skip the out-of-game belief probes (probes.jsonl)')
             p.add_argument('--workspace', default=os.environ.get('ANTHROPIC_WORKSPACE_ID', DEFAULT_WORKSPACE))

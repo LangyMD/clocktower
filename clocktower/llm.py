@@ -262,4 +262,5 @@ def conversation(client, system, schema, *, model, **kw):
     if model.startswith('gpt-'):
         kw.pop('ttl', None)
         return OpenAIConversation(system, schema, model=model, **kw)
+    kw.pop('flex', None)
     return ClaudeConversation(client, system, schema, model=model, **kw)

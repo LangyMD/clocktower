@@ -42,7 +42,7 @@ of the earlier `botc/` lab (kept alongside for reference).
 
 Every seat is one append-only model conversation. Claude models go through
 the Anthropic SDK; `gpt-*` models (e.g. `--model gpt-6-astra`) through the OpenAI Responses API
-with encrypted reasoning carried forward (Flex tier). Defaults: `claude-opus-5-5`, players at `high`
+with encrypted reasoning carried forward (standard tier; `--flex` for half-price Flex, which is throttled under load). Defaults: `claude-opus-5-5`, players at `high`
 effort.
 - **Equal budget.** Every model gets the same effort level and the same per-turn output ceiling
   (`--max-output`, thinking included, default 16K). A truncated turn is retried once at the same
