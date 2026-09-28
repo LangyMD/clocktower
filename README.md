@@ -8,15 +8,15 @@ of the earlier `botc/` lab (kept alongside for reference).
 
 - **Setup.** A uniformly random legal set of nine characters is dealt at random.
 - **Storyteller.** A scripted policy (`state.POLICY`), no LLM. Every Storyteller decision is a
-  `Choice` over all its legal values: 3% of the time the Storyteller picks uniformly among them, so
-  no legal option is ever ruled out; otherwise it follows a style, weighted like an experienced
-  human Storyteller: the Drunk usually believes they are an information role; bluffs usually include
-  an information role (and an Outsider in Baron games) and rarely the Drunk's apparent character;
-  impaired players usually get information from one consistent false world (a framed good player
-  is the Demon, the real Demon looks good), answered as a working ability would answer there, though
-  20% of Drunks get true information all game; the Spy
-  usually registers good, as a bluff, an in-play or another good character; the Recluse sometimes
-  registers evil, as a Minion or the Imp; the red herring is usually a Townsfolk; an Investigator's
+  `Choice` over all its legal values, and the pick comes from a random style weighted like an
+  experienced human Storyteller. The style can produce every answer a working ability could give in
+  some legal game (tests check this), so no plausible option is ruled out, and it never produces an
+  impossible one. The Drunk usually believes they are an information role; bluffs usually include an
+  information role (and an Outsider in Baron games) and rarely the Drunk's apparent character;
+  impaired players get information from one consistent false world (a framed good player is the
+  Demon, the real Demon looks good), answered as a working ability would answer there, though 20% of
+  Drunks get true information all game; the Spy usually registers good, as a Demon bluff; the
+  Recluse registers evil half the time; the red herring is usually a Townsfolk; an Investigator's
   second player is usually good. It is free, instant and reproducible, and keeps the Storyteller
   from confounding model comparisons. (An LLM Storyteller was tried in v1–v2; it repeated itself and
   undid evil's misinformation.)
@@ -26,7 +26,7 @@ of the earlier `botc/` lab (kept alongside for reference).
 - **Day = private time, then the town square.** Every day is the same: 3 beats of private time
   (`--private-beats`), then 3 of town square (`--public-beats`), then nominations; nothing ends a part early. In
   each beat every player gets one turn, in a random order, in groups of three (`--waves`); a group acts simultaneously and later groups see
-  earlier ones. In private time a turn is up to three whispers, each to one or two players;
+  earlier ones. In private time a turn is up to two whispers, each to one or two players;
   whispers are completely private (nobody else sees the words or that they happened). In the
   town square a turn is public speech (and optionally a Slayer shot), there is no whispering, and players
   named in one beat go first in the next so they can answer. Nominations

@@ -10,14 +10,14 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
   the user stores it as `MY_ANTHROPIC_API_KEY`; `make_client` reads either), `OPENAI_API_KEY` (for `gpt-*` models). The
   Anthropic key is not workspace-scoped, so every request sends `anthropic-workspace-id`
   (`ANTHROPIC_WORKSPACE_ID`, default in `cli.py`). Without it the API returns a 400.
-- A batch: `python -m clocktower run --games 10 --seed N --out games/v6/NAME` (games go
+- A batch: `python -m clocktower run --games 10 --seed N --out games/v7/NAME` (`--swap` adds each seed with sides swapped) (games go
   under the current protocol version, `PROTOCOL` in `cli.py`; see `games/PROTOCOLS.md`). All games and seats run
   in parallel with no request cap (`--concurrency 0`; rate limits are retried); game k uses seed N+k-1 and rotates the Minion.
   Per-team models and efforts: `--good-model/--evil-model`, `--good-effort/--evil-effort`. Rough cost
   per game (v5): Opus 5.5 ~$4, Sonnet 5 ~$4, GPT-6 Astra ~$8–10 (standard tier; `--flex` is throttled).
   A batch takes as long as its slowest game (Claude ~15 min, Astra ~45 min). Spend is logged in `games/ledger.jsonl` with a cap (`--budget`, default $1000; the
   user has said the budget can grow).
-- After a batch: `python -m clocktower report games/v6/NAME/*` and `python -m clocktower analyze games/v6/*/game-*`, commit the whole batch directory
+- After a batch: `python -m clocktower report games/v7/NAME/*` and `python -m clocktower analyze games/v7/*/game-*`, commit the whole batch directory
   (transcripts, events, conversations, calls) and push, so results survive the session. Then
   republish the viewer: `python -m clocktower site` builds `site/`; publish `site/index.html` with the
   Artifact tool, `url: https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH`, and every other file under
@@ -26,12 +26,14 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
 
 ## Design decisions the user made (don't undo without asking)
 - Memory is the model's own carried-over reasoning; no notebook, no state re-sent.
-- Each day: private time (3 beats, whispers only, invisible to others, up to 3 whispers per turn)
+- Each day: private time (3 beats, whispers only, invisible to others, up to 2 whispers per turn from v7; v5–v6 had 3)
   then the town square (3 beats, public only), then nominations. Same every day, fixed length: no
   early ends, no call-for-nominations. Dead players talk and whisper; only the living nominate.
-- The Storyteller is scripted (`state.POLICY`); the LLM Storyteller was removed. Never exclude a
-  legal Storyteller option: every decision is a `Choice` over all legal values with a uniform floor
-  (`POLICY['any']`), and style is expressed only as weights in POLICY (all judgment calls).
+- The Storyteller is scripted (`state.POLICY`); the LLM Storyteller was removed. Every decision is a
+  `Choice` over all legal values, picked by a random style whose weights are all in POLICY (judgment
+  calls). No random floor (removed in v7): instead the style must be able to produce every answer a
+  working ability could give in some legal game, and never an impossible one (tests check both).
+- Keep the protocol clean: no arbitrary special cases; every rule should be explainable in a line.
 - Nominations: each round everyone eligible is asked at once; one nomination is taken; accusation,
   defense, one comment turn for everyone, then the clockwise vote. Slayer shots on any public turn.
 - Equal budget across models: same effort and per-turn output ceiling (8K tokens, thinking included).

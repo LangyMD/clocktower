@@ -27,6 +27,7 @@ from .state import (POLICY, Grimoire, bluffs_choice, character_choice, chef_choi
                     fortune_teller_choice, info_text, mayor_choice, norm, pair_choice, random_setup, red_herring_choice,
                     setup_error, yes_choice)
 NAMES = ['Alex', 'Blair', 'Casey', 'Drew', 'Ellis', 'Frankie', 'Gray', 'Harper', 'Indigo']
+WHISPERS = 2  # per private-time turn
 WORDS = {'beat': 150, 'whisper': 150, 'nominate': 150, 'defense': 200, 'comment': 150, 'vote': 60}
 
 NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
@@ -326,7 +327,7 @@ class Game:
 
     # ---- day ---------------------------------------------------------------------------------
     def whispers(self, name, action):
-        """Up to three whispers, each to one or two players. Anything beyond that is dropped, and the
+        """Up to WHISPERS whispers, each to one or two players. Anything beyond that is dropped, and the
         sender is told (so they don't believe a player heard what they never received)."""
         out, dropped = [], []
         sent = [w for w in (action.get('whispers') or []) if isinstance(w, dict)]
@@ -335,8 +336,8 @@ class Game:
             text = clip(w.get('text'), WORDS['whisper'])
             if not (to and text):
                 continue
-            if i >= 3:
-                dropped.append(f'your whisper to {", ".join(to)} was not sent (at most three whispers a turn)')
+            if i >= WHISPERS:
+                dropped.append(f'your whisper to {", ".join(to)} was not sent (at most {WHISPERS} whispers a turn)')
                 continue
             if len(to) > 2:
                 dropped.append(f'your whisper to {", ".join(to)} went only to {to[0]} and {to[1]} '
@@ -387,7 +388,7 @@ class Game:
         self.addressed = set()
         self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
         if private:
-            tail = ('Whisper to anyone you like (up to three whispers), or no one. Nobody can address the town '
+            tail = (f'Whisper to anyone you like (up to {WHISPERS} whispers), or no one. Nobody can address the town '
                     'until the town square.')
         else:
             tail = 'Say something to the town, or nothing. No whispering now.'
@@ -425,6 +426,7 @@ class Game:
         self.executed_today = True
         self.emit('execution', {'player': name, 'died': died})
         if died:
+            g.alive_at_execution = g.alive_count()
             saint = g.works(p, 'Saint')
             self.kill(p, 'execution')
             g.executed_death = name

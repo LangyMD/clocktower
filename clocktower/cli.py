@@ -130,12 +130,19 @@ async def run_batch(args):
     limit = asyncio.Semaphore(args.parallel or args.games)
     numbers = parse_only(args.only) if args.only else range(1, args.games + 1)
 
-    async def one(k):  # game k always gets seed base + k - 1 (and a Minion by rotation), so it can be rerun alone
+    swapped = argparse.Namespace(**{**vars(args), 'good_model': args.evil_model or args.model,
+                                    'evil_model': args.good_model or args.model,
+                                    'good_effort': args.evil_effort, 'evil_effort': args.good_effort})
+
+    async def one(k, a=args, suffix=''):  # game k always gets seed base + k - 1 (and a Minion by rotation)
         minion = MINIONS[(k - 1) % len(MINIONS)] if not args.characters else None
         async with limit:
-            return await play_one(args, base + k - 1, root / f'game-{k:02d}', env, minion=minion)
+            return await play_one(a, base + k - 1, root / f'game-{k:02d}{suffix}', env, minion=minion)
 
-    results = await asyncio.gather(*(one(k) for k in numbers))
+    jobs = [one(k) for k in numbers]
+    if args.swap:  # the same seed again with the models' sides swapped, so setup luck cancels in the pair
+        jobs += [one(k, swapped, '-swap') for k in numbers]
+    results = await asyncio.gather(*jobs)
     from .report import main as report
     report(sorted(str(p) for p in root.iterdir() if p.is_dir()))
     return results
@@ -198,6 +205,8 @@ def main(argv=None):
         if name == 'run':
             p.add_argument('--parallel', type=int, default=0, help='games at once in a batch (0 = all)')
             p.add_argument('--only', help='run just these game numbers of the batch, e.g. 13,14,16-20')
+            p.add_argument('--swap', action='store_true',
+                           help='also play every seed with the good and evil models swapped (game-NN-swap)')
         if name == 'play':
             p.add_argument('--seat', default='Casey', choices=NAMES)
             p.add_argument('--port', type=int, default=8765)

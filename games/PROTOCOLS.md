@@ -86,22 +86,33 @@ good-vs-evil pairings, 5 games each, seeds 20000–20099. The Anthropic account 
 twice mid-run: the first time, seats silently passed and 84 games were discarded and rerun; after
 that a failed seat stopped its game (then waited for credit) and stopped games were rerun.
 
-## v7 — draft, not yet run
-Changes from v6, after 8 readers went through the g1 games and a second rules/Storyteller audit
+## v7 — current (Sept 28; not yet run)
+Changes from v6, after 8 readers went through the 100 g1 games and a second rules/Storyteller audit
 (6,000 simulated games):
-- Storyteller misinformation comes from one coherent false world (a framed good player is the
-  Demon, one other player the Minion, the real Demon looks good) and is what a working ability
-  would show there. v6 moved every misinformed value off the truth, which made it close to the
-  opposite of the truth: a misinformed Fortune Teller's answers were inverted, and a known Drunk's
-  Chef/Empath numbers could be read backwards. Now misinformed results look like real ones (some
-  are true where the false world agrees with the real one) and cannot be inverted.
-- A misinformed Librarian is never told "zero Outsiders" (nine players always have some); a
-  misinformed Investigator is shown the Baron only in a Baron game; a Spy registering as a good
-  character is never shown as the recipient's own character.
-- Butler: may vote yes only if their master has already voted yes (their hand is up); otherwise the
-  vote is a no, and only the Butler is told why. v6 accepted a yes before the master voted and then
-  dropped it from the count, so the public roll and the total disagreed, which confirmed Butlers.
-  A poisoned Butler sees the same prompt.
-- The Spy sees the Grimoire (characters, status, reminders) but no longer the verbatim information
-  given that night. A red herring is set whenever anyone believes they are the Fortune Teller (the
-  Drunk too). Vote remarks may be 60 words. Turn prompts no longer say "group w of N".
+- Private time: up to 2 whispers per turn (v6: 3). With 3, every claim reached nearly every seat on
+  day 1, which made role-count solving easy and good won 69% (Astra 20/20 and Sol 18/20 as good).
+- No uniform floor (v6: 3% of every decision uniform over all legal values). The style is itself
+  random and can produce every answer a working ability could give in some legal game (a test
+  checks this per information role); the floor only added impossible answers (a drunk Chef told
+  "4 pairs"), which gave impaired players away.
+- Misinformation comes from one coherent false world: a framed good player is the Demon, one other
+  player the Minion, the real Demon looks good, and the Recluse registers as usual. Results are
+  what a working ability would show there (so they look like real results, and some are true
+  where the false world agrees with the real one). v6 moved every misinformed value off the
+  truth, which made it near-inverted: a misinformed Fortune Teller's answers were the opposite of
+  the truth, and a known Drunk's numbers could be read backwards. A misinformed Undertaker is shown
+  "Imp" only when a Scarlet Woman could have taken over (5+ alive at the execution).
+- A misinformed Librarian is never told "zero Outsiders"; a misinformed Investigator is shown the
+  Baron only in a Baron game; a Spy registering as a good character is never shown as the
+  recipient's own character.
+- Registration is weighted a little more toward evil: the Spy registers evil 10% (v6: 25%), the
+  Recluse 50% (40%), information roles are shown a misregistering Spy/Recluse 50% of the time (30%),
+  and an evil player shown as a good character is a Demon bluff 70% (50%), in play 10% (20%).
+- Butler: may vote yes only if their master has already voted yes; otherwise the vote is a no and
+  only the Butler is told why. (v6 accepted a yes before the master voted and then dropped it,
+  so the public roll and the total disagreed, which confirmed Butlers.)
+- The Spy sees the Grimoire but not the verbatim information given that night. A red herring is
+  set whenever anyone believes they are the Fortune Teller (the Drunk too). Vote remarks may be
+  60 words. Turn prompts no longer say "group w of N" (players used it as a timestamp).
+- Runs: `--swap` plays every seed a second time with the models' sides swapped; `analyze` reports
+  Saint-execution wins per pairing.

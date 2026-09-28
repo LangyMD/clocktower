@@ -368,7 +368,7 @@ class ScriptedStorytellerTests(unittest.TestCase):
         g = Grimoire(NAMES, chars, drunk_as='Empath')
         r = random.Random(5)
         from clocktower.state import empath_choice
-        with policy(any=0, drunk_truthful=0):
+        with policy(drunk_truthful=0):
             answers = {empath_choice(g, g[D]).options(r)['number'] for _ in range(20)}
         self.assertEqual(len(answers), 1)
         framed, evil = g.decoy(g[D], r)
@@ -380,37 +380,47 @@ class ScriptedStorytellerTests(unittest.TestCase):
         g = Grimoire(NAMES, chars, drunk_as='Washerwoman')
         g.bluffs = ['Virgin', 'Slayer', 'Recluse']
         r = random.Random(2)
-        with policy(any=0, drunk_truthful=0, false_vouch_evil=1, as_bluff=1):
+        with policy(drunk_truthful=0, false_vouch_evil=1, as_bluff=1):
             v = pair_choice(g, g[D], 'Washerwoman').options(r)
         self.assertTrue({A, B} & set(v['players']))
         self.assertIn(v['character'], ('Virgin', 'Slayer'))
 
 
-    def test_nothing_legal_is_ruled_out(self):
-        from clocktower.state import character_choice, empath_choice
-        r = random.Random(0)
-        # a drunk Empath can be told any number, a sober Undertaker can see the Recluse as the Imp,
-        # and the Spy can register as a good character that is in play
+    def test_everything_plausible_is_reachable_and_nothing_impossible_appears(self):
+        """No random floor: the style alone can give an impaired player every answer a working ability
+        could give in some legal game (so no plausible option is ruled out), and never an impossible
+        one (which would tell them they are impaired)."""
+        from clocktower.state import chef_choice, character_choice, empath_choice, fortune_teller_choice
         chars = ['Imp', 'Spy', 'Monk', 'Drunk', 'Chef', 'Washerwoman', 'Soldier', 'Recluse', 'Saint']
-        g = Grimoire(NAMES, chars, drunk_as='Empath')
-        c = empath_choice(g, g[D])
-        self.assertEqual({c.options(r)['number'] for _ in range(2000)}, {0, 1, 2})
-        c = character_choice(g, g[E], 'Undertaker', H)
-        self.assertIn('Imp', {c.options(r)['character'] for _ in range(2000)})
-        c = character_choice(g, g[E], 'Undertaker', B)
-        self.assertTrue({'Monk', 'Chef', 'Washerwoman'} & {c.options(r)['character'] for _ in range(2000)})
-        # every legal value has a chance, and only legal values are drawn
-        c = pair_choice(g, g[F], 'Washerwoman')
-        with policy(any=1):
-            seen = {tuple(sorted(v['players'])) + (v['character'],) for v in (c.options(r) for _ in range(20000))}
-        self.assertTrue(all(c.legal({'players': list(k[:2]), 'character': k[2]}) for k in seen))
-        self.assertEqual(len(seen), len(c.keys))
+        seen = {k: set() for k in ('chef', 'empath', 'ft', 'raven', 'undertaker')}
+        for seed in range(3000):
+            r = random.Random(seed)
+            g = Grimoire(NAMES, chars, drunk_as=r.choice(['Chef', 'Empath', 'Fortune Teller', 'Ravenkeeper']))
+            d = g[D]
+            if d.shown == 'Chef':
+                seen['chef'].add(chef_choice(g, d).options(r)['number'])
+            elif d.shown == 'Empath':
+                seen['empath'].add(empath_choice(g, d).options(r)['number'])
+            elif d.shown == 'Fortune Teller':
+                g.red_herring = F
+                seen['ft'].add(fortune_teller_choice(g, d, r.sample([x for x in NAMES if x != D], 2)).options(r)['yes'])
+            else:
+                seen['raven'].add(character_choice(g, d, 'Ravenkeeper', r.choice([A, B, C, E])).options(r)['character'])
+            g.alive_at_execution = r.choice([4, 7])
+            seen['undertaker'].add((g.alive_at_execution,
+                                    character_choice(g, d, 'Undertaker', r.choice([C, E, F])).options(r)['character']))  # not the real Imp: executing it ends the game
+        self.assertEqual(seen['chef'], {0, 1, 2})  # 2 only through the Recluse, as for a working Chef
+        self.assertEqual(seen['empath'], {0, 1, 2})
+        self.assertEqual(seen['ft'], {True, False})
+        self.assertIn('Imp', seen['raven'])
+        self.assertIn((7, 'Imp'), seen['undertaker'])  # a Scarlet Woman could have caught the Demon
+        self.assertNotIn((4, 'Imp'), seen['undertaker'])  # it could not: the game would have ended
 
     def test_the_drunk_is_sometimes_told_the_truth_all_game(self):
         from clocktower.state import empath_choice
         chars = ['Imp', 'Poisoner', 'Monk', 'Drunk', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
         truthful = 0
-        with policy(any=0):
+        with policy():
             for seed in range(200):
                 g = Grimoire(NAMES, chars, drunk_as='Empath')
                 r = random.Random(seed)
@@ -579,7 +589,7 @@ class V6Tests(unittest.TestCase):
         from clocktower.state import empath_choice, fortune_teller_choice, character_choice
         chars = ['Imp', 'Poisoner', 'Monk', 'Drunk', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
         yes = 0
-        with policy(any=0, drunk_truthful=0):
+        with policy(drunk_truthful=0):
             for seed in range(300):
                 r = random.Random(seed)
                 g = Grimoire(NAMES, chars, drunk_as='Empath')
@@ -613,7 +623,7 @@ class V6Tests(unittest.TestCase):
         chars = ['Imp', 'Poisoner', 'Investigator', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
         g = Grimoire(NAMES, chars)
         both = 0
-        with policy(any=0):
+        with policy():
             for i in range(1000):
                 v = pair_choice(g, g[C], 'Investigator').options(random.Random(i))
                 both += set(v['players']) == {A, B}

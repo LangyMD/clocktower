@@ -50,32 +50,32 @@ def random_setup(rng, minion=None):
     return rng.sample(TOWNSFOLK, tf) + rng.sample(OUTSIDERS, os_) + [minion, 'Imp']
 
 
-# How the scripted Storyteller uses its discretion. Every number is a judgment call about
-# what an experienced human Storyteller tends to do; none of them rules a legal option out.
+# How the scripted Storyteller uses its discretion. Every number is a judgment call about what an
+# experienced human Storyteller tends to do. There is no separate random floor: the style is itself
+# random and can produce any answer a working ability could give in some legal game (tests check
+# this), so no plausible option is ever ruled out, and impossible ones never appear.
 POLICY = {
-    'any': 0.03,              # any decision: pick uniformly among all legal values
     # impaired players
-    'drunk_truthful': 0.2,    # per game: the Drunk gets true information (else it follows a false picture)
-    'poisoned_false': 0.8,    # per night: a poisoned player's information follows a false picture (else true)
+    'drunk_truthful': 0.2,    # per game: the Drunk gets true information (else from their false world)
+    'poisoned_false': 0.8,    # per night: a poisoned player's information comes from a false world (else true)
     'false_vouch_evil': 0.7,  # a misinformed Washerwoman's pair includes an evil player (else any player)
-    'false_zero': 0.0,        # a misinformed Librarian is told there are zero Outsiders (9 players always have some)
-    # registration
-    'spy_evil': 0.25,         # the Spy registers as evil
-    'recluse_evil': 0.4,      # the Recluse registers as evil
+    # registration (weighted toward evil, as a Storyteller balancing a 9-player game would)
+    'spy_evil': 0.1,          # the Spy registers as evil
+    'recluse_evil': 0.5,      # the Recluse registers as evil
     'recluse_as_imp': 0.3,    # a Recluse registering as an evil character registers as the Imp (else a Minion)
-    'as_bluff': 0.5,          # an evil player shown as a good character is shown as a Demon bluff,
-    'as_in_play': 0.2,        # or as a good character in play (else one not in play)
-    'misregister_pair': 0.3,  # a Washerwoman/Librarian/Investigator is shown a misregistering Spy/Recluse
+    'as_bluff': 0.7,          # an evil player shown as a good character is shown as a Demon bluff,
+    'as_in_play': 0.1,        # or as a good character in play (else one not in play)
+    'misregister_pair': 0.5,  # a Washerwoman/Librarian/Investigator is shown a misregistering Spy/Recluse
     'recluse_slain': 0.2,     # the Slayer's shot kills the Recluse
     'spy_virgin': 0.2,        # the Spy registers as a Townsfolk to the Virgin
-    # other
-    'mayor_bounce': 0.5,      # an attack on the Mayor kills someone else
+    # setup and other
     'drunk_info_weight': 3,   # the Drunk believes they are an information role, 3x as likely as another
     'bluff_drunk_role': 0.05, # the Drunk's apparent character may be among the Demon's bluffs (else kept out)
     'bluff_drunk': 0.05,      # the Drunk may be among the Demon's bluffs (else kept out)
-    'pair_partner_good': 0.9, # an Investigator's second player is a good player (else anyone)
-    'bounce_evil': 0.05,      # a Mayor bounce may land on the Minion (else a good player)
     'herring_townsfolk': 0.85,  # the red herring is a Townsfolk other than the Fortune Teller (else any good player)
+    'pair_partner_good': 0.9, # an Investigator's second player is a good player (else anyone)
+    'mayor_bounce': 0.5,      # an attack on the Mayor kills someone else
+    'bounce_evil': 0.05,      # a Mayor bounce may land on the Minion (else a good player)
 }
 
 
@@ -104,10 +104,9 @@ class Choice:
         return _key(value) in self.keys
 
     def options(self, r):
-        """The scripted Storyteller's pick: uniform over every legal value with probability
-        POLICY['any'], otherwise the style (which is always legal)."""
-        if self.auto or r.random() < POLICY['any']:
-            return r.choice(self.values)
+        """The scripted Storyteller's pick: the style (random, and always legal)."""
+        if self.auto:
+            return self.values[0]
         return norm(self.style(r))
 
 
@@ -124,6 +123,7 @@ class Grimoire:
         self.virgin_used = False
         self.day = 0
         self.executed_death = None  # who died by execution today (Undertaker)
+        self.alive_at_execution = 0  # players alive just before that execution
         self.decoys = {}            # impaired player -> the false picture their information follows
         self.truthful = {}          # Drunk -> whether their information is true this game
         self.winner = None
@@ -206,6 +206,15 @@ class Grimoire:
             partner = r.choice([q for q in others if q is not framed and q.character != 'Imp'])
             self.decoys[p.name] = (framed.name, {framed.name, partner.name})
         return self.decoys[p.name]
+
+    def false_evil(self, p, r):
+        """Who registers as evil in p's false world this time: its two evil players, plus the Recluse
+        by the usual registration chance (as it would for a working ability)."""
+        evil = set(self.decoy(p, r)[1])
+        for q in self.players:
+            if q.character == 'Recluse' and not self.is_poisoned(q) and r.random() < POLICY['recluse_evil']:
+                evil.add(q.name)
+        return evil
 
     def misinformed(self, p, r):
         """Whether the scripted Storyteller gives this impaired player false information now. The
@@ -365,8 +374,6 @@ def pair_choice(g, p, ability):
                 shown = r.choice(evil) if evil and r.random() < POLICY['false_vouch_evil'] else r.choice(others)
                 return false_pair(r, shown, [g.fake_good(r) for _ in range(6)])
             if ability == 'Librarian':
-                if r.random() < POLICY['false_zero']:
-                    return {'players': [], 'character': None}
                 return false_pair(r, r.choice(evil + [framed]), [g.fake_good(r, (OUTSIDERS,)) for _ in range(6)])
             minions = MINIONS if 'Baron' in g.in_play() else [m for m in MINIONS if m != 'Baron']
             return false_pair(r, framed, minions)  # frame a good player
@@ -406,7 +413,7 @@ def chef_choice(g, p):
 
     def style(r):
         if g.impaired(p) and g.misinformed(p, r):
-            return {'number': _pairs(ring, g.decoy(p, r)[1])}
+            return {'number': _pairs(ring, g.false_evil(p, r))}
         return {'number': _pairs(ring, g.sample_evil(r))}
     return Choice(f'Chef:{p.name}', [{'number': x} for x in values], style)
 
@@ -418,7 +425,8 @@ def empath_choice(g, p):
 
     def style(r):
         if g.impaired(p) and g.misinformed(p, r):
-            return {'number': sum(1 for q in nb if q.name in g.decoy(p, r)[1])}
+            evil = g.false_evil(p, r)
+            return {'number': sum(1 for q in nb if q.name in evil)}
         evil = g.sample_evil(r)
         return {'number': sum(1 for q in nb if q.name in evil)}
     return Choice(f'Empath:{p.name}', [{'number': x} for x in values], style)
@@ -433,7 +441,8 @@ def fortune_teller_choice(g, p, targets):
     def style(r):
         if impaired and g.misinformed(p, r):  # in the false world the framed player is the Demon
             framed, _ = g.decoy(p, r)
-            return {'yes': any(t in (framed, g.red_herring) for t in targets)}
+            recluse = any(g[t].character == 'Recluse' and r.random() < POLICY['recluse_evil'] for t in targets)
+            return {'yes': recluse or any(t in (framed, g.red_herring) for t in targets)}
         if len(possible) == 1:
             return {'yes': next(iter(possible))}
         return {'yes': r.random() < POLICY['recluse_evil']}
@@ -458,8 +467,9 @@ def character_choice(g, p, ability, target):
             framed, evil = g.decoy(p, r)
             if t.evil:
                 return {'character': other_good(r)}
-            if t.name in evil:  # an executed "Imp" with the game going on would give the lie away
-                imp = t.name == framed and ability == 'Ravenkeeper'
+            if t.name in evil:  # the framed player is the false world's Imp; an executed Imp is only
+                # consistent with the game going on if a Scarlet Woman could have taken over (5+ alive)
+                imp = t.name == framed and (ability == 'Ravenkeeper' or g.alive_at_execution >= 5)
                 return {'character': 'Imp' if imp else r.choice(MINIONS)}
             return {'character': other_good(r)}
         if t.character == 'Spy' and len(values) > 1 and r.random() > POLICY['spy_evil']:
