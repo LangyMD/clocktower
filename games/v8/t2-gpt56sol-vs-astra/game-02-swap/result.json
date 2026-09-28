@@ -1,0 +1,66 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 3,
+  "seed": 50121,
+  "starting": {
+    "Alex": "Spy",
+    "Blair": "Imp",
+    "Casey": "Recluse",
+    "Drew": "Monk",
+    "Ellis": "Drunk",
+    "Frankie": "Butler",
+    "Gray": "Saint",
+    "Harper": "Librarian",
+    "Indigo": "Virgin",
+    "Jules": "Empath",
+    "Kit": "Baron",
+    "Logan": "Soldier"
+  },
+  "final": {
+    "Alex": "Spy",
+    "Blair": "Imp",
+    "Casey": "Recluse",
+    "Drew": "Monk",
+    "Ellis": "Drunk",
+    "Frankie": "Butler",
+    "Gray": "Saint",
+    "Harper": "Librarian",
+    "Indigo": "Virgin",
+    "Jules": "Empath",
+    "Kit": "Baron",
+    "Logan": "Soldier"
+  },
+  "bluffs": [
+    "Investigator",
+    "Fortune Teller",
+    "Mayor"
+  ],
+  "red_herring": null,
+  "drunk_as": "Chef",
+  "cost": 14.184,
+  "calls": 501,
+  "tokens": {
+    "input": 1503,
+    "cache_read": 6130913,
+    "cache_write": 308137,
+    "output": 151275
+  },
+  "seconds": 1709.1,
+  "errors": [],
+  "models": {
+    "Alex": "gpt-5.6-sol",
+    "Blair": "gpt-5.6-sol",
+    "Casey": "gpt-6-astra",
+    "Drew": "gpt-6-astra",
+    "Ellis": "gpt-6-astra",
+    "Frankie": "gpt-6-astra",
+    "Gray": "gpt-6-astra",
+    "Harper": "gpt-6-astra",
+    "Indigo": "gpt-6-astra",
+    "Jules": "gpt-6-astra",
+    "Kit": "gpt-5.6-sol",
+    "Logan": "gpt-6-astra"
+  }
+}

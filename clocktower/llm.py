@@ -214,7 +214,9 @@ class ClaudeConversation(_Base):
                         **self._thinking()) as stream:
                     return await stream.get_final_message()
             except anthropic.APIStatusError as e:
-                if 'credit balance' not in str(e) or waited >= CREDIT_WAIT:
+                # out of credit (auto-reload lagging) or overloaded after the client's own retries: wait
+                transient = 'credit balance' in str(e) or 'Overloaded' in str(e) or getattr(e, 'status_code', 0) >= 500
+                if not transient or waited >= CREDIT_WAIT:
                     raise
                 await asyncio.sleep(30)
                 waited += 30

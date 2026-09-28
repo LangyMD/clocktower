@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Drew: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVtXCMcisEFYk9diw4n'}\")",
+  "stopped": "seat failed: Drew: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVtXCMcisEFYk9diw4n'}\")",
+  "days": 3,
+  "seed": 50153,
+  "starting": {
+    "Alex": "Empath",
+    "Blair": "Saint",
+    "Casey": "Recluse",
+    "Drew": "Imp",
+    "Ellis": "Librarian",
+    "Frankie": "Butler",
+    "Gray": "Scarlet Woman",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Slayer",
+    "Jules": "Washerwoman",
+    "Kit": "Baron",
+    "Logan": "Drunk"
+  },
+  "final": {
+    "Alex": "Empath",
+    "Blair": "Saint",
+    "Casey": "Recluse",
+    "Drew": "Imp",
+    "Ellis": "Librarian",
+    "Frankie": "Butler",
+    "Gray": "Scarlet Woman",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Slayer",
+    "Jules": "Washerwoman",
+    "Kit": "Baron",
+    "Logan": "Drunk"
+  },
+  "bluffs": [
+    "Investigator",
+    "Soldier",
+    "Chef"
+  ],
+  "red_herring": "Alex",
+  "drunk_as": "Fortune Teller",
+  "cost": 5.8875,
+  "calls": 312,
+  "tokens": {
+    "input": 323375,
+    "cache_read": 3228997,
+    "cache_write": 100047,
+    "output": 229987
+  },
+  "seconds": 1816.1,
+  "errors": [
+    "Drew: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVtXCMcisEFYk9diw4n'}\")"
+  ],
+  "models": {
+    "Alex": "gpt-5.2",
+    "Blair": "gpt-5.2",
+    "Casey": "gpt-5.2",
+    "Drew": "claude-opus-4-6",
+    "Ellis": "gpt-5.2",
+    "Frankie": "gpt-5.2",
+    "Gray": "claude-opus-4-6",
+    "Harper": "gpt-5.2",
+    "Indigo": "gpt-5.2",
+    "Jules": "gpt-5.2",
+    "Kit": "claude-opus-4-6",
+    "Logan": "gpt-5.2"
+  }
+}

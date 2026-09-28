@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Ellis: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVtVd6y6MZkeGerf4B7'}\")",
+  "stopped": "seat failed: Ellis: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVtVd6y6MZkeGerf4B7'}\")",
+  "days": 2,
+  "seed": 50022,
+  "starting": {
+    "Alex": "Recluse",
+    "Blair": "Monk",
+    "Casey": "Fortune Teller",
+    "Drew": "Saint",
+    "Ellis": "Scarlet Woman",
+    "Frankie": "Virgin",
+    "Gray": "Ravenkeeper",
+    "Harper": "Imp",
+    "Indigo": "Soldier",
+    "Jules": "Undertaker",
+    "Kit": "Spy",
+    "Logan": "Librarian"
+  },
+  "final": {
+    "Alex": "Recluse",
+    "Blair": "Monk",
+    "Casey": "Fortune Teller",
+    "Drew": "Saint",
+    "Ellis": "Scarlet Woman",
+    "Frankie": "Virgin",
+    "Gray": "Ravenkeeper",
+    "Harper": "Imp",
+    "Indigo": "Soldier",
+    "Jules": "Undertaker",
+    "Kit": "Spy",
+    "Logan": "Librarian"
+  },
+  "bluffs": [
+    "Empath",
+    "Chef",
+    "Washerwoman"
+  ],
+  "red_herring": "Logan",
+  "drunk_as": null,
+  "cost": 9.6916,
+  "calls": 239,
+  "tokens": {
+    "input": 22427,
+    "cache_read": 3420443,
+    "cache_write": 401531,
+    "output": 214387
+  },
+  "seconds": 1852.6,
+  "errors": [
+    "Ellis: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVtVd6y6MZkeGerf4B7'}\")"
+  ],
+  "models": {
+    "Alex": "claude-opus-4-7",
+    "Blair": "claude-opus-4-7",
+    "Casey": "claude-opus-4-7",
+    "Drew": "claude-opus-4-7",
+    "Ellis": "claude-opus-4-6",
+    "Frankie": "claude-opus-4-7",
+    "Gray": "claude-opus-4-7",
+    "Harper": "claude-opus-4-6",
+    "Indigo": "claude-opus-4-7",
+    "Jules": "claude-opus-4-7",
+    "Kit": "claude-opus-4-6",
+    "Logan": "claude-opus-4-7"
+  }
+}

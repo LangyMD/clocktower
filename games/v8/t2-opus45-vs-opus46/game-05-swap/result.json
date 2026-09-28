@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Gray: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVpQK1DA67RxYdkhZBC'}\")",
+  "stopped": "seat failed: Gray: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVpQK1DA67RxYdkhZBC'}\")",
+  "days": 2,
+  "seed": 50014,
+  "starting": {
+    "Alex": "Chef",
+    "Blair": "Drunk",
+    "Casey": "Empath",
+    "Drew": "Virgin",
+    "Ellis": "Saint",
+    "Frankie": "Slayer",
+    "Gray": "Investigator",
+    "Harper": "Butler",
+    "Indigo": "Poisoner",
+    "Jules": "Recluse",
+    "Kit": "Imp",
+    "Logan": "Baron"
+  },
+  "final": {
+    "Alex": "Chef",
+    "Blair": "Drunk",
+    "Casey": "Empath",
+    "Drew": "Virgin",
+    "Ellis": "Saint",
+    "Frankie": "Slayer",
+    "Gray": "Investigator",
+    "Harper": "Butler",
+    "Indigo": "Poisoner",
+    "Jules": "Recluse",
+    "Kit": "Imp",
+    "Logan": "Baron"
+  },
+  "bluffs": [
+    "Librarian",
+    "Mayor",
+    "Fortune Teller"
+  ],
+  "red_herring": null,
+  "drunk_as": "Washerwoman",
+  "cost": 8.1524,
+  "calls": 228,
+  "tokens": {
+    "input": 106707,
+    "cache_read": 2493745,
+    "cache_write": 304145,
+    "output": 178845
+  },
+  "seconds": 1765.9,
+  "errors": [
+    "Gray: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVVpQK1DA67RxYdkhZBC'}\")"
+  ],
+  "models": {
+    "Alex": "claude-opus-4-6",
+    "Blair": "claude-opus-4-6",
+    "Casey": "claude-opus-4-6",
+    "Drew": "claude-opus-4-6",
+    "Ellis": "claude-opus-4-6",
+    "Frankie": "claude-opus-4-6",
+    "Gray": "claude-opus-4-6",
+    "Harper": "claude-opus-4-6",
+    "Indigo": "claude-opus-4-5-20251101",
+    "Jules": "claude-opus-4-6",
+    "Kit": "claude-opus-4-5-20251101",
+    "Logan": "claude-opus-4-5-20251101"
+  }
+}

@@ -6,7 +6,9 @@ Every minute it reads the games under the given directories and checks, per mode
 by a failed seat, turns lost (truncated or refused twice, so the seat passed), the share of game
 calls that hit the output ceiling, refusals, stalls (no new calls for 10 minutes) and spend. On any
 alarm it kills the batch processes writing there and exits with a report, so a broken run costs
-minutes, not the whole budget. With --review-after it also exits (without pausing) after that many
+minutes, not the whole budget. Only overspend kills the batch processes (which loses every game in
+progress); any other alarm exits with a report and leaves the games running, since a game that hits
+a hard error stops by itself and can be rerun. With --review-after it also exits after that many
 minutes, as a checkpoint for reading transcripts.
 """
 from __future__ import annotations
@@ -108,8 +110,11 @@ def main(roots, max_spend=None, review_after=None, every=60, stall=600):
         if running and s['last_call'] and time.time() - s['last_call'] > stall:
             found.append(f'no new calls for {int(time.time() - s["last_call"])}s')
         if found:
-            pause(roots)
-            print('PAUSED\n' + '\n'.join(found) + '\n' + report(s))
+            over = bool(max_spend and s['cost'] > max_spend)
+            if over:
+                pause(roots)
+            print(('PAUSED (overspend)\n' if over else 'ALERT (games still running)\n') + '\n'.join(found)
+                  + '\n' + report(s))
             return 1
         if not running and s['games']:
             print('FINISHED\n' + report(s))
