@@ -120,3 +120,14 @@ Changes from v6, after 8 readers went through the 100 g1 games and a second rule
   the Storyteller picks a living Minion. The default is still nine. The day cap is 15.
 - Runs: `--swap` plays every seed a second time with the models' sides swapped; `analyze` reports
   Saint-execution wins per pairing.
+
+### Model memory check (Sept 28)
+Does a model see its own earlier reasoning on the next turn? Turn 1: "think of a secret number and
+animal, reply only ok"; turn 2: "reveal them, or say NO ACCESS". Each model ran 3 trials with its
+reasoning carried back (as the engine does) and 3 with it stripped (control).
+- Sees its earlier reasoning: GPT-5.5, GPT-5.6 Sol, GPT-6 Astra, GPT-6 Sol, Claude Opus 4.5 (and,
+  per Anthropic's docs, every later Claude; Opus 5.5's reveal turn is blocked by its
+  reasoning-extraction classifier).
+- Replies only (NO ACCESS even when carried): o3, GPT-5.1, GPT-5.2, GPT-5.4, Claude Sonnet 4.5.
+- Not testable: GPT-5 (requires a verified OpenAI organization).
+The engine records each team's memory mode in config.json (`good_memory`, `evil_memory`).
