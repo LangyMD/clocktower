@@ -205,15 +205,17 @@ class Grimoire:
 
     def decoy(self, p, r):
         """The false world an impaired player's information comes from, fixed per player so it stays
-        consistent from night to night: a framed good player is the Demon, one other non-Demon player
-        the Minion, and everyone else (the real Demon included) is good. Misinformed results are what
+        consistent from night to night: a framed good player is the Demon, as many other non-Demon
+        players as the game has Minions are the Minions, and everyone else (the real Demon included)
+        is good. Misinformed results are what
         a working ability would show in that world, so they look like real results: never inverted,
         and sometimes true where the false world agrees with the real one."""
         if p.name not in self.decoys:
             others = [q for q in self.players if q is not p]
             framed = r.choice([q for q in others if not q.evil])
-            partner = r.choice([q for q in others if q is not framed and q.character != 'Imp'])
-            self.decoys[p.name] = (framed.name, {framed.name, partner.name})
+            minions = sum(1 for q in self.players if q.character in MINIONS) or 1
+            partners = r.sample([q for q in others if q is not framed and q.character != 'Imp'], minions)
+            self.decoys[p.name] = (framed.name, {framed.name, *(q.name for q in partners)})
         return self.decoys[p.name]
 
     def false_evil(self, p, r):
@@ -246,9 +248,10 @@ class Grimoire:
                 out.add(q.name)
         return out
 
-    def fake_good(self, r, kinds=(TOWNSFOLK,), avoid=()):
-        """A good character to show for an evil player: a Demon bluff, one in play, or another."""
-        pool = [c for k in kinds for c in k if c not in avoid]
+    def fake_good(self, r, kinds=(TOWNSFOLK,), avoid=(), bluffs=True):
+        """A good character to show for an evil player: a Demon bluff, one in play, or another. With
+        bluffs=False (for a good player) never a Demon bluff: no good player can be one in any world."""
+        pool = [c for k in kinds for c in k if c not in avoid and (bluffs or c not in self.bluffs)]
         bluffs = [c for c in pool if c in self.bluffs]
         in_play = [c for c in pool if c in self.in_play() and c not in bluffs]
         other = [c for c in pool if c not in bluffs and c not in in_play]
@@ -381,9 +384,10 @@ def pair_choice(g, p, ability):
             evil = [q.name for q in g.players if q.evil and q is not p]
             if ability == 'Washerwoman':  # usually vouch for an evil player
                 shown = r.choice(evil) if evil and r.random() < POLICY['false_vouch_evil'] else r.choice(others)
-                return false_pair(r, shown, [g.fake_good(r) for _ in range(6)])
+                return false_pair(r, shown, [g.fake_good(r, bluffs=g[shown].evil) for _ in range(6)])
             if ability == 'Librarian':
-                return false_pair(r, r.choice(evil + [framed]), [g.fake_good(r, (OUTSIDERS,)) for _ in range(6)])
+                shown = r.choice(evil + [framed])
+                return false_pair(r, shown, [g.fake_good(r, (OUTSIDERS,), bluffs=g[shown].evil) for _ in range(6)])
             minions = MINIONS if 'Baron' in g.in_play() else [m for m in MINIONS if m != 'Baron']
             return false_pair(r, framed, minions)  # frame a good player
         real = [(q.name, q.character) for q in g.players if q is not p and q.character in group]
@@ -464,23 +468,25 @@ def character_choice(g, p, ability, target):
     impaired = g.impaired(p)
     values = ALL if impaired else sorted(g.registers_as(t))
 
-    def other_good(r):  # a good character the target is not (nor believes they are), nor the recipient's
+    def as_good(r):  # an evil player shown as a good character (usually a Demon bluff), never the recipient's
         for _ in range(30):
             c = g.fake_good(r, (TOWNSFOLK, OUTSIDERS))
-            if c not in (t.character, t.shown, p.shown):
+            if c != p.shown:
                 return c
         return c
 
     def style(r):
-        if impaired and g.misinformed(p, r):
+        if impaired and g.misinformed(p, r):  # what a working ability would show in the false world
             framed, evil = g.decoy(p, r)
-            if t.evil:
-                return {'character': other_good(r)}
             if t.name in evil:  # the framed player is the false world's Imp; an executed Imp is only
                 # consistent with the game going on if a Scarlet Woman could have taken over (5+ alive)
                 imp = t.name == framed and (ability == 'Ravenkeeper' or g.alive_at_execution >= 5)
                 return {'character': 'Imp' if imp else r.choice(MINIONS)}
-            return {'character': other_good(r)}
+            if t.evil:  # the real evil player is good in the false world
+                return {'character': as_good(r)}
+            if t.character == 'Recluse' and r.random() < POLICY['recluse_evil']:
+                return {'character': g.evil_character(r)}
+            return {'character': t.character}  # an unframed good player is who they are
         if t.character == 'Spy' and len(values) > 1 and r.random() > POLICY['spy_evil']:
             return {'character': g.fake_good(r, (TOWNSFOLK, OUTSIDERS))}
         if t.character == 'Recluse' and len(values) > 1 and r.random() < POLICY['recluse_evil']:

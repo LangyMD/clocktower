@@ -86,7 +86,7 @@ good-vs-evil pairings, 5 games each, seeds 20000–20099. The Anthropic account 
 twice mid-run: the first time, seats silently passed and 84 games were discarded and rerun; after
 that a failed seat stopped its game (then waited for credit) and stopped games were rerun.
 
-## v7 — current (Sept 28; not yet run)
+## v7 (Sept 28)
 Changes from v6, after 8 readers went through the 100 g1 games and a second rules/Storyteller audit
 (6,000 simulated games):
 - Private time: up to 2 whispers per turn (v6: 3). With 3, every claim reached nearly every seat on
@@ -135,3 +135,24 @@ reasoning carried back (as the engine does) and 3 with it stripped (control).
 - Replies only (NO ACCESS even when carried): o3, GPT-5.1, GPT-5.2, GPT-5.4, Claude Sonnet 4.5.
 - Not testable: GPT-5 (requires a verified OpenAI organization).
 The engine records each team's memory mode in config.json (`good_memory`, `evil_memory`).
+
+Calibration c1 (Sept 28): Opus 5.5 vs Opus 5.5 and GPT-6 Sol vs Sol, at 9 and 12 players, 10 games
+each (seeds 30000–30309). Evil won 2, 3, 2, 2 of 10. Four readers found good's edge is mostly skill
+and the claim meta (near-universal day-1 claims make role counts solvable), plus three engine
+issues, fixed in v8. Twelve players add real two-Minion play (busing, starpasses, Scarlet Woman
+catches, joint framing); Opus games ran a day longer at 12, Sol games did not.
+
+## v8 — current (Sept 28)
+v7 plus three fixes from the c1 calibration:
+- The false world behind misinformation has as many Minions as the real game (v7 always had one,
+  which biased false Chef/Empath numbers low at 12 players).
+- Misinformation about a good player follows the false world: a misinformed Undertaker or
+  Ravenkeeper sees an unframed good player as their real character (the Recluse registering as
+  usual), and no good player is ever shown as one of the Demon's bluffs (none can be one in any
+  world). v7 showed them a random other character, which exposed the Drunk and collided with evil's
+  bluff claims.
+- Butler: when the Butler's turn comes before their master's, the master is asked first (their vote
+  is still shown at their own seat), so the Butler sees whether their master's hand is up and may
+  vote with them. v7's strict rule locked Butlers out whenever the master sat later (13 of 21 and
+  17 of 35 Butler votes in two batches).
+- The per-turn ceiling is 4K and replies-only models are told so (see v7 notes).

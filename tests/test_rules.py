@@ -216,12 +216,19 @@ class DayTests(unittest.TestCase):
         vote = next(e for e in g.events if e['kind'] == 'vote' and e['data']['voter'] == H)
         self.assertFalse(vote['data']['yes'])  # shown as a no: nothing public reveals the Butler
         g = self.prepared(BASE, self.nominate(C, D, yes=[A, B, C, E, H]))
-        g.g.master = I  # votes after the Butler: their hand isn't up yet, so the Butler cannot vote yes
+        g.g.master = I  # votes after the Butler, and votes no: their hand is down, so the Butler cannot vote yes
         run(g.nominations())
         vote = next(e for e in g.events if e['kind'] == 'vote' and e['data']['voter'] == H)
         self.assertFalse(vote['data']['yes'])
         result = next(e for e in g.events if e['kind'] == 'vote_result')
         self.assertEqual(result['data']['votes'], 4)  # the public roll and the count always agree
+        g = self.prepared(BASE, self.nominate(C, D, yes=[A, B, C, E, H, I]))
+        g.g.master = I  # votes after the Butler, and votes yes: asked first, so the Butler sees their hand up
+        run(g.nominations())
+        votes = [e['data']['voter'] for e in g.events if e['kind'] == 'vote']
+        self.assertEqual(votes, g.vote_order(D))  # still shown in seat order
+        vote = next(e for e in g.events if e['kind'] == 'vote' and e['data']['voter'] == H)
+        self.assertTrue(vote['data']['yes'])
         g = self.prepared(BASE, self.nominate(C, D, yes=[A, B, C, E, F, H]))
         g.g.master = F  # votes before the Butler, and votes yes: the Butler may vote
         run(g.nominations())

@@ -469,11 +469,10 @@ class Game:
         g, n = self.g, self.day
         needed = math.ceil(g.alive_count() / 2)
         required = max(needed, top + 1)
-        yes, voted = [], set()
-        for voter in self.vote_order(nominee):
+        yes, voted, early = [], set(), {}
+
+        async def ask_vote(voter):
             p = g[voter]
-            if not p.alive and not p.ghost_vote:
-                continue
             lines = [f'Vote: should {nominee} be executed? It takes {required} yes votes to put them on the block']
             if block:
                 lines[0] += f' (replacing {block}, who has {top})'
@@ -484,24 +483,32 @@ class Game:
             if not p.alive:
                 lines.append('You are dead: voting yes uses your one ghost vote.')
             if p.character == 'Butler' and p.alive and g.master:  # poisoned or not: the Butler can't tell
-                if g.master in yes:
-                    seen = 'they voted yes, so you may vote'
-                elif g.master in voted:
-                    seen = 'they voted no, so you may not vote yes'
-                else:
-                    seen = 'they vote after you, so their hand is not up and you may not vote yes'
-                lines.append(f'Your master is {g.master} ({seen}).')
+                up = g.master in yes or early.get(g.master, (False,))[0]
+                lines.append(f'Your master is {g.master}: their hand is {"up, so you may vote" if up else "down, so you may not vote yes"}.')
             lines.append('Set `vote` to true or false; `say` may hold a very short remark (optional; don\'t just restate your vote).')
             a = await self.ask(voter, Request('vote', ' '.join(lines), n, options=[nominee]))
             if not isinstance(a.get('vote'), bool):  # no vote given: ask once more rather than assume no
                 a = await self.ask(voter, Request('vote', 'Your vote was missing. Set `vote` to true (yes) or '
                                                           f'false (no): should {nominee} be executed?', n,
                                                   options=[nominee]))
-            v = a.get('vote') is True
-            remark = clip(a.get('say'), WORDS['vote'])
-            if v and g.works(p, 'Butler') and g.master and g.master not in yes:
+            return a.get('vote') is True, clip(a.get('say'), WORDS['vote'])
+
+        def can_vote(q):
+            return q.alive or q.ghost_vote
+
+        for voter in self.vote_order(nominee):
+            p = g[voter]
+            if not can_vote(p):
+                continue
+            master = g[g.master] if p.character == 'Butler' and p.alive and g.master else None
+            if master and master.name not in voted and master.name not in early and can_vote(master):
+                # hands go up together: a master who votes later is asked now, so the Butler can see whether
+                # their hand is up (the master's vote is still shown at their own seat)
+                early[master.name] = await ask_vote(master.name)
+            v, remark = early.pop(voter) if voter in early else await ask_vote(voter)
+            if v and g.works(p, 'Butler') and g.master and not (g.master in yes or early.get(g.master, (False,))[0]):
                 v, remark = False, ''  # a Butler may only raise their hand while their master's is up
-                self.emit('notice', {'text': f'(Your master {g.master} has not voted yes, so you cannot vote.)'}, [voter])
+                self.emit('notice', {'text': f'(Your master {g.master} is not voting yes, so you cannot vote.)'}, [voter])
             ghost = v and not p.alive
             if ghost:
                 p.ghost_vote = False
