@@ -162,3 +162,9 @@ because (1) the OpenAI organization hit its configured spend limit, which stoppe
 (2) the 4K per-turn ceiling cut real turns far more than in the smoke tests: GPT-5.1 33% of game
 calls truncated (135 turns lost), o3 6%, Opus 4.8 4%, GPT-5.4 3%, Fable 5 2%. The partial games in
 games/v8/t1-* are not usable for ratings.
+
+v8 from Sept 28 (after t1): the per-turn output ceiling is 16K tokens, a guard against runaway loops
+rather than a thinking budget (a 4K ceiling cut 33% of GPT-5.1's turns and lost 135 of them;
+replies-only models re-derive the game every turn). Each model's thinking tokens and cost per game
+are reported next to its rating. Runs are supervised: `python -m clocktower supervise` pauses a run
+on stopped games, lost turns, >1% capped turns, refusals, stalls or overspend.

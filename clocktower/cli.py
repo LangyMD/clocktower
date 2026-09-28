@@ -168,6 +168,10 @@ def main(argv=None):
     rp.add_argument('paths', nargs='+')
     an = sub.add_parser('analyze')
     an.add_argument('paths', nargs='+')
+    sv = sub.add_parser('supervise', help='watch running batches; pause them on errors, lost turns or overspend')
+    sv.add_argument('roots', nargs='+', help='batch directory prefixes, e.g. games/v8/t2')
+    sv.add_argument('--max-spend', type=float, help='pause if these games cost more than this (USD)')
+    sv.add_argument('--review-after', type=float, help='exit (without pausing) after this many minutes')
     wp = sub.add_parser('watch')
     wp.add_argument('--port', type=int, default=8800)
     wp.add_argument('--games', default=str(GAMES))
@@ -198,7 +202,7 @@ def main(argv=None):
             p.add_argument('--effort', default='high', help='player reasoning effort (same for every model)')
             p.add_argument('--good-effort', help='reasoning effort for the good team (default --effort)')
             p.add_argument('--evil-effort', help='reasoning effort for the evil team (default --effort)')
-            p.add_argument('--max-output', type=int, default=4000,
+            p.add_argument('--max-output', type=int, default=16000,
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
             p.add_argument('--concurrency', type=int, default=0,
@@ -221,6 +225,9 @@ def main(argv=None):
     if args.command == 'report':
         from .report import main as report
         report(args.paths)
+    elif args.command == 'supervise':
+        from .supervise import main as supervise
+        raise SystemExit(supervise(args.roots, args.max_spend, args.review_after))
     elif args.command == 'analyze':
         from .analyze import main as analyze
         analyze(args.paths)
