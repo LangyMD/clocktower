@@ -18,6 +18,7 @@ import hashlib
 import json
 import os
 import random
+import shutil
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -141,8 +142,14 @@ async def run_batch(args):
 
     async def one(k, a=args, suffix=''):  # game k always gets seed base + k - 1 (and a Minion by rotation)
         minion = MINIONS[(k - 1) % len(MINIONS)] if not args.characters else None
+        out = root / f'game-{k:02d}{suffix}'
+        done = out / 'result.json'
+        if done.exists() and json.loads(done.read_text()).get('winner'):
+            return json.loads(done.read_text())  # finished earlier: keep it (so a batch can be resumed)
+        if out.exists():
+            shutil.rmtree(out)  # an unfinished game restarts from scratch
         async with limit:
-            return await play_one(a, base + k - 1, root / f'game-{k:02d}{suffix}', env, minion=minion)
+            return await play_one(a, base + k - 1, out, env, minion=minion)
 
     jobs = [one(k) for k in numbers]
     if args.swap:  # the same seed again with the models' sides swapped, so setup luck cancels in the pair

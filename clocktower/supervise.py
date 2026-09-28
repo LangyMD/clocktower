@@ -57,8 +57,16 @@ def scan(roots):
     return s
 
 
-def alarms(s, max_spend, cap_rate=0.01, lost_rate=0.005, refusal_rate=0.01, min_calls=100):
-    out = [f'game stopped: {x}' for x in s['stopped']]
+SYSTEMIC = ('credit balance', 'spend limit', 'insufficient_quota', 'authentication', 'permission', 'invalid_request')
+
+
+def alarms(s, max_spend, cap_rate=0.01, lost_rate=0.005, refusal_rate=0.01, min_calls=100, max_stopped=3):
+    """Reasons to pause. A single stopped game (a transient API error) is not one: it is rerun afterwards.
+    Pause on a systemic stop reason (credit, quota, auth, a bad request) or several stopped games."""
+    systemic = [x for x in s['stopped'] if any(k in x.lower() for k in SYSTEMIC)]
+    out = [f'game stopped: {x}' for x in systemic]
+    if len(s['stopped']) >= max_stopped:
+        out.append(f'{len(s["stopped"])} games stopped: ' + '; '.join(x[:120] for x in s['stopped'][:3]))
     for m, n in s['calls'].items():
         if n < min_calls:
             continue

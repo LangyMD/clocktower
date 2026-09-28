@@ -297,7 +297,8 @@ class OpenAIConversation(_Base):
                 return await asyncio.get_running_loop().run_in_executor(HTTP_POOL, self._post, body)
             except urllib.error.HTTPError as e:
                 detail = e.read().decode(errors='replace')[:2000]
-                if e.code not in (408, 409, 429, 500, 502, 503, 504) or attempt == 9 or 'insufficient_quota' in detail:
+                retryable = e.code in (408, 409, 429) or e.code >= 500  # incl. Cloudflare 52x
+                if not retryable or attempt == 9 or 'insufficient_quota' in detail or 'spend limit' in detail:
                     raise RuntimeError(f'OpenAI HTTP {e.code}: {detail}') from e
             except (TimeoutError, urllib.error.URLError, ConnectionError, http.client.HTTPException) as e:
                 if attempt == 9:  # dropped connections (RemoteDisconnected) and timeouts are retried
