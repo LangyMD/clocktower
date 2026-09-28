@@ -1,6 +1,6 @@
 # Clocktower
 
-Blood on the Clocktower (Trouble Brewing, nine players) played by language models over text,
+Blood on the Clocktower (Trouble Brewing, nine players by default; `--players 5-15`) played by language models over text,
 with a scripted Storyteller and optional human seats. A clean rewrite
 of the earlier `botc/` lab (kept alongside for reference).
 

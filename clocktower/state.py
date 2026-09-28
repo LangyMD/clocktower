@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from itertools import combinations, product
 import random
 from typing import Callable
-from .characters import (ALL, DEMONS, INFO_ROLES, MINIONS, OUTSIDERS, TOWNSFOLK,
+from .characters import (ALL, DEMONS, INFO_ROLES, MINIONS, OUTSIDERS, SETUPS, TOWNSFOLK,
                          is_evil_character, kind)
 
 
@@ -29,25 +29,34 @@ class Player:
         return is_evil_character(self.character)
 
 
+def team_sizes(n, baron=False):
+    """(Townsfolk, Outsiders, Minions) for n players, from the official table."""
+    tf, os_, mn = SETUPS[n]
+    return (tf - 2, os_ + 2, mn) if baron else (tf, os_, mn)
+
+
 def setup_error(characters):
-    """Why a list of 9 characters is not a legal Trouble Brewing setup, or None."""
-    if len(characters) != 9: return 'need exactly 9 characters'
-    if len(set(characters)) != 9: return 'characters must be distinct'
+    """Why a list of characters is not a legal Trouble Brewing setup, or None."""
+    n = len(characters)
+    if n not in SETUPS: return f'Trouble Brewing is for {min(SETUPS)}-{max(SETUPS)} players'
+    if len(set(characters)) != n: return 'characters must be distinct'
     bad = [c for c in characters if c not in ALL]
     if bad: return f'not on the script: {bad}'
     counts = {k: sum(1 for c in characters if kind(c) == k) for k in ('Townsfolk', 'Outsider', 'Minion', 'Demon')}
     if counts['Demon'] != 1: return 'need exactly one Imp'
-    if counts['Minion'] != 1: return 'need exactly one Minion'
-    want = (3, 4) if 'Baron' in characters else (5, 2)
-    if (counts['Townsfolk'], counts['Outsider']) != want:
-        return f'need {want[0]} Townsfolk and {want[1]} Outsiders' + (' (Baron in play)' if 'Baron' in characters else '')
+    tf, os_, mn = team_sizes(n, 'Baron' in characters)
+    if counts['Minion'] != mn: return f'need exactly {mn} Minion(s)'
+    if (counts['Townsfolk'], counts['Outsider']) != (tf, os_):
+        return f'need {tf} Townsfolk and {os_} Outsiders' + (' (Baron in play)' if 'Baron' in characters else '')
     return None
 
 
-def random_setup(rng, minion=None):
-    minion = minion or rng.choice(MINIONS)
-    tf, os_ = (3, 4) if minion == 'Baron' else (5, 2)
-    return rng.sample(TOWNSFOLK, tf) + rng.sample(OUTSIDERS, os_) + [minion, 'Imp']
+def random_setup(rng, minion=None, players=9):
+    """A uniformly random legal setup; `minion` forces one of the Minions (batches rotate it)."""
+    mn = SETUPS[players][2]
+    minions = ([minion] if minion else []) + rng.sample([m for m in MINIONS if m != minion], mn - (1 if minion else 0))
+    tf, os_, _ = team_sizes(players, 'Baron' in minions)
+    return rng.sample(TOWNSFOLK, tf) + rng.sample(OUTSIDERS, os_) + minions + ['Imp']
 
 
 # How the scripted Storyteller uses its discretion. Every number is a judgment call about what an
@@ -478,6 +487,11 @@ def character_choice(g, p, ability, target):
             return {'character': g.evil_character(r)}
         return {'character': t.character}
     return Choice(f'{ability}:{p.name}', [{'character': c} for c in values], style)
+
+
+def heir_choice(minions):
+    """Which living Minion becomes the Imp when the Imp kills themselves (no Scarlet Woman to take over)."""
+    return Choice('starpass', [{'players': [m]} for m in minions], lambda r: {'players': [r.choice(minions)]})
 
 
 def yes_choice(cid, chance):

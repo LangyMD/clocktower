@@ -24,9 +24,9 @@ from pathlib import Path
 
 from .agents import HumanSeat, ModelSeat, RandomSeat
 from .characters import MINIONS
-from .game import NAMES, Game
+from .game import ALL_NAMES, Game
 from .llm import MODEL, Ledger, conversation, limiter, make_client
-from .prompts import PLAYER_SYSTEM
+from .prompts import player_system
 from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -51,12 +51,14 @@ def shared(args):
 
 def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     characters = args.characters.split(',') if args.characters else None
-    game = Game({}, None, seed=seed, private_beats=args.private_beats,
+    names = ALL_NAMES[:len(characters) if characters else args.players]
+    system = player_system(len(names))
+    game = Game({}, None, names=names, seed=seed, private_beats=args.private_beats,
                 public_beats=args.public_beats, max_days=args.days, waves=args.waves, characters=characters,
                 minion=minion, out=out, probes=getattr(args, 'probes', False))
     if env is None:  # sim: random players, no API
         rng = random.Random(seed + 1)
-        game.seats = {n: RandomSeat(n, random.Random(rng.random()), NAMES) for n in NAMES}
+        game.seats = {n: RandomSeat(n, random.Random(rng.random()), names) for n in names}
         return game, []
     ttl = '1h' if human else '5m'  # a human can take longer than five minutes between turns
     convs = []
@@ -69,7 +71,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
         model = {'good': args.good_model, 'evil': args.evil_model}[team] or args.model
         effort = {'good': args.good_effort, 'evil': args.evil_effort}[team] or args.effort
         game.meta['models'][name] = model
-        c = conversation(env.client, PLAYER_SYSTEM, player_schema(NAMES), label=name, ledger=env.ledger,
+        c = conversation(env.client, system, player_schema(names), label=name, ledger=env.ledger,
                          semaphore=env.semaphore, on_call=game.record_call, model=model, effort=effort,
                          max_tokens=args.max_output, ttl=ttl, flex=args.flex)
         convs.append((name, c))
@@ -84,7 +86,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
               'max_days': args.days, 'human': human, 'characters': characters, 'probes': args.probes,
               'openai_tier': 'flex' if args.flex else 'default',
-              'player_prompt_sha': hashlib.sha256(PLAYER_SYSTEM.encode()).hexdigest()[:12]}
+              'players': len(names), 'player_prompt_sha': hashlib.sha256(system.encode()).hexdigest()[:12]}
     (out / 'config.json').write_text(json.dumps(config, indent=2))
     return game, convs
 
@@ -179,7 +181,9 @@ def main(argv=None):
         p.add_argument('--private-beats', type=int, default=3, help='whisper-only beats each day')
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
-        p.add_argument('--days', type=int, default=10, help='stop after this many days')
+        p.add_argument('--days', type=int, default=15, help='stop after this many days')
+        p.add_argument('--players', type=int, default=9, choices=range(5, 16), metavar='5-15',
+                       help='table size (official Trouble Brewing setup for that count)')
         p.add_argument('--characters', help='comma-separated forced setup, in seating order (tests)')
         p.add_argument('--out')
         if name in ('run', 'sim'):
@@ -208,7 +212,7 @@ def main(argv=None):
             p.add_argument('--swap', action='store_true',
                            help='also play every seed with the good and evil models swapped (game-NN-swap)')
         if name == 'play':
-            p.add_argument('--seat', default='Casey', choices=NAMES)
+            p.add_argument('--seat', default='Casey', choices=ALL_NAMES)
             p.add_argument('--port', type=int, default=8765)
     args = ap.parse_args(argv)
     if args.command == 'report':

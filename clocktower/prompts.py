@@ -1,14 +1,34 @@
 """The player system prompt (identical for every seat and every game, so it caches) and the
 scripted Storyteller's dawn narration."""
-from .characters import script_text
+from .characters import SETUPS, script_text
 
-PLAYER_SYSTEM = f"""You are one of nine players in a game of Blood on the Clocktower, using the Trouble Brewing script. The game is played over text: a town square that everyone reads, plus private whispers. A Storyteller runs the game, gives out information at night and resolves abilities. Every other seat is a different player; you control only your own.
+WORDS = {5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven', 12: 'twelve',
+         13: 'thirteen', 14: 'fourteen', 15: 'fifteen'}
+
+
+def _teams(n):
+    tf, os_, mn = SETUPS[n]
+    minions = 'one Minion' if mn == 1 else f'{mn} Minions'
+    return (f"Teams. Good: Townsfolk and Outsiders. Evil: the Demon (the Imp) and {minions}. With {WORDS[n]} players "
+            f"there are normally {tf} Townsfolk, {os_} Outsider{'' if os_ == 1 else 's'}, {minions} and the Imp; if the "
+            f"Baron is in play there are two fewer Townsfolk and two more Outsiders. Each character is in play at "
+            f"most once. You know your own character, not anyone else's.\n"
+            f"Evil knows itself. The Imp and {'its Minion know each other' if mn == 1 else 'its Minions all know one another'} "
+            f"from the start, and the Imp learns three good characters that are not in play (bluffs). Evil players can "
+            f"only talk the way everyone else does: in town or by whisper.")
+
+
+def player_system(n=9):
+    """The player system prompt for an n-player game (identical for every seat, so it caches)."""
+    return _PLAYER_SYSTEM.replace('{N}', WORDS[n]).replace('{TEAMS}', _teams(n))
+
+
+_PLAYER_SYSTEM = f"""You are one of {{N}} players in a game of Blood on the Clocktower, using the Trouble Brewing script. The game is played over text: a town square that everyone reads, plus private whispers. A Storyteller runs the game, gives out information at night and resolves abilities. Every other seat is a different player; you control only your own.
 
 Play to win for your team. Anyone may lie, bluff, keep secrets or change their story — that is the game. Your private thinking carries over from turn to turn and no one else can see it, so use it to keep your facts, your claims and your plans straight.
 
 THE GAME
-Teams. Good: Townsfolk and Outsiders. Evil: one Minion and the Demon (the Imp). With nine players there are normally 5 Townsfolk, 2 Outsiders, 1 Minion and the Imp; if the Baron is in play there are 3 Townsfolk and 4 Outsiders instead. Each character is in play at most once. You know your own character, not anyone else's.
-Evil knows itself. The Imp and its Minion know each other from the start, and the Imp learns three good characters that are not in play (bluffs). Evil players can only talk the way everyone else does: in town or by whisper.
+{{TEAMS}}
 Winning. Good wins when the Demon dies. Evil wins when only two players are left alive. The Saint and Mayor add other ways to win or lose.
 Nights and days. At night, characters with night abilities act and the Storyteller gives out information; the Imp kills. At dawn the night's deaths are announced, but not how or why. Night order: the Poisoner acts first, then the Monk, then the Imp; the information roles (Empath, Fortune Teller, Undertaker and the rest) wake after the Imp, so a player killed in the night does not wake again that night (except the Ravenkeeper, whose ability is triggered by that death). On the first night the Monk and the Imp do not act.
 Nothing is revealed when a player dies, by execution or at night: their character stays secret unless an ability (such as the Undertaker's or the Ravenkeeper's) shows it to someone. During the day the town talks and whispers, then nominates and votes. There is at most one execution per day.
@@ -68,6 +88,9 @@ DAWN_QUIET = [
     'The cockerel crows, the chapel bell rings, and the whole town answers.',
     'Frost on the windows, smoke from every chimney: all are alive to greet the day.',
 ]
+
+
+PLAYER_SYSTEM = player_system(9)
 
 
 def dawn_narration(r, deaths):

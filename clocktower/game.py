@@ -24,9 +24,11 @@ from . import probe
 from .prompts import dawn_narration
 from .render import render
 from .state import (POLICY, Grimoire, bluffs_choice, character_choice, chef_choice, drunk_as_choice, empath_choice,
-                    fortune_teller_choice, info_text, mayor_choice, norm, pair_choice, random_setup, red_herring_choice,
-                    setup_error, yes_choice)
-NAMES = ['Alex', 'Blair', 'Casey', 'Drew', 'Ellis', 'Frankie', 'Gray', 'Harper', 'Indigo']
+                    fortune_teller_choice, heir_choice, info_text, mayor_choice, norm, pair_choice, random_setup,
+                    red_herring_choice, setup_error, yes_choice)
+ALL_NAMES = ['Alex', 'Blair', 'Casey', 'Drew', 'Ellis', 'Frankie', 'Gray', 'Harper', 'Indigo', 'Jules', 'Kit',
+             'Logan', 'Morgan', 'Noel', 'Oakley']
+NAMES = ALL_NAMES[:9]  # the default nine-player table
 WHISPERS = 2  # per private-time turn
 WORDS = {'beat': 150, 'whisper': 150, 'nominate': 150, 'defense': 200, 'comment': 150, 'vote': 60}
 
@@ -167,7 +169,7 @@ class Game:
         if self.forced:
             chars = list(self.forced)  # a forced setup (tests, --characters) keeps its seating order
         else:
-            chars = random_setup(self.rng, self.minion)
+            chars = random_setup(self.rng, self.minion, len(names))
             self.rng.shuffle(chars)
         err = setup_error(chars)
         if err:
@@ -193,12 +195,16 @@ class Game:
             lines = [f'You are {p.name}. The players, clockwise: {seating} (and back to {names[0]}). '
                      f'You sit between {left} and {right}.',
                      f'Your character: {card(p.shown)}']
+            minions = [q.name for q in g.players if q.character in MINIONS]
             if p.character == 'Imp':
-                minions = [q.name for q in g.players if q.character in MINIONS]
-                lines.append(f'Your Minion: {", ".join(minions)} (you do not know which Minion character). '
-                             f'Three good characters not in play, for evil to bluff: {", ".join(g.bluffs)}.')
+                lines.append(f'Your Minion{"" if len(minions) == 1 else "s"}: {", ".join(minions)} (you do not know '
+                             f'which Minion characters). Three good characters not in play, for evil to bluff: '
+                             f'{", ".join(g.bluffs)}.')
             elif p.character in MINIONS:
-                lines.append(f'The Demon is {g.demon().name}.')
+                others = [m for m in minions if m != p.name]
+                lines.append(f'The Demon is {g.demon().name}.'
+                             + (f' Your fellow Minion{"" if len(others) == 1 else "s"}: {", ".join(others)} (you do not '
+                                'know which Minion characters).' if others else ''))
             self.emit('intro', {'text': '\n'.join(lines)}, [p.name])
 
     # ---- night -------------------------------------------------------------------------------
@@ -266,9 +272,12 @@ class Game:
         if imp and t and not g.is_poisoned(imp):
             target = g[t]
             if target is imp and imp.name != g.protected:  # a Monk-protected Imp cannot die, so no starpass
+                before = g.alive_count()
                 self.kill(imp, 'starpass')
                 deaths.append(imp)
-                heir = next((q for q in g.living() if q.character in MINIONS), None)
+                # a Scarlet Woman who can take over does; otherwise the Storyteller picks a living Minion
+                living = [q.name for q in g.living() if q.character in MINIONS]
+                heir = g.scarlet_woman_heir(before) or (g[self.decide(heir_choice(living))['players'][0]] if living else None)
                 if heir:
                     if heir.character == 'Poisoner':
                         g.poisoned = None  # the Poisoner's poison ends when they stop being the Poisoner

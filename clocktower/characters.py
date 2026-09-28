@@ -7,6 +7,10 @@ MINIONS = ['Poisoner', 'Spy', 'Scarlet Woman', 'Baron']
 DEMONS = ['Imp']
 ALL = TOWNSFOLK + OUTSIDERS + MINIONS + DEMONS
 GOOD = TOWNSFOLK + OUTSIDERS
+# Official Trouble Brewing setup by player count: (Townsfolk, Outsiders, Minions), plus one Demon.
+# The Baron turns two Townsfolk into Outsiders.
+SETUPS = {5: (3, 0, 1), 6: (3, 1, 1), 7: (5, 0, 1), 8: (5, 1, 1), 9: (5, 2, 1), 10: (7, 0, 2), 11: (7, 1, 2),
+          12: (7, 2, 2), 13: (9, 0, 3), 14: (9, 1, 3), 15: (9, 2, 3)}
 INFO_ROLES = {'Washerwoman', 'Librarian', 'Investigator', 'Chef', 'Empath', 'Fortune Teller', 'Undertaker', 'Ravenkeeper'}
 
 ABILITY = {

@@ -642,5 +642,55 @@ class V6Tests(unittest.TestCase):
         self.assertIn('seat failed', result['stopped'])
 
 
+class TableSizeTests(unittest.TestCase):
+    def test_every_size_deals_a_legal_setup(self):
+        from clocktower.state import random_setup
+        from clocktower.characters import SETUPS
+        for n in SETUPS:
+            for seed in range(50):
+                chars = random_setup(random.Random(seed), None, n)
+                self.assertIsNone(setup_error(chars), (n, chars))
+
+    def test_minions_know_each_other_and_the_imp_knows_them_all(self):
+        from clocktower.game import ALL_NAMES
+        names = ALL_NAMES[:12]
+        chars = ['Imp', 'Poisoner', 'Spy', 'Monk', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Mayor', 'Virgin',
+                 'Butler', 'Saint']
+        g = Game({n: RandomSeat(n, random.Random(0), names) for n in names}, ScriptedStoryteller(random.Random(0)),
+                 names=names, characters=chars, seed=1)
+        run(g.setup())
+        self.assertTrue(any('Your Minions: Blair, Casey' in t for t in g.buf[names[0]]))
+        self.assertTrue(any('Your fellow Minion: Casey' in t for t in g.buf[names[1]]))
+        self.assertTrue(any('Your fellow Minion: Blair' in t for t in g.buf[names[2]]))
+
+    def test_starpass_goes_to_the_scarlet_woman_first(self):
+        from clocktower.game import ALL_NAMES
+        names = ALL_NAMES[:12]
+        chars = ['Imp', 'Poisoner', 'Scarlet Woman', 'Monk', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Mayor',
+                 'Virgin', 'Butler', 'Saint']
+        log = []
+        g = Game({n: Seat(n, lambda n_, r: None, log) for n in names}, Storyteller(), names=names, characters=chars,
+                 seed=2)
+        run(g.setup())
+        run(g.night(1))
+        g.seats = {n: Seat(n, night_targets({names[0]: [names[0]], names[1]: [names[5]]}), log) for n in names}
+        run(g.night(2))
+        self.assertEqual(g.g[names[2]].character, 'Imp')
+        self.assertEqual(g.g[names[1]].character, 'Poisoner')
+
+    def test_twelve_player_random_games_finish(self):
+        from clocktower.game import ALL_NAMES
+        names = ALL_NAMES[:12]
+        done = 0
+        for seed in range(20):
+            rng = random.Random(seed)
+            g = Game({n: RandomSeat(n, random.Random(rng.random()), names) for n in names},
+                     ScriptedStoryteller(random.Random(seed)), names=names, seed=seed, max_days=15)
+            result = run(g.run())
+            self.assertFalse(result['errors'], result['errors'])
+            done += result['winner'] is not None
+        self.assertGreater(done, 12)
+
+
 if __name__ == '__main__':
     unittest.main()

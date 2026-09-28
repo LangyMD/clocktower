@@ -1,6 +1,6 @@
 # Clocktower — notes for Claude sessions
 
-An eval where language models play Blood on the Clocktower (Trouble Brewing, 9 players). It measures
+An eval where language models play Blood on the Clocktower (Trouble Brewing, 9 players by default; `--players` 5–15). It measures
 holding coherent state and bluffs over a whole game. See README.md for the design.
 
 ## Running

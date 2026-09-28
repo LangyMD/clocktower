@@ -114,5 +114,9 @@ Changes from v6, after 8 readers went through the 100 g1 games and a second rule
 - The Spy sees the Grimoire but not the verbatim information given that night. A red herring is
   set whenever anyone believes they are the Fortune Teller (the Drunk too). Vote remarks may be
   60 words. Turn prompts no longer say "group w of N" (players used it as a timestamp).
+- Table size: `--players 5-15` deals the official Trouble Brewing setup for that count (e.g. 12
+  players: 7 Townsfolk, 2 Outsiders, 2 Minions, the Imp). Minions learn each other as well as the
+  Demon; the Imp learns all its Minions; a starpass goes to a Scarlet Woman who can take over, else
+  the Storyteller picks a living Minion. The default is still nine. The day cap is 15.
 - Runs: `--swap` plays every seed a second time with the models' sides swapped; `analyze` reports
   Saint-execution wins per pairing.
