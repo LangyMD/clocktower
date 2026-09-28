@@ -1,0 +1,57 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 5,
+  "seed": 30005,
+  "starting": {
+    "Alex": "Fortune Teller",
+    "Blair": "Soldier",
+    "Casey": "Chef",
+    "Drew": "Monk",
+    "Ellis": "Butler",
+    "Frankie": "Spy",
+    "Gray": "Imp",
+    "Harper": "Slayer",
+    "Indigo": "Drunk"
+  },
+  "final": {
+    "Alex": "Fortune Teller",
+    "Blair": "Soldier",
+    "Casey": "Chef",
+    "Drew": "Monk",
+    "Ellis": "Butler",
+    "Frankie": "Spy",
+    "Gray": "Imp",
+    "Harper": "Slayer",
+    "Indigo": "Drunk"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Empath",
+    "Recluse"
+  ],
+  "red_herring": "Blair",
+  "drunk_as": "Librarian",
+  "cost": 5.7062,
+  "calls": 474,
+  "tokens": {
+    "input": 1896,
+    "cache_read": 8855237,
+    "cache_write": 299734,
+    "output": 121444
+  },
+  "seconds": 1111.6,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-opus-5-5"
+  }
+}
