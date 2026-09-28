@@ -168,7 +168,7 @@ class Reply:
 
 class _Base:
     def __init__(self, system, schema, *, label, ledger, semaphore, on_call=None, model=MODEL, effort='high',
-                 max_tokens=8000):
+                 max_tokens=4000):
         self.system, self.schema = system, schema
         self.label, self.ledger, self.semaphore, self.on_call = label, ledger, semaphore, on_call
         self.model, self.effort, self.max_tokens = model, effort, max_tokens

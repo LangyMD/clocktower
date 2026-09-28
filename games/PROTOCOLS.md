@@ -114,6 +114,10 @@ Changes from v6, after 8 readers went through the 100 g1 games and a second rule
 - The Spy sees the Grimoire but not the verbatim information given that night. A red herring is
   set whenever anyone believes they are the Fortune Teller (the Drunk too). Vote remarks may be
   60 words. Turn prompts no longer say "group w of N" (players used it as a timestamp).
+- Per-turn output ceiling 4K tokens, thinking included (v6: 8K). No frontier model's turn went past
+  4K in v6/v7 games; older models (GPT-5.1, 5.4) think longer per turn, so a lower cap would cut them.
+- Models that don't see their own earlier reasoning (see the memory check below) are told so in one
+  prompt line instead of being told their thinking carries over; the prompt is otherwise identical.
 - Table size: `--players 5-15` deals the official Trouble Brewing setup for that count (e.g. 12
   players: 7 Townsfolk, 2 Outsiders, 2 Minions, the Imp). Minions learn each other as well as the
   Demon; the Imp learns all its Minions; a starpass goes to a Scarlet Woman who can take over, else

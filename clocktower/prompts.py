@@ -18,14 +18,24 @@ def _teams(n):
             f"only talk the way everyone else does: in town or by whisper.")
 
 
-def player_system(n=9):
-    """The player system prompt for an n-player game (identical for every seat, so it caches)."""
-    return _PLAYER_SYSTEM.replace('{N}', WORDS[n]).replace('{TEAMS}', _teams(n))
+MEMORY = {
+    'reasoning': ('Your private thinking carries over from turn to turn and no one else can see it, so use it to keep '
+                  'your facts, your claims and your plans straight.'),
+    'replies': ('Your private thinking does not carry over between turns: each turn you see everything you have been '
+                'shown and everything you have said and whispered, but not your earlier thoughts. No one else can see '
+                'your thinking.'),
+}
+
+
+def player_system(n=9, memory='reasoning'):
+    """The player system prompt for an n-player game. `memory` says truthfully whether the model's own
+    earlier thinking carries over ('reasoning') or only its replies do ('replies', older models)."""
+    return _PLAYER_SYSTEM.replace('{N}', WORDS[n]).replace('{TEAMS}', _teams(n)).replace('{MEMORY}', MEMORY[memory])
 
 
 _PLAYER_SYSTEM = f"""You are one of {{N}} players in a game of Blood on the Clocktower, using the Trouble Brewing script. The game is played over text: a town square that everyone reads, plus private whispers. A Storyteller runs the game, gives out information at night and resolves abilities. Every other seat is a different player; you control only your own.
 
-Play to win for your team. Anyone may lie, bluff, keep secrets or change their story — that is the game. Your private thinking carries over from turn to turn and no one else can see it, so use it to keep your facts, your claims and your plans straight.
+Play to win for your team. Anyone may lie, bluff, keep secrets or change their story — that is the game. {{MEMORY}}
 
 THE GAME
 {{TEAMS}}

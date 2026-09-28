@@ -52,7 +52,6 @@ def shared(args):
 def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     characters = args.characters.split(',') if args.characters else None
     names = ALL_NAMES[:len(characters) if characters else args.players]
-    system = player_system(len(names))
     game = Game({}, None, names=names, seed=seed, private_beats=args.private_beats,
                 public_beats=args.public_beats, max_days=args.days, waves=args.waves, characters=characters,
                 minion=minion, out=out, probes=getattr(args, 'probes', False))
@@ -71,6 +70,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
         model = {'good': args.good_model, 'evil': args.evil_model}[team] or args.model
         effort = {'good': args.good_effort, 'evil': args.evil_effort}[team] or args.effort
         game.meta['models'][name] = model
+        system = player_system(len(names), spec(model)['memory'])
         c = conversation(env.client, system, player_schema(names), label=name, ledger=env.ledger,
                          semaphore=env.semaphore, on_call=game.record_call, model=model, effort=effort,
                          max_tokens=args.max_output, ttl=ttl, flex=args.flex)
@@ -88,7 +88,8 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
               'max_days': args.days, 'human': human, 'characters': characters, 'probes': args.probes,
               'openai_tier': 'flex' if args.flex else 'default',
-              'players': len(names), 'player_prompt_sha': hashlib.sha256(system.encode()).hexdigest()[:12]}
+              'players': len(names),
+              'player_prompt_sha': hashlib.sha256(player_system(len(names)).encode()).hexdigest()[:12]}
     (out / 'config.json').write_text(json.dumps(config, indent=2))
     return game, convs
 
@@ -197,7 +198,7 @@ def main(argv=None):
             p.add_argument('--effort', default='high', help='player reasoning effort (same for every model)')
             p.add_argument('--good-effort', help='reasoning effort for the good team (default --effort)')
             p.add_argument('--evil-effort', help='reasoning effort for the evil team (default --effort)')
-            p.add_argument('--max-output', type=int, default=8000,
+            p.add_argument('--max-output', type=int, default=4000,
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
             p.add_argument('--concurrency', type=int, default=0,
