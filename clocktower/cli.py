@@ -132,7 +132,7 @@ async def run_batch(args):
         out = Path(args.out) if args.out else RUNS / f'{stamp}-{base}'
         return [await play_one(args, base, out, env)]
     root = Path(args.out) if args.out else RUNS / f'batch-{stamp}'
-    limit = asyncio.Semaphore(args.parallel or args.games)
+    limit = asyncio.Semaphore(args.parallel or 10 ** 6)  # 0 = every game of the batch at once (swaps included)
     numbers = parse_only(args.only) if args.only else range(1, args.games + 1)
 
     swapped = argparse.Namespace(**{**vars(args), 'good_model': args.evil_model or args.model,
