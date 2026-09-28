@@ -35,17 +35,53 @@ def _price(inp, out, read=None, write_5m=None, write_1h=None):
             'write_1h': write_1h if write_1h is not None else inp * 2}
 
 
-PRICES = {
+def _openai(inp, out, explicit_cache=True):
+    """OpenAI prices: cached input 10%; models with explicit cache breakpoints bill writes at 1.25x."""
+    return _price(inp, out, read=inp / 10, write_5m=inp * 1.25 if explicit_cache else inp,
+                  write_1h=inp * 1.25 if explicit_cache else inp)
+
+
+PRICES = {  # USD per million tokens, list prices as of Sept 2026; Flex is half price
     'claude-opus-5-5': _price(4, 20, read=0.20),
     'claude-opus-5': _price(5, 25),
     'claude-fable-5-1': _price(10, 50, read=0.25),
+    'claude-fable-5': _price(10, 50),
+    'claude-opus-4-8': _price(5, 25),
+    'claude-opus-4-7': _price(5, 25),
+    'claude-opus-4-6': _price(5, 25),
+    'claude-opus-4-5-20251101': _price(5, 25),
     'claude-sonnet-5': _price(2, 10),
+    'claude-sonnet-4-5-20250929': _price(3, 15),
     'claude-haiku-4-5': _price(1, 5),
-    # OpenAI list prices as recorded by the earlier lab (botc/costs.py); Flex is half price.
     'gpt-6-astra': _price(10, 50, read=1, write_5m=12.5, write_1h=12.5),
+    'gpt-6-sol': _price(2, 10, read=0.2, write_5m=2.5, write_1h=2.5),
     'gpt-5.6-sol': _price(4, 20, read=0.4, write_5m=5, write_1h=5),
-    'gpt-6-sol': _price(2, 10, read=0.2, write_5m=2.5, write_1h=2.5),  # Sept 2026 list price
+    'gpt-5.5': _openai(5, 30, explicit_cache=False),
+    'gpt-5.4': _openai(2.5, 15, explicit_cache=False),
+    'gpt-5.2': _openai(1.75, 14, explicit_cache=False),
+    'gpt-5.1': _openai(1.25, 10, explicit_cache=False),
+    'o3': _openai(2, 8, explicit_cache=False),
 }
+
+# How each model is driven, where it differs from the current default (adaptive thinking with an
+# effort level for Claude; for OpenAI, reasoning carried across all turns, concise summaries and
+# explicit cache breakpoints). `memory` is what the model sees of its own past turns: 'reasoning'
+# (its earlier thinking too) or 'replies' (only what it said). Measured with a two-turn check
+# (pick a secret in your thinking, reveal it next turn), Sept 28 2026; see games/PROTOCOLS.md.
+MODELS = {
+    'claude-sonnet-4-5-20250929': {'thinking': 'budget', 'effort': False, 'memory': 'replies'},
+    'claude-opus-4-5-20251101': {'thinking': 'budget'},
+    'gpt-5.5': {'explicit_cache': False},
+    'gpt-5.4': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
+    'gpt-5.2': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
+    'gpt-5.1': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
+    'o3': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies'},
+}
+
+
+def spec(model):
+    return {'thinking': 'adaptive', 'effort': True, 'context': True, 'explicit_cache': True, 'summary': 'concise',
+            'memory': 'reasoning', **MODELS.get(model, {})}
 
 
 def cost(model, usage, factor=1.0):
@@ -151,6 +187,19 @@ class ClaudeConversation(_Base):
         self.client = client
         self.cache = {'type': 'ephemeral', 'ttl': ttl}
 
+    def _thinking(self):
+        """Thinking and effort, by model: adaptive thinking with an effort level, or (older models) a thinking
+        budget of three quarters of the per-turn ceiling, the rest left for the answer."""
+        sp = spec(self.model)
+        out = {'format': {'type': 'json_schema', 'schema': self.schema}}
+        if sp['effort']:
+            out['effort'] = self.effort
+        if sp['thinking'] == 'budget':
+            thinking = {'type': 'enabled', 'budget_tokens': self.max_tokens * 3 // 4}
+        else:
+            thinking = {'type': 'adaptive', 'display': 'summarized'}
+        return {'thinking': thinking, 'output_config': out}
+
     async def _stream(self, messages):
         """One streamed request. When the account is out of credit (as happens while auto-reload
         catches up with a large batch), wait and retry for up to CREDIT_WAIT seconds, so the game
@@ -162,9 +211,7 @@ class ClaudeConversation(_Base):
                         model=self.model, max_tokens=self.max_tokens,
                         system=[{'type': 'text', 'text': self.system, 'cache_control': self.cache}],
                         messages=messages, cache_control=self.cache,
-                        thinking={'type': 'adaptive', 'display': 'summarized'},
-                        output_config={'effort': self.effort,
-                                       'format': {'type': 'json_schema', 'schema': self.schema}}) as stream:
+                        **self._thinking()) as stream:
                     return await stream.get_final_message()
             except anthropic.APIStatusError as e:
                 if 'credit balance' not in str(e) or waited >= CREDIT_WAIT:
@@ -225,9 +272,18 @@ class OpenAIConversation(_Base):
             raise RuntimeError('OPENAI_API_KEY is not set')
         self.messages = [{'role': 'developer', 'content': [self._block(system)]}]
 
-    @staticmethod
-    def _block(text):
-        return {'type': 'input_text', 'text': text, 'prompt_cache_breakpoint': {'mode': 'explicit'}}
+    def _block(self, text):
+        block = {'type': 'input_text', 'text': text}
+        if spec(self.model)['explicit_cache']:
+            block['prompt_cache_breakpoint'] = {'mode': 'explicit'}
+        return block
+
+    def _reasoning(self):
+        sp = spec(self.model)
+        out = {'effort': self.effort, 'summary': sp['summary']}
+        if sp['context']:
+            out['context'] = 'all_turns'  # carry reasoning across turns (models that support it)
+        return out
 
     def _post(self, body):
         req = urllib.request.Request(self.URL, data=json.dumps(body).encode(), method='POST',
@@ -259,9 +315,10 @@ class OpenAIConversation(_Base):
             body = {'model': self.model, 'store': False, 'max_output_tokens': self.max_tokens, 'input': messages,
                     'text': {'format': {'type': 'json_schema', 'name': 'game_action', 'strict': True,
                                         'schema': self.schema}},
-                    'reasoning': {'effort': self.effort, 'summary': 'concise', 'context': 'all_turns'},
-                    'prompt_cache_key': f'clocktower:{self.label}:{id(self) % 10 ** 8}',
-                    'prompt_cache_options': {'mode': 'explicit', 'ttl': '30m'}}
+                    'reasoning': self._reasoning(),
+                    'prompt_cache_key': f'clocktower:{self.label}:{id(self) % 10 ** 8}'}
+            if spec(self.model)['explicit_cache']:
+                body['prompt_cache_options'] = {'mode': 'explicit', 'ttl': '30m'}
             if self.flex:
                 body['service_tier'] = 'flex'
             start = time.monotonic()
@@ -306,9 +363,12 @@ class OpenAIConversation(_Base):
         return Reply({})
 
 
+OPENAI_PREFIXES = ('gpt-', 'o1', 'o3', 'o4')
+
+
 def conversation(client, system, schema, *, model, **kw):
     """A Claude or OpenAI conversation, by model name."""
-    if model.startswith('gpt-'):
+    if model.startswith(OPENAI_PREFIXES):
         kw.pop('ttl', None)
         return OpenAIConversation(system, schema, model=model, **kw)
     kw.pop('flex', None)

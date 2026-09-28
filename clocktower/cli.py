@@ -25,7 +25,7 @@ from pathlib import Path
 from .agents import HumanSeat, ModelSeat, RandomSeat
 from .characters import MINIONS
 from .game import ALL_NAMES, Game
-from .llm import MODEL, Ledger, conversation, limiter, make_client
+from .llm import MODEL, Ledger, conversation, limiter, make_client, spec
 from .prompts import player_system
 from .schema import player_schema
 
@@ -80,7 +80,9 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     game.seat_factory = seat
     config = {'protocol': PROTOCOL, 'model': args.model, 'good_model': args.good_model, 'evil_model': args.evil_model,
               'player_effort': args.effort, 'good_effort': args.good_effort or args.effort,
-              'evil_effort': args.evil_effort or args.effort, 'max_output_tokens': args.max_output, 'storyteller': 'scripted',
+              'evil_effort': args.evil_effort or args.effort, 'max_output_tokens': args.max_output,
+              'good_memory': spec(args.good_model or args.model)['memory'],
+              'evil_memory': spec(args.evil_model or args.model)['memory'], 'storyteller': 'scripted',
               'seed': seed,
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
