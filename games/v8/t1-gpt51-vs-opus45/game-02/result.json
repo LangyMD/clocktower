@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Frankie: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVLEGSEkMi8DMpnGZ6zd'}\")",
+  "stopped": "seat failed: Frankie: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVLEGSEkMi8DMpnGZ6zd'}\")",
+  "days": 1,
+  "seed": 40141,
+  "starting": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Chef",
+    "Casey": "Librarian",
+    "Drew": "Fortune Teller",
+    "Ellis": "Washerwoman",
+    "Frankie": "Poisoner",
+    "Gray": "Recluse",
+    "Harper": "Imp",
+    "Indigo": "Butler",
+    "Jules": "Spy",
+    "Kit": "Monk",
+    "Logan": "Slayer"
+  },
+  "final": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Chef",
+    "Casey": "Librarian",
+    "Drew": "Fortune Teller",
+    "Ellis": "Washerwoman",
+    "Frankie": "Poisoner",
+    "Gray": "Recluse",
+    "Harper": "Imp",
+    "Indigo": "Butler",
+    "Jules": "Spy",
+    "Kit": "Monk",
+    "Logan": "Slayer"
+  },
+  "bluffs": [
+    "Empath",
+    "Soldier",
+    "Undertaker"
+  ],
+  "red_herring": "Logan",
+  "drunk_as": null,
+  "cost": 0.8527,
+  "calls": 41,
+  "tokens": {
+    "input": 34678,
+    "cache_read": 74096,
+    "cache_write": 19820,
+    "output": 49449
+  },
+  "seconds": 227.7,
+  "errors": [
+    "Frankie: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVLEGSEkMi8DMpnGZ6zd'}\")"
+  ],
+  "models": {
+    "Alex": "gpt-5.1",
+    "Blair": "gpt-5.1",
+    "Casey": "gpt-5.1",
+    "Drew": "gpt-5.1",
+    "Ellis": "gpt-5.1",
+    "Frankie": "claude-opus-4-5-20251101",
+    "Gray": "gpt-5.1",
+    "Harper": "claude-opus-4-5-20251101",
+    "Indigo": "gpt-5.1",
+    "Jules": "claude-opus-4-5-20251101",
+    "Kit": "gpt-5.1",
+    "Logan": "gpt-5.1"
+  }
+}

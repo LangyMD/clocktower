@@ -156,3 +156,9 @@ v7 plus three fixes from the c1 calibration:
   vote with them. v7's strict rule locked Butlers out whenever the master sat later (13 of 21 and
   17 of 35 Butler votes in two batches).
 - The per-turn ceiling is 4K and replies-only models are told so (see v7 notes).
+
+Timeline t1 (Sept 28, aborted after ~30 minutes, $1,107): 14 models, 21 matchups, 12 players. Stopped
+because (1) the OpenAI organization hit its configured spend limit, which stopped 133 games, and
+(2) the 4K per-turn ceiling cut real turns far more than in the smoke tests: GPT-5.1 33% of game
+calls truncated (135 turns lost), o3 6%, Opus 4.8 4%, GPT-5.4 3%, Fable 5 2%. The partial games in
+games/v8/t1-* are not usable for ratings.

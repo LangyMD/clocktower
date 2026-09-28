@@ -1,0 +1,66 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 3,
+  "seed": 40000,
+  "starting": {
+    "Alex": "Empath",
+    "Blair": "Investigator",
+    "Casey": "Butler",
+    "Drew": "Undertaker",
+    "Ellis": "Recluse",
+    "Frankie": "Baron",
+    "Gray": "Saint",
+    "Harper": "Washerwoman",
+    "Indigo": "Slayer",
+    "Jules": "Imp",
+    "Kit": "Poisoner",
+    "Logan": "Drunk"
+  },
+  "final": {
+    "Alex": "Empath",
+    "Blair": "Investigator",
+    "Casey": "Butler",
+    "Drew": "Undertaker",
+    "Ellis": "Recluse",
+    "Frankie": "Baron",
+    "Gray": "Saint",
+    "Harper": "Washerwoman",
+    "Indigo": "Slayer",
+    "Jules": "Imp",
+    "Kit": "Poisoner",
+    "Logan": "Drunk"
+  },
+  "bluffs": [
+    "Chef",
+    "Ravenkeeper",
+    "Monk"
+  ],
+  "red_herring": "Harper",
+  "drunk_as": "Fortune Teller",
+  "cost": 7.9528,
+  "calls": 341,
+  "tokens": {
+    "input": 99935,
+    "cache_read": 3925208,
+    "cache_write": 304799,
+    "output": 166050
+  },
+  "seconds": 1261.9,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-4-5-20251101",
+    "Blair": "claude-opus-4-5-20251101",
+    "Casey": "claude-opus-4-5-20251101",
+    "Drew": "claude-opus-4-5-20251101",
+    "Ellis": "claude-opus-4-5-20251101",
+    "Frankie": "claude-sonnet-4-5-20250929",
+    "Gray": "claude-opus-4-5-20251101",
+    "Harper": "claude-opus-4-5-20251101",
+    "Indigo": "claude-opus-4-5-20251101",
+    "Jules": "claude-sonnet-4-5-20250929",
+    "Kit": "claude-sonnet-4-5-20250929",
+    "Logan": "claude-opus-4-5-20251101"
+  }
+}

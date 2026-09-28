@@ -1,0 +1,70 @@
+{
+  "winner": null,
+  "reason": "seat failed: Jules: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "stopped": "seat failed: Jules: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "days": 2,
+  "seed": 40103,
+  "starting": {
+    "Alex": "Recluse",
+    "Blair": "Librarian",
+    "Casey": "Virgin",
+    "Drew": "Drunk",
+    "Ellis": "Imp",
+    "Frankie": "Spy",
+    "Gray": "Investigator",
+    "Harper": "Slayer",
+    "Indigo": "Saint",
+    "Jules": "Empath",
+    "Kit": "Butler",
+    "Logan": "Baron"
+  },
+  "final": {
+    "Alex": "Recluse",
+    "Blair": "Librarian",
+    "Casey": "Virgin",
+    "Drew": "Drunk",
+    "Ellis": "Imp",
+    "Frankie": "Spy",
+    "Gray": "Investigator",
+    "Harper": "Slayer",
+    "Indigo": "Saint",
+    "Jules": "Empath",
+    "Kit": "Butler",
+    "Logan": "Baron"
+  },
+  "bluffs": [
+    "Undertaker",
+    "Ravenkeeper",
+    "Mayor"
+  ],
+  "red_herring": null,
+  "drunk_as": "Washerwoman",
+  "cost": 6.3809,
+  "calls": 215,
+  "tokens": {
+    "input": 306333,
+    "cache_read": 1227264,
+    "cache_write": 0,
+    "output": 281243
+  },
+  "seconds": 1390.6,
+  "errors": [
+    "Jules: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')",
+    "Drew: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')",
+    "Frankie: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')"
+  ],
+  "models": {
+    "Alex": "gpt-5.4",
+    "Blair": "gpt-5.4",
+    "Casey": "gpt-5.4",
+    "Drew": "gpt-5.4",
+    "Ellis": "gpt-5.5",
+    "Frankie": "gpt-5.5",
+    "Gray": "gpt-5.4",
+    "Harper": "gpt-5.4",
+    "Indigo": "gpt-5.4",
+    "Jules": "gpt-5.4",
+    "Kit": "gpt-5.4",
+    "Logan": "gpt-5.5"
+  }
+}

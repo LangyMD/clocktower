@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Blair: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "stopped": "seat failed: Blair: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "days": 2,
+  "seed": 40163,
+  "starting": {
+    "Alex": "Chef",
+    "Blair": "Librarian",
+    "Casey": "Virgin",
+    "Drew": "Drunk",
+    "Ellis": "Slayer",
+    "Frankie": "Recluse",
+    "Gray": "Saint",
+    "Harper": "Spy",
+    "Indigo": "Butler",
+    "Jules": "Imp",
+    "Kit": "Baron",
+    "Logan": "Ravenkeeper"
+  },
+  "final": {
+    "Alex": "Chef",
+    "Blair": "Librarian",
+    "Casey": "Virgin",
+    "Drew": "Drunk",
+    "Ellis": "Slayer",
+    "Frankie": "Recluse",
+    "Gray": "Saint",
+    "Harper": "Spy",
+    "Indigo": "Butler",
+    "Jules": "Imp",
+    "Kit": "Baron",
+    "Logan": "Ravenkeeper"
+  },
+  "bluffs": [
+    "Fortune Teller",
+    "Soldier",
+    "Monk"
+  ],
+  "red_herring": null,
+  "drunk_as": "Washerwoman",
+  "cost": 5.2653,
+  "calls": 204,
+  "tokens": {
+    "input": 172334,
+    "cache_read": 1265003,
+    "cache_write": 56538,
+    "output": 247412
+  },
+  "seconds": 1434.4,
+  "errors": [
+    "Blair: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')"
+  ],
+  "models": {
+    "Alex": "gpt-5.4",
+    "Blair": "gpt-5.4",
+    "Casey": "gpt-5.4",
+    "Drew": "gpt-5.4",
+    "Ellis": "gpt-5.4",
+    "Frankie": "gpt-5.4",
+    "Gray": "gpt-5.4",
+    "Harper": "claude-opus-4-7",
+    "Indigo": "gpt-5.4",
+    "Jules": "claude-opus-4-7",
+    "Kit": "claude-opus-4-7",
+    "Logan": "gpt-5.4"
+  }
+}

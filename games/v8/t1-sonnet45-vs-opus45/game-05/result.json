@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Frankie: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVLF8kQnAGcvPZNTPjE2'}\")",
+  "stopped": "seat failed: Frankie: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVLF8kQnAGcvPZNTPjE2'}\")",
+  "days": 1,
+  "seed": 40004,
+  "starting": {
+    "Alex": "Slayer",
+    "Blair": "Empath",
+    "Casey": "Librarian",
+    "Drew": "Butler",
+    "Ellis": "Chef",
+    "Frankie": "Poisoner",
+    "Gray": "Fortune Teller",
+    "Harper": "Recluse",
+    "Indigo": "Scarlet Woman",
+    "Jules": "Imp",
+    "Kit": "Virgin",
+    "Logan": "Undertaker"
+  },
+  "final": {
+    "Alex": "Slayer",
+    "Blair": "Empath",
+    "Casey": "Librarian",
+    "Drew": "Butler",
+    "Ellis": "Chef",
+    "Frankie": "Poisoner",
+    "Gray": "Fortune Teller",
+    "Harper": "Recluse",
+    "Indigo": "Scarlet Woman",
+    "Jules": "Imp",
+    "Kit": "Virgin",
+    "Logan": "Undertaker"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Soldier",
+    "Saint"
+  ],
+  "red_herring": "Blair",
+  "drunk_as": null,
+  "cost": 0.998,
+  "calls": 74,
+  "tokens": {
+    "input": 33703,
+    "cache_read": 220460,
+    "cache_write": 40247,
+    "output": 31437
+  },
+  "seconds": 227.4,
+  "errors": [
+    "Frankie: APIStatusError(\"{'type': 'error', 'error': {'details': None, 'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CfVLF8kQnAGcvPZNTPjE2'}\")"
+  ],
+  "models": {
+    "Alex": "claude-sonnet-4-5-20250929",
+    "Blair": "claude-sonnet-4-5-20250929",
+    "Casey": "claude-sonnet-4-5-20250929",
+    "Drew": "claude-sonnet-4-5-20250929",
+    "Ellis": "claude-sonnet-4-5-20250929",
+    "Frankie": "claude-opus-4-5-20251101",
+    "Gray": "claude-sonnet-4-5-20250929",
+    "Harper": "claude-sonnet-4-5-20250929",
+    "Indigo": "claude-opus-4-5-20251101",
+    "Jules": "claude-opus-4-5-20251101",
+    "Kit": "claude-sonnet-4-5-20250929",
+    "Logan": "claude-sonnet-4-5-20250929"
+  }
+}

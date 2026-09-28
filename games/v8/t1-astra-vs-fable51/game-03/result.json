@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Kit: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_s",
+  "stopped": "seat failed: Kit: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_s",
+  "days": 4,
+  "seed": 40192,
+  "starting": {
+    "Alex": "Poisoner",
+    "Blair": "Fortune Teller",
+    "Casey": "Drunk",
+    "Drew": "Empath",
+    "Ellis": "Librarian",
+    "Frankie": "Butler",
+    "Gray": "Soldier",
+    "Harper": "Virgin",
+    "Indigo": "Monk",
+    "Jules": "Scarlet Woman",
+    "Kit": "Investigator",
+    "Logan": "Imp"
+  },
+  "final": {
+    "Alex": "Poisoner",
+    "Blair": "Fortune Teller",
+    "Casey": "Drunk",
+    "Drew": "Empath",
+    "Ellis": "Librarian",
+    "Frankie": "Butler",
+    "Gray": "Soldier",
+    "Harper": "Virgin",
+    "Indigo": "Monk",
+    "Jules": "Imp",
+    "Kit": "Investigator",
+    "Logan": "Imp"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Slayer",
+    "Recluse"
+  ],
+  "red_herring": "Gray",
+  "drunk_as": "Chef",
+  "cost": 13.9521,
+  "calls": 397,
+  "tokens": {
+    "input": 1296,
+    "cache_read": 4724595,
+    "cache_write": 275778,
+    "output": 145534
+  },
+  "seconds": 1437.0,
+  "errors": [
+    "Kit: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')"
+  ],
+  "models": {
+    "Alex": "claude-fable-5-1",
+    "Blair": "gpt-6-astra",
+    "Casey": "gpt-6-astra",
+    "Drew": "gpt-6-astra",
+    "Ellis": "gpt-6-astra",
+    "Frankie": "gpt-6-astra",
+    "Gray": "gpt-6-astra",
+    "Harper": "gpt-6-astra",
+    "Indigo": "gpt-6-astra",
+    "Jules": "claude-fable-5-1",
+    "Kit": "gpt-6-astra",
+    "Logan": "claude-fable-5-1"
+  }
+}

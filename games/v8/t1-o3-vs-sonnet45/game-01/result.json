@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Indigo: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organizatio",
+  "stopped": "seat failed: Indigo: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organizatio",
+  "days": 2,
+  "seed": 40130,
+  "starting": {
+    "Alex": "Soldier",
+    "Blair": "Recluse",
+    "Casey": "Saint",
+    "Drew": "Butler",
+    "Ellis": "Imp",
+    "Frankie": "Undertaker",
+    "Gray": "Poisoner",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Empath",
+    "Jules": "Baron",
+    "Kit": "Drunk",
+    "Logan": "Washerwoman"
+  },
+  "final": {
+    "Alex": "Soldier",
+    "Blair": "Recluse",
+    "Casey": "Saint",
+    "Drew": "Butler",
+    "Ellis": "Imp",
+    "Frankie": "Undertaker",
+    "Gray": "Poisoner",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Empath",
+    "Jules": "Baron",
+    "Kit": "Drunk",
+    "Logan": "Washerwoman"
+  },
+  "bluffs": [
+    "Librarian",
+    "Slayer",
+    "Mayor"
+  ],
+  "red_herring": "Harper",
+  "drunk_as": "Fortune Teller",
+  "cost": 3.6778,
+  "calls": 257,
+  "tokens": {
+    "input": 148322,
+    "cache_read": 1713534,
+    "cache_write": 42892,
+    "output": 330222
+  },
+  "seconds": 1408.8,
+  "errors": [
+    "Indigo: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')"
+  ],
+  "models": {
+    "Alex": "o3",
+    "Blair": "o3",
+    "Casey": "o3",
+    "Drew": "o3",
+    "Ellis": "claude-sonnet-4-5-20250929",
+    "Frankie": "o3",
+    "Gray": "claude-sonnet-4-5-20250929",
+    "Harper": "o3",
+    "Indigo": "o3",
+    "Jules": "claude-sonnet-4-5-20250929",
+    "Kit": "o3",
+    "Logan": "o3"
+  }
+}

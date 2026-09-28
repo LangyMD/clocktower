@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Casey: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "stopped": "seat failed: Casey: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "days": 1,
+  "seed": 40111,
+  "starting": {
+    "Alex": "Monk",
+    "Blair": "Soldier",
+    "Casey": "Butler",
+    "Drew": "Virgin",
+    "Ellis": "Undertaker",
+    "Frankie": "Empath",
+    "Gray": "Recluse",
+    "Harper": "Baron",
+    "Indigo": "Drunk",
+    "Jules": "Imp",
+    "Kit": "Spy",
+    "Logan": "Saint"
+  },
+  "final": {
+    "Alex": "Monk",
+    "Blair": "Soldier",
+    "Casey": "Butler",
+    "Drew": "Virgin",
+    "Ellis": "Undertaker",
+    "Frankie": "Empath",
+    "Gray": "Recluse",
+    "Harper": "Baron",
+    "Indigo": "Drunk",
+    "Jules": "Imp",
+    "Kit": "Spy",
+    "Logan": "Saint"
+  },
+  "bluffs": [
+    "Washerwoman",
+    "Mayor",
+    "Fortune Teller"
+  ],
+  "red_herring": null,
+  "drunk_as": "Ravenkeeper",
+  "cost": 0,
+  "calls": 0,
+  "tokens": {
+    "input": 0,
+    "cache_read": 0,
+    "cache_write": 0,
+    "output": 0
+  },
+  "seconds": 0.6,
+  "errors": [
+    "Casey: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')"
+  ],
+  "models": {
+    "Alex": "gpt-5.6-sol",
+    "Blair": "gpt-5.6-sol",
+    "Casey": "gpt-5.6-sol",
+    "Drew": "gpt-5.6-sol",
+    "Ellis": "gpt-5.6-sol",
+    "Frankie": "gpt-5.6-sol",
+    "Gray": "gpt-5.6-sol",
+    "Harper": "gpt-5.5",
+    "Indigo": "gpt-5.6-sol",
+    "Jules": "gpt-5.5",
+    "Kit": "gpt-5.5",
+    "Logan": "gpt-5.6-sol"
+  }
+}

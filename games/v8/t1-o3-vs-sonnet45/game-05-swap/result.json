@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Casey: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "stopped": "seat failed: Casey: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "days": 1,
+  "seed": 40134,
+  "starting": {
+    "Alex": "Drunk",
+    "Blair": "Butler",
+    "Casey": "Poisoner",
+    "Drew": "Imp",
+    "Ellis": "Monk",
+    "Frankie": "Empath",
+    "Gray": "Recluse",
+    "Harper": "Saint",
+    "Indigo": "Washerwoman",
+    "Jules": "Slayer",
+    "Kit": "Baron",
+    "Logan": "Soldier"
+  },
+  "final": {
+    "Alex": "Drunk",
+    "Blair": "Butler",
+    "Casey": "Poisoner",
+    "Drew": "Imp",
+    "Ellis": "Monk",
+    "Frankie": "Empath",
+    "Gray": "Recluse",
+    "Harper": "Saint",
+    "Indigo": "Washerwoman",
+    "Jules": "Slayer",
+    "Kit": "Baron",
+    "Logan": "Soldier"
+  },
+  "bluffs": [
+    "Investigator",
+    "Virgin",
+    "Librarian"
+  ],
+  "red_herring": "Ellis",
+  "drunk_as": "Fortune Teller",
+  "cost": 0,
+  "calls": 0,
+  "tokens": {
+    "input": 0,
+    "cache_read": 0,
+    "cache_write": 0,
+    "output": 0
+  },
+  "seconds": 6.2,
+  "errors": [
+    "Casey: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')"
+  ],
+  "models": {
+    "Alex": "claude-sonnet-4-5-20250929",
+    "Blair": "claude-sonnet-4-5-20250929",
+    "Casey": "o3",
+    "Drew": "o3",
+    "Ellis": "claude-sonnet-4-5-20250929",
+    "Frankie": "claude-sonnet-4-5-20250929",
+    "Gray": "claude-sonnet-4-5-20250929",
+    "Harper": "claude-sonnet-4-5-20250929",
+    "Indigo": "claude-sonnet-4-5-20250929",
+    "Jules": "claude-sonnet-4-5-20250929",
+    "Kit": "o3",
+    "Logan": "claude-sonnet-4-5-20250929"
+  }
+}

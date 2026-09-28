@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Jules: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "stopped": "seat failed: Jules: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization",
+  "days": 2,
+  "seed": 40162,
+  "starting": {
+    "Alex": "Washerwoman",
+    "Blair": "Librarian",
+    "Casey": "Poisoner",
+    "Drew": "Virgin",
+    "Ellis": "Soldier",
+    "Frankie": "Scarlet Woman",
+    "Gray": "Saint",
+    "Harper": "Recluse",
+    "Indigo": "Monk",
+    "Jules": "Chef",
+    "Kit": "Imp",
+    "Logan": "Mayor"
+  },
+  "final": {
+    "Alex": "Washerwoman",
+    "Blair": "Librarian",
+    "Casey": "Poisoner",
+    "Drew": "Virgin",
+    "Ellis": "Soldier",
+    "Frankie": "Scarlet Woman",
+    "Gray": "Saint",
+    "Harper": "Recluse",
+    "Indigo": "Monk",
+    "Jules": "Chef",
+    "Kit": "Imp",
+    "Logan": "Mayor"
+  },
+  "bluffs": [
+    "Undertaker",
+    "Butler",
+    "Investigator"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 6.9778,
+  "calls": 232,
+  "tokens": {
+    "input": 186504,
+    "cache_read": 1608784,
+    "cache_write": 81175,
+    "output": 333038
+  },
+  "seconds": 1388.9,
+  "errors": [
+    "Jules: RuntimeError('OpenAI HTTP 429: {\\n  \"error\": {\\n    \"message\": \"Your organization has reached its configured enforced spend limit. Update your limit at https://platform.openai.com/settings/organization/limits.\",\\n    \"type\": \"insufficient_quota\",\\n    \"param\": null,\\n    \"code\": \"organization_spend_limit_exceeded\"\\n  }\\n}')"
+  ],
+  "models": {
+    "Alex": "gpt-5.4",
+    "Blair": "gpt-5.4",
+    "Casey": "claude-opus-4-7",
+    "Drew": "gpt-5.4",
+    "Ellis": "gpt-5.4",
+    "Frankie": "claude-opus-4-7",
+    "Gray": "gpt-5.4",
+    "Harper": "gpt-5.4",
+    "Indigo": "gpt-5.4",
+    "Jules": "gpt-5.4",
+    "Kit": "claude-opus-4-7",
+    "Logan": "gpt-5.4"
+  }
+}
