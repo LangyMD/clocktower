@@ -1,0 +1,57 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 4,
+  "seed": 20049,
+  "starting": {
+    "Alex": "Washerwoman",
+    "Blair": "Ravenkeeper",
+    "Casey": "Monk",
+    "Drew": "Poisoner",
+    "Ellis": "Butler",
+    "Frankie": "Chef",
+    "Gray": "Imp",
+    "Harper": "Empath",
+    "Indigo": "Drunk"
+  },
+  "final": {
+    "Alex": "Washerwoman",
+    "Blair": "Ravenkeeper",
+    "Casey": "Monk",
+    "Drew": "Poisoner",
+    "Ellis": "Butler",
+    "Frankie": "Chef",
+    "Gray": "Imp",
+    "Harper": "Empath",
+    "Indigo": "Drunk"
+  },
+  "bluffs": [
+    "Undertaker",
+    "Soldier",
+    "Virgin"
+  ],
+  "red_herring": null,
+  "drunk_as": "Investigator",
+  "cost": 7.6338,
+  "calls": 448,
+  "tokens": {
+    "input": 1104,
+    "cache_read": 11724739,
+    "cache_write": 538068,
+    "output": 360420
+  },
+  "seconds": 2763.8,
+  "errors": [],
+  "models": {
+    "Alex": "claude-sonnet-5",
+    "Blair": "claude-sonnet-5",
+    "Casey": "claude-sonnet-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-sonnet-5",
+    "Frankie": "claude-sonnet-5",
+    "Gray": "claude-opus-5-5",
+    "Harper": "claude-sonnet-5",
+    "Indigo": "claude-sonnet-5"
+  }
+}
