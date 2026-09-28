@@ -36,7 +36,8 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
 - Keep the protocol clean: no arbitrary special cases; every rule should be explainable in a line.
 - Nominations: each round everyone eligible is asked at once; one nomination is taken; accusation,
   defense, one comment turn for everyone, then the clockwise vote. Slayer shots on any public turn.
-- Equal budget across models: same effort and per-turn output ceiling (8K tokens, thinking included).
+- Equal budget across models: same effort ("high") and per-turn output ceiling (16K tokens, thinking
+  included) — a guard against runaway loops, not a thinking budget (a 4K cap cut older models' turns).
 - Every game in an experiment gets its own seed (more distinct transcripts for later review); the one
   exception worth making is a side-swapped pair sharing a seed (see the roadmap).
 - Minimise wall-clock time: run every game of an experiment at once, no request queues.
@@ -66,7 +67,15 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
   stronger; mixed tables. The user also asked "what happens if there's a ton?" (unclear; ask).
 - **Done:** v5 x1 (Opus/Sonnet/Astra 2x2s, 10 seeds, `games/v5/x1-*`); v6 g1 (Opus high, Opus low,
   Sonnet 5, Astra, GPT-6 Sol; all 20 good-vs-evil pairings, 5 games each, seeds 20000–20099,
-  `games/v6/g1-*`).
+  `games/v6/g1-*`); v7 c1 calibration (Opus and Sol mirrors at 9 and 12 players, `games/v7/c1-*`).
+- **In progress:** v8 timeline t2 (14 models from Sonnet 4.5/o3 to Opus 5.5/GPT-6 Astra, 12 players,
+  21 matchups of neighbours in time, 5 side-swapped pairs each, seeds 50000+, `games/v8/t2-*`);
+  33 of 210 games finished, paused for the user's decision after supervisor mistakes (see
+  PROTOCOLS.md). Resume with the same `run` commands: finished games are kept. GPT-5 needs a verified
+  OpenAI organization.
+- **Supervising runs:** `python -m clocktower supervise games/v8/t2 --max-spend N` in the background.
+  It kills batches only on overspend (killing a batch loses every game in progress); other alarms
+  only alert. Transient API errors make a call wait, not the game stop.
 
 ## Working with the user
 Be concise: lead with the answer. Check realism and design before scaling up runs.
