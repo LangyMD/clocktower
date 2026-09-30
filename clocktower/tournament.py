@@ -45,7 +45,8 @@ def commands(plan):
 def run(path, dry=False):
     plan = json.loads(Path(path).read_text())
     logs = Path(plan['out'] + '-logs')
-    logs.mkdir(parents=True, exist_ok=True)
+    if not dry:
+        logs.mkdir(parents=True, exist_ok=True)
     procs = []
     for name, cmd in commands(plan):
         if dry:

@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Frankie: RuntimeError('OpenAI transport error: Remote end closed connection without response')",
+  "stopped": "seat failed: Frankie: RuntimeError('OpenAI transport error: Remote end closed connection without response')",
+  "days": 6,
+  "seed": 70001,
+  "starting": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Librarian",
+    "Casey": "Fortune Teller",
+    "Drew": "Drunk",
+    "Ellis": "Mayor",
+    "Frankie": "Imp",
+    "Gray": "Chef",
+    "Harper": "Poisoner",
+    "Indigo": "Butler",
+    "Jules": "Spy",
+    "Kit": "Investigator",
+    "Logan": "Slayer"
+  },
+  "final": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Librarian",
+    "Casey": "Fortune Teller",
+    "Drew": "Drunk",
+    "Ellis": "Mayor",
+    "Frankie": "Imp",
+    "Gray": "Chef",
+    "Harper": "Poisoner",
+    "Indigo": "Butler",
+    "Jules": "Spy",
+    "Kit": "Investigator",
+    "Logan": "Slayer"
+  },
+  "bluffs": [
+    "Washerwoman",
+    "Recluse",
+    "Soldier"
+  ],
+  "red_herring": "Ellis",
+  "drunk_as": "Monk",
+  "cost": 24.8039,
+  "calls": 932,
+  "tokens": {
+    "input": 3510,
+    "cache_read": 26243095,
+    "cache_write": 2949279,
+    "output": 411901
+  },
+  "seconds": 10832.2,
+  "errors": [
+    "Frankie: RuntimeError('OpenAI transport error: Remote end closed connection without response')"
+  ],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "gpt-6.1-sol",
+    "Gray": "claude-opus-5-5",
+    "Harper": "gpt-6.1-sol",
+    "Indigo": "claude-opus-5-5",
+    "Jules": "gpt-6.1-sol",
+    "Kit": "claude-opus-5-5",
+    "Logan": "claude-opus-5-5"
+  }
+}

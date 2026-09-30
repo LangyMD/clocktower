@@ -242,3 +242,10 @@ used for a Saint bluff; no capped turns at 32K). One gap, fixed before the freez
 kept the real red herring, so a poisoned Fortune Teller pointing at it always heard a true YES (it
 decided one game). Final v12: a poisoned Fortune Teller's false world has no red herring (simulated
 false rate 60% -> ~80%, like the other roles). The c2 games ran before that fix.
+
+c2 outcome: 10 of 12 games finished, good 9 and evil 1 (the long games that usually go to evil were
+the two lost). One game stopped on day 6 when OpenAI closed the connection before replying, 10 times
+in a row, at high effort; OpenAI requests are now streamed (server-sent events), which keeps bytes
+flowing during long thinking (max gap 6 s in a max-effort test). One GPT-5.1 game was killed at day 3
+by a container restart. Fable 5 as good cost $88 in one 6-day 12-player game (~$10 per seat-game),
+far above e1's short-game average: budget the flagship with care.

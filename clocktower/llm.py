@@ -326,10 +326,22 @@ class OpenAIConversation(_Base):
         return out
 
     def _post(self, body):
-        req = urllib.request.Request(self.URL, data=json.dumps(body).encode(), method='POST',
+        """One streamed request (server-sent events), returning the final response object. Streaming keeps
+        bytes flowing while the model thinks: long unstreamed requests were cut off mid-game ("remote end
+        closed connection") at high and max effort."""
+        req = urllib.request.Request(self.URL, data=json.dumps({**body, 'stream': True}).encode(), method='POST',
                                      headers={'Authorization': f'Bearer {self.key}', 'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=900) as resp:  # a max-effort turn can take over 5 minutes
-            return json.load(resp)
+        with urllib.request.urlopen(req, timeout=900) as resp:  # the timeout is per read, between events
+            for raw in resp:
+                line = raw.decode(errors='replace').strip()
+                if not line.startswith('data: '):
+                    continue
+                event = json.loads(line[6:])
+                if event.get('type') in ('response.completed', 'response.incomplete', 'response.failed'):
+                    return event['response']
+                if event.get('type') == 'error':
+                    raise ConnectionError(f"stream error: {json.dumps(event)[:500]}")
+        raise ConnectionError('stream ended without a final response')
 
     async def _request(self, body):
         for attempt in range(10):
