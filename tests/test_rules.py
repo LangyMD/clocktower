@@ -650,6 +650,13 @@ class V6Tests(unittest.TestCase):
 
 
 class TableSizeTests(unittest.TestCase):
+    def test_a_range_picks_the_size_from_the_seed(self):
+        from clocktower.cli import table_size
+        self.assertEqual(table_size('12', 7), 12)
+        self.assertEqual([table_size('10-12', s) for s in range(60000, 60006)], [10, 11, 12, 10, 11, 12])
+        with self.assertRaises(ValueError):
+            table_size('4-12', 1)
+
     def test_every_size_deals_a_legal_setup(self):
         from clocktower.state import random_setup
         from clocktower.characters import SETUPS

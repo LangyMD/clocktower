@@ -32,7 +32,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v8'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
+PROTOCOL = 'v9'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -50,9 +50,19 @@ def shared(args):
     return Shared(make_client(), Ledger(GAMES / 'ledger.jsonl', cap=args.budget), limiter(args.concurrency))
 
 
+def table_size(players, seed):
+    """'12' is always 12 players; a range '10-12' picks one by seed (10 + seed % 3), so a side-swapped
+    pair, which shares its seed, shares its table size too."""
+    lo, _, hi = str(players).partition('-')
+    lo, hi = int(lo), int(hi or lo)
+    if not 5 <= lo <= hi <= 15:
+        raise ValueError(f'--players must be within 5-15, got {players}')
+    return lo + (seed or 0) % (hi - lo + 1)
+
+
 def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     characters = args.characters.split(',') if args.characters else None
-    names = ALL_NAMES[:len(characters) if characters else args.players]
+    names = ALL_NAMES[:len(characters) if characters else table_size(args.players, seed)]
     game = Game({}, None, names=names, seed=seed, private_beats=args.private_beats,
                 public_beats=args.public_beats, max_days=args.days, waves=args.waves, characters=characters,
                 minion=minion, out=out, probes=getattr(args, 'probes', False))
@@ -89,7 +99,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
               'max_days': args.days, 'human': human, 'characters': characters, 'probes': args.probes,
               'openai_tier': 'flex' if args.flex else 'default',
-              'players': len(names),
+              'players': len(names), 'players_arg': str(args.players),
               'player_prompt_sha': hashlib.sha256(player_system(len(names)).encode()).hexdigest()[:12]}
     (out / 'config.json').write_text(json.dumps(config, indent=2))
     return game, convs
@@ -129,7 +139,7 @@ async def run_batch(args):
     env = shared(args)
     base = args.seed if args.seed is not None else random.randrange(2 ** 32)
     stamp = time.strftime('%Y%m%d-%H%M%S')
-    if args.games == 1:
+    if args.games == 1 and not args.swap:
         out = Path(args.out) if args.out else RUNS / f'{stamp}-{base}'
         return [await play_one(args, base, out, env)]
     root = Path(args.out) if args.out else RUNS / f'batch-{stamp}'
@@ -140,8 +150,8 @@ async def run_batch(args):
                                     'evil_model': args.good_model or args.model,
                                     'good_effort': args.evil_effort, 'evil_effort': args.good_effort})
 
-    async def one(k, a=args, suffix=''):  # game k always gets seed base + k - 1 (and a Minion by rotation)
-        minion = MINIONS[(k - 1) % len(MINIONS)] if not args.characters else None
+    async def one(k, a=args, suffix=''):  # game k gets seed base + k - 1; the seed picks the Minion in play
+        minion = MINIONS[(base + k - 1) % len(MINIONS)] if not args.characters else None
         out = root / f'game-{k:02d}{suffix}'
         done = out / 'result.json'
         if done.exists() and json.loads(done.read_text()).get('winner'):
@@ -196,8 +206,9 @@ def main(argv=None):
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=15, help='stop after this many days')
-        p.add_argument('--players', type=int, default=9, choices=range(5, 16), metavar='5-15',
-                       help='table size (official Trouble Brewing setup for that count)')
+        p.add_argument('--players', default='9', metavar='N or A-B',
+                       help='table size, 5-15 (official Trouble Brewing setup for that count); a range such as '
+                            '10-12 picks each game\'s size from its seed')
         p.add_argument('--characters', help='comma-separated forced setup, in seating order (tests)')
         p.add_argument('--out')
         if name in ('run', 'sim'):

@@ -142,7 +142,7 @@ and the claim meta (near-universal day-1 claims make role counts solvable), plus
 issues, fixed in v8. Twelve players add real two-Minion play (busing, starpasses, Scarlet Woman
 catches, joint framing); Opus games ran a day longer at 12, Sol games did not.
 
-## v8 — current (Sept 28)
+## v8 (Sept 28)
 v7 plus three fixes from the c1 calibration:
 - The false world behind misinformation has as many Minions as the real game (v7 always had one,
   which biased false Chef/Empath numbers low at 12 players).
@@ -168,3 +168,22 @@ rather than a thinking budget (a 4K ceiling cut 33% of GPT-5.1's turns and lost 
 replies-only models re-derive the game every turn). Each model's thinking tokens and cost per game
 are reported next to its rating. Runs are supervised: `python -m clocktower supervise` pauses a run
 on stopped games, lost turns, >1% capped turns, refusals, stalls or overspend.
+
+t2 (Sept 29, paused with 33 of 210 games finished): the supervisor killed every batch twice on
+transient API errors (one HTTP 520, then three Opus 4.6 overloads), losing the games in progress. Since
+then every 5xx is retried, overloads wait, the supervisor kills only on overspend, and `run` resumes a
+batch (finished games are kept).
+
+## v9 — current (Sept 30)
+v8 game rules, unchanged. Two setup changes:
+- The table size can vary: `--players 10-12` gives each game 10 + seed % 3 players, so every
+  table has two Minions (Trouble Brewing's 10–12 band) and 0, 1 or 2 Outsiders. A side-swapped
+  pair shares its seed and so its table size.
+- The Minion guaranteed to be in play is picked by seed (MINIONS[seed % 4]), not by the game's
+  number within its batch, so batches of one pair still rotate Minions. (`--games 1 --swap` now
+  plays both games of the pair; before it silently played one.)
+New models: GPT-6.1 Sol (`gpt-6.1-sol`, $2/$10, carries its reasoning: memory check 3/3 carried,
+3/3 NO ACCESS stripped) and Sonnet 5.5 (`claude-sonnet-5-5`, $2/$10; the memory check is refused as
+reasoning extraction, so its memory is assumed like other adaptive-thinking Claude models and is
+checked in transcripts). Effort "max" is accepted by both labs: on a smoke turn Opus 5.5 thought
+~5,000 tokens at max against ~300 at high, GPT-6 Sol ~1,900 against ~600.
