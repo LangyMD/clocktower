@@ -18,6 +18,8 @@ from collections import defaultdict
 from pathlib import Path
 
 EVIL = {'Imp', 'Poisoner', 'Spy', 'Scarlet Woman', 'Baron'}
+from .characters import GOOD as _GOOD
+TEAM_CHARACTERS = {'evil': EVIL, 'good': set(_GOOD)}  # `--seat-model CHARACTER:MODEL` overrides, by team
 
 
 def wilson(k, n, z=1.96):
@@ -43,7 +45,9 @@ def _entrant(config, team):
     """A team's model, with its effort when it isn't the default 'high' (e.g. 'claude-opus-5-5@low')."""
     model = config.get(f'{team}_model') or config.get('model')
     effort = config.get(f'{team}_effort') or config.get('player_effort') or 'high'
-    return model if effort == 'high' else f'{model}@{effort}'
+    name = model if effort == 'high' else f'{model}@{effort}'
+    extra = [x for x in config.get('seat_models') or [] if x.split(':')[0] in (team, *TEAM_CHARACTERS[team])]
+    return name + ''.join(f' +{x}' for x in extra)  # mixed or upgraded teams are their own entrants
 
 
 def game_metrics(path):

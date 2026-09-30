@@ -60,6 +60,47 @@ def table_size(players, seed):
     return lo + (seed or 0) % (hi - lo + 1)
 
 
+def _model(text, effort):
+    """'claude-opus-5-5@low' -> ('claude-opus-5-5', 'low'); no suffix keeps `effort`."""
+    model, _, e = text.partition('@')
+    return model, e or effort
+
+
+def seat_models(g, args, seed):
+    """Which model (and effort) plays each seat, once the characters are dealt.
+
+    A team's model may be a comma list (`--good-model A,B,C`): the team's seats, in an order shuffled
+    by the seed, take the models in turn, so a mixed team splits as evenly as it can. Then each
+    `--seat-model` override applies, in order: `good:MODEL:N` / `evil:MODEL:N` gives N of that team's
+    seats (picked by the seed; N defaults to 1) to MODEL, and `CHARACTER:MODEL` (e.g. `Imp:gpt-6-astra`)
+    gives the seat dealt that character. Any model may carry an effort, `MODEL@low`."""
+    rng = random.Random(f'{seed}-seats')
+    out = {}
+    for team in ('good', 'evil'):
+        spec_ = {'good': args.good_model, 'evil': args.evil_model}[team] or args.model
+        effort = {'good': args.good_effort, 'evil': args.evil_effort}[team] or args.effort
+        models = [_model(m.strip(), effort) for m in spec_.split(',')]
+        seats = [p.name for p in g.players if (p.evil) == (team == 'evil')]
+        rng.shuffle(seats)
+        for i, name in enumerate(seats):
+            out[name] = models[i % len(models)]
+    for override in getattr(args, 'seat_model', None) or []:
+        who, _, rest = override.partition(':')
+        if who in ('good', 'evil'):
+            model, _, n = rest.partition(':')
+            effort = {'good': args.good_effort, 'evil': args.evil_effort}[who] or args.effort
+            seats = sorted(p.name for p in g.players if p.evil == (who == 'evil'))
+            for name in rng.sample(seats, int(n or 1)):
+                out[name] = _model(model, effort)
+        else:
+            p = next((q for q in g.players if q.character == who), None)
+            if p is None:
+                continue  # that character isn't in this game
+            effort = (args.evil_effort if p.evil else args.good_effort) or args.effort
+            out[p.name] = _model(rest, effort)
+    return out
+
+
 def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     characters = args.characters.split(',') if args.characters else None
     names = ALL_NAMES[:len(characters) if characters else table_size(args.players, seed)]
@@ -73,14 +114,16 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     ttl = '1h' if human else '5m'  # a human can take longer than five minutes between turns
     convs = []
     game.meta['models'] = {}
+    assigned = {}  # seat -> (model, effort), fixed once the characters are dealt
 
     def seat(name, team):  # called once the characters are dealt
         if name == human:
             game.meta['models'][name] = 'human'
             return HumanSeat(name)
-        model = {'good': args.good_model, 'evil': args.evil_model}[team] or args.model
-        effort = {'good': args.good_effort, 'evil': args.evil_effort}[team] or args.effort
-        game.meta['models'][name] = model
+        if not assigned:
+            assigned.update(seat_models(game.g, args, seed))
+        model, effort = assigned[name]
+        game.meta['models'][name] = model if effort == args.effort else f'{model}@{effort}'
         system = player_system(len(names), spec(model)['memory'])
         c = conversation(env.client, system, player_schema(names), label=name, ledger=env.ledger,
                          semaphore=env.semaphore, on_call=game.record_call, model=model, effort=effort,
@@ -92,8 +135,10 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
     config = {'protocol': PROTOCOL, 'model': args.model, 'good_model': args.good_model, 'evil_model': args.evil_model,
               'player_effort': args.effort, 'good_effort': args.good_effort or args.effort,
               'evil_effort': args.evil_effort or args.effort, 'max_output_tokens': args.max_output,
-              'good_memory': spec(args.good_model or args.model)['memory'],
-              'evil_memory': spec(args.evil_model or args.model)['memory'], 'storyteller': 'scripted',
+              'seat_models': getattr(args, 'seat_model', None) or [],
+              'good_memory': spec(_model((args.good_model or args.model).split(',')[0], '')[0])['memory'],
+              'evil_memory': spec(_model((args.evil_model or args.model).split(',')[0], '')[0])['memory'],
+              'storyteller': 'scripted',
               'seed': seed,
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
@@ -195,6 +240,16 @@ def main(argv=None):
     sp = sub.add_parser('site')
     sp.add_argument('--games', default=str(GAMES))
     sp.add_argument('--out', default=str(ROOT / 'site'))
+    pl = sub.add_parser('plan', help='write a tournament plan (JSON) for a list of models')
+    pl.add_argument('models', help='JSON file: a list of model ids, or of {id, short, ...}, in release order')
+    pl.add_argument('--within', type=int, help='only pairs at most this many places apart (default: all pairs)')
+    pl.add_argument('--pairs', type=int, default=1, help='side-swapped pairs per matchup')
+    pl.add_argument('--seed', type=int, default=80000)
+    pl.add_argument('--out', default=f'games/{PROTOCOL}/f1')
+    pl.add_argument('--players', default='10-12')
+    tp = sub.add_parser('tournament', help='run every matchup of a plan at once (resumable)')
+    tp.add_argument('plan')
+    tp.add_argument('--dry-run', action='store_true', help='print the commands instead')
     fp = sub.add_parser('fetch', help='download game logs from the Hugging Face dataset (e.g. v9/e1-*)')
     fp.add_argument('patterns', nargs='+')
     rv = sub.add_parser('replay')
@@ -222,6 +277,9 @@ def main(argv=None):
             p.add_argument('--effort', default='high', help='player reasoning effort (same for every model)')
             p.add_argument('--good-effort', help='reasoning effort for the good team (default --effort)')
             p.add_argument('--evil-effort', help='reasoning effort for the evil team (default --effort)')
+            p.add_argument('--seat-model', action='append', metavar='SPEC',
+                           help='per-seat override, repeatable: good:MODEL[:N], evil:MODEL[:N] (N seats of that '
+                                'team, picked by seed) or CHARACTER:MODEL (e.g. Imp:gpt-6-astra); MODEL@effort ok')
             p.add_argument('--max-output', type=int, default=32000,
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
@@ -257,6 +315,13 @@ def main(argv=None):
     elif args.command == 'site':
         from .site import build as build_site
         build_site(args.games, args.out)
+    elif args.command == 'plan':
+        from .tournament import make_plan
+        models = json.loads(Path(args.models).read_text())
+        print(json.dumps(make_plan(models, args.within, args.pairs, args.seed, args.out, args.players), indent=1))
+    elif args.command == 'tournament':
+        from .tournament import run as tournament
+        raise SystemExit(tournament(args.plan, args.dry_run))
     elif args.command == 'fetch':
         from .store import fetch
         print(fetch(args.patterns))

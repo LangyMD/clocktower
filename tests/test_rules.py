@@ -785,3 +785,46 @@ class V12Tests(unittest.TestCase):
         self.assertTrue(spy)
         for role in ('Washerwoman', 'Librarian', 'Investigator'):
             self.assertIn(f'({role}) was shown:', spy[-1])
+
+
+class SeatModelTests(unittest.TestCase):
+    def args(self, **kw):
+        import argparse
+        base = dict(model='m0', good_model='a', evil_model='b', effort='high', good_effort=None, evil_effort=None,
+                    seat_model=[])
+        return argparse.Namespace(**{**base, **kw})
+
+    def test_teams_mixed_models_and_seat_overrides(self):
+        from clocktower.cli import seat_models
+        g = Grimoire(NAMES, BASE)  # evil: Alex (Imp), Blair (Poisoner)
+        out = seat_models(g, self.args(), 1)
+        self.assertEqual({out[A], out[B]}, {('b', 'high')})
+        self.assertEqual({out[n] for n in NAMES[2:]}, {('a', 'high')})
+        mixed = seat_models(g, self.args(good_model='a,c@low'), 1)
+        good = [mixed[n] for n in NAMES[2:]]
+        self.assertEqual(sorted(set(good)), [('a', 'high'), ('c', 'low')])
+        self.assertLessEqual(abs(good.count(('a', 'high')) - good.count(('c', 'low'))), 1)
+        one = seat_models(g, self.args(seat_model=['good:x:1', 'Imp:y@max']), 1)
+        self.assertEqual(sum(one[n] == ('x', 'high') for n in NAMES[2:]), 1)
+        self.assertEqual(one[A], ('y', 'max'))
+        self.assertEqual(seat_models(g, self.args(seat_model=['good:x:1']), 1), one | {A: ('b', 'high')})
+
+
+class ContextTests(unittest.TestCase):
+    def test_oldest_turns_but_never_the_first_are_dropped_to_fit_the_window(self):
+        from clocktower.llm import OpenAIConversation, Ledger, NO_LIMIT
+        import os, tempfile
+        os.environ.setdefault('OPENAI_API_KEY', 'test')
+        c = OpenAIConversation('rules', {}, label='x', ledger=Ledger(tempfile.mktemp()), semaphore=NO_LIMIT,
+                               model='gpt-4o', flex=False)
+        self.assertEqual(c.max_tokens, 16_384)  # GPT-4o's own output limit
+        big = 'word ' * 20_000
+        for k in range(12):
+            c.messages += [{'role': 'user', 'content': [{'type': 'input_text', 'text': f'turn {k} ' + big}]},
+                           {'role': 'assistant', 'content': 'ok'}]
+        c.last_input = 125_000
+        c.fit('next')
+        texts = [m['content'][0]['text'][:7] for m in c.messages if m.get('role') == 'user']
+        self.assertEqual(texts[0], 'turn 0 ')  # the first turn (character and setup) stays
+        self.assertGreater(c.trimmed, 0)
+        self.assertEqual(texts[1], f'turn {c.trimmed + 1} ')  # then the most recent turns

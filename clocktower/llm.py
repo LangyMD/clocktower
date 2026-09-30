@@ -62,6 +62,9 @@ PRICES = {  # USD per million tokens, list prices as of Sept 2026; Flex is half 
     'gpt-5.4': _openai(2.5, 15, explicit_cache=False),
     'gpt-5.2': _openai(1.75, 14, explicit_cache=False),
     'gpt-5.1': _openai(1.25, 10, explicit_cache=False),
+    'gpt-5': _openai(1.25, 10, explicit_cache=False),
+    'o1': _price(15, 60, read=7.5, write_5m=15, write_1h=15),
+    'gpt-4o': _price(2.5, 10, read=1.25, write_5m=2.5, write_1h=2.5),
     'o3': _openai(2, 8, explicit_cache=False),
 }
 
@@ -71,19 +74,23 @@ PRICES = {  # USD per million tokens, list prices as of Sept 2026; Flex is half 
 # (its earlier thinking too) or 'replies' (only what it said). Measured with a two-turn check
 # (pick a secret in your thinking, reveal it next turn), Sept 28 2026; see games/PROTOCOLS.md.
 MODELS = {
-    'claude-sonnet-4-5-20250929': {'thinking': 'budget', 'effort': False, 'memory': 'replies'},
-    'claude-opus-4-5-20251101': {'thinking': 'budget'},
+    'claude-sonnet-4-5-20250929': {'thinking': 'budget', 'effort': False, 'memory': 'replies', 'window': 200_000},
+    'claude-opus-4-5-20251101': {'thinking': 'budget', 'window': 200_000},
     'gpt-5.5': {'explicit_cache': False},
     'gpt-5.4': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
     'gpt-5.2': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
     'gpt-5.1': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
-    'o3': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies'},
+    'o3': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
+    'o1': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
+    'gpt-5': {'context': False, 'explicit_cache': False, 'memory': 'replies'},  # memory unverified (org check)
+    'gpt-4o': {'reasoning': False, 'context': False, 'explicit_cache': False, 'memory': 'replies',
+               'window': 128_000, 'max_output': 16_384},  # no reasoning; its output limit is 16K
 }
 
 
 def spec(model):
     return {'thinking': 'adaptive', 'effort': True, 'context': True, 'explicit_cache': True, 'summary': 'concise',
-            'memory': 'reasoning', **MODELS.get(model, {})}
+            'memory': 'reasoning', 'reasoning': True, 'window': None, 'max_output': None, **MODELS.get(model, {})}
 
 
 def cost(model, usage, factor=1.0):
@@ -173,14 +180,37 @@ class _Base:
                  max_tokens=32000):
         self.system, self.schema = system, schema
         self.label, self.ledger, self.semaphore, self.on_call = label, ledger, semaphore, on_call
-        self.model, self.effort, self.max_tokens = model, effort, max_tokens
+        self.model, self.effort = model, effort
+        self.max_tokens = min(max_tokens, spec(model)['max_output'] or max_tokens)  # a model's own hard limit
         self.messages = []
+        self.last_input = 0   # input tokens of the last call
+        self.trimmed = 0      # turns dropped to fit the context window
+
+    def fit(self, text):
+        """When the game outgrows the model's context window, drop its oldest turns (never the first,
+        which holds the seat's character and setup), so it sees as much of the recent game as fits."""
+        window = spec(self.model)['window']
+        if not window or not self.last_input:
+            return
+        over = self.last_input + len(text) // 3 + self.max_tokens - int(window * 0.95)
+        while over > 0:
+            users = [i for i, m in enumerate(self.messages) if isinstance(m, dict) and m.get('role') == 'user']
+            if len(users) < 3:
+                return
+            dropped = self.messages[users[1]:users[2]]
+            del self.messages[users[1]:users[2]]
+            over -= len(json.dumps(dropped, default=str)) // 4
+            self.trimmed += 1
 
     def record(self, meta, attempt, stop, start, spent, usage, thinking, out, extra=None):
         if self.on_call:
             self.on_call({'label': self.label, **(meta or {}), 'model': self.model, 'attempt': attempt, 'stop': stop,
                           'latency': round(time.monotonic() - start, 2), 'cost': spent, 'usage': usage,
-                          'thinking': thinking, 'output': out, **(extra or {})})
+                          'thinking': thinking, 'output': out, **({'trimmed': self.trimmed} if self.trimmed else {}),
+                          **(extra or {})})
+        total = sum(usage.get(k, 0) for k in ('input_tokens', 'cache_read_input_tokens', 'cache_creation_input_tokens'))
+        if total:
+            self.last_input = total
 
 
 class ClaudeConversation(_Base):
@@ -228,6 +258,7 @@ class ClaudeConversation(_Base):
         the reply is added to the conversation."""
         user = {'role': 'user', 'content': text}
         if commit:
+            self.fit(text)
             self.messages.append(user)
         messages = self.messages if commit else [*self.messages, user]
         refusals = truncations = 0
@@ -268,7 +299,7 @@ class OpenAIConversation(_Base):
     item, including encrypted reasoning, is appended to the input for the next turn."""
     URL = 'https://api.openai.com/v1/responses'
 
-    def __init__(self, system, schema, *, flex=True, **kw):
+    def __init__(self, system, schema, *, flex=False, **kw):
         super().__init__(system, schema, **kw)
         self.flex = flex
         self.key = os.environ.get('OPENAI_API_KEY')
@@ -312,6 +343,7 @@ class OpenAIConversation(_Base):
     async def send(self, text, meta=None, commit=True) -> Reply:
         user = {'role': 'user', 'content': [self._block(text)]}
         if commit:
+            self.fit(text)
             self.messages.append(user)
         messages = self.messages if commit else [*self.messages, user]
         truncations = 0
@@ -320,8 +352,9 @@ class OpenAIConversation(_Base):
             body = {'model': self.model, 'store': False, 'max_output_tokens': self.max_tokens, 'input': messages,
                     'text': {'format': {'type': 'json_schema', 'name': 'game_action', 'strict': True,
                                         'schema': self.schema}},
-                    'reasoning': self._reasoning(),
                     'prompt_cache_key': f'clocktower:{self.label}:{id(self) % 10 ** 8}'}
+            if spec(self.model)['reasoning']:
+                body['reasoning'] = self._reasoning()
             if spec(self.model)['explicit_cache']:
                 body['prompt_cache_options'] = {'mode': 'explicit', 'ttl': '30m'}
             if self.flex:
