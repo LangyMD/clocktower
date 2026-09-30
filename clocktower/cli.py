@@ -32,7 +32,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v12'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
+PROTOCOL = 'v12'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -263,7 +263,7 @@ def main(argv=None):
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=15, help='stop after this many days')
-        p.add_argument('--players', default='9', metavar='N or A-B',
+        p.add_argument('--players', default='10-12', metavar='N or A-B',
                        help='table size, 5-15 (official Trouble Brewing setup for that count); a range such as '
                             '10-12 picks each game\'s size from its seed')
         p.add_argument('--characters', help='comma-separated forced setup, in seating order (tests)')

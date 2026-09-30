@@ -68,7 +68,7 @@ POLICY = {
     'drunk_truthful': 0.2,    # per game: the Drunk gets true information (else from their false world)
     'poisoned_false': 0.8,    # per night: a poisoned player's information comes from a false world (else true)
     'false_vouch_evil': 0.7,  # a misinformed Washerwoman's pair includes an evil player (else any player)
-    # registration (weighted toward evil, as a Storyteller balancing a 9-player game would)
+    # registration (weighted toward evil, as a Storyteller balancing the game would)
     'spy_evil': 0.1,          # the Spy registers as evil
     'recluse_evil': 0.5,      # the Recluse registers as evil
     'recluse_as_imp': 0.3,    # a Recluse registering as an evil character registers as the Imp (else a Minion)

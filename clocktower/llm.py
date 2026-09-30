@@ -65,6 +65,9 @@ PRICES = {  # USD per million tokens, list prices as of Sept 2026; Flex is half 
     'gpt-5': _openai(1.25, 10, explicit_cache=False),
     'o1': _price(15, 60, read=7.5, write_5m=15, write_1h=15),
     'gpt-4o': _price(2.5, 10, read=1.25, write_5m=2.5, write_1h=2.5),
+    # served only through OpenRouter (Amazon Bedrock); OpenRouter's reported cost is used when present
+    'openrouter:anthropic/claude-opus-4.1': _price(15, 75),
+    'openrouter:anthropic/claude-sonnet-4': _price(3, 15),
     'o3': _openai(2, 8, explicit_cache=False),
 }
 
@@ -72,7 +75,7 @@ PRICES = {  # USD per million tokens, list prices as of Sept 2026; Flex is half 
 # effort level for Claude; for OpenAI, reasoning carried across all turns, concise summaries and
 # explicit cache breakpoints). `memory` is what the model sees of its own past turns: 'reasoning'
 # (its earlier thinking too) or 'replies' (only what it said). Measured with a two-turn check
-# (pick a secret in your thinking, reveal it next turn), Sept 28 2026; see games/PROTOCOLS.md.
+# (pick a secret in your thinking, reveal it next turn), Sept 28 2026; see docs/protocol-history.md.
 MODELS = {
     'claude-sonnet-4-5-20250929': {'thinking': 'budget', 'effort': False, 'memory': 'replies', 'window': 200_000},
     'claude-opus-4-5-20251101': {'thinking': 'budget', 'window': 200_000},
@@ -83,6 +86,8 @@ MODELS = {
     'o3': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
     'o1': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
     'gpt-5': {'context': False, 'explicit_cache': False, 'memory': 'replies'},  # memory unverified (org check)
+    'openrouter:anthropic/claude-opus-4.1': {'thinking': 'budget', 'memory': 'replies', 'window': 200_000},
+    'openrouter:anthropic/claude-sonnet-4': {'thinking': 'budget', 'memory': 'replies', 'window': 200_000},
     'gpt-4o': {'reasoning': False, 'context': False, 'explicit_cache': False, 'memory': 'replies',
                'window': 128_000, 'max_output': 16_384},  # no reasoning; its output limit is 16K
 }
@@ -404,8 +409,86 @@ class OpenAIConversation(_Base):
 OPENAI_PREFIXES = ('gpt-', 'o1', 'o3', 'o4')
 
 
+class OpenRouterConversation(_Base):
+    """Older Claude models still served only through OpenRouter (Amazon Bedrock): chat completions with a
+    thinking budget (three quarters of the ceiling, as for the other budget-thinking Claude models) and
+    Anthropic prompt caching. These endpoints take no structured-output setting, so the reply schema is
+    stated in the system prompt and the JSON is parsed (a malformed reply is retried). The API drops
+    earlier thinking from the context, so these models remember their replies only."""
+    URL = 'https://openrouter.ai/api/v1/chat/completions'
+
+    def __init__(self, system, schema, **kw):
+        super().__init__(system, schema, **kw)
+        self.key = os.environ.get('OPENROUTER_API_KEY')
+        if not self.key:
+            raise RuntimeError('OPENROUTER_API_KEY is not set')
+        self.slug = self.model.split(':', 1)[1]
+        rules = system + ('\n\nReply with one JSON object and nothing else (no code fence), matching this JSON '
+                          'schema:\n' + json.dumps(schema))
+        self.messages = [{'role': 'system', 'content': [{'type': 'text', 'text': rules,
+                                                         'cache_control': {'type': 'ephemeral'}}]}]
+
+    def _post(self, body):
+        req = urllib.request.Request(self.URL, data=json.dumps(body).encode(), method='POST',
+                                     headers={'Authorization': f'Bearer {self.key}', 'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=900) as resp:
+            return json.load(resp)
+
+    _request = OpenAIConversation._request
+
+    async def send(self, text, meta=None, commit=True) -> Reply:
+        user = {'role': 'user', 'content': [{'type': 'text', 'text': text}]}
+        if commit:
+            self.fit(text)
+            self.messages.append(user)
+        messages = self.messages if commit else [*self.messages, user]
+        truncations = 0
+        for attempt in range(4):
+            self.ledger.check()
+            for m in messages[1:]:  # one cache breakpoint on the newest user turn (plus the system prompt)
+                if m['role'] == 'user':
+                    m['content'][-1].pop('cache_control', None)
+            messages[-1]['content'][-1]['cache_control'] = {'type': 'ephemeral'}
+            body = {'model': self.slug, 'messages': messages, 'max_tokens': self.max_tokens,
+                    'reasoning': {'max_tokens': self.max_tokens * 3 // 4}, 'usage': {'include': True},
+                    'provider': {'require_parameters': True}}
+            start = time.monotonic()
+            async with (self.semaphore if commit else NO_LIMIT):
+                raw = await self._request(body)
+            u = raw.get('usage') or {}
+            read = (u.get('prompt_tokens_details') or {}).get('cached_tokens', 0)
+            write = (u.get('prompt_tokens_details') or {}).get('cache_write_tokens', 0)
+            usage = {'input_tokens': u.get('prompt_tokens', 0) - read - write, 'cache_read_input_tokens': read,
+                     'cache_creation_input_tokens': write, 'output_tokens': u.get('completion_tokens', 0),
+                     'output_tokens_details': {'thinking_tokens': (u.get('completion_tokens_details') or {}).get('reasoning_tokens', 0)}}
+            spent = u.get('cost') if u.get('cost') is not None else cost(self.model, usage)
+            self.ledger.add(spent, label=self.label)
+            choice = (raw.get('choices') or [{}])[0]
+            msg = choice.get('message') or {}
+            thinking, out = msg.get('reasoning') or '', (msg.get('content') or '').strip()
+            stop = {'stop': 'end_turn', 'length': 'max_tokens'}.get(choice.get('finish_reason'), choice.get('finish_reason'))
+            self.record(meta, attempt, stop, start, spent, usage, thinking, out)
+            if stop == 'max_tokens':
+                truncations += 1
+                if truncations >= 2:
+                    return Reply({}, thinking)
+                continue
+            try:
+                action = json.loads(out[out.find('{'):out.rfind('}') + 1])
+            except json.JSONDecodeError:
+                continue
+            if commit:
+                self.messages.append({'role': 'assistant', 'content': out})
+            return Reply(action, thinking)
+        return Reply({})
+
+
 def conversation(client, system, schema, *, model, **kw):
-    """A Claude or OpenAI conversation, by model name."""
+    """A Claude, OpenAI or OpenRouter conversation, by model name."""
+    if model.startswith('openrouter:'):
+        kw.pop('ttl', None)
+        kw.pop('flex', None)
+        return OpenRouterConversation(system, schema, model=model, **kw)
     if model.startswith(OPENAI_PREFIXES):
         kw.pop('ttl', None)
         return OpenAIConversation(system, schema, model=model, **kw)
