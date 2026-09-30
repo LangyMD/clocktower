@@ -344,6 +344,19 @@ class InformationTests(unittest.TestCase):
 
 
 class ScriptedStorytellerTests(unittest.TestCase):
+    def test_librarian_with_no_outsiders_can_learn_zero_or_see_the_spy(self):
+        chars = ['Imp', 'Spy', 'Monk', 'Librarian', 'Chef', 'Washerwoman', 'Soldier', 'Empath', 'Mayor']
+        g = Grimoire(NAMES, chars)
+        seen = {bool(pair_choice(g, g[D], 'Librarian').options(random.Random(s))['players']) for s in range(200)}
+        self.assertEqual(seen, {True, False})  # "zero" is reachable, not only the Spy
+
+    def test_ravenkeeper_who_picks_themselves_sees_what_they_think_they_are(self):
+        from clocktower.state import character_choice
+        chars = ['Imp', 'Poisoner', 'Drunk', 'Chef', 'Empath', 'Monk', 'Washerwoman', 'Soldier', 'Saint']
+        g = Grimoire(NAMES, chars, drunk_as='Ravenkeeper')
+        shown = {character_choice(g, g[C], 'Ravenkeeper', C).options(random.Random(s))['character'] for s in range(100)}
+        self.assertEqual(shown, {'Ravenkeeper'})
+
     def test_every_scripted_choice_is_legal(self):
         from clocktower.characters import TOWNSFOLK
         from clocktower.state import (character_choice, empath_choice, fortune_teller_choice, mayor_choice,

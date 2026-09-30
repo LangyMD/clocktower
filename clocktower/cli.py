@@ -32,7 +32,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v9'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
+PROTOCOL = 'v10'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 

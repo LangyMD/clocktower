@@ -84,6 +84,8 @@ def render(ev, viewer, dead=()):
             tag += " [Fortune Teller's red herring]" if seat['name'] == d.get('red_herring') else ''
             lines.append(f"{i}. {seat['name']}: {seat['character']}{tag}")
         return '\n'.join(lines + [f"Demon bluffs: {', '.join(d['bluffs'])}"])
+    if k == 'death':
+        return f"[{d['player']} dies: {d.get('cause', '')}]"
     if k == 'becomes':
         return f"[{d['player']} is now the {d['character']}]"
     if k == 'thinking':

@@ -35,7 +35,7 @@ WORDS = {'beat': 150, 'whisper': 150, 'nominate': 150, 'defense': 200, 'comment'
 NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
     'Poisoner': (1, 'Choose a player to poison tonight and tomorrow.', True),
     'Monk': (1, 'Choose a player (not yourself) to protect from the Demon tonight.', False),
-    'Imp': (1, 'Choose a player to kill. (Choosing yourself kills you and makes your Minion the new Imp.)', True),
+    'Imp': (1, 'Choose a player to kill. (Choosing yourself kills you and makes one of your Minions the new Imp.)', True),
     'Fortune Teller': (2, 'Choose two players: you learn whether either of them is the Demon.', True),
     'Butler': (1, 'Choose your master (not yourself): tomorrow you may only vote if they vote too.', False),
 }
@@ -353,7 +353,8 @@ class Game:
                                '(a whisper goes to one or two players)')
             out.append({'to': to[:2], 'text': text})
         if dropped:
-            self.emit('notice', {'text': '(' + '; '.join(dropped).capitalize() + '.)'}, [name])
+            text = '; '.join(dropped)
+            self.emit('notice', {'text': f'({text[:1].upper()}{text[1:]}.)'}, [name])
         return out
 
     async def turns(self, n, order, kind, head, tail, words, beat=None, private=False):
@@ -566,7 +567,7 @@ class Game:
             self.emit('nomination', {'nominator': nominator, 'nominee': nominee, 'text': accusation})
             if self.virgin(nominator, nominee):
                 return
-            d = await self.ask(nominee, Request('defense', f'Day {n}: {nominator} has nominated you. '
+            d = await self.ask(nominee, Request('defense', f'Day {n}: {"you have nominated yourself" if nominator == nominee else nominator + " has nominated you"}. '
                                                            'Give your defense in `say`.', n))
             self.emit('defense', {'nominee': nominee, 'text': clip(d.get('say'), WORDS['defense'])})
             order = list(self.names)

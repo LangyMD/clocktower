@@ -174,7 +174,7 @@ transient API errors (one HTTP 520, then three Opus 4.6 overloads), losing the g
 then every 5xx is retried, overloads wait, the supervisor kills only on overspend, and `run` resumes a
 batch (finished games are kept).
 
-## v9 — current (Sept 30)
+## v9 (Sept 30)
 v8 game rules, unchanged. Two setup changes:
 - The table size can vary: `--players 10-12` gives each game 10 + seed % 3 players, so every
   table has two Minions (Trouble Brewing's 10–12 band) and 0, 1 or 2 Outsiders. A side-swapped
@@ -194,3 +194,15 @@ other at high). Opus 5.5 at max effort thought 3–10K tokens a turn and hit the
 turn lost), so that pair was restarted on the same seed with a 64K ceiling
 (`e1-opus55max64k-v-gpt61sol`); the sweep measures what effort buys, not truncation. All other
 games use the 16K ceiling.
+
+## v10 — current (Sept 30)
+v9 plus fixes from the e1 engine audit (no rule violations and no impossible information were found
+in e1 or in 1,500 simulated games; these are Storyteller judgment calls and wording):
+- Librarian with no Outsider in play: v9 always pointed them at the Spy (78 of 78 in simulation),
+  never "zero", a tell and a legal answer the style could not give. Now the Spy is used with
+  probability `misregister_pair`, as for every other pair ability; otherwise "zero".
+- A Ravenkeeper who picks themselves learns the character they think they are (a Drunk Ravenkeeper
+  was shown "Drunk").
+- A sober Undertaker or Ravenkeeper shown an executed Spy as a good character is never shown their own.
+- Wording: the Imp's prompt says "one of your Minions" becomes the Imp; a self-nomination says "you
+  have nominated yourself"; the notice about a whisper to 3+ players keeps names' capitals.

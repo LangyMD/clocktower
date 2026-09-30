@@ -402,7 +402,7 @@ def pair_choice(g, p, ability):
                 mis.append((q.name, g.fake_good(r, (group,), avoid=(p.shown,))))
             else:
                 mis.append((q.name, r.choice(sorted(options))))
-        pool = mis if mis and (not real or r.random() < POLICY['misregister_pair']) else real
+        pool = mis if mis and r.random() < POLICY['misregister_pair'] else real  # with no real one: 'zero'
         if not pool:
             return {'players': [], 'character': None}
         n, c = r.choice(pool)
@@ -476,6 +476,8 @@ def character_choice(g, p, ability, target):
         return c
 
     def style(r):
+        if t is p:  # a Ravenkeeper who picks themselves learns what they think they are (a Drunk too)
+            return {'character': p.shown}
         if impaired and g.misinformed(p, r):  # what a working ability would show in the false world
             framed, evil = g.decoy(p, r)
             if t.name in evil:  # the framed player is the false world's Imp; an executed Imp is only
@@ -488,7 +490,7 @@ def character_choice(g, p, ability, target):
                 return {'character': g.evil_character(r)}
             return {'character': t.character}  # an unframed good player is who they are
         if t.character == 'Spy' and len(values) > 1 and r.random() > POLICY['spy_evil']:
-            return {'character': g.fake_good(r, (TOWNSFOLK, OUTSIDERS))}
+            return {'character': as_good(r)}
         if t.character == 'Recluse' and len(values) > 1 and r.random() < POLICY['recluse_evil']:
             return {'character': g.evil_character(r)}
         return {'character': t.character}
