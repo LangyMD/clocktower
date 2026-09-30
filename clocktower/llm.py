@@ -85,7 +85,7 @@ MODELS = {
     'gpt-5.1': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
     'o3': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
     'o1': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
-    'gpt-5': {'context': False, 'explicit_cache': False, 'memory': 'replies'},  # memory unverified (org check)
+    'gpt-5': {'context': False, 'explicit_cache': False, 'memory': 'replies'},  # checked Oct 1: replies only
     'openrouter:anthropic/claude-opus-4.1': {'thinking': 'budget', 'memory': 'replies', 'window': 200_000},
     'openrouter:anthropic/claude-sonnet-4': {'thinking': 'budget', 'memory': 'replies', 'window': 200_000},
     'gpt-4o': {'reasoning': False, 'context': False, 'explicit_cache': False, 'memory': 'replies',

@@ -42,13 +42,17 @@ def commands(plan):
         yield m['name'], cmd
 
 
-def run(path, dry=False):
+def run(path, dry=False, only=None):
+    """Launch the plan's matchups (or just those named in `only`, with the seeds and output folders
+    they have in the full plan, so a pilot's games count toward the full run)."""
     plan = json.loads(Path(path).read_text())
     logs = Path(plan['out'] + '-logs')
     if not dry:
         logs.mkdir(parents=True, exist_ok=True)
     procs = []
     for name, cmd in commands(plan):
+        if only and name not in only:
+            continue
         if dry:
             print(' '.join(cmd))
             continue

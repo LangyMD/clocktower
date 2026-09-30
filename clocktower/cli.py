@@ -250,6 +250,7 @@ def main(argv=None):
     tp = sub.add_parser('tournament', help='run every matchup of a plan at once (resumable)')
     tp.add_argument('plan')
     tp.add_argument('--dry-run', action='store_true', help='print the commands instead')
+    tp.add_argument('--only', help='comma-separated matchup names: run just these (same seeds as in the full plan)')
     fp = sub.add_parser('fetch', help='download game logs from the Hugging Face dataset (e.g. v9/e1-*)')
     fp.add_argument('patterns', nargs='+')
     rv = sub.add_parser('replay')
@@ -321,7 +322,7 @@ def main(argv=None):
         print(json.dumps(make_plan(models, args.within, args.pairs, args.seed, args.out, args.players), indent=1))
     elif args.command == 'tournament':
         from .tournament import run as tournament
-        raise SystemExit(tournament(args.plan, args.dry_run))
+        raise SystemExit(tournament(args.plan, args.dry_run, set(args.only.split(',')) if args.only else None))
     elif args.command == 'fetch':
         from .store import fetch
         print(fetch(args.patterns))
