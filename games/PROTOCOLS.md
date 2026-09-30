@@ -207,7 +207,7 @@ in e1 or in 1,500 simulated games; these are Storyteller judgment calls and word
 - Wording: the Imp's prompt says "one of your Minions" becomes the Imp; a self-nomination says "you
   have nominated yourself"; the notice about a whisper to 3+ players keeps names' capitals.
 
-## v11 — current (Oct 1)
+## v11 (Oct 1)
 v10 plus, from the second e1 read:
 - Every seat's text reaches the others in one typography (straight quotes, " - " for dashes, "..."
   for an ellipsis, no markdown `*`, backtick or `#`). In e1 the GPT models wrote curly apostrophes in
@@ -216,3 +216,22 @@ v10 plus, from the second e1 read:
   chance 0.82). No player noticed, but a stronger one could. Raw replies stay in conversations/.
 - Prompt wording: "up to 2 whispers this turn" (o3 and Sonnet 4.5 read it as per private time), and
   the comment turn asks players not just to announce their vote (the vote prompt already did).
+
+## v12 — current, the frozen protocol (Oct 1)
+v11 plus the Storyteller changes from the e1 Storyteller read, stated as three principles:
+- **Misinformation is false.** A poisoned player's result comes from a false world that is redrawn
+  until the result is not one a working ability could give (when one exists). In e1 only 39% of
+  poisoned results were false, because the false world often agreed with the truth. The Drunk keeps
+  one false world all game, so their story holds.
+- **Nothing the setup's counts rule out.** Demon bluffs include an Outsider only when the Drunk is in
+  play (then the town sees one Outsider fewer than the setup has, so one evil Outsider claim fits;
+  otherwise it breaks the count: 3 of 4 such claimers were executed by day 2 in e1). "Baron" is shown
+  (for a Recluse, a framed player, or a misinformed Investigator or Undertaker) only when the Baron is
+  in play; "Imp" for an executed player only when a Scarlet Woman could have taken over (5+ alive);
+  a misinformed Librarian at a table with no Outsiders learns "zero", as it would in its false world.
+- **The Spy sees the whole Grimoire**, including what the Washerwoman, Librarian and Investigator
+  were shown (the official reminder tokens, dropped in v7).
+Also: turn order in every beat is plain random (the "players named in the last beat go first" rule
+did almost nothing: 80% of the table is named each beat); the per-turn output ceiling is 32K for
+every model (GPT-5.1 re-derives the game each turn and lost 6 turns at 16K in e1; no model at high
+comes near 16K otherwise); OpenAI requests time out after 15 minutes.

@@ -28,8 +28,7 @@ of the earlier `botc/` lab (kept alongside for reference).
   each beat every player gets one turn, in a random order, in groups of three (`--waves`); a group acts simultaneously and later groups see
   earlier ones. In private time a turn is up to two whispers, each to one or two players;
   whispers are completely private (nobody else sees the words or that they happened). In the
-  town square a turn is public speech (and optionally a Slayer shot), there is no whispering, and players
-  named in one beat go first in the next so they can answer. Nominations
+  town square a turn is public speech (and optionally a Slayer shot), and there is no whispering. Nominations
   open after the last town-square beat.
 - **Nominations.** Rounds until one brings no nomination. Each round, every living player who
   hasn't nominated today is asked at once to nominate (with an accusation) or pass; if several

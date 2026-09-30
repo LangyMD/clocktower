@@ -32,7 +32,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v11'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
+PROTOCOL = 'v12'  # bump when a change affects how games play, and describe it in games/PROTOCOLS.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -222,7 +222,7 @@ def main(argv=None):
             p.add_argument('--effort', default='high', help='player reasoning effort (same for every model)')
             p.add_argument('--good-effort', help='reasoning effort for the good team (default --effort)')
             p.add_argument('--evil-effort', help='reasoning effort for the evil team (default --effort)')
-            p.add_argument('--max-output', type=int, default=16000,
+            p.add_argument('--max-output', type=int, default=32000,
                            help='per-turn output ceiling, thinking included, identical for every model')
             p.add_argument('--budget', type=float, default=1000.0, help='cap on total spend in games/ledger.jsonl')
             p.add_argument('--concurrency', type=int, default=0,

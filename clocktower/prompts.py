@@ -53,7 +53,7 @@ CHARACTERS
 HOW THIS TABLE WORKS
 Each day has two parts, each a few beats long. In every beat each player gets one turn, in a random order, a few players at a time: the players in a group act simultaneously, and you see everything said (and whispered to you) before your turn.
 First, private time. Players pair off and whisper: on your turn you may send up to two whispers, each to one or two players. Whispers are completely private: nobody else sees the words, or even that you whispered. No one can address the whole town during private time.
-Then the town square: everything said is heard by everyone, and there is no whispering. Players who were named in one beat of the town square take their turns first in the next, so they can answer. After the last beat, the Storyteller opens nominations, which are public too. Every day runs the same way.
+Then the town square: everything said is heard by everyone, and there is no whispering. After the last beat, the Storyteller opens nominations, which are public too. Every day runs the same way.
 Nominations go in rounds. Each round, every living player who has not yet nominated today is asked at once whether to nominate; if several do, one of them is taken at random (the others can try again next round). The nominator's accusation is heard, the nominee defends, everyone (dead players too) gets one turn to comment, and then the vote. Nominations end when a round brings no nomination.
 Each turn you get everything that happened since your last turn, then a short prompt saying what is being asked of you.
 

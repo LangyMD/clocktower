@@ -125,6 +125,7 @@ class Grimoire:
         self.by_name = {p.name: p for p in self.players}
         self.red_herring = None
         self.bluffs = []
+        self.reminders = []         # what the pair abilities were shown, as on the real Grimoire
         self.poisoned = None        # name of the poisoned player (tonight and tomorrow day)
         self.protected = None       # Monk protection tonight
         self.master = None          # Butler's master for today's votes
@@ -227,6 +228,23 @@ class Grimoire:
                 evil.add(q.name)
         return evil
 
+    def false_result(self, p, r, result, truths):
+        """A misinformed result, `result(r)` drawn from p's false world. A poisoned player's false world is
+        redrawn until the result is not one a working ability could give (when some result is not), so
+        poison makes information false. The Drunk keeps one false world all game, so their story holds."""
+        v = result(r)
+        for _ in range(30):
+            if p.character == 'Drunk' or v not in truths:
+                return v
+            self.decoys.pop(p.name, None)
+            v = result(r)
+        return v
+
+    def minions_shown(self):
+        """Minion characters a false or misregistered result may name: the Baron only when in play
+        (the Outsider count would otherwise rule it out)."""
+        return [m for m in MINIONS if m != 'Baron' or 'Baron' in self.in_play()]
+
     def misinformed(self, p, r):
         """Whether the scripted Storyteller gives this impaired player false information now. The
         Drunk's is decided once per game, so their story stays consistent either way."""
@@ -259,9 +277,9 @@ class Grimoire:
                                       (other, 1 - POLICY['as_bluff'] - POLICY['as_in_play'])) if x]
         return r.choice(r.choices([x for x, _ in groups], [w for _, w in groups])[0])
 
-    def evil_character(self, r):
-        """An evil character to show for a Recluse."""
-        return 'Imp' if r.random() < POLICY['recluse_as_imp'] else r.choice(MINIONS)
+    def evil_character(self, r, imp=True):
+        """An evil character to show for a Recluse (the Imp only when `imp` is consistent)."""
+        return 'Imp' if imp and r.random() < POLICY['recluse_as_imp'] else r.choice(self.minions_shown())
 
     def in_play(self):
         return {q.character for q in self.players} | {q.shown for q in self.players}
@@ -302,7 +320,7 @@ class Grimoire:
         if self.bluffs: lines.append(f"Demon bluffs: {', '.join(self.bluffs)}")
         used = [x for x, flag in (('Slayer', self.slayer_used), ('Virgin', self.virgin_used)) if flag]
         if used: lines.append(f"Spent once-per-game abilities: {', '.join(used)}")
-        lines += list(reminders)
+        lines += list(self.reminders) + list(reminders)
         return '\n'.join(lines)
 
 
@@ -326,28 +344,33 @@ def red_herring_choice(g):
     return Choice('red_herring', [{'players': [x]} for x in good], style)
 
 
-def pick_bluffs(r, options, baron, drunk_shown=None):
-    """Three Demon bluffs that suit the setup: an information role (so evil can invent checkable
-    results) and an Outsider when the Baron is in play (the town can count Outsiders). The Drunk's
+def pick_bluffs(r, options, drunk, drunk_shown=None):
+    """Three Demon bluffs that fit the setup's counts: an information role (so evil can invent checkable
+    results), and one Outsider only when the Drunk is in play (the town sees one Outsider fewer than
+    the setup has, so one evil Outsider claim fits; otherwise it would break the count). The Drunk's
     apparent character (a sure double claim) and the Drunk (unclaimable) are usually kept out."""
     avoid = {c for c, keep in ((drunk_shown, POLICY['bluff_drunk_role']), ('Drunk', POLICY['bluff_drunk']))
              if c and r.random() >= keep}
     if len([c for c in options if c not in avoid]) >= 3:
         options = [c for c in options if c not in avoid]
-    picks = []
-    info = [c for c in options if c in INFO_ROLES]
+    townsfolk = [c for c in options if c not in OUTSIDERS]
     outsiders = [c for c in options if c in OUTSIDERS]
+    picks = []
+    info = [c for c in townsfolk if c in INFO_ROLES]
     if info:
         picks.append(r.choice(info))
-    if baron and outsiders:
-        picks.append(r.choice([c for c in outsiders if c not in picks]))
-    return picks + r.sample([c for c in options if c not in picks], 3 - len(picks))
+    if drunk and outsiders:
+        picks.append(r.choice(outsiders))
+    rest = [c for c in townsfolk if c not in picks]
+    if len(rest) < 3 - len(picks):  # too few Townsfolk left (never at 10-12 players)
+        rest = [c for c in options if c not in picks]
+    return picks + r.sample(rest, 3 - len(picks))
 
 
-def bluffs_choice(options, baron, drunk_shown=None):
+def bluffs_choice(options, drunk, drunk_shown=None):
     """Three good characters not in play, shown to the Imp."""
     return Choice('bluffs', [{'characters': list(c)} for c in combinations(options, 3)],
-                  lambda r: {'characters': pick_bluffs(r, options, baron, drunk_shown)})
+                  lambda r: {'characters': pick_bluffs(r, options, drunk, drunk_shown)})
 
 
 def _pair(r, first, others, avoid=()):
@@ -386,10 +409,11 @@ def pair_choice(g, p, ability):
                 shown = r.choice(evil) if evil and r.random() < POLICY['false_vouch_evil'] else r.choice(others)
                 return false_pair(r, shown, [g.fake_good(r, bluffs=g[shown].evil) for _ in range(6)])
             if ability == 'Librarian':
+                if not any(q.character in OUTSIDERS for q in g.players):
+                    return {'players': [], 'character': None}  # the false world has no Outsiders either
                 shown = r.choice(evil + [framed])
                 return false_pair(r, shown, [g.fake_good(r, (OUTSIDERS,), bluffs=g[shown].evil) for _ in range(6)])
-            minions = MINIONS if 'Baron' in g.in_play() else [m for m in MINIONS if m != 'Baron']
-            return false_pair(r, framed, minions)  # frame a good player
+            return false_pair(r, framed, g.minions_shown())  # frame a good player
         real = [(q.name, q.character) for q in g.players if q is not p and q.character in group]
         mis = []  # a misregistering Spy (as a Townsfolk or Outsider) or Recluse (as a Minion)
         for q in g.players:
@@ -401,7 +425,7 @@ def pair_choice(g, p, ability):
             if q.character == 'Spy':  # never the recipient's own character (that would point at the Spy)
                 mis.append((q.name, g.fake_good(r, (group,), avoid=(p.shown,))))
             else:
-                mis.append((q.name, r.choice(sorted(options))))
+                mis.append((q.name, r.choice(sorted(options & set(g.minions_shown())))))
         pool = mis if mis and r.random() < POLICY['misregister_pair'] else real  # with no real one: 'zero'
         if not pool:
             return {'players': [], 'character': None}
@@ -426,7 +450,7 @@ def chef_choice(g, p):
 
     def style(r):
         if g.impaired(p) and g.misinformed(p, r):
-            return {'number': _pairs(ring, g.false_evil(p, r))}
+            return {'number': g.false_result(p, r, lambda r: _pairs(ring, g.false_evil(p, r)), possible)}
         return {'number': _pairs(ring, g.sample_evil(r))}
     return Choice(f'Chef:{p.name}', [{'number': x} for x in values], style)
 
@@ -438,8 +462,8 @@ def empath_choice(g, p):
 
     def style(r):
         if g.impaired(p) and g.misinformed(p, r):
-            evil = g.false_evil(p, r)
-            return {'number': sum(1 for q in nb if q.name in evil)}
+            count = lambda r: sum(1 for q in nb if q.name in g.false_evil(p, r))
+            return {'number': g.false_result(p, r, count, possible)}
         evil = g.sample_evil(r)
         return {'number': sum(1 for q in nb if q.name in evil)}
     return Choice(f'Empath:{p.name}', [{'number': x} for x in values], style)
@@ -453,9 +477,11 @@ def fortune_teller_choice(g, p, targets):
 
     def style(r):
         if impaired and g.misinformed(p, r):  # in the false world the framed player is the Demon
-            framed, _ = g.decoy(p, r)
-            recluse = any(g[t].character == 'Recluse' and r.random() < POLICY['recluse_evil'] for t in targets)
-            return {'yes': recluse or any(t in (framed, g.red_herring) for t in targets)}
+            def yes(r):
+                framed, _ = g.decoy(p, r)
+                recluse = any(g[t].character == 'Recluse' and r.random() < POLICY['recluse_evil'] for t in targets)
+                return recluse or any(t in (framed, g.red_herring) for t in targets)
+            return {'yes': g.false_result(p, r, yes, possible)}
         if len(possible) == 1:
             return {'yes': next(iter(possible))}
         return {'yes': r.random() < POLICY['recluse_evil']}
@@ -478,21 +504,26 @@ def character_choice(g, p, ability, target):
     def style(r):
         if t is p:  # a Ravenkeeper who picks themselves learns what they think they are (a Drunk too)
             return {'character': p.shown}
-        if impaired and g.misinformed(p, r):  # what a working ability would show in the false world
+        # "Imp" for an executed player is only consistent with the game going on if a Scarlet Woman
+        # could have taken over (5+ alive at the execution)
+        imp_ok = ability == 'Ravenkeeper' or g.alive_at_execution >= 5
+
+        def false_world(r):  # what a working ability would show in the false world
             framed, evil = g.decoy(p, r)
-            if t.name in evil:  # the framed player is the false world's Imp; an executed Imp is only
-                # consistent with the game going on if a Scarlet Woman could have taken over (5+ alive)
-                imp = t.name == framed and (ability == 'Ravenkeeper' or g.alive_at_execution >= 5)
-                return {'character': 'Imp' if imp else r.choice(MINIONS)}
+            if t.name in evil:  # the framed player is the false world's Imp, the others its Minions
+                return 'Imp' if t.name == framed and imp_ok else r.choice(g.minions_shown())
             if t.evil:  # the real evil player is good in the false world
-                return {'character': as_good(r)}
+                return as_good(r)
             if t.character == 'Recluse' and r.random() < POLICY['recluse_evil']:
-                return {'character': g.evil_character(r)}
-            return {'character': t.character}  # an unframed good player is who they are
+                return g.evil_character(r, imp_ok)
+            return t.character  # an unframed good player is who they are
+
+        if impaired and g.misinformed(p, r):
+            return {'character': g.false_result(p, r, false_world, set(g.registers_as(t)))}
         if t.character == 'Spy' and len(values) > 1 and r.random() > POLICY['spy_evil']:
             return {'character': as_good(r)}
         if t.character == 'Recluse' and len(values) > 1 and r.random() < POLICY['recluse_evil']:
-            return {'character': g.evil_character(r)}
+            return {'character': g.evil_character(r, imp_ok)}
         return {'character': t.character}
     return Choice(f'{ability}:{p.name}', [{'character': c} for c in values], style)
 

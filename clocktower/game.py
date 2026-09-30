@@ -13,7 +13,6 @@ import asyncio
 import json
 import math
 import random
-import re
 import time
 from pathlib import Path
 
@@ -87,7 +86,6 @@ class Game:
         self.buf = {n: [] for n in self.names}
         self.executed_today = False
         self.starting = None
-        self.addressed = set()  # players named in the last town-square beat
         self.probes, self.probe_tasks, self.probe_log = probes, [], []
 
     # ---- logging -----------------------------------------------------------------------
@@ -192,7 +190,7 @@ class Game:
             drunk.shown = self.decide(drunk_as_choice([c for c in TOWNSFOLK if c not in in_play]))['character']
         if any(p.shown == 'Fortune Teller' for p in g.players):  # the Drunk-as-Fortune-Teller too
             g.red_herring = self.decide(red_herring_choice(g))['players'][0]
-        g.bluffs = self.decide(bluffs_choice([c for c in GOOD if c not in in_play], 'Baron' in in_play,
+        g.bluffs = self.decide(bluffs_choice([c for c in GOOD if c not in in_play], drunk is not None,
                                              drunk.shown if drunk else None))['characters']
         self.starting = {p.name: p.character for p in g.players}
         if self.seat_factory:
@@ -332,6 +330,8 @@ class Game:
         for p, role, c, target in info:
             text = info_text(role, self.decide(c), target)
             self.emit('info', {'text': f'Night {n} — {role}: {text}'}, [p.name])
+            if role in ('Washerwoman', 'Librarian', 'Investigator'):
+                g.reminders.append(f'{p.name} ({role}) was shown: {text}')
         spy = g.with_character('Spy')
         if spy and spy.alive:
             self.emit('info', {'text': f'Night {n} — Spy: you look at the Grimoire.\n'
@@ -392,20 +392,16 @@ class Game:
                 say = clip(acts[name].get('say'), words)
                 if say:
                     self.emit('say', {'speaker': name, 'text': say})
-                    self.addressed |= {x for x in self.names if x != name and re.search(rf'\b{x}\b', say)}
             self.shots(wave, acts)
             if g.winner:
                 return
 
     async def beat(self, n, k, private):
         """Everyone gets one turn, in a random order. In private time players can only whisper;
-        in the town square they can only speak, and whoever was just named answers first."""
+        in the town square they can only speak."""
         total = self.private_beats if private else self.public_beats
         order = list(self.names)
         self.rng.shuffle(order)
-        if not private and k > 1:
-            order.sort(key=lambda x: x not in self.addressed)
-        self.addressed = set()
         self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
         if private:
             tail = (f'Whisper to anyone you like (up to {WHISPERS} whispers this turn), or no one. Nobody can address the town '
