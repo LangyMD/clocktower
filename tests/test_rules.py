@@ -870,3 +870,37 @@ class WhisperTests(unittest.TestCase):
         run(g.daytime(1))
         sent = [e['data'] for e in g.events if e['kind'] == 'whisper']
         self.assertEqual([(w['to'], w['text']) for w in sent], [([B], 'first')])
+
+
+class CheckpointTests(unittest.TestCase):
+    def test_a_killed_game_resumes_from_its_last_dusk_and_plays_out_the_same(self):
+        import tempfile, json as _json
+        from pathlib import Path
+        chars = ['Imp', 'Poisoner', 'Monk', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        with tempfile.TemporaryDirectory() as d:
+            whole = game(chars, out=Path(d) / 'whole', probes=False)
+            whole.private_beats = whole.public_beats = 1
+            r1 = run(whole.run())
+
+            first = game(chars, out=Path(d) / 'killed', probes=False)
+            first.private_beats = first.public_beats = 1
+            night = first.night
+
+            async def crash(n):
+                if n == 3:
+                    raise KeyboardInterrupt  # the machine restarts during night 3
+                return await night(n)
+            first.night = crash
+            with self.assertRaises(KeyboardInterrupt):
+                run(first.run())
+            self.assertTrue((Path(d) / 'killed' / 'checkpoint.pkl').exists())
+
+            again = game(chars, out=Path(d) / 'killed', probes=False)
+            again.private_beats = again.public_beats = 1
+            r2 = run(again.run())
+            strip = lambda evs: [(e['day'], e['kind'], _json.dumps(e['data'], sort_keys=True)) for e in evs]
+            self.assertEqual(strip(again.events), strip(whole.events))
+            self.assertEqual((r1['winner'], r1['days']), (r2['winner'], r2['days']))
+            logged = [_json.loads(l) for l in (Path(d) / 'killed' / 'events.jsonl').read_text().splitlines()]
+            self.assertEqual(strip(logged), strip(whole.events))  # the log reads as if play never stopped
+            self.assertFalse((Path(d) / 'killed' / 'checkpoint.pkl').exists())

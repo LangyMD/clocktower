@@ -1,0 +1,66 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 6,
+  "seed": 90200,
+  "starting": {
+    "Alex": "Librarian",
+    "Blair": "Imp",
+    "Casey": "Baron",
+    "Drew": "Poisoner",
+    "Ellis": "Butler",
+    "Frankie": "Recluse",
+    "Gray": "Soldier",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Saint",
+    "Jules": "Undertaker",
+    "Kit": "Monk",
+    "Logan": "Drunk"
+  },
+  "final": {
+    "Alex": "Librarian",
+    "Blair": "Imp",
+    "Casey": "Baron",
+    "Drew": "Poisoner",
+    "Ellis": "Butler",
+    "Frankie": "Recluse",
+    "Gray": "Soldier",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Saint",
+    "Jules": "Undertaker",
+    "Kit": "Monk",
+    "Logan": "Drunk"
+  },
+  "bluffs": [
+    "Investigator",
+    "Washerwoman",
+    "Virgin"
+  ],
+  "red_herring": null,
+  "drunk_as": "Empath",
+  "cost": 9.0327,
+  "calls": 805,
+  "tokens": {
+    "input": 3220,
+    "cache_read": 20167850,
+    "cache_write": 606446,
+    "output": 243564
+  },
+  "seconds": 1610.5,
+  "errors": [],
+  "models": {
+    "Alex": "claude-sonnet-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-opus-5-5",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-sonnet-5-5",
+    "Frankie": "claude-sonnet-5-5",
+    "Gray": "claude-sonnet-5-5",
+    "Harper": "claude-sonnet-5-5",
+    "Indigo": "claude-sonnet-5-5",
+    "Jules": "claude-sonnet-5-5",
+    "Kit": "claude-sonnet-5-5",
+    "Logan": "claude-sonnet-5-5"
+  }
+}

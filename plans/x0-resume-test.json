@@ -1,0 +1,2 @@
+{"out": "games/v14/x0", "seed": 99900, "players": "10-12",
+ "matchups": [{"name": "opus55-v-sol61", "good": "claude-opus-5-5", "evil": "gpt-6.1-sol", "pairs": 1}]}

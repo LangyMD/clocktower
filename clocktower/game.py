@@ -11,6 +11,7 @@ one at a time with a running tally.
 from __future__ import annotations
 import asyncio
 import json
+import pickle
 import math
 import random
 import time
@@ -608,13 +609,70 @@ class Game:
             g.winner, g.reason = 'good', 'Three players remain, there was no execution, and the Mayor lives.'
 
     # ---- the whole game ------------------------------------------------------------------------
+    # ---- checkpoints -----------------------------------------------------------------------
+    CHECKPOINT = 'checkpoint.pkl'
+
+    async def checkpoint(self, n, elapsed):
+        """Save everything needed to continue the game at night n: the Grimoire, the random states,
+        every event and call so far, each seat's pending text and conversation. Written at each dusk,
+        so a game killed by a machine restart or a failed seat resumes from its last dusk."""
+        if not self.out:
+            return
+        if self.probe_tasks:  # finish the day's belief probes so none is lost with the process
+            await asyncio.gather(*self.probe_tasks)
+            self.probe_tasks = []
+        convs = {name: {k: getattr(seat.conversation, k) for k in ('messages', 'trimmed', 'last_input')}
+                 for name, seat in self.seats.items() if hasattr(seat, 'conversation')}
+        probes = self.out / 'probes.jsonl'
+        state = {'night': n, 'elapsed': elapsed, 'day': self.day, 'phase': self.phase, 'g': self.g,
+                 'rng': self.rng.getstate(), 'st_rng': getattr(getattr(self.st, 'rng', None), 'getstate', lambda: None)(),
+                 'events': self.events, 'calls': self.calls, 'errors': self.errors, 'buf': self.buf,
+                 'executed_today': self.executed_today, 'starting': self.starting, 'meta': self.meta,
+                 'probe_lines': len(probes.read_text().splitlines()) if probes.exists() else 0, 'convs': convs}
+        tmp = self.out / (self.CHECKPOINT + '.tmp')
+        tmp.write_bytes(pickle.dumps(state))
+        tmp.replace(self.out / self.CHECKPOINT)
+
+    def restore(self):
+        """Continue from this game's checkpoint, if it has one: returns (night, elapsed seconds) or None.
+        The log files are cut back to the checkpoint, so they read as if play never stopped."""
+        path = self.out / self.CHECKPOINT if self.out else None
+        if not path or not path.exists():
+            return None
+        s = pickle.loads(path.read_bytes())
+        for k in ('day', 'phase', 'g', 'events', 'calls', 'errors', 'buf', 'executed_today', 'starting', 'meta'):
+            setattr(self, k, s[k])
+        self.rng.setstate(s['rng'])
+        if s['st_rng'] is not None:
+            self.st.rng.setstate(s['st_rng'])
+        if self.seat_factory:
+            self.seats = {p.name: self.seat_factory(p.name, 'evil' if p.evil else 'good') for p in self.g.players}
+        for name, conv in s['convs'].items():
+            for k, v in conv.items():
+                setattr(self.seats[name].conversation, k, v)
+        (self.out / 'events.jsonl').write_text(''.join(json.dumps(ev) + '\n' for ev in self.events))
+        (self.out / 'transcript.md').write_text(''.join(
+            (render(ev, 'omniscient', set(ev['dead'])) or '') + '\n' for ev in self.events))
+        (self.out / 'calls.jsonl').write_text(''.join(json.dumps(c) + '\n' for c in self.calls))
+        probes = self.out / 'probes.jsonl'
+        if probes.exists():
+            probes.write_text(''.join(line + '\n' for line in probes.read_text().splitlines()[:s['probe_lines']]))
+        (self.out / 'result.json').unlink(missing_ok=True)  # a stopped game resumes too
+        return s['night'], s['elapsed']
+
     async def run(self):
         start = time.time()
         stopped = None
         try:
-            await self.setup()
-            n = 1
+            resumed = self.restore()
+            if resumed:
+                n, earlier = resumed
+                start -= earlier
+            else:
+                await self.setup()
+                n = 1
             while True:
+                await self.checkpoint(n, time.time() - start)
                 await self.night(n)
                 if self.g.check_victory():
                     break
@@ -637,6 +695,8 @@ class Game:
         result = self.result(time.time() - start, stopped)
         if self.out:
             (self.out / 'result.json').write_text(json.dumps(result, indent=2))
+            if not (stopped or '').startswith(('seat failed', 'budget')):  # only a stopped game resumes
+                (self.out / self.CHECKPOINT).unlink(missing_ok=True)
         return result
 
     def result(self, seconds, stopped):

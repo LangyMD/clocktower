@@ -11,11 +11,29 @@ seeds, and resumes: finished games are kept, unfinished ones restart. Logs go to
 from __future__ import annotations
 import itertools
 import json
+import os
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 SEEDS_PER_MATCHUP = 100  # matchup i uses seeds seed + 100*i onwards
+UPLOAD_EVERY = 1800  # seconds between snapshots of the plan's games to the Hugging Face dataset
+
+
+def upload(plan):
+    """Snapshot the plan's game folders (finished games, and checkpoints of unfinished ones) to the log
+    dataset, so a replaced machine loses nothing: `fetch` them back and rerun `tournament` to resume."""
+    from huggingface_hub import HfApi
+    from .store import REPO
+    out = Path(plan['out'])
+    try:
+        HfApi().upload_folder(repo_id=REPO, repo_type='dataset', folder_path=str(out.parent),
+                              path_in_repo=out.parent.name, allow_patterns=[f'{out.name}-*/**'],
+                              commit_message=f'{out.name}: snapshot')
+        print(f'uploaded {out}-* to {REPO}', flush=True)
+    except Exception as e:  # a failed upload never stops the games
+        print(f'upload failed: {e!r}'[:300], flush=True)
 
 
 def make_plan(models, within=None, pairs=1, seed=80000, out='games/v12/f1', players='10-12'):
@@ -60,7 +78,16 @@ def run(path, dry=False, only=None):
         procs.append((name, subprocess.Popen(cmd, stdout=open(logs / f'{name}.log', 'w'), stderr=subprocess.STDOUT)))
     if dry:
         return 0
-    print(f'launched {len(procs)} matchups; logs in {logs}/')
+    print(f'launched {len(procs)} matchups; logs in {logs}/', flush=True)
+    done = threading.Event()
+    if os.environ.get('HF_TOKEN'):
+        def snapshots():
+            while not done.wait(UPLOAD_EVERY):
+                upload(plan)
+        threading.Thread(target=snapshots, daemon=True).start()
     failed = [name for name, p in procs if p.wait() != 0]
+    done.set()
+    if os.environ.get('HF_TOKEN'):
+        upload(plan)
     print('all matchups finished' + (f'; failed: {", ".join(failed)}' if failed else ''))
     return 1 if failed else 0

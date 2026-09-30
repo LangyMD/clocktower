@@ -201,8 +201,9 @@ async def run_batch(args):
         done = out / 'result.json'
         if done.exists() and json.loads(done.read_text()).get('winner'):
             return json.loads(done.read_text())  # finished earlier: keep it (so a batch can be resumed)
-        if out.exists():
-            shutil.rmtree(out)  # an unfinished game restarts from scratch
+        if out.exists() and not (out / 'checkpoint.pkl').exists():
+            shutil.rmtree(out)  # an unfinished game with no checkpoint restarts from scratch
+        # otherwise it continues from its last dusk (Game.restore)
         async with limit:
             return await play_one(a, base + k - 1, out, env, minion=minion)
 

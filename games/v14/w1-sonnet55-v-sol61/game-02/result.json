@@ -1,0 +1,66 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 3,
+  "seed": 90101,
+  "starting": {
+    "Alex": "Imp",
+    "Blair": "Drunk",
+    "Casey": "Investigator",
+    "Drew": "Butler",
+    "Ellis": "Chef",
+    "Frankie": "Librarian",
+    "Gray": "Slayer",
+    "Harper": "Undertaker",
+    "Indigo": "Spy",
+    "Jules": "Mayor",
+    "Kit": "Fortune Teller",
+    "Logan": "Scarlet Woman"
+  },
+  "final": {
+    "Alex": "Imp",
+    "Blair": "Drunk",
+    "Casey": "Investigator",
+    "Drew": "Butler",
+    "Ellis": "Chef",
+    "Frankie": "Librarian",
+    "Gray": "Slayer",
+    "Harper": "Undertaker",
+    "Indigo": "Spy",
+    "Jules": "Mayor",
+    "Kit": "Fortune Teller",
+    "Logan": "Scarlet Woman"
+  },
+  "bluffs": [
+    "Washerwoman",
+    "Recluse",
+    "Ravenkeeper"
+  ],
+  "red_herring": "Jules",
+  "drunk_as": "Empath",
+  "cost": 4.1526,
+  "calls": 500,
+  "tokens": {
+    "input": 1874,
+    "cache_read": 7794142,
+    "cache_write": 381193,
+    "output": 180722
+  },
+  "seconds": 1735.9,
+  "errors": [],
+  "models": {
+    "Alex": "gpt-6.1-sol",
+    "Blair": "claude-sonnet-5-5",
+    "Casey": "claude-sonnet-5-5",
+    "Drew": "claude-sonnet-5-5",
+    "Ellis": "claude-sonnet-5-5",
+    "Frankie": "claude-sonnet-5-5",
+    "Gray": "claude-sonnet-5-5",
+    "Harper": "claude-sonnet-5-5",
+    "Indigo": "gpt-6.1-sol",
+    "Jules": "claude-sonnet-5-5",
+    "Kit": "claude-sonnet-5-5",
+    "Logan": "gpt-6.1-sol"
+  }
+}
