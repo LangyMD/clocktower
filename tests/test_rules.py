@@ -728,3 +728,60 @@ class TableSizeTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class V12Tests(unittest.TestCase):
+    """The three Storyteller principles of the frozen protocol."""
+
+    def test_poisoned_results_are_false_whenever_they_can_be(self):
+        from clocktower.state import empath_choice
+        chars = ['Imp', 'Poisoner', 'Chef', 'Empath', 'Monk', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        false = n = 0
+        for s in range(400):
+            g = Grimoire(NAMES, chars)
+            g.poisoned = C  # the Chef; the truth is 1 pair (Imp, Poisoner)
+            v = chef_choice(g, g[C]).options(random.Random(s))['number']
+            false += v != 1
+            g.poisoned = D  # the Empath, next to Chef and Monk: the truth is 0
+            n += empath_choice(g, g[D]).options(random.Random(s))['number'] != 0
+        # misinformed 80% of the time, and then (nearly) always false
+        self.assertGreater(false, 0.7 * 400)
+        self.assertGreater(n, 0.7 * 400)
+
+    def test_demon_bluffs_include_an_outsider_only_with_the_drunk_in_play(self):
+        from clocktower.state import pick_bluffs
+        from clocktower.characters import GOOD, OUTSIDERS
+        options = [c for c in GOOD if c not in ('Monk', 'Empath', 'Chef', 'Soldier', 'Washerwoman')]
+        for s in range(300):
+            self.assertFalse(set(pick_bluffs(random.Random(s), options, False)) & set(OUTSIDERS))
+        with_drunk = [len(set(pick_bluffs(random.Random(s), options, True)) & set(OUTSIDERS)) for s in range(300)]
+        self.assertEqual(set(with_drunk), {1})
+
+    def test_no_baron_is_shown_at_a_table_without_one(self):
+        from clocktower.state import character_choice
+        chars = ['Imp', 'Poisoner', 'Recluse', 'Investigator', 'Undertaker', 'Monk', 'Washerwoman', 'Soldier', 'Saint']
+        g = Grimoire(NAMES, chars)
+        g.alive_at_execution = 9
+        for s in range(400):
+            r = random.Random(s)
+            self.assertNotEqual(pair_choice(g, g[D], 'Investigator').options(r)['character'], 'Baron')
+            self.assertNotEqual(character_choice(g, g[E], 'Undertaker', C).options(r)['character'], 'Baron')
+
+    def test_an_executed_recluse_is_not_shown_as_the_imp_with_fewer_than_five_alive(self):
+        from clocktower.state import character_choice
+        chars = ['Imp', 'Poisoner', 'Recluse', 'Investigator', 'Undertaker', 'Monk', 'Washerwoman', 'Soldier', 'Saint']
+        g = Grimoire(NAMES, chars)
+        g.alive_at_execution = 4
+        shown = {character_choice(g, g[E], 'Undertaker', C).options(random.Random(s))['character'] for s in range(300)}
+        self.assertNotIn('Imp', shown)
+        self.assertIn('Recluse', shown)
+
+    def test_the_spy_sees_what_the_pair_abilities_were_shown(self):
+        chars = ['Imp', 'Spy', 'Washerwoman', 'Librarian', 'Investigator', 'Monk', 'Chef', 'Butler', 'Saint']
+        g = game(chars)
+        run(g.setup())
+        run(g.night(1))
+        spy = [e['data']['text'] for e in g.events if e['kind'] == 'info' and 'look at the Grimoire' in e['data']['text']]
+        self.assertTrue(spy)
+        for role in ('Washerwoman', 'Librarian', 'Investigator'):
+            self.assertIn(f'({role}) was shown:', spy[-1])
