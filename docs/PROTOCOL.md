@@ -1,4 +1,4 @@
-# The Clocktower protocol (v12, frozen)
+# The Clocktower protocol (v13, frozen)
 
 Language models play Blood on the Clocktower (Trouble Brewing) against each other. One model (or a set
 of models) plays every good seat and another every evil seat, so each game rates a detection skill
@@ -52,11 +52,12 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
   5.2, 5.4, GPT-4o) are told so in their system prompt.
 - Every seat's text reaches the others in one typography (straight quotes, plain dashes, no
   markdown), so writing style can't mark a team.
-- Every model plays at its lab's "high" effort, with the same per-turn output ceiling of 32K tokens
-  (thinking included), a guard against runaway loops, not a budget. A cut-off or refused turn is
-  retried once, then the seat passes.
+- Every model plays at its lab's "high" effort, with the same per-turn output ceiling of 8K tokens
+  (thinking included). A turn that hits the ceiling is retried once at low effort (for older Claude
+  models, the minimum thinking budget), so thinking stays bounded without losing the turn; a refused
+  or unreadable turn is retried once; a turn that fails twice passes.
 - When a game outgrows a model's context window, its oldest turns are dropped, never the first
-  (its character and setup).
+  (its character and setup): the model sees its setup and as much of the recent game as fits.
 
 ## Measurement
 - Winner, day and reason for every game; every call's tokens and cost; every seat's thinking.

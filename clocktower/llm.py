@@ -80,12 +80,12 @@ MODELS = {
     'claude-sonnet-4-5-20250929': {'thinking': 'budget', 'effort': False, 'memory': 'replies', 'window': 200_000},
     'claude-opus-4-5-20251101': {'thinking': 'budget', 'window': 200_000},
     'gpt-5.5': {'explicit_cache': False},
-    'gpt-5.4': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
-    'gpt-5.2': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
-    'gpt-5.1': {'context': False, 'explicit_cache': False, 'memory': 'replies'},
+    'gpt-5.4': {'context': False, 'explicit_cache': False, 'memory': 'replies', 'window': 400_000},
+    'gpt-5.2': {'context': False, 'explicit_cache': False, 'memory': 'replies', 'window': 400_000},
+    'gpt-5.1': {'context': False, 'explicit_cache': False, 'memory': 'replies', 'window': 400_000},
     'o3': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
     'o1': {'context': False, 'explicit_cache': False, 'summary': 'auto', 'memory': 'replies', 'window': 200_000},
-    'gpt-5': {'context': False, 'explicit_cache': False, 'memory': 'replies'},  # checked Oct 1: replies only
+    'gpt-5': {'context': False, 'explicit_cache': False, 'memory': 'replies', 'window': 400_000},  # checked Oct 1: replies only
     'openrouter:anthropic/claude-opus-4.1': {'thinking': 'budget', 'memory': 'replies', 'window': 200_000},
     'openrouter:anthropic/claude-sonnet-4': {'thinking': 'budget', 'memory': 'replies', 'window': 200_000},
     'gpt-4o': {'reasoning': False, 'context': False, 'explicit_cache': False, 'memory': 'replies',
@@ -182,14 +182,19 @@ class Reply:
 
 class _Base:
     def __init__(self, system, schema, *, label, ledger, semaphore, on_call=None, model=MODEL, effort='high',
-                 max_tokens=32000):
+                 max_tokens=8000):
         self.system, self.schema = system, schema
         self.label, self.ledger, self.semaphore, self.on_call = label, ledger, semaphore, on_call
         self.model, self.effort = model, effort
         self.max_tokens = min(max_tokens, spec(model)['max_output'] or max_tokens)  # a model's own hard limit
         self.messages = []
         self.last_input = 0   # input tokens of the last call
+        self.low = False      # this attempt is the low-effort retry of a turn that hit the ceiling
         self.trimmed = 0      # turns dropped to fit the context window
+
+    def turn_effort(self):
+        """The effort for this attempt: the game's, or low when retrying a turn that hit the ceiling."""
+        return 'low' if self.low else self.effort
 
     def fit(self, text):
         """When the game outgrows the model's context window, drop its oldest turns (never the first,
@@ -211,7 +216,8 @@ class _Base:
         if self.on_call:
             self.on_call({'label': self.label, **(meta or {}), 'model': self.model, 'attempt': attempt, 'stop': stop,
                           'latency': round(time.monotonic() - start, 2), 'cost': spent, 'usage': usage,
-                          'thinking': thinking, 'output': out, **({'trimmed': self.trimmed} if self.trimmed else {}),
+                          'thinking': thinking, 'output': out, 'effort': self.turn_effort(),
+                          **({'trimmed': self.trimmed} if self.trimmed else {}),
                           **(extra or {})})
         total = sum(usage.get(k, 0) for k in ('input_tokens', 'cache_read_input_tokens', 'cache_creation_input_tokens'))
         if total:
@@ -230,9 +236,9 @@ class ClaudeConversation(_Base):
         sp = spec(self.model)
         out = {'format': {'type': 'json_schema', 'schema': self.schema}}
         if sp['effort']:
-            out['effort'] = self.effort
-        if sp['thinking'] == 'budget':
-            thinking = {'type': 'enabled', 'budget_tokens': self.max_tokens * 3 // 4}
+            out['effort'] = self.turn_effort()
+        if sp['thinking'] == 'budget':  # older models: a budget of 3/4 of the ceiling (the minimum when retrying)
+            thinking = {'type': 'enabled', 'budget_tokens': 1024 if self.low else self.max_tokens * 3 // 4}
         else:
             thinking = {'type': 'adaptive', 'display': 'summarized'}
         return {'thinking': thinking, 'output_config': out}
@@ -261,6 +267,7 @@ class ClaudeConversation(_Base):
     async def send(self, text, meta=None, commit=True) -> Reply:
         """One turn. With commit=False (a probe) the turn is a fork: neither the question nor
         the reply is added to the conversation."""
+        self.low = False
         user = {'role': 'user', 'content': text}
         if commit:
             self.fit(text)
@@ -286,6 +293,7 @@ class ClaudeConversation(_Base):
                 continue
             if r.stop_reason == 'max_tokens':
                 truncations += 1
+                self.low = True  # retry once at low effort, then the seat passes
                 if truncations >= 2:
                     return Reply({}, thinking)
                 continue
@@ -320,7 +328,7 @@ class OpenAIConversation(_Base):
 
     def _reasoning(self):
         sp = spec(self.model)
-        out = {'effort': self.effort, 'summary': sp['summary']}
+        out = {'effort': self.turn_effort(), 'summary': sp['summary']}
         if sp['context']:
             out['context'] = 'all_turns'  # carry reasoning across turns (models that support it)
         return out
@@ -358,6 +366,7 @@ class OpenAIConversation(_Base):
             await asyncio.sleep(min(2 ** attempt, 60) + random.random())
 
     async def send(self, text, meta=None, commit=True) -> Reply:
+        self.low = False
         user = {'role': 'user', 'content': [self._block(text)]}
         if commit:
             self.fit(text)
@@ -403,6 +412,7 @@ class OpenAIConversation(_Base):
             self.record(meta, attempt, stop, start, spent, usage, thinking, out)
             if stop == 'max_tokens':
                 truncations += 1
+                self.low = True  # retry once at low effort, then the seat passes
                 if truncations >= 2:
                     return Reply({}, thinking)
                 continue
@@ -449,6 +459,7 @@ class OpenRouterConversation(_Base):
     _request = OpenAIConversation._request
 
     async def send(self, text, meta=None, commit=True) -> Reply:
+        self.low = False
         user = {'role': 'user', 'content': [{'type': 'text', 'text': text}]}
         if commit:
             self.fit(text)
@@ -462,7 +473,8 @@ class OpenRouterConversation(_Base):
                     m['content'][-1].pop('cache_control', None)
             messages[-1]['content'][-1]['cache_control'] = {'type': 'ephemeral'}
             body = {'model': self.slug, 'messages': messages, 'max_tokens': self.max_tokens,
-                    'reasoning': {'max_tokens': self.max_tokens * 3 // 4}, 'usage': {'include': True},
+                    'reasoning': {'max_tokens': 1024 if self.low else self.max_tokens * 3 // 4},
+                    'usage': {'include': True},
                     'provider': {'require_parameters': True}}
             start = time.monotonic()
             async with (self.semaphore if commit else NO_LIMIT):
@@ -482,6 +494,7 @@ class OpenRouterConversation(_Base):
             self.record(meta, attempt, stop, start, spent, usage, thinking, out)
             if stop == 'max_tokens':
                 truncations += 1
+                self.low = True  # retry once at low effort, then the seat passes
                 if truncations >= 2:
                     return Reply({}, thinking)
                 continue

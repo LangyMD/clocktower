@@ -2,12 +2,12 @@
 
 An eval where language models play Blood on the Clocktower (Trouble Brewing) against each other: one
 model plays the good team, another the evil team, so each game rates detection against deception.
-The rules are frozen as protocol v12: read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
+The rules are frozen as protocol v13: read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
 is what it is, and every past run: `docs/protocol-history.md`.
 
 ## Where things are
 - Code: `clocktower/` (see the table in README). Tests: `python -m unittest discover -s tests` (no API).
-- Game logs: the private Hugging Face dataset `dwarkesh/clocktower-games` (all versions, v1–v12; also
+- Game logs: the private Hugging Face dataset `dwarkesh/clocktower-games` (all versions, v1–v13; also
   `backup/` holds a git bundle of this repo's full history before the logs were removed from it).
   Git keeps each game's `config.json` and `result.json` (see `.gitignore`). `python -m clocktower
   fetch v9/e1-*` downloads logs into `games/`.
@@ -29,7 +29,7 @@ is what it is, and every past run: `docs/protocol-history.md`.
 - Not served anywhere any more: Claude Opus 4, 3.7 Sonnet, 3.5 Sonnet, 3 Opus; OpenAI o1-preview, GPT-4.5.
 
 ## Running an experiment
-1. Write a plan: `python -m clocktower plan MODELS.json --within K --pairs P --seed S --out games/v12/NAME > plans/NAME.json`
+1. Write a plan: `python -m clocktower plan MODELS.json --within K --pairs P --seed S --out games/v13/NAME > plans/NAME.json`
    (or write the JSON by hand: matchups with `good`, `evil`, `pairs`, optional `good_effort`,
    `evil_effort`, `seat_models`). Every experiment gets fresh seeds (seed blocks of 100 per matchup).
 2. New model? Add it to `llm.PRICES` and `llm.MODELS` (thinking style, memory, context window), run a
@@ -41,8 +41,8 @@ is what it is, and every past run: `docs/protocol-history.md`.
    scan/alarms/report` give spend, lost/capped/refused turns and stalls; read a few transcripts early.
    Pause only if the design is broken. Kill processes by exact PID: `pkill -f PATTERN` matches your own
    shell and kills it. Tournament processes start with the full python path, so match `clocktower run`.
-5. After: `python -m clocktower analyze games/v12/NAME-*/game-*`; upload logs with
-   `hf upload dwarkesh/clocktower-games games/v12 v12 --repo-type dataset`; commit configs, results and
+5. After: `python -m clocktower analyze games/v13/NAME-*/game-*`; upload logs with
+   `hf upload dwarkesh/clocktower-games games/v13 v13 --repo-type dataset`; commit configs, results and
    the ledger; republish the viewer if asked (`python -m clocktower site`, then the Artifact tool with
    `url: https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH` and every file under `site/` in `files`).
 6. While a batch runs, the stop hook complains about the changing ledger: commit it, or hide it with
@@ -53,7 +53,8 @@ is what it is, and every past run: `docs/protocol-history.md`.
 - Each day: 3 private beats (up to 2 whispers per turn), 3 town-square beats, nominations; same every
   day, fixed length. Dead players talk and whisper; only the living nominate.
 - Scripted Storyteller (`state.POLICY`), no LLM; every rule explainable in one line, no special cases.
-- Equal settings: every model at its lab's "high" effort, one per-turn ceiling (32K) as a runaway guard.
+- Equal settings: every model at its lab's "high" effort, one per-turn ceiling (8K); a turn that hits
+  it is retried once at low effort (v13; the user wanted bounded thinking for older models).
   (Effort sweep in e1: no measurable effect of effort on play, but only 1 pair per level; v6 found
   Opus low 255 Elo below high as good. The user chose high over medium.)
 - Every game has its own seed; a side-swapped pair shares one. Run every game of an experiment at once.
@@ -77,7 +78,9 @@ is what it is, and every past run: `docs/protocol-history.md`.
   p(1-p) information per game).
 - Phase 2: top up pairs where the rating intervals are widest, by a rule and budget fixed in advance
   (allocate by uncertainty, never by which way results lean). Resolution: ~one generation, not neighbours.
-- Before launch: GPT-5 verified + smoke test + memory check; o1 costs ~$10 per seat-game.
+- GPT-5 verified Oct 2 (replies only, ~3K thinking tokens a turn). o1 costs ~$10 per seat-game.
+- Pilot (Oct 2): 8 flagship matchups covering every older model, same seeds as the full plan
+  (`tournament plans/f1-timeline.json --only ...`), so they count toward it.
 
 ## Experiments the frozen design makes possible (brainstorm; costs at ~$15 per game)
 Mechanics: `--good-model A,B,C` mixes a team (seats split evenly by seed); `--seat-model

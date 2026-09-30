@@ -217,7 +217,7 @@ v10 plus, from the second e1 read:
 - Prompt wording: "up to 2 whispers this turn" (o3 and Sonnet 4.5 read it as per private time), and
   the comment turn asks players not just to announce their vote (the vote prompt already did).
 
-## v12 — current, the frozen protocol (Oct 1)
+## v12 (Oct 1)
 v11 plus the Storyteller changes from the e1 Storyteller read, stated as three principles:
 - **Misinformation is false.** A poisoned player's result comes from a false world that is redrawn
   until the result is not one a working ability could give (when one exists). In e1 only 39% of
@@ -249,3 +249,15 @@ in a row, at high effort; OpenAI requests are now streamed (server-sent events),
 flowing during long thinking (max gap 6 s in a max-effort test). One GPT-5.1 game was killed at day 3
 by a container restart. Fable 5 as good cost $88 in one 6-day 12-player game (~$10 per seat-game),
 far above e1's short-game average: budget the flagship with care.
+
+## v13 — current, the frozen protocol (Oct 2)
+v12 plus a bounded thinking rule, for the older models in the flagship timeline: the per-turn ceiling
+is 8K tokens (was 32K), and a turn that hits it is retried once at low effort (older Claude models: the
+minimum 1,024-token thinking budget) rather than at the same ceiling. OpenAI's reasoning models take no
+thinking budget, only a total-output limit that leaves a turn with no answer, so a low-effort retry is
+the clean way to bound thinking without losing turns. Share of e1/c2 turns over 8K: GPT-5.1 28%, o3,
+GPT-5.2/5.4 and Opus 4.8 about 3%, Opus 4.6 0.7%, newer models ~0%; at 2K or 4K the fallback would
+become the normal setting for older models (o3 and GPT-5.4 40% at 2K), an uneven budget, so 8K.
+GPT-5 (verified Oct 2) thinks ~3K tokens even on trivial turns and sees only its replies (checked).
+Calls record the effort each attempt used. The GPT-5 family's 400K window is registered so an
+oversized game is trimmed, not failed.

@@ -824,7 +824,7 @@ class ContextTests(unittest.TestCase):
         import os, tempfile
         os.environ.setdefault('OPENAI_API_KEY', 'test')
         c = OpenAIConversation('rules', {}, label='x', ledger=Ledger(tempfile.mktemp()), semaphore=NO_LIMIT,
-                               model='gpt-4o', flex=False)
+                               model='gpt-4o', flex=False, max_tokens=32_000)
         self.assertEqual(c.max_tokens, 16_384)  # GPT-4o's own output limit
         big = 'word ' * 20_000
         for k in range(12):
@@ -836,3 +836,24 @@ class ContextTests(unittest.TestCase):
         self.assertEqual(texts[0], 'turn 0 ')  # the first turn (character and setup) stays
         self.assertGreater(c.trimmed, 0)
         self.assertEqual(texts[1], f'turn {c.trimmed + 1} ')  # then the most recent turns
+
+
+class CeilingTests(unittest.TestCase):
+    def test_a_turn_that_hits_the_ceiling_is_retried_once_at_low_effort(self):
+        from clocktower.llm import OpenAIConversation, Ledger, NO_LIMIT
+        import os, tempfile, json as _json
+        os.environ.setdefault('OPENAI_API_KEY', 'test')
+        c = OpenAIConversation('rules', {}, label='x', ledger=Ledger(tempfile.mktemp()), semaphore=NO_LIMIT,
+                               model='gpt-5.1')
+        efforts, replies = [], [
+            {'status': 'incomplete', 'incomplete_details': {'reason': 'max_output_tokens'}, 'output': [], 'usage': {}},
+            {'status': 'completed', 'output': [{'type': 'message', 'content': [
+                {'type': 'output_text', 'text': _json.dumps({'say': 'hi'})}]}], 'usage': {}}]
+
+        async def fake(body):
+            efforts.append(body['reasoning']['effort'])
+            return replies.pop(0)
+        c._request = fake
+        self.assertEqual(c.max_tokens, 8000)
+        self.assertEqual(run(c.send('go')).action, {'say': 'hi'})
+        self.assertEqual(efforts, ['high', 'low'])
