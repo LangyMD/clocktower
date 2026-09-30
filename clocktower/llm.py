@@ -292,7 +292,7 @@ class OpenAIConversation(_Base):
     def _post(self, body):
         req = urllib.request.Request(self.URL, data=json.dumps(body).encode(), method='POST',
                                      headers={'Authorization': f'Bearer {self.key}', 'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=900 if self.flex else 300) as resp:
+        with urllib.request.urlopen(req, timeout=900) as resp:  # a max-effort turn can take over 5 minutes
             return json.load(resp)
 
     async def _request(self, body):
