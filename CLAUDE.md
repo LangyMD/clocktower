@@ -1,88 +1,131 @@
-# Clocktower — notes for Claude sessions
+# Clocktower — handbook for Claude sessions
 
-An eval where language models play Blood on the Clocktower (Trouble Brewing, 9 players by default; `--players` 5–15). It measures
-holding coherent state and bluffs over a whole game. See README.md for the design.
+An eval where language models play Blood on the Clocktower (Trouble Brewing) against each other: one
+model plays the good team, another the evil team, so each game rates detection against deception.
+The rules are frozen as protocol v12: read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
+is what it is, and every past run: `docs/protocol-history.md`.
 
-## Running
-- Setup: `pip install -e .` (Python ≥3.11). Tests: `python -m unittest discover -s tests`. No-API
-  simulation: `python -m clocktower sim --games 200`.
-- Keys come from the environment: `ANTHROPIC_API_KEY` (Claude Code on the web withholds that name, so
-  the user stores it as `MY_ANTHROPIC_API_KEY`; `make_client` reads either), `OPENAI_API_KEY` (for `gpt-*` models). The
-  Anthropic key is not workspace-scoped, so every request sends `anthropic-workspace-id`
-  (`ANTHROPIC_WORKSPACE_ID`, default in `cli.py`). Without it the API returns a 400.
-- A batch: `python -m clocktower run --games 10 --seed N --out games/v7/NAME` (`--swap` adds each seed with sides swapped) (games go
-  under the current protocol version, `PROTOCOL` in `cli.py`; see `games/PROTOCOLS.md`). All games and seats run
-  in parallel with no request cap (`--concurrency 0`; rate limits are retried); game k uses seed N+k-1 and rotates the Minion.
-  Per-team models and efforts: `--good-model/--evil-model`, `--good-effort/--evil-effort`. Rough cost
-  per game (v5): Opus 5.5 ~$4, Sonnet 5 ~$4, GPT-6 Astra ~$8–10 (standard tier; `--flex` is throttled).
-  A batch takes as long as its slowest game (Claude ~15 min, Astra ~45 min). Spend is logged in `games/ledger.jsonl` with a cap (`--budget`, default $1000; the
-  user has said the budget can grow).
-- After a batch: `python -m clocktower report games/v11/NAME/*` and `python -m clocktower analyze games/v11/*/game-*`.
-  Game logs live in the private Hugging Face dataset `dwarkesh/clocktower-games`, not in git (git keeps
-  each game's config.json and result.json, via .gitignore): upload the batch with
-  `hf upload dwarkesh/clocktower-games games/v11/NAME v11/NAME --repo-type dataset` (needs `HF_TOKEN`,
-  set in the environment; `.claude/settings.json` allows that command), commit and push the rest.
-  Fetch logs in a fresh session with `python -m clocktower fetch v9/e1-*`. Then
-  republish the viewer: `python -m clocktower site` builds `site/`; publish `site/index.html` with the
-  Artifact tool, `url: https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH`, and every other file under
-  `site/` in `files` (same relative paths). That keeps the one viewer link the user has.
-- When a change affects how games play, bump `PROTOCOL` and add a section to `games/PROTOCOLS.md`.
+## Where things are
+- Code: `clocktower/` (see the table in README). Tests: `python -m unittest discover -s tests` (no API).
+- Game logs: the private Hugging Face dataset `dwarkesh/clocktower-games` (all versions, v1–v12; also
+  `backup/` holds a git bundle of this repo's full history before the logs were removed from it).
+  Git keeps each game's `config.json` and `result.json` (see `.gitignore`). `python -m clocktower
+  fetch v9/e1-*` downloads logs into `games/`.
+- Experiment plans: `plans/` (`timeline-models.json`, `f1-timeline.json`).
+- Planning pages published as Artifacts: `docs/plans/*.html`. Reader reports: `docs/analysis/`.
+- Spend ledger: `games/ledger.jsonl` (~$7.5k through Oct 1 2026).
+
+## Keys and access (all in the environment)
+- `ANTHROPIC_API_KEY` (the web environment withholds that name, so it is `MY_ANTHROPIC_API_KEY`;
+  `make_client` reads either). Every request sends `anthropic-workspace-id` (`ANTHROPIC_WORKSPACE_ID`,
+  default in `cli.py`); without it the API returns 400.
+- `OPENAI_API_KEY` (standard tier; `--flex` is throttled). GPT-5 needs a verified OpenAI organization.
+- `OPENROUTER_API_KEY`: only for models no longer on Anthropic's API (Opus 4.1, Sonnet 4, via Bedrock):
+  model ids `openrouter:anthropic/claude-opus-4.1`, `openrouter:anthropic/claude-sonnet-4`.
+- `HF_TOKEN`: the log dataset. `.claude/settings.json` allows `hf upload dwarkesh/clocktower-games ...`.
+- Not served anywhere any more: Claude Opus 4, 3.7 Sonnet, 3.5 Sonnet, 3 Opus; OpenAI o1-preview, GPT-4.5.
+
+## Running an experiment
+1. Write a plan: `python -m clocktower plan MODELS.json --within K --pairs P --seed S --out games/v12/NAME > plans/NAME.json`
+   (or write the JSON by hand: matchups with `good`, `evil`, `pairs`, optional `good_effort`,
+   `evil_effort`, `seat_models`). Every experiment gets fresh seeds (seed blocks of 100 per matchup).
+2. New model? Add it to `llm.PRICES` and `llm.MODELS` (thinking style, memory, context window), run a
+   two-turn smoke test, and a memory check (does it see its earlier reasoning next turn?). Tell a
+   replies-only model so (its `memory` entry does this).
+3. Launch in the background: `python -m clocktower tournament plans/NAME.json` (every matchup at once,
+   no queue; resumable: rerun the same command and finished games are kept).
+4. Watch it yourself (the user wants an agent, not a script that kills batches): `clocktower.supervise.
+   scan/alarms/report` give spend, lost/capped/refused turns and stalls; read a few transcripts early.
+   Pause only if the design is broken. Kill processes by exact PID: `pkill -f PATTERN` matches your own
+   shell and kills it. Tournament processes start with the full python path, so match `clocktower run`.
+5. After: `python -m clocktower analyze games/v12/NAME-*/game-*`; upload logs with
+   `hf upload dwarkesh/clocktower-games games/v12 v12 --repo-type dataset`; commit configs, results and
+   the ledger; republish the viewer if asked (`python -m clocktower site`, then the Artifact tool with
+   `url: https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH` and every file under `site/` in `files`).
+6. While a batch runs, the stop hook complains about the changing ledger: commit it, or hide it with
+   `git update-index --skip-worktree games/ledger.jsonl` and undo that when the batch ends.
 
 ## Design decisions the user made (don't undo without asking)
-- Memory is the model's own carried-over reasoning; no notebook, no state re-sent.
-- Each day: private time (3 beats, whispers only, invisible to others, up to 2 whispers per turn from v7; v5–v6 had 3)
-  then the town square (3 beats, public only), then nominations. Same every day, fixed length: no
-  early ends, no call-for-nominations. Dead players talk and whisper; only the living nominate.
-- The Storyteller is scripted (`state.POLICY`); the LLM Storyteller was removed. Every decision is a
-  `Choice` over all legal values, picked by a random style whose weights are all in POLICY (judgment
-  calls). No random floor (removed in v7): instead the style must be able to produce every answer a
-  working ability could give in some legal game, and never an impossible one (tests check both).
-- Keep the protocol clean: no arbitrary special cases; every rule should be explainable in a line.
-- Nominations: each round everyone eligible is asked at once; one nomination is taken; accusation,
-  defense, one comment turn for everyone, then the clockwise vote. Slayer shots on any public turn.
-- Equal budget across models: same effort ("high") and per-turn output ceiling (16K tokens, thinking
-  included) — a guard against runaway loops, not a thinking budget (a 4K cap cut older models' turns).
-- Every game in an experiment gets its own seed (more distinct transcripts for later review); the one
-  exception worth making is a side-swapped pair sharing a seed (see the roadmap).
-- Minimise wall-clock time: run every game of an experiment at once, no request queues.
-- Rating: a good (detection) Elo and an evil (deception) Elo per model, from homogeneous-team
-  matchups (one model plays evil, another good), Bradley–Terry fit.
+- Memory is the model's own carried-over conversation; no notebook, no state re-sent.
+- Each day: 3 private beats (up to 2 whispers per turn), 3 town-square beats, nominations; same every
+  day, fixed length. Dead players talk and whisper; only the living nominate.
+- Scripted Storyteller (`state.POLICY`), no LLM; every rule explainable in one line, no special cases.
+- Equal settings: every model at its lab's "high" effort, one per-turn ceiling (32K) as a runaway guard.
+  (Effort sweep in e1: no measurable effect of effort on play, but only 1 pair per level; v6 found
+  Opus low 255 Elo below high as good. The user chose high over medium.)
+- Every game has its own seed; a side-swapped pair shares one. Run every game of an experiment at once.
+- Ratings: detection (good) and deception (evil) Elo per entrant, one Bradley–Terry fit.
+- 10–12 players by seed (two Minions, richer meta than 9).
 
-## Experiment roadmap (brainstormed with the user, Sept 27; not yet run unless noted)
-- **Headline chart:** detection Elo and deception Elo against model release date, one point per
-  model, coloured by lab: is deception improving faster or slower than detection? Hold fixed "each
-  model at its best (max effort) under the same per-turn ceiling", print cost beside each point.
-  (Alternatives considered: equal dollars per game, which mixes in pricing; equal thinking tokens.)
-- **Rating design:** one Bradley–Terry fit with a detection and a deception rating per model plus a
-  shared good-side advantage, so both are in the same units; anchor a reference model at 1500. Play
-  side-swapped pairs (A good vs B evil and B good vs A evil on one seed) so side advantage and setup
-  luck cancel. Several anchor opponents across the skill range, since strong good teams win 90–100%
-  against weak evil ones (ceiling). 10 games a cell gives about ±25 points of win rate (±150 Elo),
-  so lean on the belief probes too.
-- **Generation sweeps:** GPT-5 → 5.1 → 5.2 → 5.5 → 5.6 → 6 (Astra, Sol); Claude Fable 5, 5.1, Opus 5,
-  5.5, Sonnet. Mirror matches are confounded (both sides improve), so rate against anchors instead.
-  Older models need engine work (thinking budgets instead of effort; check they are still served).
-- **Other charts:** a CursorBench-style cost frontier (Elo against cost per seat-game, one line per
-  model through its effort levels; the user decided efficiency is secondary); a skill map (good Elo
-  against evil Elo); probe-based detection (probability good puts on the real Demon) against
-  deception (how little the town puts on it), a low-noise check on the ratings.
-- **Sociological experiments** (need per-seat models; the engine only assigns per team today): one
-  good player upgraded to a stronger model; one player of a weak team upgraded; only the evil team
-  stronger; mixed tables. The user also asked "what happens if there's a ton?" (unclear; ask).
-- **Done:** v5 x1 (Opus/Sonnet/Astra 2x2s, 10 seeds, `games/v5/x1-*`); v6 g1 (Opus high, Opus low,
-  Sonnet 5, Astra, GPT-6 Sol; all 20 good-vs-evil pairings, 5 games each, seeds 20000–20099,
-  `games/v6/g1-*`); v7 c1 calibration (Opus and Sol mirrors at 9 and 12 players, `games/v7/c1-*`).
-- **v8 timeline t2** (paused for good, 33 of 210 games, `games/v8/t2-*`): superseded by the plan below.
-- **v9 pilot e1** (Sept 30, 60 games, 30 side-swapped pairs, seeds 60000–60029, 10–12 players, `games/v9/e1-*`):
-  old and new models plus an effort sweep; nine reader reports in `analysis/e1/`. Led to v10 (Storyteller
-  fixes) and v11 (one typography for all seats: GPT and Claude punctuation told the teams apart).
-- **Next (awaiting the user's decisions):** final timeline run, a round robin of 10 frontier models,
-  4 side-swapped pairs per matchup (360 games, ~$6.6k at e1 prices), after the proposed v12 Storyteller
-  changes and a 32K ceiling; see the recommendations artifact. GPT-5 needs a verified OpenAI organization.
-- **Supervising runs:** the user wants the agent itself to watch runs (spend, lost turns, stalls, a few
-  transcripts) and decide, not a script that kills batches. `clocktower.supervise.scan/alarms` give the
-  numbers. Transient API errors make a call wait, not the game stop. Kill processes by exact PID:
-  `pkill -f PATTERN` matches the agent's own shell and kills it.
+## Results so far (details in docs/protocol-history.md)
+- v5 x1, v6 g1 (100 games), v7 c1 calibration, v8 t1/t2 (aborted: infrastructure), v9 e1 pilot (60
+  games: engine sound, 36% evil wins, typography tell found), v12 c2 calibration (12 games).
+- Good wins about two-thirds; the newer model wins most swept pairs; replies-only models hold state
+  from their replies but GPT-5.1 re-derives the game every turn (slow; needs the 32K ceiling).
+
+## Next: the flagship timeline run (awaiting the user's go)
+- 21 models, GPT-4o (May 2024) to GPT-6.1 Sol (Sep 2026): every model still served that was its lab's
+  best at release, plus the newest cheaper releases (`plans/timeline-models.json`). Anthropic starts at
+  Sonnet 4 (stand-in for the unserved Opus 4) and Opus 4.1 via OpenRouter.
+- Every pair at most 10 apart in release order plays 1 side-swapped pair: 155 matchups, 310 games,
+  ~$7–8k (`plans/f1-timeline.json`; page: https://claude.ai/artifact/4D3xhVgd5r92yK4XXAPVPs). With a
+  2.5-year skill spread, far-apart games are near-certain and carry little information, so the band
+  beats a full round robin by ~10% (simulation; literature: Shah et al. 2016 on graph connectivity,
+  p(1-p) information per game).
+- Phase 2: top up pairs where the rating intervals are widest, by a rule and budget fixed in advance
+  (allocate by uncertainty, never by which way results lean). Resolution: ~one generation, not neighbours.
+- Before launch: GPT-5 verified + smoke test + memory check; o1 costs ~$10 per seat-game.
+
+## Experiments the frozen design makes possible (brainstorm; costs at ~$15 per game)
+Mechanics: `--good-model A,B,C` mixes a team (seats split evenly by seed); `--seat-model
+good:MODEL:N`, `evil:MODEL:N`, `CHARACTER:MODEL` upgrade specific seats; `MODEL@effort` sets effort.
+Mixed entrants get their own names in `analyze`; most of these need a small custom analysis too.
+Run each as side-swapped pairs against a fixed baseline, 10–20 pairs per arm unless noted.
+
+**One strong player (influence)**
+1. One strong good seat among weak ones (e.g. 1 Opus 5.5 in a Sonnet 4.5 town): the win-rate lift,
+   and whether the town follows it (its votes vs the town's, belief shift after it speaks).
+2. One strong evil seat: upgrade only the Imp vs only one Minion. Which evil role carries the team?
+3. The strong good seat in an information role (Fortune Teller, Empath) vs a non-information role
+   (Soldier, Mayor): information vs persuasion.
+4. Marginal value curve: 0, 1, 2, 4, all good seats upgraded. Is skill additive, or does one leader suffice?
+
+**Mixed teams (coordination and diversity)**
+5. Mixed vs homogeneous teams of equal average strength (Opus 5.5 + GPT-6.1 Sol + Fable 5.1 as evil vs
+   each alone): the cost of not sharing a "mind" (evil must coordinate by whisper, not by shared priors).
+6. Mixed good town vs homogeneous town: does diversity reduce herding (fewer unanimous wrong votes)?
+7. In-group trust: on mixed tables, do seats trust seats played by their own model or lab more
+   (votes, whispers, P(evil))? Style can still leak identity after the typography fix.
+8. Model recognition: can a seat tell which seats share its model? Ask in a probe; score it.
+
+**Scale and structure**
+9. Table size 5–15: does a stronger model's edge grow with social complexity? (3 Minions at 13–15.)
+10. Many copies ("a ton"): 15 seats of a weak model vs 15 of a strong one; or the same team at 5 vs 15.
+    (The user asked "what happens if there's a ton?": ask what they meant.)
+11. Communication budget: 1 vs 2 vs 3 whispers per turn, or fewer beats: how much does good's edge
+    depend on free information flow? (Protocol variants, not rating runs.)
+
+**Memory, effort and cost**
+12. Memory ablation: Opus 5.5 and GPT-6.1 Sol with earlier reasoning stripped vs carried (needs a
+    small engine flag). Measures the replies-only handicap that confounds the old models (~$100).
+13. Effort curves per model (low/medium/high/max, 5+ pairs per level, same seeds): a cost frontier chart.
+14. Context pressure: long 15-player games; does play decay by day (probe accuracy, contradictions)?
+
+**Humans**
+15. Human seats (`play`): one human in a model town, or one model among humans, for a human baseline
+    of detection and deception.
+
+**Robustness of the eval**
+16. Prompt paraphrase: reword the system prompt without changing rules; do ratings hold?
+17. Storyteller sensitivity: vary one POLICY weight (poison, Recluse) on fixed seeds; do ratings hold?
+18. Seed replay: rerun identical seeds to measure run-to-run noise of a matchup.
+
+**Behavioural readouts (from existing logs, no new games)**
+19. Lie detection: how often good calls out a false claim, by model; evil's bluff consistency.
+20. Whisper networks: who talks to whom, alliances, whether evil's private graph gives it away.
+21. Theory of mind: evil's prediction of the town's beliefs (probes) vs how well it survives.
+22. Herding and sycophancy: unanimous votes, first-nominee executions, reversals under pressure.
 
 ## Working with the user
-Be concise: lead with the answer. Check realism and design before scaling up runs.
+Be concise: lead with the answer. Check realism and design before scaling up runs. Minimise wall-clock
+time and waste. Explain choices plainly; the user reads summaries on their phone.
