@@ -1,0 +1,63 @@
+{
+  "winner": "evil",
+  "reason": "Casey was the Saint, and the Saint was executed.",
+  "stopped": null,
+  "days": 4,
+  "seed": 60001,
+  "starting": {
+    "Alex": "Undertaker",
+    "Blair": "Spy",
+    "Casey": "Saint",
+    "Drew": "Recluse",
+    "Ellis": "Empath",
+    "Frankie": "Fortune Teller",
+    "Gray": "Imp",
+    "Harper": "Investigator",
+    "Indigo": "Drunk",
+    "Jules": "Baron",
+    "Kit": "Monk"
+  },
+  "final": {
+    "Alex": "Undertaker",
+    "Blair": "Spy",
+    "Casey": "Saint",
+    "Drew": "Recluse",
+    "Ellis": "Empath",
+    "Frankie": "Fortune Teller",
+    "Gray": "Imp",
+    "Harper": "Investigator",
+    "Indigo": "Drunk",
+    "Jules": "Imp",
+    "Kit": "Monk"
+  },
+  "bluffs": [
+    "Chef",
+    "Butler",
+    "Slayer"
+  ],
+  "red_herring": "Indigo",
+  "drunk_as": "Ravenkeeper",
+  "cost": 14.7041,
+  "calls": 530,
+  "tokens": {
+    "input": 552666,
+    "cache_read": 7445376,
+    "cache_write": 0,
+    "output": 1172906
+  },
+  "seconds": 8618.0,
+  "errors": [],
+  "models": {
+    "Alex": "o3",
+    "Blair": "gpt-5.4",
+    "Casey": "o3",
+    "Drew": "o3",
+    "Ellis": "o3",
+    "Frankie": "o3",
+    "Gray": "gpt-5.4",
+    "Harper": "o3",
+    "Indigo": "o3",
+    "Jules": "gpt-5.4",
+    "Kit": "o3"
+  }
+}
