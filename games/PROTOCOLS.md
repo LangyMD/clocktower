@@ -187,3 +187,10 @@ New models: GPT-6.1 Sol (`gpt-6.1-sol`, $2/$10, carries its reasoning: memory ch
 reasoning extraction, so its memory is assumed like other adaptive-thinking Claude models and is
 checked in transcripts). Effort "max" is accepted by both labs: on a smoke turn Opus 5.5 thought
 ~5,000 tokens at max against ~300 at high, GPT-6 Sol ~1,900 against ~600.
+
+e1 (Sept 30, 60 games, 30 side-swapped pairs, seeds 60000–60029, 10–12 players): a spread of old
+and new models plus an effort sweep (Opus 5.5 and GPT-6.1 Sol at low, medium and max against the
+other at high). Opus 5.5 at max effort thought 3–10K tokens a turn and hit the 16K ceiling (one evil
+turn lost), so that pair was restarted on the same seed with a 64K ceiling
+(`e1-opus55max64k-v-gpt61sol`); the sweep measures what effort buys, not truncation. All other
+games use the 16K ceiling.
