@@ -1,0 +1,251 @@
+<title>Timeline Pairing Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column; the matchup grid and the rating chart are the two figures. */
+:root {
+  --bg: #f7f7f4; --surface: #fcfcfb; --fg: #16161a; --muted: #5b5a63; --faint: #8b8a93; --line: #e2e1dc;
+  --anth: #eb6834; --oai: #4a3aa7;
+  --q1: #86b6ef; --q2: #3987e5; --q3: #184f95; --empty: #eeede8; --self: #e7e6e1;
+  --display: "Fraunces", Georgia, serif; --body: "Source Sans 3", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); }
+.wrap { max-width: 880px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 44px; }
+h1, h2 { font-family: var(--display); font-weight: 650; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { font-size: 24px; }
+p { margin: 0; max-width: 66ch; }
+.lede { color: var(--muted); font-size: 18px; }
+.eyebrow { font: 600 12px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+section { display: grid; gap: 16px; min-width: 0; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font-variant-numeric: tabular-nums; }
+.facts div { display: grid; }
+.facts b { font: 600 26px/1.1 var(--display); }
+.facts span { color: var(--muted); font-size: 14px; }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.scroll { overflow-x: auto; }
+.grid { display: grid; grid-template-columns: 116px repeat(10, minmax(38px, 1fr)); gap: 3px; min-width: 560px; font-size: 13px; }
+.grid .h { font: 500 11px/1.2 var(--mono); color: var(--muted); display: flex; align-items: flex-end; justify-content: center;
+  writing-mode: vertical-rl; transform: rotate(180deg); height: 92px; padding: 4px 0; }
+.grid .r { display: flex; align-items: center; gap: 6px; font: 500 12px/1.2 var(--mono); color: var(--fg); white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.dot.anth { background: var(--anth); } .dot.oai { background: var(--oai); }
+.cell { aspect-ratio: 1; border-radius: 4px; display: grid; place-items: center; font: 600 13px/1 var(--mono);
+  font-variant-numeric: tabular-nums; cursor: default; outline-offset: 2px; }
+.cell.q1 { background: var(--q1); color: #0d1b30; } .cell.q2 { background: var(--q2); color: #fff; }
+.cell.q3 { background: var(--q3); color: #fff; } .cell.self { background: var(--self); }
+.cell.lower { background: transparent; }
+.cell:focus-visible, .cell:hover { outline: 2px solid var(--fg); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); align-items: center; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 13px; line-height: 1.4;
+  padding: 7px 10px; border-radius: 6px; max-width: 280px; z-index: 5; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.game { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; background: var(--surface); }
+.game .seat { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; }
+.tag { font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; padding: 4px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+td.num, th.num { text-align: right; }
+pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font: 13px/1.6 var(--mono); color: var(--fg); }
+pre .c { color: var(--faint); }
+.note { font-size: 14px; color: var(--muted); }
+.mock { display: inline-block; font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  border: 1px dashed var(--faint); border-radius: 4px; padding: 5px 7px; }
+svg text { font-family: var(--body); }
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:14px">
+    <div class="eyebrow">Clocktower · rating design for the model timeline</div>
+    <h1>Every model meets most others, and close neighbours meet often</h1>
+    <p class="lede">Ten frontier models from September 2025 to September 2026 play a near round robin in side-swapped pairs, twelve-player tables. The fit gives each model one combined rating, split into detection (playing good) and deception (playing evil).</p>
+    <div class="facts">
+      <div><b>10</b><span>models, 5 per lab</span></div>
+      <div><b>45</b><span>matchups (every pair)</span></div>
+      <div><b>194</b><span>side-swapped pairs</span></div>
+      <div><b>388</b><span>games</span></div>
+      <div><b>±98</b><span>Elo, 95% interval (combined)</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Who plays whom</h2>
+    <p>Rows and columns are the models in release order. Each cell is the number of side-swapped pairs that matchup gets: 6 when the models are one or two releases apart, 4 when three to five apart, 2 when further. Close matchups get more games because near-even games carry the most information; distant ones still get some, so the top and bottom of the ranking are compared directly and the fit can check it is consistent.</p>
+    <div class="figure">
+      <div class="scroll"><div class="grid" id="grid" role="grid" aria-label="Matchup grid"></div></div>
+      <div class="legend" style="margin-top:14px">
+        <span><span class="sw" style="background:var(--q3)"></span>6 pairs · 12 games</span>
+        <span><span class="sw" style="background:var(--q2)"></span>4 pairs · 8 games</span>
+        <span><span class="sw" style="background:var(--q1)"></span>2 pairs · 4 games</span>
+        <span><span class="dot anth" style="display:inline-block;margin-right:6px"></span>Anthropic</span>
+        <span><span class="dot oai" style="display:inline-block;margin-right:6px"></span>OpenAI</span>
+        <span>* remembers replies only</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>One pair, two games</h2>
+    <p>Every cell above is made of pairs like this one. Both games share a seed, so the same characters, seats and Storyteller draws, and only the sides swap. Setup luck and good's built-in edge cancel inside the pair. Every pair gets its own seed.</p>
+    <div class="pair">
+      <div class="game"><div class="eyebrow">Seed 61231 · game A</div>
+        <div class="seat"><span>Opus 4.8 plays the 9 good seats</span><span class="tag">good</span></div>
+        <div class="seat"><span>GPT-6 Astra plays the 3 evil seats</span><span class="tag">evil</span></div></div>
+      <div class="game"><div class="eyebrow">Seed 61231 · game B</div>
+        <div class="seat"><span>GPT-6 Astra plays the 9 good seats</span><span class="tag">good</span></div>
+        <div class="seat"><span>Opus 4.8 plays the 3 evil seats</span><span class="tag">evil</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why this shape</h2>
+    <p>In a Bradley–Terry fit, the uncertainty between two ratings behaves like electrical resistance between them in the graph of who played whom. A chain of neighbours is resistors in series: errors pile up from one end to the other. Many cross-links are resistors in parallel. Simulated error for the same 200-game budget, one standard error in Elo:</p>
+    <div class="figure scroll">
+      <table>
+        <thead><tr><th>Design</th><th class="num">Detection</th><th class="num">Deception</th><th class="num">Top vs bottom</th></tr></thead>
+        <tbody>
+          <tr><td>Chain of neighbours (last run)</td><td class="num">199</td><td class="num">195</td><td class="num">458</td></tr>
+          <tr><td>Everyone vs one anchor</td><td class="num">156</td><td class="num">450</td><td class="num">220</td></tr>
+          <tr><td>Round robin, spread evenly</td><td class="num">153</td><td class="num">131</td><td class="num">330</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it runs</h2>
+    <p>One command launches all 45 matchups at once, each a batch of its pairs with its own seeds. Nothing is staged. I check the run myself every ten minutes: spend against plan, lost or capped turns by model, and a few transcripts.</p>
+<pre><span class="c"># the plan: models in release order, pairs per matchup by release gap</span>
+python -m clocktower tournament plans/t3.json --players 12 --out games/v8/t3
+
+<span class="c"># what it launches for each matchup, e.g. Opus 4.8 against GPT-6 Astra (4 pairs)</span>
+python -m clocktower run --games 4 --swap --seed 61230 --players 12 \
+    --good-model claude-opus-4-8 --evil-model gpt-6-astra --out games/v8/t3-opus48-vs-astra
+
+<span class="c"># while it runs: a read-only status report</span>
+python -m clocktower status games/v8/t3
+
+<span class="c"># afterwards: ratings with 95% intervals</span>
+python -m clocktower ratings games/v8/t3-*/game-*</pre>
+    <p class="note">The <code>tournament</code>, <code>status</code> and <code>ratings</code> commands are proposed; the <code>run</code> line works today.</p>
+  </section>
+
+  <section>
+    <h2>What the result looks like</h2>
+    <p><span class="mock">Illustration · simulated numbers, not results</span></p>
+    <p>One point per model at its release date, with its 95% interval. Hollow points remember only their replies, not their earlier thinking.</p>
+    <div class="figure">
+      <div class="legend" style="margin-bottom:8px">
+        <span><span class="dot anth" style="display:inline-block;margin-right:6px"></span>Anthropic</span>
+        <span><span class="dot oai" style="display:inline-block;margin-right:6px"></span>OpenAI</span>
+      </div>
+      <div class="scroll"><svg id="chart" viewBox="0 0 820 360" width="100%" style="min-width:560px" role="img" aria-label="Illustrative combined rating by release date"></svg></div>
+    </div>
+    <div class="figure scroll">
+      <table id="table">
+        <thead><tr><th>Model</th><th>Released</th><th>Memory</th><th class="num">Combined</th><th class="num">Detection</th><th class="num">Deception</th><th class="num">Games</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const M = [
+  ['Sonnet 4.5','Anthropic','2025-09-29',true, 1230],
+  ['GPT-5.1','OpenAI','2025-11-12',true, 1265],
+  ['Opus 4.6','Anthropic','2026-02-04',false, 1395],
+  ['GPT-5.4','OpenAI','2026-03-05',true, 1405],
+  ['Opus 4.8','Anthropic','2026-05-28',false, 1500],
+  ['GPT-5.6 Sol','OpenAI','2026-07-09',false, 1545],
+  ['GPT-6 Astra','OpenAI','2026-08-27',false, 1700],
+  ['Fable 5.1','Anthropic','2026-08-28',false, 1640],
+  ['Opus 5.5','Anthropic','2026-09-21',false, 1690],
+  ['GPT-6.1 Sol','OpenAI','2026-09-27',false, 1675],
+];
+const n = M.length, pairsFor = g => g <= 2 ? 6 : g <= 5 ? 4 : 2;
+const grid = document.getElementById('grid'), tip = document.getElementById('tip');
+const label = m => m[0] + (m[3] ? '*' : '');
+const cls = m => m[1] === 'Anthropic' ? 'anth' : 'oai';
+grid.appendChild(Object.assign(document.createElement('div'), {}));
+M.forEach(m => { const h = document.createElement('div'); h.className = 'h'; h.textContent = label(m); grid.appendChild(h); });
+const games = Array(n).fill(0);
+M.forEach((a, i) => {
+  const r = document.createElement('div'); r.className = 'r';
+  r.innerHTML = `<span class="dot ${cls(a)}"></span>${label(a)}`; grid.appendChild(r);
+  M.forEach((b, j) => {
+    const c = document.createElement('div'); c.className = 'cell';
+    if (i === j) c.classList.add('self');
+    else if (j < i) c.classList.add('lower');
+    else {
+      const p = pairsFor(j - i); games[i] += 2 * p; games[j] += 2 * p;
+      c.classList.add(p === 6 ? 'q3' : p === 4 ? 'q2' : 'q1'); c.textContent = p; c.tabIndex = 0;
+      const text = `${a[0]} vs ${b[0]}: ${p} pairs, ${2 * p} games (${p} with each side playing good)`;
+      c.setAttribute('aria-label', text);
+      const show = e => { tip.textContent = text; tip.hidden = false; const r = c.getBoundingClientRect();
+        tip.style.left = Math.min(innerWidth - 290, r.left) + 'px'; tip.style.top = (r.bottom + 8) + 'px'; };
+      c.addEventListener('mouseenter', show); c.addEventListener('focus', show);
+      c.addEventListener('mouseleave', () => tip.hidden = true); c.addEventListener('blur', () => tip.hidden = true);
+    }
+    grid.appendChild(c);
+  });
+});
+// illustrative chart
+const svg = document.getElementById('chart'), W = 820, H = 360, L = 58, R = 104, T = 16, B = 40;
+const t0 = Date.parse('2025-09-01'), t1 = Date.parse('2026-10-15');
+const x = d => L + (Date.parse(d) - t0) / (t1 - t0) * (W - L - R);
+const y0 = 1050, y1 = 1900, y = v => T + (y1 - v) / (y1 - y0) * (H - T - B);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text) e.textContent = text; svg.appendChild(e); return e; };
+for (let v = 1100; v <= 1900; v += 200) {
+  el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 });
+  el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 12, fill: 'var(--muted)' }, v);
+}
+['2025-10-01','2026-01-01','2026-04-01','2026-07-01','2026-10-01'].forEach(d => {
+  const dt = new Date(d); el('text', { x: x(d), y: H - 14, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--muted)' },
+    dt.toLocaleString('en', { month: 'short' }) + ' ' + String(dt.getFullYear()).slice(2));
+});
+el('text', { x: 12, y: T + 4, 'font-size': 12, fill: 'var(--muted)' }, 'Elo');
+const ci = i => (i === 0 || i === n - 1) ? 115 : 98;
+['Anthropic', 'OpenAI'].forEach(lab => {
+  const pts = M.map((m, i) => [m, i]).filter(([m]) => m[1] === lab);
+  el('polyline', { points: pts.map(([m]) => `${x(m[2])},${y(m[4])}`).join(' '), fill: 'none',
+    stroke: lab === 'Anthropic' ? 'var(--anth)' : 'var(--oai)', 'stroke-width': 2, opacity: .55 });
+});
+M.forEach((m, i) => {
+  const c = m[1] === 'Anthropic' ? 'var(--anth)' : 'var(--oai)', cx = x(m[2]), cy = y(m[4]), e = ci(i);
+  el('line', { x1: cx, x2: cx, y1: y(m[4] + e), y2: y(m[4] - e), stroke: c, 'stroke-width': 2, 'stroke-linecap': 'round' });
+  const dot = el('circle', { cx, cy, r: 5.5, fill: m[3] ? 'var(--surface)' : c, stroke: c, 'stroke-width': 2.5 });
+  const hit = el('circle', { cx, cy, r: 14, fill: 'transparent', tabindex: 0 });
+  const text = `${m[0]} (${m[2]}): ${m[4]} ± ${e}${m[3] ? ' · replies-only memory' : ''} · illustrative`;
+  const show = () => { tip.textContent = text; tip.hidden = false; const r = hit.getBoundingClientRect();
+    tip.style.left = Math.min(innerWidth - 290, r.left) + 'px'; tip.style.top = (r.bottom + 6) + 'px'; };
+  hit.addEventListener('mouseenter', show); hit.addEventListener('focus', show);
+  hit.addEventListener('mouseleave', () => tip.hidden = true); hit.addEventListener('blur', () => tip.hidden = true);
+});
+[[8, 'Opus 5.5', -10], [6, 'GPT-6 Astra', -26]].forEach(([i, t, dy]) =>
+  el('text', { x: x(M[i][2]) + 12, y: y(M[i][4]) + dy + 14, 'font-size': 12, fill: 'var(--fg)' }, t));
+// table
+const tb = document.querySelector('#table tbody');
+M.forEach((m, i) => {
+  const tr = document.createElement('tr'), det = Math.round(m[4] + (m[4] - 1500) * .35), dec = Math.round(m[4] - (m[4] - 1500) * .35);
+  tr.innerHTML = `<td><span class="dot ${cls(m)}" style="display:inline-block;margin-right:8px"></span>${m[0]}</td><td>${m[2]}</td>
+    <td>${m[3] ? 'replies only' : 'keeps reasoning'}</td><td class="num">${m[4]} ± ${ci(i)}</td><td class="num">${det} ± 168</td>
+    <td class="num">${dec} ± 142</td><td class="num">${games[i]}</td>`;
+  tb.appendChild(tr);
+});
+</script>
