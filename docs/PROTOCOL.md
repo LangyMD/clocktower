@@ -34,11 +34,12 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
   in `state.POLICY` (each weight is a judgment call about what an experienced Storyteller does).
 - The style can produce every answer a working ability could give in some legal game allowed by the
   public counts, and never an impossible one (tests check both).
-- **Misinformation is false.** A poisoned player's result comes from a false world, redrawn until
-  it differs from what a working ability could give (when it can). The Drunk keeps one false world
-  all game (true information in 20% of games), so their story holds.
-- **Nothing the setup's counts rule out.** Demon bluffs include an Outsider only when the Drunk is
-  in play; "Baron" is shown only with a Baron in play; an executed player is shown as the Imp only
+- **Misinformation is false.** On 80% of poisoned nights a poisoned player's result comes from a
+  false world, redrawn until it differs from what a working ability could give (when it can); a
+  poisoned Fortune Teller's false world has no red herring. The Drunk keeps one false world all game
+  (true information in 20% of games), so their story holds.
+- **Nothing the setup's counts rule out.** Demon bluffs include one Outsider exactly when the Drunk
+  is in play; "Baron" is shown only with a Baron in play; an executed player is shown as the Imp only
   if a Scarlet Woman could have taken over.
 - **The Spy sees the whole Grimoire**, including what each pair ability (Washerwoman, Librarian,
   Investigator) was shown.

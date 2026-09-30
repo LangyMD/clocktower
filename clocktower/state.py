@@ -480,7 +480,8 @@ def fortune_teller_choice(g, p, targets):
             def yes(r):
                 framed, _ = g.decoy(p, r)
                 recluse = any(g[t].character == 'Recluse' and r.random() < POLICY['recluse_evil'] for t in targets)
-                return recluse or any(t in (framed, g.red_herring) for t in targets)
+                herring = g.red_herring if p.character == 'Drunk' else None  # a poisoned FT's false world has none
+                return recluse or any(t in (framed, herring) for t in targets)
             return {'yes': g.false_result(p, r, yes, possible)}
         if len(possible) == 1:
             return {'yes': next(iter(possible))}

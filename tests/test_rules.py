@@ -748,6 +748,14 @@ class V12Tests(unittest.TestCase):
         self.assertGreater(false, 0.7 * 400)
         self.assertGreater(n, 0.7 * 400)
 
+    def test_a_poisoned_fortune_teller_pointing_at_the_red_herring_can_hear_no(self):
+        from clocktower.state import fortune_teller_choice
+        g = Grimoire(NAMES, BASE)
+        g.players[3].character = g.players[3].shown = 'Fortune Teller'  # D, poisoned
+        g.red_herring, g.poisoned = E, D  # the Chef is the red herring
+        answers = {fortune_teller_choice(g, g[D], [E, F]).options(random.Random(s))['yes'] for s in range(200)}
+        self.assertIn(False, answers)
+
     def test_demon_bluffs_include_an_outsider_only_with_the_drunk_in_play(self):
         from clocktower.state import pick_bluffs
         from clocktower.characters import GOOD, OUTSIDERS

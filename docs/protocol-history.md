@@ -235,3 +235,10 @@ Also: turn order in every beat is plain random (the "players named in the last b
 did almost nothing: 80% of the table is named each beat); the per-turn output ceiling is 32K for
 every model (GPT-5.1 re-derives the game each turn and lost 6 turns at 16K in e1; no model at high
 comes near 16K otherwise); OpenAI requests time out after 15 minutes.
+
+c2 calibration (Oct 1, 12 games, seeds 70000–70005, `games/v12/c2-*`): the v12 rules worked (6 of 8
+poisoned results false, against 39% in e1; Outsider bluffs only with the Drunk; the Spy's reminders
+used for a Saint bluff; no capped turns at 32K). One gap, fixed before the freeze: the false world
+kept the real red herring, so a poisoned Fortune Teller pointing at it always heard a true YES (it
+decided one game). Final v12: a poisoned Fortune Teller's false world has no red herring (simulated
+false rate 60% -> ~80%, like the other roles). The c2 games ran before that fix.
