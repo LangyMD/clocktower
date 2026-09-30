@@ -13,7 +13,10 @@ is what it is, and every past run: `docs/protocol-history.md`.
   fetch v9/e1-*` downloads logs into `games/`.
 - Experiment plans: `plans/` (`timeline-models.json`, `f1-timeline.json`).
 - Planning pages published as Artifacts: `docs/plans/*.html`. Reader reports: `docs/analysis/`.
-- Spend ledger: `games/ledger.jsonl` (~$7.5k through Oct 1 2026).
+- Spend ledger: `games/ledger.jsonl` (~$7.7k through Oct 1 2026).
+- Git history still contains the old raw logs (~3 GB of blobs; the working tree doesn't). The user
+  approved removing them, but the agent's permission check blocks force-pushes: the user runs
+  `scripts/strip-game-logs.sh` (verified on a copy: 148 commits kept, same final tree, 7 MB).
 
 ## Keys and access (all in the environment)
 - `ANTHROPIC_API_KEY` (the web environment withholds that name, so it is `MY_ANTHROPIC_API_KEY`;
