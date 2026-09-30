@@ -1,0 +1,91 @@
+{
+ "out": "games/v14/w1",
+ "seed": 90000,
+ "players": "10-12",
+ "matchups": [
+  {
+   "name": "opus55-v-sol61",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 6
+  },
+  {
+   "name": "sonnet55-v-sol61",
+   "good": "claude-sonnet-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 2
+  },
+  {
+   "name": "opus55-v-sonnet55",
+   "good": "claude-opus-5-5",
+   "evil": "claude-sonnet-5-5",
+   "pairs": 2
+  },
+  {
+   "name": "fable51-v-astra",
+   "good": "claude-fable-5-1",
+   "evil": "gpt-6-astra",
+   "pairs": 2
+  },
+  {
+   "name": "opus55-v-astra",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6-astra",
+   "pairs": 2
+  },
+  {
+   "name": "sol56-v-opus55",
+   "good": "gpt-5.6-sol",
+   "evil": "claude-opus-5-5",
+   "pairs": 2
+  },
+  {
+   "name": "sonnet45-v-gpt54",
+   "good": "claude-sonnet-4-5-20250929",
+   "evil": "gpt-5.4",
+   "pairs": 1
+  },
+  {
+   "name": "gpt4o-v-sonnet45",
+   "good": "gpt-4o",
+   "evil": "claude-sonnet-4-5-20250929",
+   "pairs": 1
+  },
+  {
+   "name": "o3-v-sonnet4",
+   "good": "o3",
+   "evil": "openrouter:anthropic/claude-sonnet-4",
+   "pairs": 1
+  },
+  {
+   "name": "opus55-v-sol61-b6",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 4,
+   "args": [
+    "--private-beats",
+    "6"
+   ]
+  },
+  {
+   "name": "sonnet55-v-sol61-b6",
+   "good": "claude-sonnet-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 1,
+   "args": [
+    "--private-beats",
+    "6"
+   ]
+  },
+  {
+   "name": "fable51-v-astra-b6",
+   "good": "claude-fable-5-1",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "args": [
+    "--private-beats",
+    "6"
+   ]
+  }
+ ]
+}

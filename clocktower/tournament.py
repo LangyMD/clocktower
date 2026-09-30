@@ -39,6 +39,7 @@ def commands(plan):
                 cmd += [f"--{flag.replace('_', '-')}", m[flag]]
         for s in m.get('seat_models', []):
             cmd += ['--seat-model', s]
+        cmd += m.get('args', [])  # any other run flags, e.g. ["--private-beats", "6"] for a protocol variant
         yield m['name'], cmd
 
 

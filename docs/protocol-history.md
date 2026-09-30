@@ -250,7 +250,7 @@ flowing during long thinking (max gap 6 s in a max-effort test). One GPT-5.1 gam
 by a container restart. Fable 5 as good cost $88 in one 6-day 12-player game (~$10 per seat-game),
 far above e1's short-game average: budget the flagship with care.
 
-## v13 — current, the frozen protocol (Oct 2)
+## v13 (Oct 2)
 v12 plus a bounded thinking rule, for the older models in the flagship timeline: the per-turn ceiling
 is 8K tokens (was 32K), and a turn that hits it is retried once at low effort (older Claude models: the
 minimum 1,024-token thinking budget) rather than at the same ceiling. OpenAI's reasoning models take no
@@ -261,3 +261,13 @@ become the normal setting for older models (o3 and GPT-5.4 40% at 2K), an uneven
 GPT-5 (verified Oct 2) thinks ~3K tokens even on trivial turns and sees only its replies (checked).
 Calls record the effort each attempt used. The GPT-5 family's 400K window is registered so an
 oversized game is trimmed, not failed.
+
+## v14 — current (Oct 2): one conversation at a time
+v13 with private time restructured, at the user's suggestion: 4 private beats (was 3) and one whisper
+per turn (was up to 2), still to one or two players. In a real game a player is in one private
+conversation at a time; two whispers a turn let a player run two secret conversations at once and
+blast a claim to four people per turn (in e1, 85–100% of good seats whispered their role on day 1,
+and the good team read as one mind). More beats with one whisper each gives more back-and-forth and
+makes whom you talk to a visible choice. Cost: private time was ~34% of spend with 3 beats; 4 beats of
+one whisper is roughly +10% cost and wall-clock. A 6-beat variant (`--private-beats 6`) is tested
+alongside. The w1 experiment (50 games) checks whether it tilts balance toward either side.

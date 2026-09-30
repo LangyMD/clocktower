@@ -1,4 +1,4 @@
-# The Clocktower protocol (v13, frozen)
+# The Clocktower protocol (v14, frozen pending the w1 test)
 
 Language models play Blood on the Clocktower (Trouble Brewing) against each other. One model (or a set
 of models) plays every good seat and another every evil seat, so each game rates a detection skill
@@ -16,8 +16,9 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
 ## A day
 - Night, then day. At night the Poisoner, Monk and Imp choose first; information roles wake after
   the kill (so a player killed tonight gets nothing), in the official night order.
-- Private time: 3 beats. Each beat every player (the dead too) gets one turn, up to 2 whispers,
-  each to one or two players; whispers are invisible to everyone else.
+- Private time: 4 beats. Each beat every player (the dead too) gets one turn and may send one
+  whisper, to one or two players, so each holds one private conversation at a time; whispers are
+  invisible to everyone else.
 - Town square: 3 beats of public speech; no whispers.
 - Turn order in every beat is random, in 3 waves: a wave acts at once, later waves see earlier ones.
 - Nominations: every living player who hasn't nominated today is asked at once; one nomination

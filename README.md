@@ -6,7 +6,7 @@ pits one model's detection (finding the Demon) against another's deception (hidi
 game of claims, whispers, bluffs and votes. It measures whether a model can hold coherent state and
 a consistent story for hours of play.
 
-- **The rules of the eval:** [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (v13, frozen). Why each rule is what it
+- **The rules of the eval:** [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (v14). Why each rule is what it
   is: [`docs/protocol-history.md`](docs/protocol-history.md).
 - **Experiments so far and planned:** [`CLAUDE.md`](CLAUDE.md) (also the handbook for agent sessions).
 - **Game logs:** the private Hugging Face dataset `dwarkesh/clocktower-games` (every transcript, event,

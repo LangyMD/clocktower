@@ -32,7 +32,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v13'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
+PROTOCOL = 'v14'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -260,7 +260,7 @@ def main(argv=None):
     for name in ('run', 'play', 'sim'):
         p = sub.add_parser(name)
         p.add_argument('--seed', type=int)
-        p.add_argument('--private-beats', type=int, default=3, help='whisper-only beats each day')
+        p.add_argument('--private-beats', type=int, default=4, help='whisper-only beats each day')
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=15, help='stop after this many days')

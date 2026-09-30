@@ -28,7 +28,7 @@ from .state import (POLICY, Grimoire, bluffs_choice, character_choice, chef_choi
 ALL_NAMES = ['Alex', 'Blair', 'Casey', 'Drew', 'Ellis', 'Frankie', 'Gray', 'Harper', 'Indigo', 'Jules', 'Kit',
              'Logan', 'Morgan', 'Noel', 'Oakley']
 NAMES = ALL_NAMES[:9]  # the default nine-player table
-WHISPERS = 2  # per private-time turn
+WHISPERS = 1  # per private-time turn (v14; v7-v13 had 2): one conversation at a time
 WORDS = {'beat': 150, 'whisper': 150, 'nominate': 150, 'defense': 200, 'comment': 150, 'vote': 60}
 
 NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
@@ -61,7 +61,7 @@ def fmt(value):
 
 
 class Game:
-    def __init__(self, seats, storyteller=None, *, names=NAMES, seed=None, private_beats=3, public_beats=3, max_days=10,
+    def __init__(self, seats, storyteller=None, *, names=NAMES, seed=None, private_beats=4, public_beats=3, max_days=10,
                  waves=3, characters=None, minion=None, out=None, seat_factory=None, probes=True):
         """`seats` maps names to seats; alternatively `seat_factory(name, team)` creates them once the
         characters are dealt (so, for example, the evil team can use a different model). `probes` asks
@@ -356,7 +356,8 @@ class Game:
             if not (to and text):
                 continue
             if i >= WHISPERS:
-                dropped.append(f'your whisper to {", ".join(to)} was not sent (at most {WHISPERS} whispers a turn)')
+                limit = 'one whisper a turn' if WHISPERS == 1 else f'at most {WHISPERS} whispers a turn'
+                dropped.append(f'your whisper to {", ".join(to)} was not sent ({limit})')
                 continue
             if len(to) > 2:
                 dropped.append(f'your whisper to {", ".join(to)} went only to {to[0]} and {to[1]} '
@@ -404,7 +405,7 @@ class Game:
         self.rng.shuffle(order)
         self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
         if private:
-            tail = (f'Whisper to anyone you like (up to {WHISPERS} whispers this turn), or no one. Nobody can address the town '
+            tail = (f'You may send one whisper this turn, to one or two players, or none. Nobody can address the town '
                     'until the town square.')
         else:
             tail = 'Say something to the town, or nothing. No whispering now.'

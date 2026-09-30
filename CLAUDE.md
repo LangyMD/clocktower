@@ -2,12 +2,12 @@
 
 An eval where language models play Blood on the Clocktower (Trouble Brewing) against each other: one
 model plays the good team, another the evil team, so each game rates detection against deception.
-The rules are frozen as protocol v13: read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
+The rules are protocol v14 (frozen pending the w1 test of its private-time change): read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
 is what it is, and every past run: `docs/protocol-history.md`.
 
 ## Where things are
 - Code: `clocktower/` (see the table in README). Tests: `python -m unittest discover -s tests` (no API).
-- Game logs: the private Hugging Face dataset `dwarkesh/clocktower-games` (all versions, v1–v13; also
+- Game logs: the private Hugging Face dataset `dwarkesh/clocktower-games` (all versions, v1–v14; also
   `backup/` holds a git bundle of this repo's full history before the logs were removed from it).
   Git keeps each game's `config.json` and `result.json` (see `.gitignore`). `python -m clocktower
   fetch v9/e1-*` downloads logs into `games/`.
@@ -49,7 +49,8 @@ is what it is, and every past run: `docs/protocol-history.md`.
 
 ## Design decisions the user made (don't undo without asking)
 - Memory is the model's own carried-over conversation; no notebook, no state re-sent.
-- Each day: 3 private beats (up to 2 whispers per turn), 3 town-square beats, nominations; same every
+- Each day: 4 private beats (one whisper per turn, to one or two players: one conversation at a time;
+  v14, the user's idea; v7–v13 had 3 beats of up to 2), 3 town-square beats, nominations; same every
   day, fixed length. Dead players talk and whisper; only the living nominate.
 - Scripted Storyteller (`state.POLICY`), no LLM; every rule explainable in one line, no special cases.
 - Equal settings: every model at its lab's "high" effort, one per-turn ceiling (8K); a turn that hits

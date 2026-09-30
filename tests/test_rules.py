@@ -294,7 +294,7 @@ class DayTests(unittest.TestCase):
         g = self.prepared(BASE, lambda n, r: None)  # nobody ever says or whispers anything
         run(g.daytime(1))
         beats = [e['data']['text'] for e in g.events if e['kind'] == 'header' and '·' in e['data']['text']]
-        self.assertEqual(beats, [f'Day 1 · private time {k}' for k in (1, 2, 3)]
+        self.assertEqual(beats, [f'Day 1 · private time {k}' for k in (1, 2, 3, 4)]
                          + [f'Day 1 · town square {k}' for k in (1, 2, 3)])
 
     def test_mayor_wins_with_three_alive_and_no_execution(self):
@@ -857,3 +857,16 @@ class CeilingTests(unittest.TestCase):
         self.assertEqual(c.max_tokens, 8000)
         self.assertEqual(run(c.send('go')).action, {'say': 'hi'})
         self.assertEqual(efforts, ['high', 'low'])
+
+
+class WhisperTests(unittest.TestCase):
+    def test_one_whisper_a_turn(self):
+        def policy(name, req):
+            if req.kind == 'beat' and name == A:
+                return {'whispers': [{'to': [B], 'text': 'first'}, {'to': [C], 'text': 'second'}]}
+        g = game(BASE, policy)
+        run(g.setup())
+        g.private_beats, g.public_beats = 1, 0
+        run(g.daytime(1))
+        sent = [e['data'] for e in g.events if e['kind'] == 'whisper']
+        self.assertEqual([(w['to'], w['text']) for w in sent], [([B], 'first')])
