@@ -71,7 +71,7 @@ is what it is, and every past run: `docs/protocol-history.md`.
   best at release, plus the newest cheaper releases (`plans/timeline-models.json`). Anthropic starts at
   Sonnet 4 (stand-in for the unserved Opus 4) and Opus 4.1 via OpenRouter.
 - Every pair at most 10 apart in release order plays 1 side-swapped pair: 155 matchups, 310 games,
-  ~$7–8k (`plans/f1-timeline.json`; page: https://claude.ai/artifact/4D3xhVgd5r92yK4XXAPVPs). With a
+  ~$8.5k at ~4 days a game (`plans/f1-timeline.json`; page: https://claude.ai/artifact/4D3xhVgd5r92yK4XXAPVPs). With a
   2.5-year skill spread, far-apart games are near-certain and carry little information, so the band
   beats a full round robin by ~10% (simulation; literature: Shah et al. 2016 on graph connectivity,
   p(1-p) information per game).
