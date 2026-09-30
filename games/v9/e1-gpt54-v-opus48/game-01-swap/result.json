@@ -1,0 +1,60 @@
+{
+  "winner": "evil",
+  "reason": "Jules was the Saint, and the Saint was executed.",
+  "stopped": null,
+  "days": 3,
+  "seed": 60009,
+  "starting": {
+    "Alex": "Imp",
+    "Blair": "Virgin",
+    "Casey": "Baron",
+    "Drew": "Fortune Teller",
+    "Ellis": "Empath",
+    "Frankie": "Spy",
+    "Gray": "Recluse",
+    "Harper": "Soldier",
+    "Indigo": "Monk",
+    "Jules": "Saint"
+  },
+  "final": {
+    "Alex": "Imp",
+    "Blair": "Virgin",
+    "Casey": "Imp",
+    "Drew": "Fortune Teller",
+    "Ellis": "Empath",
+    "Frankie": "Spy",
+    "Gray": "Recluse",
+    "Harper": "Soldier",
+    "Indigo": "Monk",
+    "Jules": "Saint"
+  },
+  "bluffs": [
+    "Undertaker",
+    "Butler",
+    "Chef"
+  ],
+  "red_herring": "Blair",
+  "drunk_as": null,
+  "cost": 41.4244,
+  "calls": 496,
+  "tokens": {
+    "input": 204808,
+    "cache_read": 13420977,
+    "cache_write": 2923211,
+    "output": 793197
+  },
+  "seconds": 7573.6,
+  "errors": [],
+  "models": {
+    "Alex": "gpt-5.4",
+    "Blair": "claude-opus-4-8",
+    "Casey": "gpt-5.4",
+    "Drew": "claude-opus-4-8",
+    "Ellis": "claude-opus-4-8",
+    "Frankie": "gpt-5.4",
+    "Gray": "claude-opus-4-8",
+    "Harper": "claude-opus-4-8",
+    "Indigo": "claude-opus-4-8",
+    "Jules": "claude-opus-4-8"
+  }
+}
