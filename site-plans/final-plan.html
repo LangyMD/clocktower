@@ -80,9 +80,9 @@ td.wrap { white-space: normal; }
     <h1>Ready for the final run, after five small Storyteller changes and a 32K ceiling</h1>
     <p class="lede">The engine is sound. The games are realistic and varied, and good wins about two-thirds of games, which is fine for ratings. Nine readers went through all 60 games. Their fixes that don't change the game are already in (v10, v11). What's left for you to decide: five Storyteller changes, the output ceiling, the model list and the pairing plan.</p>
     <div class="facts">
-      <div><b>58/60</b><span>games finished</span></div>
-      <div><b>20/58</b><span>evil wins</span></div>
-      <div><b>$1,091</b><span>spent on e1</span></div>
+      <div><b>59/60</b><span>games finished</span></div>
+      <div><b>21/59</b><span>evil wins</span></div>
+      <div><b>$1,105</b><span>spent on e1</span></div>
       <div><b>0</b><span>rule violations found</span></div>
       <div><b>~$6.6k</b><span>proposed final run, 360 games</span></div>
     </div>
@@ -94,7 +94,7 @@ td.wrap { white-space: normal; }
       <li><b>Engine.</b> No rule violations and no impossible information, in 60 games and 1,500 simulated ones. Every ability, the Scarlet Woman rule, starpasses, ghost votes, the Butler, the Virgin, the Slayer, the Saint and the Mayor resolved correctly.</li>
       <li><b>Realism.</b> The best games read like strong human Trouble Brewing: a Spy claiming Chef with the true number to sell out its own team, a Virgin nomination used to spend the day's execution, a Mayor tie broken by the Imp's own vote. What reads least human is the talk, which comes as rounds of statements rather than a conversation. That is mostly the models, which is what we measure.</li>
       <li><b>Diversity.</b> 30 distinct setups, and each character appears in 8–19 of them. 27 distinct execution sequences in 53 games, and play styles differ clearly by model. The exception is evil's opening, which is nearly the same every game: the Imp hands out the three bluffs on the first private turn.</li>
-      <li><b>Balance.</b> Evil won 20 of 58 finished games (34%). Early in the run it looked like 25%, because good wins end sooner: good wins on days 1–4, evil wins mostly on days 5–7. Table size (10, 11, 12) has no visible effect. The newer model won 8 of the 9 pairs that one model swept.</li>
+      <li><b>Balance.</b> Evil won 21 of 59 finished games (36%). Early in the run it looked like 25%, because good wins end sooner: good wins on days 1–4, evil wins mostly on days 5–7. Table size (10, 11, 12) has no visible effect. The newer model won 8 of the 9 pairs that one model swept.</li>
       <li><b>Structure.</b> 3+3 beats, 2 whispers per turn and 3 waves all work; keep them. Private time feeds the town square: 12% of public lines cite a whisper.</li>
     </ul>
   </section>
@@ -170,7 +170,7 @@ td.wrap { white-space: normal; }
   <section>
     <h2>5. Pairings and size of the run</h2>
     <ul>
-      <li><b>A plain round robin: every pair of the 10 models plays 4 side-swapped pairs.</b> That's 45 matchups, 360 games, about <b>$6.6k</b> at e1 prices, taking as long as the slowest game. In e1 that was a GPT-5.1 game at about 6 hours, because GPT-5.1 slows down each day as it re-derives the game. Cross-links matter; a chain of neighbours does not work. The 6/4/2 taper was only 4% sharper than a plain round robin.</li>
+      <li><b>A plain round robin: every pair of the 10 models plays 4 side-swapped pairs.</b> That's 45 matchups, 360 games, about <b>$6.6k</b> at e1 prices, taking as long as the slowest game. In e1 that was a GPT-5.1 game at about 8 hours, because GPT-5.1 slows down each day as it re-derives the game. Cross-links matter; a chain of neighbours does not work. The 6/4/2 taper was only 4% sharper than a plain round robin.</li>
       <li><b>What it resolves:</b> gaps of about 300+ Elo, roughly one generation. Neighbours a few months apart need about 12× the games. <a href="https://claude.ai/artifact/VtnC1sXfuifkFMBKgDB1XY">Fidelity page.</a></li>
       <li><b>Use the probes as a second outcome.</b> Report P(the real Demon) from good seats, and how well good's votes separate evil nominees from good ones, beside win-rate Elo. In e1 these separate models more clearly than wins: 44% of pairs ended in a split and carried little information.</li>
       <li><b>Keep the table size varying from 10 to 12 by seed</b>, with a good-side advantage per size in the fit.</li>
