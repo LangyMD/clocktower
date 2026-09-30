@@ -2,3 +2,11 @@
 __pycache__/
 *.egg-info/
 site/
+# Game logs live in the Hugging Face dataset dwarkesh/clocktower-games (python -m clocktower fetch);
+# git keeps each game's config.json and result.json and the batch analyses.
+games/v*/**
+games/logs/
+!games/v*/**/
+!games/v*/**/config.json
+!games/v*/**/result.json
+!games/v*/**/*.txt
