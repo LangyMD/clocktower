@@ -14,9 +14,8 @@ is what it is, and every past run: `docs/protocol-history.md`.
 - Experiment plans: `plans/` (`timeline-models.json`, `f1-timeline.json`).
 - Planning pages published as Artifacts: `docs/plans/*.html`. Reader reports: `docs/analysis/`.
 - Spend ledger: `games/ledger.jsonl` (~$7.7k through Oct 1 2026).
-- Git history still contains the old raw logs (~3 GB of blobs; the working tree doesn't). The user
-  approved removing them, but the agent's permission check blocks force-pushes: the user runs
-  `scripts/strip-game-logs.sh` (verified on a copy: 148 commits kept, same final tree, 7 MB).
+- Raw game logs were removed from git history on Oct 2 (`scripts/strip-game-logs.sh`; the repo is ~20 MB).
+  Anyone with an older clone should re-clone.
 
 ## Keys and access (all in the environment)
 - `ANTHROPIC_API_KEY` (the web environment withholds that name, so it is `MY_ANTHROPIC_API_KEY`;
