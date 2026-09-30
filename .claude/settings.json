@@ -1,0 +1,5 @@
+{
+  "permissions": {
+    "allow": ["Bash(hf upload-large-folder dwarkesh/clocktower-games:*)"]
+  }
+}
