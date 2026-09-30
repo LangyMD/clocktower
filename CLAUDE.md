@@ -17,8 +17,12 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
   per game (v5): Opus 5.5 ~$4, Sonnet 5 ~$4, GPT-6 Astra ~$8–10 (standard tier; `--flex` is throttled).
   A batch takes as long as its slowest game (Claude ~15 min, Astra ~45 min). Spend is logged in `games/ledger.jsonl` with a cap (`--budget`, default $1000; the
   user has said the budget can grow).
-- After a batch: `python -m clocktower report games/v7/NAME/*` and `python -m clocktower analyze games/v7/*/game-*`, commit the whole batch directory
-  (transcripts, events, conversations, calls) and push, so results survive the session. Then
+- After a batch: `python -m clocktower report games/v11/NAME/*` and `python -m clocktower analyze games/v11/*/game-*`.
+  Game logs live in the private Hugging Face dataset `dwarkesh/clocktower-games`, not in git (git keeps
+  each game's config.json and result.json, via .gitignore): upload the batch with
+  `hf upload dwarkesh/clocktower-games games/v11/NAME v11/NAME --repo-type dataset` (needs `HF_TOKEN`,
+  set in the environment; `.claude/settings.json` allows that command), commit and push the rest.
+  Fetch logs in a fresh session with `python -m clocktower fetch v9/e1-*`. Then
   republish the viewer: `python -m clocktower site` builds `site/`; publish `site/index.html` with the
   Artifact tool, `url: https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH`, and every other file under
   `site/` in `files` (same relative paths). That keeps the one viewer link the user has.
@@ -68,14 +72,17 @@ holding coherent state and bluffs over a whole game. See README.md for the desig
 - **Done:** v5 x1 (Opus/Sonnet/Astra 2x2s, 10 seeds, `games/v5/x1-*`); v6 g1 (Opus high, Opus low,
   Sonnet 5, Astra, GPT-6 Sol; all 20 good-vs-evil pairings, 5 games each, seeds 20000–20099,
   `games/v6/g1-*`); v7 c1 calibration (Opus and Sol mirrors at 9 and 12 players, `games/v7/c1-*`).
-- **In progress:** v8 timeline t2 (14 models from Sonnet 4.5/o3 to Opus 5.5/GPT-6 Astra, 12 players,
-  21 matchups of neighbours in time, 5 side-swapped pairs each, seeds 50000+, `games/v8/t2-*`);
-  33 of 210 games finished, paused for the user's decision after supervisor mistakes (see
-  PROTOCOLS.md). Resume with the same `run` commands: finished games are kept. GPT-5 needs a verified
-  OpenAI organization.
-- **Supervising runs:** `python -m clocktower supervise games/v8/t2 --max-spend N` in the background.
-  It kills batches only on overspend (killing a batch loses every game in progress); other alarms
-  only alert. Transient API errors make a call wait, not the game stop.
+- **v8 timeline t2** (paused for good, 33 of 210 games, `games/v8/t2-*`): superseded by the plan below.
+- **v9 pilot e1** (Sept 30, 60 games, 30 side-swapped pairs, seeds 60000–60029, 10–12 players, `games/v9/e1-*`):
+  old and new models plus an effort sweep; nine reader reports in `analysis/e1/`. Led to v10 (Storyteller
+  fixes) and v11 (one typography for all seats: GPT and Claude punctuation told the teams apart).
+- **Next (awaiting the user's decisions):** final timeline run, a round robin of 10 frontier models,
+  4 side-swapped pairs per matchup (360 games, ~$6.6k at e1 prices), after the proposed v12 Storyteller
+  changes and a 32K ceiling; see the recommendations artifact. GPT-5 needs a verified OpenAI organization.
+- **Supervising runs:** the user wants the agent itself to watch runs (spend, lost turns, stalls, a few
+  transcripts) and decide, not a script that kills batches. `clocktower.supervise.scan/alarms` give the
+  numbers. Transient API errors make a call wait, not the game stop. Kill processes by exact PID:
+  `pkill -f PATTERN` matches the agent's own shell and kills it.
 
 ## Working with the user
 Be concise: lead with the answer. Check realism and design before scaling up runs.
