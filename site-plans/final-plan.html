@@ -1,0 +1,190 @@
+<title>Final Run Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column; the matchup grid and the rating chart are the two figures. */
+:root {
+  --bg: #f7f7f4; --surface: #fcfcfb; --fg: #16161a; --muted: #5b5a63; --faint: #8b8a93; --line: #e2e1dc;
+  --anth: #eb6834; --oai: #4a3aa7;
+  --q1: #86b6ef; --q2: #3987e5; --q3: #184f95; --empty: #eeede8; --self: #e7e6e1;
+  --display: "Fraunces", Georgia, serif; --body: "Source Sans 3", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); }
+.wrap { max-width: 880px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 44px; }
+h1, h2 { font-family: var(--display); font-weight: 650; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { font-size: 24px; }
+p { margin: 0; max-width: 66ch; }
+.lede { color: var(--muted); font-size: 18px; }
+.eyebrow { font: 600 12px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+section { display: grid; gap: 16px; min-width: 0; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font-variant-numeric: tabular-nums; }
+.facts div { display: grid; }
+.facts b { font: 600 26px/1.1 var(--display); }
+.facts span { color: var(--muted); font-size: 14px; }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.scroll { overflow-x: auto; }
+.grid { display: grid; grid-template-columns: 116px repeat(10, minmax(38px, 1fr)); gap: 3px; min-width: 560px; font-size: 13px; }
+.grid .h { font: 500 11px/1.2 var(--mono); color: var(--muted); display: flex; align-items: flex-end; justify-content: center;
+  writing-mode: vertical-rl; transform: rotate(180deg); height: 92px; padding: 4px 0; }
+.grid .r { display: flex; align-items: center; gap: 6px; font: 500 12px/1.2 var(--mono); color: var(--fg); white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.dot.anth { background: var(--anth); } .dot.oai { background: var(--oai); }
+.cell { aspect-ratio: 1; border-radius: 4px; display: grid; place-items: center; font: 600 13px/1 var(--mono);
+  font-variant-numeric: tabular-nums; cursor: default; outline-offset: 2px; }
+.cell.q1 { background: var(--q1); color: #0d1b30; } .cell.q2 { background: var(--q2); color: #fff; }
+.cell.q3 { background: var(--q3); color: #fff; } .cell.self { background: var(--self); }
+.cell.lower { background: transparent; }
+.cell:focus-visible, .cell:hover { outline: 2px solid var(--fg); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); align-items: center; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 13px; line-height: 1.4;
+  padding: 7px 10px; border-radius: 6px; max-width: 280px; z-index: 5; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.game { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; background: var(--surface); }
+.game .seat { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; }
+.tag { font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; padding: 4px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+td.num, th.num { text-align: right; }
+pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font: 13px/1.6 var(--mono); color: var(--fg); }
+pre .c { color: var(--faint); }
+.note { font-size: 14px; color: var(--muted); }
+.mock { display: inline-block; font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  border: 1px dashed var(--faint); border-radius: 4px; padding: 5px 7px; }
+svg text { font-family: var(--body); }
+.rec { display: grid; gap: 10px; }
+.rec li { margin: 6px 0; }
+ol, ul { margin: 0; padding-left: 22px; max-width: 70ch; } li { margin: 5px 0; }
+.pill { font: 600 11px/1 var(--body); letter-spacing: .05em; text-transform: uppercase; padding: 3px 6px; border-radius: 4px;
+  border: 1px solid var(--line); color: var(--muted); margin-right: 6px; white-space: nowrap; }
+.pill.done { border-color: var(--q2); color: var(--q2); }
+.pill.ask { border-color: var(--anth); color: var(--anth); }
+td.wrap { white-space: normal; }
+</style>
+<div class="wrap">
+  <header style="display:grid;gap:14px">
+    <div class="eyebrow">Clocktower · recommendations after the e1 pilot (60 games, 30 side-swapped pairs)</div>
+    <h1>Ready for the final run, after five small Storyteller changes and a 32K ceiling</h1>
+    <p class="lede">The engine is sound. The games are realistic and varied, and good wins about two-thirds of games, which is fine for ratings. Nine readers went through all 60 games. Their fixes that don't change the game are already in (v10, v11). What's left for you to decide: five Storyteller changes, the output ceiling, the model list and the pairing plan.</p>
+    <div class="facts">
+      <div><b>58/60</b><span>games finished</span></div>
+      <div><b>20/58</b><span>evil wins</span></div>
+      <div><b>$1,091</b><span>spent on e1</span></div>
+      <div><b>0</b><span>rule violations found</span></div>
+      <div><b>~$6.6k</b><span>proposed final run, 360 games</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>1. What e1 showed</h2>
+    <ul>
+      <li><b>Engine.</b> No rule violations and no impossible information, in 60 games and 1,500 simulated ones. Every ability, the Scarlet Woman rule, starpasses, ghost votes, the Butler, the Virgin, the Slayer, the Saint and the Mayor resolved correctly.</li>
+      <li><b>Realism.</b> The best games read like strong human Trouble Brewing: a Spy claiming Chef with the true number to sell out its own team, a Virgin nomination used to spend the day's execution, a Mayor tie broken by the Imp's own vote. What reads least human is the talk, which comes as rounds of statements rather than a conversation. That is mostly the models, which is what we measure.</li>
+      <li><b>Diversity.</b> 30 distinct setups, and each character appears in 8–19 of them. 27 distinct execution sequences in 53 games, and play styles differ clearly by model. The exception is evil's opening, which is nearly the same every game: the Imp hands out the three bluffs on the first private turn.</li>
+      <li><b>Balance.</b> Evil won 20 of 58 finished games (34%). Early in the run it looked like 25%, because good wins end sooner: good wins on days 1–4, evil wins mostly on days 5–7. Table size (10, 11, 12) has no visible effect. The newer model won 8 of the 9 pairs that one model swept.</li>
+      <li><b>Structure.</b> 3+3 beats, 2 whispers per turn and 3 waves all work; keep them. Private time feeds the town square: 12% of public lines cite a whisper.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>2. Protocol</h2>
+    <p><span class="pill done">done</span><b>v10, from the engine audit.</b></p>
+    <ul>
+      <li>The Librarian can now learn "zero" when a Spy is in play. v9 always pointed them at the Spy, which was a tell.</li>
+      <li>A Ravenkeeper who picks themselves sees the character they think they are.</li>
+      <li>A Spy guard for the Undertaker and Ravenkeeper.</li>
+      <li>Wording fixes.</li>
+    </ul>
+    <p><span class="pill done">done</span><b>v11, from the diversity read.</b></p>
+    <ul>
+      <li>Every seat's text now reaches the others in one typography. GPT models write curly apostrophes and Claude models never do, so in a game between labs the evil team was identifiable by punctuation alone. Nobody noticed, but a stronger model could have.</li>
+      <li>Clearer whisper and comment prompts.</li>
+      <li>OpenAI requests now time out after 15 minutes, not 5. A max-effort GPT-6.1 Sol turn ran past 5 minutes and stalled a game.</li>
+    </ul>
+    <p><span class="pill ask">your call</span><b>v12: five Storyteller changes, each a one-line rule.</b> The Storyteller reader estimates they would add about 4–6 points for evil together. I recommend all five.</p>
+    <ol>
+      <li><b>Poison makes information false.</b> Poisoned players got a false result only 39% of the time, because the false world often agrees with the truth. A human Storyteller would make it 80–90%. The fix: redraw the false world until tonight's result differs from the truth.</li>
+      <li><b>The Spy sees the Washerwoman, Librarian and Investigator pings.</b> This is on the real Grimoire; it was dropped in v7.</li>
+      <li><b>Outsider bluffs follow the count.</b> The Demon gets no Outsider bluff in a Baron game without a Drunk, where the Outsider count makes one impossible. 3 of 4 such claimers were executed by day 2.</li>
+      <li><b>A misinformed Librarian at a table with no Outsiders learns "zero".</b> Today such a ping always contains an evil player, which works as an evil detector.</li>
+      <li><b>No "Baron" at a table without one, and no Recluse shown as "Imp" when a Scarlet Woman couldn't have taken over.</b> These guards already exist for the Investigator.</li>
+    </ol>
+    <p><span class="pill">optional</span><b>Smaller changes.</b></p>
+    <ul>
+      <li>Draw seat names per seed from a pool.</li>
+      <li>Drop the "named players speak first" rule: 80% of the table is named each beat, so it does almost nothing.</li>
+      <li>Test one whisper per turn on a single calibration pair before adopting it. The realism reader expects it to curb the hive-mind good team and evil's free coordination; the structure reader would keep two.</li>
+    </ul>
+    <p><span class="pill">don't</span><b>Changes to avoid.</b> A Storyteller that reacts to the game state, which would compress detection ratings; shorter late days; limits on dead players; coaching the models.</p>
+  </section>
+
+  <section>
+    <h2>3. Reasoning effort</h2>
+    <ul>
+      <li><b>The same nominal effort is not the same amount of thinking.</b> At "high", mean thinking per turn varies about 20× within each lab (GPT-5.1 3.7K tokens, GPT-6.1 Sol 0.24K; Opus 4.8 1.1K, Opus 5.5 0.18K). Between labs the curves have different shapes: Opus is flat from low to high, then jumps 34× at max, while Sol rises about 5× per step.</li>
+      <li><b>No measurable effect of effort on play.</b> GPT-6.1 Sol at low effort, averaging 6 thinking tokens a turn, won on both sides. Opus at low still made correct deductions. Neither lab's reasoning went off the rails: the ceiling hits were long, on-topic deliberation, not loops. That's one pair per effort level, though, so it's weak evidence.</li>
+      <li><b>Recommendation: keep each vendor's "high" for the headline.</b> Frame it as "each model at its maker's high setting", and print median thinking tokens and cost next to every point. Don't use max: it costs 3–15× more per turn, needs a 64K ceiling for Claude, and showed no benefit.</li>
+      <li><b>Raise the shared ceiling from 16K to 32K.</b> GPT-5.1 lost 6 turns in e1: on days 3–4 it re-derives the whole game past 16K, because it can't see its earlier reasoning. The ceiling is meant as a runaway guard, not a thinking budget, and no other model comes near 16K at high, so this costs almost nothing.</li>
+      <li><b>Summaries can't be compared across labs.</b> OpenAI's concise summaries are about 5% of the reasoning, Claude's about 35–40%. Judge reasoning quality from play, not from summaries.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. Which models</h2>
+    <p>The frontier model from each lab over the year, in release order:</p>
+    <div class="figure scroll"><table>
+      <thead><tr><th>Model</th><th>Released</th><th>Memory</th><th class="num">$ per seat-game (e1)</th></tr></thead>
+      <tbody>
+        <tr><td>Sonnet 4.5</td><td>2025-09-29</td><td>replies only</td><td class="num">0.85</td></tr>
+        <tr><td>GPT-5.1</td><td>2025-11-12</td><td>replies only</td><td class="num">1.20</td></tr>
+        <tr><td>Opus 4.6</td><td>2026-02-04</td><td>reasoning</td><td class="num">2.65</td></tr>
+        <tr><td>GPT-5.4</td><td>2026-03-05</td><td>replies only</td><td class="num">1.78</td></tr>
+        <tr><td>Opus 4.8</td><td>2026-05-28</td><td>reasoning</td><td class="num">3.71</td></tr>
+        <tr><td>GPT-5.6 Sol</td><td>2026-07-09</td><td>reasoning</td><td class="num">0.83</td></tr>
+        <tr><td>GPT-6 Astra</td><td>2026-08-27</td><td>reasoning</td><td class="num">2.18</td></tr>
+        <tr><td>Fable 5.1</td><td>2026-08-28</td><td>reasoning</td><td class="num">2.50</td></tr>
+        <tr><td>Opus 5.5</td><td>2026-09-21</td><td>reasoning</td><td class="num">0.67</td></tr>
+        <tr><td>GPT-6.1 Sol</td><td>2026-09-27</td><td>reasoning</td><td class="num">0.33</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>Keep the three replies-only models.</b> In e1 they held coherent state from their reply history: 3 real slips in 6 games. But their rating partly measures the memory mechanism, so mark them on the chart, and <b>measure the handicap</b>: 5 side-swapped pairs of Opus 5.5 with its reasoning removed against normal Opus 5.5, and the same for GPT-6.1 Sol, about $60. This needs a small engine flag.</li>
+      <li><b>Leave out</b> o3, GPT-5.2, GPT-5.5, Opus 4.5, Opus 4.7 and Fable 5. They weren't the frontier long enough, or they're near-duplicates of a neighbour. Sonnet 5.5 is cheap and new, but not frontier; add it as an extra point only if you want a mid-tier comparison.</li>
+      <li><b>GPT-5</b> can join once the OpenAI organization is verified (about +$700 for 9 more matchups).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Pairings and size of the run</h2>
+    <ul>
+      <li><b>A plain round robin: every pair of the 10 models plays 4 side-swapped pairs.</b> That's 45 matchups, 360 games, about <b>$6.6k</b> at e1 prices, taking as long as the slowest game. In e1 that was a GPT-5.1 game at about 6 hours, because GPT-5.1 slows down each day as it re-derives the game. Cross-links matter; a chain of neighbours does not work. The 6/4/2 taper was only 4% sharper than a plain round robin.</li>
+      <li><b>What it resolves:</b> gaps of about 300+ Elo, roughly one generation. Neighbours a few months apart need about 12× the games. <a href="https://claude.ai/artifact/VtnC1sXfuifkFMBKgDB1XY">Fidelity page.</a></li>
+      <li><b>Use the probes as a second outcome.</b> Report P(the real Demon) from good seats, and how well good's votes separate evil nominees from good ones, beside win-rate Elo. In e1 these separate models more clearly than wins: 44% of pairs ended in a split and carried little information.</li>
+      <li><b>Keep the table size varying from 10 to 12 by seed</b>, with a good-side advantage per size in the fit.</li>
+      <li><b>Cheaper variant:</b> drop Opus 4.6 and Opus 4.8, the two priciest seats, and add Sonnet 5.5, for about $4k.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Before launching</h2>
+    <ol>
+      <li>Your decisions on section 2 (v12) and section 4 (the model list).</li>
+      <li>I implement v12 and the 32K ceiling, with tests, and play a 12-game calibration batch on the new rules (about $150).</li>
+      <li>Launch everything at once. I watch it myself: spend, lost turns, stalls and a few transcripts. No script kills batches.</li>
+    </ol>
+    <p class="note">One game (GPT-6.1 Sol at max effort) stopped when OpenAI kept dropping its 5-minute-plus calls; OpenAI requests now wait 15 minutes. Game logs are now kept in a private Hugging Face dataset (dwarkesh/clocktower-games). GitHub keeps the code and each game's config and result. Removing the old logs from git history needs a force-push, which the permission check blocked; that's for you to do (below). The nine reader reports are in the repo under analysis/e1/.</p>
+  </section>
+</div>
