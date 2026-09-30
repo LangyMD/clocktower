@@ -1,0 +1,189 @@
+<title>Fifteen Model Pairings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column; the matchup grid and the rating chart are the two figures. */
+:root {
+  --bg: #f7f7f4; --surface: #fcfcfb; --fg: #16161a; --muted: #5b5a63; --faint: #8b8a93; --line: #e2e1dc;
+  --anth: #eb6834; --oai: #4a3aa7;
+  --q1: #86b6ef; --q2: #3987e5; --q3: #184f95; --empty: #eeede8; --self: #e7e6e1;
+  --display: "Fraunces", Georgia, serif; --body: "Source Sans 3", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); }
+.wrap { max-width: 880px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 44px; }
+h1, h2 { font-family: var(--display); font-weight: 650; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { font-size: 24px; }
+p { margin: 0; max-width: 66ch; }
+.lede { color: var(--muted); font-size: 18px; }
+.eyebrow { font: 600 12px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+section { display: grid; gap: 16px; min-width: 0; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font-variant-numeric: tabular-nums; }
+.facts div { display: grid; }
+.facts b { font: 600 26px/1.1 var(--display); }
+.facts span { color: var(--muted); font-size: 14px; }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.scroll { overflow-x: auto; }
+.grid { display: grid; grid-template-columns: 116px repeat(15, minmax(30px, 1fr)); gap: 3px; min-width: 640px; font-size: 13px; }
+.grid .h { font: 500 11px/1.2 var(--mono); color: var(--muted); display: flex; align-items: flex-end; justify-content: center;
+  writing-mode: vertical-rl; transform: rotate(180deg); height: 92px; padding: 4px 0; }
+.grid .r { display: flex; align-items: center; gap: 6px; font: 500 12px/1.2 var(--mono); color: var(--fg); white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.dot.anth { background: var(--anth); } .dot.oai { background: var(--oai); }
+.cell { aspect-ratio: 1; border-radius: 4px; display: grid; place-items: center; font: 600 12px/1 var(--mono);
+  font-variant-numeric: tabular-nums; cursor: default; outline-offset: 2px; }
+.cell.q1 { background: var(--q1); color: #0d1b30; } .cell.q2 { background: var(--q2); color: #fff; }
+.cell.q3 { background: var(--q3); color: #fff; } .cell.self { background: var(--self); }
+.cell.lower { background: transparent; }
+.cell:focus-visible, .cell:hover { outline: 2px solid var(--fg); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); align-items: center; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 13px; line-height: 1.4;
+  padding: 7px 10px; border-radius: 6px; max-width: 280px; z-index: 5; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.game { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; background: var(--surface); }
+.game .seat { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; }
+.tag { font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; padding: 4px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+td.num, th.num { text-align: right; }
+pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font: 13px/1.6 var(--mono); color: var(--fg); }
+pre .c { color: var(--faint); }
+.note { font-size: 14px; color: var(--muted); }
+.mock { display: inline-block; font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  border: 1px dashed var(--faint); border-radius: 4px; padding: 5px 7px; }
+svg text { font-family: var(--body); }
+td.long { white-space: normal; }
+</style>
+<div class="wrap">
+  <header style="display:grid;gap:14px">
+    <div class="eyebrow">Clocktower · proposed final run, protocol v12</div>
+    <h1>Every model plays every other, two side-swapped pairs each</h1>
+    <p class="lede">15 models: every model that was its lab's best when released, from September 2025, plus the two newest cheaper releases. A full round robin: no choice of who meets whom, and every matchup measured directly. Table sizes 10–12 by seed.</p>
+    <div class="facts">
+      <div><b>15</b><span>models (8 Anthropic, 7 OpenAI)</span></div>
+      <div><b>105</b><span>matchups</span></div>
+      <div><b>210</b><span>side-swapped pairs</span></div>
+      <div><b>420</b><span>games (56 per model)</span></div>
+      <div><b>~$8k</b><span>at e1 per-seat costs</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Who plays whom</h2>
+    <p>Rows and columns are the models in release order. Every cell is one matchup: 2 side-swapped pairs, 4 games, each model playing good twice and evil twice. Shading shows the matchup's estimated cost; Opus 4.8, GPT-5.5 and Opus 4.6 are the priciest seats. Hover a cell for details.</p>
+    <div class="figure">
+      <div class="scroll"><div class="grid" id="grid" role="grid" aria-label="Matchup grid"></div></div>
+      <div class="legend" style="margin-top:14px">
+        <span><span class="sw" style="background:var(--q1)"></span>under $70</span>
+        <span><span class="sw" style="background:var(--q2)"></span>$70–100</span>
+        <span><span class="sw" style="background:var(--q3)"></span>over $100</span>
+        <span><span class="dot anth" style="display:inline-block;margin-right:6px"></span>Anthropic</span>
+        <span><span class="dot oai" style="display:inline-block;margin-right:6px"></span>OpenAI</span>
+        <span>* sees only its own replies, not its earlier reasoning</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why a full round robin</h2>
+    <p>Rating precision depends on how well the graph of matchups connects the models, not on concentrating games anywhere. I compared designs at the same budget (480 games) in a Bradley–Terry simulation. Two columns: the smallest gap between release-order neighbours the fit reliably detects, and the 95% interval on one model's rating, both in Elo. Lower is better.</p>
+    <div class="figure scroll"><table>
+      <thead><tr><th>Design, 15 models</th><th class="num">Matchups</th><th class="num">Neighbour gap</th><th class="num">± per model</th></tr></thead>
+      <tbody>
+        <tr><td>Full round robin</td><td class="num">105</td><td class="num">340</td><td class="num">166</td></tr>
+        <tr><td>Each model meets its 8 nearest in a ring</td><td class="num">60</td><td class="num">330</td><td class="num">165</td></tr>
+        <tr><td>Each model meets 8, spread across the timeline</td><td class="num">60</td><td class="num">346</td><td class="num">168</td></tr>
+        <tr><td>Random 8 opponents each</td><td class="num">60</td><td class="num">359</td><td class="num">176</td></tr>
+        <tr><td>Chain of neighbours</td><td class="num">14</td><td class="num">620</td><td class="num">316</td></tr>
+      </tbody>
+    </table></div>
+    <p>Every well-connected design lands within about 5% of the others; only the chain fails. That matches the literature: pairwise-comparison error is governed by the comparison graph's connectivity, and well-connected graphs are near-optimal (Shah et al., JMLR 2016). The full round robin is the one design with no arbitrary choices, so it's the one to freeze. What 420 games resolve is about one model generation (~350 Elo); separating release-order neighbours would take about 10× more games.</p>
+  </section>
+
+  <section>
+    <h2>The fifteen models</h2>
+    <div class="figure scroll"><table id="models">
+      <thead><tr><th>Model</th><th>Released</th><th>Why it's in</th><th class="num">$ per seat-game</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <p class="note">Left out: o3 and GPT-5 (before the window; GPT-5 can be added once the OpenAI organization is verified), Opus 4.1 (overtaken by Sonnet 4.5), Opus 5, GPT-6 Sol and Sonnet 5.5 (mid-tier releases while a stronger model was current), GPT-5.3-Codex (coding-only), Mythos 5 (not generally available). $ per seat-game comes from e1 (probes included); ~ marks a model without e1 data.</p>
+  </section>
+
+  <section>
+    <h2>How it would run</h2>
+<pre><span class="c"># one batch per matchup, all 105 launched at once; the seed fixes the table size (10 + seed % 3)</span>
+python -m clocktower run --games 2 --swap --seed 80000 --players 10-12 \
+    --good-model claude-opus-4-8 --evil-model gpt-6-astra --out games/v12/f1-opus48-v-astra
+
+<span class="c"># ratings: detection and deception per model, one Bradley–Terry fit, plus probe scores</span>
+python -m clocktower analyze games/v12/f1-*/game-*</pre>
+  </section>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script>
+const M = [
+  ['Sonnet 4.5','Anthropic','2025-09-29',true,0.85,'Anthropic\'s best at release (beat Opus 4.1)'],
+  ['GPT-5.1','OpenAI','2025-11-12',true,1.20,'OpenAI flagship'],
+  ['Opus 4.5','Anthropic','2025-11-24',false,1.66,'Anthropic flagship'],
+  ['GPT-5.2','OpenAI','2025-12-11',true,1.54,'OpenAI flagship'],
+  ['Opus 4.6','Anthropic','2026-02-05',false,2.65,'Anthropic flagship'],
+  ['GPT-5.4','OpenAI','2026-03-05',true,1.78,'OpenAI flagship'],
+  ['Opus 4.7','Anthropic','2026-04-16',false,1.15,'Anthropic flagship'],
+  ['GPT-5.5','OpenAI','2026-04-23',false,3.21,'OpenAI flagship'],
+  ['Opus 4.8','Anthropic','2026-05-28',false,3.71,'Anthropic flagship'],
+  ['Fable 5','Anthropic','2026-06-09',false,1.88,'Anthropic flagship (new top tier)'],
+  ['GPT-5.6 Sol','OpenAI','2026-07-09',false,0.83,'OpenAI flagship (Sol was 5.6\'s top tier)'],
+  ['Fable 5.1','Anthropic','2026-09-01',false,2.50,'Anthropic flagship'],
+  ['GPT-6 Astra','OpenAI','2026-09-03',false,2.18,'OpenAI flagship'],
+  ['Opus 5.5','Anthropic','2026-09-22',false,0.67,'newest Anthropic release, cheaper tier'],
+  ['GPT-6.1 Sol','OpenAI','2026-09-27',false,0.33,'newest OpenAI release, cheaper tier'],
+];
+const n = M.length, PAIRS = 2, SEATS = 11;  // an average table: each model fills 11 seat-games per pair
+const cost = (a, b) => PAIRS * SEATS * (a[4] + b[4]);
+const grid = document.getElementById('grid'), tip = document.getElementById('tip');
+const label = m => m[0] + (m[3] ? '*' : '');
+const cls = m => m[1] === 'Anthropic' ? 'anth' : 'oai';
+grid.appendChild(document.createElement('div'));
+M.forEach(m => { const h = document.createElement('div'); h.className = 'h'; h.textContent = label(m); grid.appendChild(h); });
+let total = 0;
+M.forEach((a, i) => {
+  const r = document.createElement('div'); r.className = 'r';
+  r.innerHTML = `<span class="dot ${cls(a)}"></span>${label(a)}`; grid.appendChild(r);
+  M.forEach((b, j) => {
+    const c = document.createElement('div'); c.className = 'cell';
+    if (i === j) c.classList.add('self');
+    else if (j < i) c.classList.add('lower');
+    else {
+      const k = cost(a, b); total += k;
+      c.classList.add(k < 70 ? 'q1' : k <= 100 ? 'q2' : 'q3'); c.textContent = PAIRS; c.tabIndex = 0;
+      const text = `${a[0]} vs ${b[0]}: 2 side-swapped pairs, 4 games (each side good twice), about $${Math.round(k)}`;
+      c.setAttribute('aria-label', text);
+      const show = () => { tip.textContent = text; tip.hidden = false; const rc = c.getBoundingClientRect();
+        tip.style.left = Math.min(innerWidth - 290, rc.left) + 'px'; tip.style.top = (rc.bottom + 8) + 'px'; };
+      c.addEventListener('mouseenter', show); c.addEventListener('focus', show);
+      c.addEventListener('mouseleave', () => tip.hidden = true); c.addEventListener('blur', () => tip.hidden = true);
+    }
+    grid.appendChild(c);
+  });
+});
+const tb = document.querySelector('#models tbody');
+M.forEach(m => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><span class="dot ${cls(m)}" style="display:inline-block;margin-right:8px"></span>${label(m)}</td><td>${m[2]}</td><td class="long">${m[5]}</td><td class="num">${m[4].toFixed(2)}</td>`;
+  tb.appendChild(tr);
+});
+console.log('estimated total', Math.round(total));
+</script>
