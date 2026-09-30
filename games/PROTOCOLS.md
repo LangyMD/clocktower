@@ -195,7 +195,7 @@ turn lost), so that pair was restarted on the same seed with a 64K ceiling
 (`e1-opus55max64k-v-gpt61sol`); the sweep measures what effort buys, not truncation. All other
 games use the 16K ceiling.
 
-## v10 — current (Sept 30)
+## v10 (Sept 30)
 v9 plus fixes from the e1 engine audit (no rule violations and no impossible information were found
 in e1 or in 1,500 simulated games; these are Storyteller judgment calls and wording):
 - Librarian with no Outsider in play: v9 always pointed them at the Spy (78 of 78 in simulation),
@@ -206,3 +206,13 @@ in e1 or in 1,500 simulated games; these are Storyteller judgment calls and word
 - A sober Undertaker or Ravenkeeper shown an executed Spy as a good character is never shown their own.
 - Wording: the Imp's prompt says "one of your Minions" becomes the Imp; a self-nomination says "you
   have nominated yourself"; the notice about a whisper to 3+ players keeps names' capitals.
+
+## v11 — current (Oct 1)
+v10 plus, from the second e1 read:
+- Every seat's text reaches the others in one typography (straight quotes, " - " for dashes, "..."
+  for an ellipsis, no markdown `*`, backtick or `#`). In e1 the GPT models wrote curly apostrophes in
+  96–100% of messages and Claude models never did, so in a cross-lab game the evil team could be
+  picked out by punctuation alone (a surface-feature test put 2.1 of 3 evil players in its top 3,
+  chance 0.82). No player noticed, but a stronger one could. Raw replies stay in conversations/.
+- Prompt wording: "up to 2 whispers this turn" (o3 and Sonnet 4.5 read it as per private time), and
+  the comment turn asks players not just to announce their vote (the vote prompt already did).

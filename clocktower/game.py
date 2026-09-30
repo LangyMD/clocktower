@@ -41,8 +41,18 @@ NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
 }
 
 
+# Every seat's text reaches the others in one typography, so a model's style (curly quotes, dash
+# style, markdown) can't mark which team a seat is on when the two teams are different models.
+TYPOGRAPHY = str.maketrans({'\u2018': "'", '\u2019': "'", '\u201c': '"', '\u201d': '"', '\u2014': ' - ',
+                            '\u2013': ' - ', '\u2026': '...', '*': None, '`': None, '#': None})
+
+
+def plain(text):
+    return ' '.join((text or '').translate(TYPOGRAPHY).split())
+
+
 def clip(text, words):
-    text = ' '.join((text or '').split())
+    text = plain(text)
     w = text.split(' ')
     return text if len(w) <= words else ' '.join(w[:words]) + '… [cut off]'
 
@@ -398,7 +408,7 @@ class Game:
         self.addressed = set()
         self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
         if private:
-            tail = (f'Whisper to anyone you like (up to {WHISPERS} whispers), or no one. Nobody can address the town '
+            tail = (f'Whisper to anyone you like (up to {WHISPERS} whispers this turn), or no one. Nobody can address the town '
                     'until the town square.')
         else:
             tail = 'Say something to the town, or nothing. No whispering now.'
@@ -573,7 +583,7 @@ class Game:
             order = list(self.names)
             self.rng.shuffle(order)
             await self.turns(n, order, 'comment', f'Day {n}, comments on the nomination of {nominee}',
-                             'Say something to the town before the vote, or nothing. No whispering now.', WORDS['comment'])
+                             'Say something to the town before the vote, or nothing (don\'t just announce your vote). No whispering now.', WORDS['comment'])
             if g.winner:
                 return
             block, top = await self.vote(nominee, block, top)

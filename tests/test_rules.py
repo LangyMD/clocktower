@@ -662,6 +662,13 @@ class V6Tests(unittest.TestCase):
         self.assertIn('seat failed', result['stopped'])
 
 
+class TypographyTests(unittest.TestCase):
+    def test_every_seat_speaks_in_one_typography(self):
+        from clocktower.game import clip
+        self.assertEqual(clip('I\u2019m **sure** \u2014 it\u2019s \u201cKit\u201d\u2026', 60), 'I\'m sure - it\'s "Kit"...')
+        self.assertEqual(clip("I'm sure - it's \"Kit\"...", 60), 'I\'m sure - it\'s "Kit"...')
+
+
 class TableSizeTests(unittest.TestCase):
     def test_a_range_picks_the_size_from_the_seed(self):
         from clocktower.cli import table_size
