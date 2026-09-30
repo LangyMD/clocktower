@@ -3,7 +3,7 @@ name = "clocktower"
 version = "0.1.0"
 description = "Blood on the Clocktower (Trouble Brewing) played by language models, with human seats"
 requires-python = ">=3.11"
-dependencies = ["anthropic>=1.8"]
+dependencies = ["anthropic>=1.8", "huggingface_hub>=0.30"]
 
 [project.scripts]
 clocktower = "clocktower.cli:main"

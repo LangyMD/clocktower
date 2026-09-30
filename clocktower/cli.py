@@ -195,6 +195,8 @@ def main(argv=None):
     sp = sub.add_parser('site')
     sp.add_argument('--games', default=str(GAMES))
     sp.add_argument('--out', default=str(ROOT / 'site'))
+    fp = sub.add_parser('fetch', help='download game logs from the Hugging Face dataset (e.g. v9/e1-*)')
+    fp.add_argument('patterns', nargs='+')
     rv = sub.add_parser('replay')
     rv.add_argument('path')
     rv.add_argument('--view', default='omniscient', help='a player name, public, or omniscient')
@@ -255,6 +257,9 @@ def main(argv=None):
     elif args.command == 'site':
         from .site import build as build_site
         build_site(args.games, args.out)
+    elif args.command == 'fetch':
+        from .store import fetch
+        print(fetch(args.patterns))
     elif args.command == 'replay':
         from .report import replay
         replay(args.path, args.view, args.thinking)
