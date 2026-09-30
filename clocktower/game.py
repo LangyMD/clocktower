@@ -14,6 +14,7 @@ import json
 import pickle
 import math
 import random
+import re
 import time
 from pathlib import Path
 
@@ -41,20 +42,25 @@ NIGHT_ACTIONS = {  # role: (number of targets, prompt, may choose self)
 }
 
 
-# Every seat's text reaches the others in one typography, so a model's style (curly quotes, dash
-# style, markdown) can't mark which team a seat is on when the two teams are different models.
+# Every seat's text reaches the others in one typography, so a model's style (curly quotes, dash and
+# hyphen variants, bullets, arrows, emoji, markdown) can't mark which team a seat is on when the two
+# teams are different models.
 TYPOGRAPHY = str.maketrans({'\u2018': "'", '\u2019': "'", '\u201c': '"', '\u201d': '"', '\u2014': ' - ',
-                            '\u2013': ' - ', '\u2026': '...', '*': None, '`': None, '#': None})
+                            '\u2013': ' - ', '\u2026': '...', '\u2010': '-', '\u2011': '-', '\u2012': '-',
+                            '\u2212': '-', '\u00a0': ' ', '\u202f': ' ', '\u2022': '-', '\u00b7': '-', '\u25e6': '-',
+                            '\u2023': '-', '\u2192': '->', '\u2190': '<-', '\u21d2': '=>', '\u2194': '<->',
+                            '*': None, '`': None, '#': None})
+EMOJI = re.compile('[\U0001F000-\U0001FAFF\u2600-\u27BF\uFE0F\u200D]')
 
 
 def plain(text):
-    return ' '.join((text or '').translate(TYPOGRAPHY).split())
+    return ' '.join(EMOJI.sub('', (text or '').translate(TYPOGRAPHY)).split())
 
 
 def clip(text, words):
     text = plain(text)
     w = text.split(' ')
-    return text if len(w) <= words else ' '.join(w[:words]) + '… [cut off]'
+    return text if len(w) <= words else ' '.join(w[:words]) + '...'  # the same for every model
 
 
 def fmt(value):
@@ -387,6 +393,9 @@ class Game:
             acts = await self.ask_many(requests)
             if private:
                 for name in wave:
+                    if (acts[name].get('say') or '').strip() and not acts[name].get('whispers'):
+                        self.emit('notice', {'text': '(Nothing is said aloud in private time: to talk to someone, '
+                                                     'whisper to them.)'}, [name])
                     for msg in self.whispers(name, acts[name]):
                         self.emit('whisper', {'from': name, **msg}, [name, *msg['to']])
                 continue

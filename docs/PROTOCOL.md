@@ -28,7 +28,7 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
 - Standard rules for thresholds, ties, ghost votes, the Butler (their master is asked first when
   they vote later), Virgin, Slayer, Saint, Mayor, Scarlet Woman and the Imp's starpass.
 - Word limits per turn: 150 for speech, whispers, accusations and comments, 200 for a defense, 60
-  for a vote remark; longer text is cut and marked `[cut off]`.
+  for a vote remark; longer text is cut and ends in "...", the same for every model.
 
 ## The Storyteller (scripted, no LLM)
 - Every decision is a choice over all legal values, picked by a random style whose weights are all
@@ -51,12 +51,13 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
   no state re-sent.
 - Models whose API cannot carry reasoning across turns ("replies only": Sonnet 4.5, o1, o3, GPT-5.1,
   5.2, 5.4, GPT-4o) are told so in their system prompt.
-- Every seat's text reaches the others in one typography (straight quotes, plain dashes, no
-  markdown), so writing style can't mark a team.
+- Every seat's text reaches the others in one typography (straight quotes, plain dashes and hyphens,
+  no bullets, arrows, emoji or markdown), so writing style can't mark a team.
 - Every model plays at its lab's "high" effort, with the same per-turn output ceiling of 8K tokens
   (thinking included). A turn that hits the ceiling is retried once at low effort (for older Claude
-  models, the minimum thinking budget), so thinking stays bounded without losing the turn; a refused
-  or unreadable turn is retried once; a turn that fails twice passes.
+  models, the minimum thinking budget), so thinking stays bounded without losing the turn. A turn cut
+  off twice or refused twice passes; a turn with no usable reply after four attempts stops the game,
+  which resumes from its last checkpoint.
 - When a game outgrows a model's context window, its oldest turns are dropped, never the first
   (its character and setup): the model sees its setup and as much of the recent game as fits.
 

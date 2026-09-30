@@ -8,7 +8,8 @@ form, so the model keeps its own reasoning across the whole game and every reque
 reads everything before the new turn from cache.
 
 Every model gets the same per-turn output ceiling (`max_tokens`, thinking included).
-A truncated turn is retried once at the same ceiling rather than given more room.
+A turn that hits the ceiling is retried once at low effort; a turn with no usable reply after four
+attempts stops the game (SeatFailed), which then resumes from its last checkpoint.
 """
 from __future__ import annotations
 import asyncio
@@ -189,12 +190,11 @@ class _Base:
         self.max_tokens = min(max_tokens, spec(model)['max_output'] or max_tokens)  # a model's own hard limit
         self.messages = []
         self.last_input = 0   # input tokens of the last call
-        self.low = False      # this attempt is the low-effort retry of a turn that hit the ceiling
         self.trimmed = 0      # turns dropped to fit the context window
 
-    def turn_effort(self):
-        """The effort for this attempt: the game's, or low when retrying a turn that hit the ceiling."""
-        return 'low' if self.low else self.effort
+    def turn_effort(self, low=False):
+        """The effort for an attempt: the game's, or low when retrying a turn that hit the ceiling."""
+        return 'low' if low else self.effort
 
     def fit(self, text):
         """When the game outgrows the model's context window, drop its oldest turns (never the first,
@@ -212,11 +212,11 @@ class _Base:
             over -= len(json.dumps(dropped, default=str)) // 4
             self.trimmed += 1
 
-    def record(self, meta, attempt, stop, start, spent, usage, thinking, out, extra=None):
+    def record(self, meta, attempt, stop, start, spent, usage, thinking, out, extra=None, low=False):
         if self.on_call:
             self.on_call({'label': self.label, **(meta or {}), 'model': self.model, 'attempt': attempt, 'stop': stop,
                           'latency': round(time.monotonic() - start, 2), 'cost': spent, 'usage': usage,
-                          'thinking': thinking, 'output': out, 'effort': self.turn_effort(),
+                          'thinking': thinking, 'output': out, 'effort': self.turn_effort(low),
                           **({'trimmed': self.trimmed} if self.trimmed else {}),
                           **(extra or {})})
         total = sum(usage.get(k, 0) for k in ('input_tokens', 'cache_read_input_tokens', 'cache_creation_input_tokens'))
@@ -230,20 +230,20 @@ class ClaudeConversation(_Base):
         self.client = client
         self.cache = {'type': 'ephemeral', 'ttl': ttl}
 
-    def _thinking(self):
+    def _thinking(self, low=False):
         """Thinking and effort, by model: adaptive thinking with an effort level, or (older models) a thinking
         budget of three quarters of the per-turn ceiling, the rest left for the answer."""
         sp = spec(self.model)
         out = {'format': {'type': 'json_schema', 'schema': self.schema}}
         if sp['effort']:
-            out['effort'] = self.turn_effort()
+            out['effort'] = self.turn_effort(low)
         if sp['thinking'] == 'budget':  # older models: a budget of 3/4 of the ceiling (the minimum when retrying)
-            thinking = {'type': 'enabled', 'budget_tokens': 1024 if self.low else self.max_tokens * 3 // 4}
+            thinking = {'type': 'enabled', 'budget_tokens': 1024 if low else self.max_tokens * 3 // 4}
         else:
             thinking = {'type': 'adaptive', 'display': 'summarized'}
         return {'thinking': thinking, 'output_config': out}
 
-    async def _stream(self, messages):
+    async def _stream(self, messages, low=False):
         """One streamed request. When the account is out of credit (as happens while auto-reload
         catches up with a large batch), wait and retry for up to CREDIT_WAIT seconds, so the game
         pauses instead of failing."""
@@ -254,7 +254,7 @@ class ClaudeConversation(_Base):
                         model=self.model, max_tokens=self.max_tokens,
                         system=[{'type': 'text', 'text': self.system, 'cache_control': self.cache}],
                         messages=messages, cache_control=self.cache,
-                        **self._thinking()) as stream:
+                        **self._thinking(low)) as stream:
                     return await stream.get_final_message()
             except anthropic.APIStatusError as e:
                 # out of credit (auto-reload lagging) or overloaded after the client's own retries: wait
@@ -267,7 +267,7 @@ class ClaudeConversation(_Base):
     async def send(self, text, meta=None, commit=True) -> Reply:
         """One turn. With commit=False (a probe) the turn is a fork: neither the question nor
         the reply is added to the conversation."""
-        self.low = False
+        low = False  # True for the one retry of a turn that hit the ceiling (local: probes run alongside)
         user = {'role': 'user', 'content': text}
         if commit:
             self.fit(text)
@@ -278,14 +278,14 @@ class ClaudeConversation(_Base):
             self.ledger.check()
             start = time.monotonic()
             async with (self.semaphore if commit else NO_LIMIT):  # probes never wait behind game turns
-                r = await self._stream(messages)
+                r = await self._stream(messages, low)
             usage = r.usage.model_dump(exclude_none=True)
             spent = cost(self.model, usage)
             self.ledger.add(spent, label=self.label)
             thinking = '\n'.join(b.thinking for b in r.content if b.type == 'thinking' and b.thinking)
             out = ''.join(b.text for b in r.content if b.type == 'text')
             refusal = r.stop_details.model_dump() if getattr(r, 'stop_details', None) else None
-            self.record(meta, attempt, r.stop_reason, start, spent, usage, thinking, out, {'refusal': refusal})
+            self.record(meta, attempt, r.stop_reason, start, spent, usage, thinking, out, {'refusal': refusal}, low)
             if r.stop_reason == 'refusal':
                 refusals += 1
                 if refusals >= 2:
@@ -293,7 +293,7 @@ class ClaudeConversation(_Base):
                 continue
             if r.stop_reason == 'max_tokens':
                 truncations += 1
-                self.low = True  # retry once at low effort, then the seat passes
+                low = True  # retry once at low effort, then the seat passes
                 if truncations >= 2:
                     return Reply({}, thinking)
                 continue
@@ -304,7 +304,7 @@ class ClaudeConversation(_Base):
             if commit:
                 self.messages.append({'role': 'assistant', 'content': [b.model_dump(exclude_none=True) for b in r.content]})
             return Reply(action, thinking)
-        return Reply({})
+        raise SeatFailed(f'{self.label} ({self.model}): no usable reply in 4 attempts')
 
 
 class OpenAIConversation(_Base):
@@ -326,9 +326,9 @@ class OpenAIConversation(_Base):
             block['prompt_cache_breakpoint'] = {'mode': 'explicit'}
         return block
 
-    def _reasoning(self):
+    def _reasoning(self, low=False):
         sp = spec(self.model)
-        out = {'effort': self.turn_effort(), 'summary': sp['summary']}
+        out = {'effort': self.turn_effort(low), 'summary': sp['summary']}
         if sp['context']:
             out['context'] = 'all_turns'  # carry reasoning across turns (models that support it)
         return out
@@ -366,7 +366,7 @@ class OpenAIConversation(_Base):
             await asyncio.sleep(min(2 ** attempt, 60) + random.random())
 
     async def send(self, text, meta=None, commit=True) -> Reply:
-        self.low = False
+        low = False  # True for the one retry of a turn that hit the ceiling (local: probes run alongside)
         user = {'role': 'user', 'content': [self._block(text)]}
         if commit:
             self.fit(text)
@@ -380,7 +380,7 @@ class OpenAIConversation(_Base):
                                         'schema': self.schema}},
                     'prompt_cache_key': f'clocktower:{self.label}:{id(self) % 10 ** 8}'}
             if spec(self.model)['reasoning']:
-                body['reasoning'] = self._reasoning()
+                body['reasoning'] = self._reasoning(low)
             if spec(self.model)['explicit_cache']:
                 body['prompt_cache_options'] = {'mode': 'explicit', 'ttl': '30m'}
             if self.flex:
@@ -409,10 +409,10 @@ class OpenAIConversation(_Base):
             stop = 'refusal' if refused else raw.get('status')
             if (raw.get('incomplete_details') or {}).get('reason') == 'max_output_tokens':
                 stop = 'max_tokens'
-            self.record(meta, attempt, stop, start, spent, usage, thinking, out)
+            self.record(meta, attempt, stop, start, spent, usage, thinking, out, low=low)
             if stop == 'max_tokens':
                 truncations += 1
-                self.low = True  # retry once at low effort, then the seat passes
+                low = True  # retry once at low effort, then the seat passes
                 if truncations >= 2:
                     return Reply({}, thinking)
                 continue
@@ -425,7 +425,7 @@ class OpenAIConversation(_Base):
             if commit:
                 self.messages.extend(output)
             return Reply(action, thinking)
-        return Reply({})
+        raise SeatFailed(f'{self.label} ({self.model}): no usable reply in 4 attempts')
 
 
 OPENAI_PREFIXES = ('gpt-', 'o1', 'o3', 'o4')
@@ -459,7 +459,7 @@ class OpenRouterConversation(_Base):
     _request = OpenAIConversation._request
 
     async def send(self, text, meta=None, commit=True) -> Reply:
-        self.low = False
+        low = False  # True for the one retry of a turn that hit the ceiling (local: probes run alongside)
         user = {'role': 'user', 'content': [{'type': 'text', 'text': text}]}
         if commit:
             self.fit(text)
@@ -473,7 +473,7 @@ class OpenRouterConversation(_Base):
                     m['content'][-1].pop('cache_control', None)
             messages[-1]['content'][-1]['cache_control'] = {'type': 'ephemeral'}
             body = {'model': self.slug, 'messages': messages, 'max_tokens': self.max_tokens,
-                    'reasoning': {'max_tokens': 1024 if self.low else self.max_tokens * 3 // 4},
+                    'reasoning': {'max_tokens': 1024 if low else self.max_tokens * 3 // 4},
                     'usage': {'include': True},
                     'provider': {'require_parameters': True}}
             start = time.monotonic()
@@ -491,10 +491,10 @@ class OpenRouterConversation(_Base):
             msg = choice.get('message') or {}
             thinking, out = msg.get('reasoning') or '', (msg.get('content') or '').strip()
             stop = {'stop': 'end_turn', 'length': 'max_tokens'}.get(choice.get('finish_reason'), choice.get('finish_reason'))
-            self.record(meta, attempt, stop, start, spent, usage, thinking, out)
+            self.record(meta, attempt, stop, start, spent, usage, thinking, out, low=low)
             if stop == 'max_tokens':
                 truncations += 1
-                self.low = True  # retry once at low effort, then the seat passes
+                low = True  # retry once at low effort, then the seat passes
                 if truncations >= 2:
                     return Reply({}, thinking)
                 continue
@@ -505,7 +505,7 @@ class OpenRouterConversation(_Base):
             if commit:
                 self.messages.append({'role': 'assistant', 'content': out})
             return Reply(action, thinking)
-        return Reply({})
+        raise SeatFailed(f'{self.label} ({self.model}): no usable reply in 4 attempts')
 
 
 def conversation(client, system, schema, *, model, **kw):

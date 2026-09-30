@@ -904,3 +904,23 @@ class CheckpointTests(unittest.TestCase):
             logged = [_json.loads(l) for l in (Path(d) / 'killed' / 'events.jsonl').read_text().splitlines()]
             self.assertEqual(strip(logged), strip(whole.events))  # the log reads as if play never stopped
             self.assertFalse((Path(d) / 'killed' / 'checkpoint.pkl').exists())
+
+
+class TellTests(unittest.TestCase):
+    def test_hyphens_bullets_arrows_emoji_and_cut_marks_look_the_same_for_every_model(self):
+        from clocktower.game import clip
+        self.assertEqual(clip('non‑breaking • point → next \U0001F600 ok ✅', 60),
+                         'non-breaking - point -> next ok')
+        self.assertEqual(clip('word ' * 10, 3), 'word word word...')
+
+    def test_speech_in_private_time_is_answered_with_a_notice(self):
+        def policy(name, req):
+            if req.kind == 'beat' and name == A:
+                return {'say': 'Hello everyone'}
+        g = game(BASE, policy)
+        run(g.setup())
+        g.private_beats, g.public_beats = 1, 0
+        run(g.daytime(1))
+        self.assertFalse([e for e in g.events if e['kind'] == 'say'])
+        self.assertTrue([e for e in g.events if e['kind'] == 'notice' and 'private time' in e['data']['text']
+                         and e['to'] == [A]])

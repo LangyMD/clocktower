@@ -199,6 +199,10 @@ async def run_batch(args):
         minion = MINIONS[(base + k - 1) % len(MINIONS)] if not args.characters else None
         out = root / f'game-{k:02d}{suffix}'
         done = out / 'result.json'
+        cfg = out / 'config.json'
+        if cfg.exists() and json.loads(cfg.read_text()).get('protocol') != PROTOCOL:
+            raise SystemExit(f'{out} holds {json.loads(cfg.read_text()).get("protocol")} games; write {PROTOCOL} games '
+                             f'to a new folder (games/{PROTOCOL}/...)')
         if done.exists() and json.loads(done.read_text()).get('winner'):
             return json.loads(done.read_text())  # finished earlier: keep it (so a batch can be resumed)
         if out.exists() and not (out / 'checkpoint.pkl').exists():
