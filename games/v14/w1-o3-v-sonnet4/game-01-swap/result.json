@@ -1,0 +1,66 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 5,
+  "seed": 90800,
+  "starting": {
+    "Alex": "Imp",
+    "Blair": "Scarlet Woman",
+    "Casey": "Librarian",
+    "Drew": "Poisoner",
+    "Ellis": "Ravenkeeper",
+    "Frankie": "Virgin",
+    "Gray": "Empath",
+    "Harper": "Mayor",
+    "Indigo": "Soldier",
+    "Jules": "Drunk",
+    "Kit": "Butler",
+    "Logan": "Investigator"
+  },
+  "final": {
+    "Alex": "Imp",
+    "Blair": "Scarlet Woman",
+    "Casey": "Librarian",
+    "Drew": "Poisoner",
+    "Ellis": "Ravenkeeper",
+    "Frankie": "Virgin",
+    "Gray": "Empath",
+    "Harper": "Mayor",
+    "Indigo": "Soldier",
+    "Jules": "Drunk",
+    "Kit": "Butler",
+    "Logan": "Investigator"
+  },
+  "bluffs": [
+    "Chef",
+    "Recluse",
+    "Fortune Teller"
+  ],
+  "red_herring": null,
+  "drunk_as": "Undertaker",
+  "cost": 14.3194,
+  "calls": 885,
+  "tokens": {
+    "input": 318382,
+    "cache_read": 18179635,
+    "cache_write": 426428,
+    "output": 638041
+  },
+  "seconds": 3684.4,
+  "errors": [],
+  "models": {
+    "Alex": "o3",
+    "Blair": "o3",
+    "Casey": "openrouter:anthropic/claude-sonnet-4",
+    "Drew": "o3",
+    "Ellis": "openrouter:anthropic/claude-sonnet-4",
+    "Frankie": "openrouter:anthropic/claude-sonnet-4",
+    "Gray": "openrouter:anthropic/claude-sonnet-4",
+    "Harper": "openrouter:anthropic/claude-sonnet-4",
+    "Indigo": "openrouter:anthropic/claude-sonnet-4",
+    "Jules": "openrouter:anthropic/claude-sonnet-4",
+    "Kit": "openrouter:anthropic/claude-sonnet-4",
+    "Logan": "openrouter:anthropic/claude-sonnet-4"
+  }
+}
