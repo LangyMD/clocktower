@@ -302,7 +302,21 @@ chance). 6 and 8 beats did not differ. c3h (10 games on arm A's seeds) added one
 prompt ("The whisper log is evidence ... players who huddle early and often get read as a team"): evil's
 first whisper still went to a teammate 83% of the time, and evil won 1 of 9. The user dropped the log.
 
-## v16 — current (Oct 2): private whispers again, 6 beats
+## v16 (Oct 2): private whispers again, 6 beats
 v15 without the public whisper log (and without the c3h hint): whispers are invisible again, as in v14.
 Kept from v15: 6 private beats, the prompt's statement of the number of beats ("choose carefully whom to
 spend them on") and the whispers left on each private turn, and the harness fixes.
+
+f2 (Oct 1, 109 of 110 games, `games/v16/f2-*`, readers in docs/analysis/f2/): the 11 models released in 2026,
+full round robin, one side-swapped pair each, $4.4k. Engine sound; two clear tiers (Fable 5 onward
++360 Elo); 25% duds, mostly older-model blunders and deal luck. Two defects: (1) the low-effort retry
+did not bound adaptive-thinking Claude models: Opus 4.8 re-hit the 8K ceiling on 40% of retries and
+lost 76 turns; (2) plan seeds stepped by 100 (= 0 mod 4), so every game's guaranteed Minion was the
+Poisoner.
+
+## v17 — current (Oct 1): bounded retries, chosen Minions
+v16 with: a ceiling retry uses the least thinking the model allows (thinking off for adaptive Claude
+models); the guaranteed Minion is set per game by the plan so a batch balances them; OpenAI and
+OpenRouter calls wait for credit (auto-reload) like Claude calls. Opus 4.8's 20 f2 games are re-run
+on their seeds (f2r); f3 adds 184 games (~$3.8k) by an information-per-dollar allocation (at most 4 extra pairs
+per matchup, mostly near neighbours), with guaranteed Minions chosen to balance the totals.

@@ -32,7 +32,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v16'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
+PROTOCOL = 'v17'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -186,7 +186,8 @@ async def run_batch(args):
     stamp = time.strftime('%Y%m%d-%H%M%S')
     if args.games == 1 and not args.swap:
         out = Path(args.out) if args.out else RUNS / f'{stamp}-{base}'
-        return [await play_one(args, base, out, env)]
+        minion = args.minions.split(',')[0].strip() if getattr(args, 'minions', None) else None
+        return [await play_one(args, base, out, env, minion=minion)]
     root = Path(args.out) if args.out else RUNS / f'batch-{stamp}'
     limit = asyncio.Semaphore(args.parallel or 10 ** 6)  # 0 = every game of the batch at once (swaps included)
     numbers = parse_only(args.only) if args.only else range(1, args.games + 1)
@@ -195,8 +196,13 @@ async def run_batch(args):
                                     'evil_model': args.good_model or args.model,
                                     'good_effort': args.evil_effort, 'evil_effort': args.good_effort})
 
-    async def one(k, a=args, suffix=''):  # game k gets seed base + k - 1; the seed picks the Minion in play
-        minion = MINIONS[(base + k - 1) % len(MINIONS)] if not args.characters else None
+    forced = [m.strip() for m in args.minions.split(',')] if getattr(args, 'minions', None) else None
+    assert not forced or all(m in MINIONS for m in forced), f'--minions must name Minions: {MINIONS}'
+
+    async def one(k, a=args, suffix=''):  # game k gets seed base + k - 1, and a guaranteed Minion: the plan's
+        # choice (--minions, one per game, so a batch can balance them) or else picked by the seed
+        minion = None if args.characters else (forced[(k - 1) % len(forced)] if forced
+                                               else MINIONS[(base + k - 1) % len(MINIONS)])
         out = root / f'game-{k:02d}{suffix}'
         done = out / 'result.json'
         cfg = out / 'config.json'
@@ -266,6 +272,7 @@ def main(argv=None):
         p = sub.add_parser(name)
         p.add_argument('--seed', type=int)
         p.add_argument('--private-beats', type=int, default=6, help='whisper-only beats each day')
+        p.add_argument('--minions', help='comma-separated guaranteed Minion for game 1, 2, ... (default: by seed)')
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=15, help='stop after this many days')

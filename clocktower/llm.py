@@ -8,7 +8,8 @@ form, so the model keeps its own reasoning across the whole game and every reque
 reads everything before the new turn from cache.
 
 Every model gets the same per-turn output ceiling (`max_tokens`, thinking included).
-A turn that hits the ceiling is retried once at low effort; a turn with no usable reply after four
+A turn that hits the ceiling is retried once with the least thinking the model allows (none for adaptive
+Claude models, a 1K budget for older ones, low effort for OpenAI); a turn with no usable reply after four
 attempts stops the game (SeatFailed), which then resumes from its last checkpoint.
 """
 from __future__ import annotations
@@ -239,6 +240,8 @@ class ClaudeConversation(_Base):
             out['effort'] = self.turn_effort(low)
         if sp['thinking'] == 'budget':  # older models: a budget of 3/4 of the ceiling (the minimum when retrying)
             thinking = {'type': 'enabled', 'budget_tokens': 1024 if low else self.max_tokens * 3 // 4}
+        elif low:  # adaptive models can't take a budget, and low effort doesn't bound them (v16 Opus 4.8): no thinking
+            thinking = {'type': 'disabled'}
         else:
             thinking = {'type': 'adaptive', 'display': 'summarized'}
         return {'thinking': thinking, 'output_config': out}
@@ -352,18 +355,26 @@ class OpenAIConversation(_Base):
         raise ConnectionError('stream ended without a final response')
 
     async def _request(self, body):
-        for attempt in range(10):
+        waited = 0  # seconds spent waiting for credit (auto-reload catching up), as for Claude
+        attempt = 0
+        while attempt < 10:
             try:
                 return await asyncio.get_running_loop().run_in_executor(HTTP_POOL, self._post, body)
             except urllib.error.HTTPError as e:
                 detail = e.read().decode(errors='replace')[:2000]
+                credit = e.code == 402 or 'insufficient_quota' in detail or 'credit' in detail.lower()
+                if credit and waited < CREDIT_WAIT:
+                    await asyncio.sleep(30)
+                    waited += 30
+                    continue
                 retryable = e.code in (408, 409, 429) or e.code >= 500  # incl. Cloudflare 52x
-                if not retryable or attempt == 9 or 'insufficient_quota' in detail or 'spend limit' in detail:
+                if not retryable or attempt == 9 or credit or 'spend limit' in detail:
                     raise RuntimeError(f'OpenAI HTTP {e.code}: {detail}') from e
             except (TimeoutError, urllib.error.URLError, ConnectionError, http.client.HTTPException) as e:
                 if attempt == 9:  # dropped connections (RemoteDisconnected) and timeouts are retried
                     raise RuntimeError(f'OpenAI transport error: {e}') from e
             await asyncio.sleep(min(2 ** attempt, 60) + random.random())
+            attempt += 1
 
     async def send(self, text, meta=None, commit=True) -> Reply:
         low = False  # True for the one retry of a turn that hit the ceiling (local: probes run alongside)

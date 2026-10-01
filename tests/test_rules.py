@@ -884,6 +884,39 @@ class CeilingTests(unittest.TestCase):
         self.assertEqual(run(c.send('go')).action, {'say': 'hi'})
         self.assertEqual(efforts, ['high', 'low'])
 
+    def test_adaptive_claude_retries_without_thinking(self):
+        from clocktower.llm import ClaudeConversation, Ledger, NO_LIMIT
+        import tempfile
+        c = ClaudeConversation(None, 'rules', {}, label='x', ledger=Ledger(tempfile.mktemp()), semaphore=NO_LIMIT,
+                               model='claude-opus-4-8')
+        self.assertEqual(c._thinking()['thinking']['type'], 'adaptive')
+        self.assertEqual(c._thinking(low=True)['thinking'], {'type': 'disabled'})
+
+    def test_openai_waits_for_credit_instead_of_failing(self):
+        from clocktower import llm
+        import os, tempfile, io, urllib.error
+        os.environ.setdefault('OPENAI_API_KEY', 'test')
+        c = llm.OpenAIConversation('rules', {}, label='x', ledger=llm.Ledger(tempfile.mktemp()),
+                                   semaphore=llm.NO_LIMIT, model='gpt-5.4')
+        calls = []
+
+        def post(body):
+            calls.append(1)
+            if len(calls) < 3:
+                raise urllib.error.HTTPError('u', 429, 'quota', {}, io.BytesIO(b'{"error": {"code": "insufficient_quota"}}'))
+            return {'ok': True}
+        c._post = post
+        slept = []
+
+        async def nap(t):
+            slept.append(t)
+        real, llm.asyncio.sleep = llm.asyncio.sleep, nap
+        try:
+            self.assertEqual(run(c._request({})), {'ok': True})
+        finally:
+            llm.asyncio.sleep = real
+        self.assertEqual(slept, [30, 30])
+
 
 class WhisperTests(unittest.TestCase):
     def test_one_whisper_a_turn(self):

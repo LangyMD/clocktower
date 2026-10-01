@@ -1,0 +1,349 @@
+{
+ "out": "games/v17/f3",
+ "seed": 140000,
+ "players": "10-12",
+ "budget": 19200,
+ "matchups": [
+  {
+   "name": "opus55-v-sol61",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 4,
+   "seed": 140000,
+   "args": [
+    "--minions",
+    "Spy,Scarlet Woman,Baron,Spy"
+   ]
+  },
+  {
+   "name": "gpt56sol-v-fable51",
+   "good": "gpt-5.6-sol",
+   "evil": "claude-fable-5-1",
+   "pairs": 4,
+   "seed": 140100,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Baron,Spy,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "gpt54-v-gpt55",
+   "good": "gpt-5.4",
+   "evil": "gpt-5.5",
+   "pairs": 4,
+   "seed": 140200,
+   "args": [
+    "--minions",
+    "Baron,Spy,Scarlet Woman,Baron"
+   ]
+  },
+  {
+   "name": "opus47-v-opus48",
+   "good": "claude-opus-4-7",
+   "evil": "claude-opus-4-8",
+   "pairs": 4,
+   "seed": 140300,
+   "args": [
+    "--minions",
+    "Spy,Scarlet Woman,Baron,Spy"
+   ]
+  },
+  {
+   "name": "astra-v-opus55",
+   "good": "gpt-6-astra",
+   "evil": "claude-opus-5-5",
+   "pairs": 4,
+   "seed": 140400,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Baron,Spy,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "gpt56sol-v-opus55",
+   "good": "gpt-5.6-sol",
+   "evil": "claude-opus-5-5",
+   "pairs": 4,
+   "seed": 140500,
+   "args": [
+    "--minions",
+    "Baron,Spy,Scarlet Woman,Baron"
+   ]
+  },
+  {
+   "name": "gpt54-v-gpt56sol",
+   "good": "gpt-5.4",
+   "evil": "gpt-5.6-sol",
+   "pairs": 4,
+   "seed": 140600,
+   "args": [
+    "--minions",
+    "Spy,Scarlet Woman,Baron,Spy"
+   ]
+  },
+  {
+   "name": "gpt56sol-v-sol61",
+   "good": "gpt-5.6-sol",
+   "evil": "gpt-6.1-sol",
+   "pairs": 4,
+   "seed": 140700,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Baron,Spy,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "opus46-v-gpt56sol",
+   "good": "claude-opus-4-6",
+   "evil": "gpt-5.6-sol",
+   "pairs": 4,
+   "seed": 140800,
+   "args": [
+    "--minions",
+    "Baron,Spy,Scarlet Woman,Baron"
+   ]
+  },
+  {
+   "name": "fable5-v-fable51",
+   "good": "claude-fable-5",
+   "evil": "claude-fable-5-1",
+   "pairs": 4,
+   "seed": 140900,
+   "args": [
+    "--minions",
+    "Spy,Baron,Scarlet Woman,Spy"
+   ]
+  },
+  {
+   "name": "opus46-v-gpt55",
+   "good": "claude-opus-4-6",
+   "evil": "gpt-5.5",
+   "pairs": 4,
+   "seed": 141000,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Spy,Baron,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "gpt55-v-opus48",
+   "good": "gpt-5.5",
+   "evil": "claude-opus-4-8",
+   "pairs": 4,
+   "seed": 141100,
+   "args": [
+    "--minions",
+    "Baron,Spy,Scarlet Woman,Baron"
+   ]
+  },
+  {
+   "name": "fable51-v-sol61",
+   "good": "claude-fable-5-1",
+   "evil": "gpt-6.1-sol",
+   "pairs": 4,
+   "seed": 141200,
+   "args": [
+    "--minions",
+    "Baron,Spy,Scarlet Woman,Baron"
+   ]
+  },
+  {
+   "name": "fable51-v-opus55",
+   "good": "claude-fable-5-1",
+   "evil": "claude-opus-5-5",
+   "pairs": 4,
+   "seed": 141300,
+   "args": [
+    "--minions",
+    "Spy,Scarlet Woman,Baron,Spy"
+   ]
+  },
+  {
+   "name": "gpt56sol-v-astra",
+   "good": "gpt-5.6-sol",
+   "evil": "gpt-6-astra",
+   "pairs": 4,
+   "seed": 141400,
+   "args": [
+    "--minions",
+    "Spy,Baron,Scarlet Woman,Spy"
+   ]
+  },
+  {
+   "name": "opus46-v-sol61",
+   "good": "claude-opus-4-6",
+   "evil": "gpt-6.1-sol",
+   "pairs": 4,
+   "seed": 141500,
+   "args": [
+    "--minions",
+    "Spy,Scarlet Woman,Baron,Spy"
+   ]
+  },
+  {
+   "name": "opus47-v-fable51",
+   "good": "claude-opus-4-7",
+   "evil": "claude-fable-5-1",
+   "pairs": 3,
+   "seed": 141600,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Baron,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "astra-v-sol61",
+   "good": "gpt-6-astra",
+   "evil": "gpt-6.1-sol",
+   "pairs": 3,
+   "seed": 141700,
+   "args": [
+    "--minions",
+    "Baron,Scarlet Woman,Spy"
+   ]
+  },
+  {
+   "name": "fable5-v-gpt56sol",
+   "good": "claude-fable-5",
+   "evil": "gpt-5.6-sol",
+   "pairs": 3,
+   "seed": 141800,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Baron,Spy"
+   ]
+  },
+  {
+   "name": "opus47-v-gpt56sol",
+   "good": "claude-opus-4-7",
+   "evil": "gpt-5.6-sol",
+   "pairs": 2,
+   "seed": 141900,
+   "args": [
+    "--minions",
+    "Baron,Spy"
+   ]
+  },
+  {
+   "name": "gpt54-v-opus48",
+   "good": "gpt-5.4",
+   "evil": "claude-opus-4-8",
+   "pairs": 2,
+   "seed": 142000,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "opus47-v-opus55",
+   "good": "claude-opus-4-7",
+   "evil": "claude-opus-5-5",
+   "pairs": 2,
+   "seed": 142100,
+   "args": [
+    "--minions",
+    "Baron,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "opus46-v-gpt54",
+   "good": "claude-opus-4-6",
+   "evil": "gpt-5.4",
+   "pairs": 2,
+   "seed": 142200,
+   "args": [
+    "--minions",
+    "Spy,Baron"
+   ]
+  },
+  {
+   "name": "gpt54-v-opus55",
+   "good": "gpt-5.4",
+   "evil": "claude-opus-5-5",
+   "pairs": 2,
+   "seed": 142300,
+   "args": [
+    "--minions",
+    "Spy,Scarlet Woman"
+   ]
+  },
+  {
+   "name": "gpt55-v-opus55",
+   "good": "gpt-5.5",
+   "evil": "claude-opus-5-5",
+   "pairs": 2,
+   "seed": 142400,
+   "args": [
+    "--minions",
+    "Spy,Baron"
+   ]
+  },
+  {
+   "name": "gpt55-v-gpt56sol",
+   "good": "gpt-5.5",
+   "evil": "gpt-5.6-sol",
+   "pairs": 2,
+   "seed": 142500,
+   "args": [
+    "--minions",
+    "Scarlet Woman,Spy"
+   ]
+  },
+  {
+   "name": "opus46-v-opus47",
+   "good": "claude-opus-4-6",
+   "evil": "claude-opus-4-7",
+   "pairs": 1,
+   "seed": 142600,
+   "args": [
+    "--minions",
+    "Scarlet Woman"
+   ]
+  },
+  {
+   "name": "gpt54-v-opus47",
+   "good": "gpt-5.4",
+   "evil": "claude-opus-4-7",
+   "pairs": 1,
+   "seed": 142700,
+   "args": [
+    "--minions",
+    "Baron"
+   ]
+  },
+  {
+   "name": "opus46-v-opus55",
+   "good": "claude-opus-4-6",
+   "evil": "claude-opus-5-5",
+   "pairs": 1,
+   "seed": 142800,
+   "args": [
+    "--minions",
+    "Baron"
+   ]
+  },
+  {
+   "name": "fable51-v-astra",
+   "good": "claude-fable-5-1",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "seed": 142900,
+   "args": [
+    "--minions",
+    "Baron"
+   ]
+  },
+  {
+   "name": "opus47-v-sol61",
+   "good": "claude-opus-4-7",
+   "evil": "gpt-6.1-sol",
+   "pairs": 1,
+   "seed": 143000,
+   "args": [
+    "--minions",
+    "Spy"
+   ]
+  }
+ ]
+}

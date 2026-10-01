@@ -2,7 +2,7 @@
 
 An eval where language models play Blood on the Clocktower (Trouble Brewing) against each other: one
 model plays the good team, another the evil team, so each game rates detection against deception.
-The rules are protocol v16 (frozen): read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
+The rules are protocol v17 (frozen): read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
 is what it is, and every past run: `docs/protocol-history.md`.
 
 ## Where things are
@@ -60,7 +60,7 @@ is what it is, and every past run: `docs/protocol-history.md`.
   day, fixed length. Dead players talk and whisper; only the living nominate.
 - Scripted Storyteller (`state.POLICY`), no LLM; every rule explainable in one line, no special cases.
 - Equal settings: every model at its lab's "high" effort, one per-turn ceiling (8K); a turn that hits
-  it is retried once at low effort (v13; the user wanted bounded thinking for older models).
+  it is retried once with the least thinking the model allows (v13, v17; the user wanted bounded thinking).
   (Effort sweep in e1: no measurable effect of effort on play, but only 1 pair per level; v6 found
   Opus low 255 Elo below high as good. The user chose high over medium.)
 - Every game has its own seed; a side-swapped pair shares one. Run every game of an experiment at once.

@@ -1,4 +1,4 @@
-# The Clocktower protocol (v16, frozen)
+# The Clocktower protocol (v17, frozen)
 
 Language models play Blood on the Clocktower (Trouble Brewing) against each other. One model (or a set
 of models) plays every good seat and another every evil seat, so each game rates a detection skill
@@ -8,8 +8,9 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
 
 ## Setup
 - 10, 11 or 12 players, picked by the seed (10 + seed % 3): always 2 Minions, and 0, 1 or 2 Outsiders.
-- The official Trouble Brewing setup for the table size, dealt uniformly at random; one Minion
-  (MINIONS[seed % 4]) is guaranteed to be in play so Minions rotate across games.
+- The official Trouble Brewing setup for the table size, dealt uniformly at random; one Minion is
+  guaranteed to be in play: the plan's choice per game (`--minions`, balanced across a batch), or else
+  MINIONS[seed % 4].
 - Seats are named Alex, Blair, Casey, … in seating order.
 - Every game has its own seed; a side-swapped pair plays one seed twice with the teams' models swapped.
 
@@ -55,8 +56,10 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
 - Every seat's text reaches the others in one typography (straight quotes, plain dashes and hyphens,
   no bullets, arrows, emoji or markdown), so writing style can't mark a team.
 - Every model plays at its lab's "high" effort, with the same per-turn output ceiling of 8K tokens
-  (thinking included). A turn that hits the ceiling is retried once at low effort (for older Claude
-  models, the minimum thinking budget), so thinking stays bounded without losing the turn. A turn cut
+  (thinking included). A turn that hits the ceiling is retried once with the least thinking the
+  model allows (none for adaptive Claude models, a 1K budget for older Claude models, low effort for
+  OpenAI), so thinking stays bounded without losing the turn. Out of credit (auto-reload lagging), a
+  call waits up to 30 minutes and retries. A turn cut
   off twice or refused twice passes; a turn with no usable reply after four attempts stops the game,
   which resumes from its last checkpoint.
 - When a game outgrows a model's context window, its oldest turns are dropped, never the first

@@ -34,7 +34,7 @@ def metrics(I):
 def show(name,I,spent,ngames):
     m=metrics(I); print(f"{name:42s} ${spent:6.0f} {ngames:4d} games | per-model 90% ±{1.645*m[0]:4.0f} | adjacent-gap 90% ±{1.645*m[1]:4.0f} (worst ±{1.645*m[2]:4.0f})")
 show('now (f2, 1 pair each)',base,0,0)
-B=10000
+B=int(__import__("os").environ.get("BUDGET","10000")); CAP=int(__import__("os").environ.get("CAP","1000"))
 for k in (1,2,3):
     I=base+k*sum(IP[p] for p in pairs); spent=k*sum(pc.values()); show(f'uniform +{k} pairs/matchup',I,spent,k*2*len(pairs))
 # greedy by objective reduction per dollar: objective = mean adjacent-gap variance + mean per-model variance
@@ -44,7 +44,7 @@ I=base.copy(); spent=0; alloc=collections.Counter()
 while True:
     cur=obj(I); best=None
     for p in pairs:
-        if spent+pc[p]>B: continue
+        if spent+pc[p]>B or alloc[p]>=CAP: continue
         gain=(cur-obj(I+IP[p]))/pc[p]
         if best is None or gain>best[0]: best=(gain,p)
     if not best: break
