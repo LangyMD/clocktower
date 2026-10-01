@@ -21,6 +21,10 @@ from pathlib import Path
 from .agents import Request, ScriptedStoryteller
 from .characters import FIRST_NIGHT, GOOD, MINIONS, OTHER_NIGHTS, TOWNSFOLK, card
 from .llm import BudgetExceeded, Reply, SeatFailed
+
+
+class Halted(RuntimeError):
+    """An operator asked this one game to stop (a STOP file in its folder); it resumes from its checkpoint."""
 from . import probe
 from .prompts import dawn_narration
 from .render import render
@@ -148,6 +152,8 @@ class Game:
 
     # ---- asking seats and the Storyteller ------------------------------------------------------
     async def ask(self, name, request: Request) -> dict:
+        if self.out and (self.out / self.STOP).exists():  # an operator halts this one game; it resumes later
+            raise Halted(f'{self.STOP} file in {self.out}')
         text = '\n'.join(self.buf[name]).strip()
         self.buf[name] = []
         text = (text + '\n\n' if text else '') + '>>> ' + request.prompt
@@ -622,6 +628,7 @@ class Game:
     # ---- the whole game ------------------------------------------------------------------------
     # ---- checkpoints -----------------------------------------------------------------------
     CHECKPOINT = 'checkpoint.pkl'
+    STOP = 'STOP'  # touch <game>/STOP to halt that game at its next turn (it keeps its checkpoint)
 
     async def checkpoint(self, n, elapsed):
         """Save everything needed to continue the game at night n: the Grimoire, the random states,
@@ -698,6 +705,8 @@ class Game:
             stopped = f'budget: {e}'
         except SeatFailed as e:
             stopped = f'seat failed: {str(e)[:300]}'
+        except Halted as e:
+            stopped = f'halted: {e}'
         if self.probe_tasks:
             await asyncio.gather(*self.probe_tasks)
         g = self.g
@@ -706,7 +715,7 @@ class Game:
         result = self.result(time.time() - start, stopped)
         if self.out:
             (self.out / 'result.json').write_text(json.dumps(result, indent=2))
-            if not (stopped or '').startswith(('seat failed', 'budget')):  # only a stopped game resumes
+            if not (stopped or '').startswith(('seat failed', 'budget', 'halted')):  # only a stopped game resumes
                 (self.out / self.CHECKPOINT).unlink(missing_ok=True)
         return result
 

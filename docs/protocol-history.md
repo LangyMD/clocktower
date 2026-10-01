@@ -317,6 +317,6 @@ Poisoner.
 ## v17 — current (Oct 1): bounded retries, chosen Minions
 v16 with: a ceiling retry uses the least thinking the model allows (thinking off for adaptive Claude
 models); the guaranteed Minion is set per game by the plan so a batch balances them; OpenAI and
-OpenRouter calls wait for credit (auto-reload) like Claude calls. Opus 4.8's 20 f2 games are re-run
-on their seeds (f2r); f3 adds 184 games (~$3.8k) by an information-per-dollar allocation (at most 4 extra pairs
+OpenRouter calls wait for credit (auto-reload) like Claude calls. Opus 4.8's 20 f2 games are dropped from
+the fit; f3 adds 184 games (~$3.8k); f3b 78 more (~$1.2k) replacing Opus 4.8's 20 f2 games with fresh balanced ones by an information-per-dollar allocation (at most 4 extra pairs
 per matchup, mostly near neighbours), with guaranteed Minions chosen to balance the totals.

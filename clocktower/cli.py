@@ -217,8 +217,9 @@ async def run_batch(args):
         async with limit:
             return await play_one(a, base + k - 1, out, env, minion=minion)
 
-    jobs = [one(k) for k in numbers]
-    if args.swap:  # the same seed again with the models' sides swapped, so setup luck cancels in the pair
+    side = getattr(args, 'side', 'both')
+    jobs = [one(k) for k in numbers] if side != 'swap' else []
+    if args.swap and side != 'normal':  # the same seed again with the models' sides swapped, so setup luck cancels
         jobs += [one(k, swapped, '-swap') for k in numbers]
     results = await asyncio.gather(*jobs)
     from .report import main as report
@@ -307,6 +308,8 @@ def main(argv=None):
         if name == 'run':
             p.add_argument('--parallel', type=int, default=0, help='games at once in a batch (0 = all)')
             p.add_argument('--only', help='run just these game numbers of the batch, e.g. 13,14,16-20')
+            p.add_argument('--side', choices=('both', 'normal', 'swap'), default='both',
+                           help='with --swap: play only the original game or only the swapped one (one process per game)')
             p.add_argument('--swap', action='store_true',
                            help='also play every seed with the good and evil models swapped (game-NN-swap)')
         if name == 'play':

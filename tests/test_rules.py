@@ -932,6 +932,29 @@ class WhisperTests(unittest.TestCase):
 
 
 class CheckpointTests(unittest.TestCase):
+    def test_a_stop_file_halts_one_game_which_then_resumes_and_finishes(self):
+        import tempfile
+        from pathlib import Path
+        chars = ['Imp', 'Poisoner', 'Monk', 'Empath', 'Chef', 'Washerwoman', 'Soldier', 'Butler', 'Saint']
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / 'g'
+            first = game(chars, out=out, probes=False)
+            first.private_beats = first.public_beats = 1
+            night = first.night
+
+            async def halt_on_night_2(n):
+                if n == 2:
+                    (out / 'STOP').touch()
+                return await night(n)
+            first.night = halt_on_night_2
+            r = run(first.run())
+            self.assertTrue(r['reason'].startswith('halted'))
+            self.assertTrue((out / 'checkpoint.pkl').exists())
+            (out / 'STOP').unlink()
+            again = game(chars, out=out, probes=False)
+            again.private_beats = again.public_beats = 1
+            self.assertIsNotNone(run(again.run())['winner'])
+
     def test_a_killed_game_resumes_from_its_last_dusk_and_plays_out_the_same(self):
         import tempfile, json as _json
         from pathlib import Path

@@ -43,6 +43,10 @@ is what it is, and every past run: `docs/protocol-history.md`.
    and write the pattern as `'[c]locktower run'` so a watcher's own command line doesn't match itself.
    The container restarts every so often (three times on Oct 1); every game checkpoints at each dusk, so
    after a restart rerun the same `tournament` command and games resume from their last dusk.
+   One process per matchup runs all its games concurrently (asyncio; I/O-bound, so hundreds of calls at
+   once; ~200 MB per process, so not one process per game). To halt one game: `touch <game>/STOP` (it stops
+   at its next turn, keeping its checkpoint); to resume it: delete STOP and run
+   `tournament PLAN --only MATCHUP/gNN` (or `MATCHUP/gNN-swap`), which runs just that game.
    Keep a `run_in_background` Bash waiter running while a batch runs (e.g. `while pgrep -f '[c]locktower run';
    do sleep 60; done`): an idle session's container is reclaimed within minutes, killing every game (Oct 1).
 5. After: `python -m clocktower analyze games/v13/NAME-*/game-*`; upload logs with

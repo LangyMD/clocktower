@@ -46,7 +46,20 @@ def make_plan(models, within=None, pairs=1, seed=80000, out='games/v12/f1', play
     return {'out': out, 'seed': seed, 'players': players, 'matchups': matchups}
 
 
-def commands(plan):
+def commands(plan, per_game=False):
+    """One command per matchup (all its games in one asyncio process: the games are I/O-bound, so a process
+    runs hundreds of API calls at once), or with per_game one per game (MATCHUP/gNN, MATCHUP/gNN-swap) to rerun
+    a single game. To halt one game, touch <game>/STOP; to resume it, delete STOP and launch MATCHUP/gNN."""
+    for name, cmd, pairs in _matchup_commands(plan):
+        if not per_game:
+            yield name, cmd
+            continue
+        for k in range(1, pairs + 1):
+            for side, suffix in (('normal', ''), ('swap', '-swap')):
+                yield f'{name}/g{k:02d}{suffix}', cmd + ['--only', str(k), '--side', side]
+
+
+def _matchup_commands(plan):
     for i, m in enumerate(plan['matchups']):
         cmd = [sys.executable, '-m', 'clocktower', 'run', '--games', str(m.get('pairs', 1)), '--swap',
                '--seed', str(m.get('seed', plan['seed'] + SEEDS_PER_MATCHUP * i)), '--players', str(plan.get('players', '10-12')),
@@ -58,7 +71,7 @@ def commands(plan):
         for s in m.get('seat_models', []):
             cmd += ['--seat-model', s]
         cmd += m.get('args', [])  # any other run flags, e.g. ["--private-beats", "6"] for a protocol variant
-        yield m['name'], cmd
+        yield m['name'], cmd, m.get('pairs', 1)
 
 
 def run(path, dry=False, only=None):
@@ -69,16 +82,18 @@ def run(path, dry=False, only=None):
     if not dry:
         logs.mkdir(parents=True, exist_ok=True)
     procs = []
-    for name, cmd in commands(plan):
-        if only and name not in only:
+    single = only and any('/' in o for o in only)  # MATCHUP/gNN[-swap]: run just those games, one process each
+    for name, cmd in commands(plan, per_game=bool(single)):
+        if only and name not in only and name.split('/')[0] not in only:
             continue
         if dry:
             print(' '.join(cmd))
             continue
-        procs.append((name, subprocess.Popen(cmd, stdout=open(logs / f'{name}.log', 'w'), stderr=subprocess.STDOUT)))
+        log = logs / f"{name.replace('/', '--')}.log"
+        procs.append((name, subprocess.Popen(cmd, stdout=open(log, 'w'), stderr=subprocess.STDOUT)))
     if dry:
         return 0
-    print(f'launched {len(procs)} matchups; logs in {logs}/', flush=True)
+    print(f'launched {len(procs)} processes; logs in {logs}/', flush=True)
     done = threading.Event()
     if os.environ.get('HF_TOKEN'):
         def snapshots():
