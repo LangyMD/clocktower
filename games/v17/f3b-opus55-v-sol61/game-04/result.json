@@ -1,7 +1,7 @@
 {
   "winner": null,
-  "reason": "budget: spend $19254.78 has reached the cap $19200.00",
-  "stopped": "budget: spend $19254.78 has reached the cap $19200.00",
+  "reason": "budget: spend $20301.18 has reached the cap $19200.00",
+  "stopped": "budget: spend $20301.18 has reached the cap $19200.00",
   "days": 6,
   "seed": 150103,
   "starting": {
@@ -45,7 +45,7 @@
     "cache_write": 511726,
     "output": 233076
   },
-  "seconds": 2580.2,
+  "seconds": 2580.3,
   "errors": [],
   "models": {
     "Alex": "claude-opus-5-5",
