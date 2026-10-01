@@ -1,0 +1,63 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 4,
+  "seed": 142300,
+  "starting": {
+    "Alex": "Spy",
+    "Blair": "Librarian",
+    "Casey": "Poisoner",
+    "Drew": "Virgin",
+    "Ellis": "Soldier",
+    "Frankie": "Imp",
+    "Gray": "Butler",
+    "Harper": "Investigator",
+    "Indigo": "Washerwoman",
+    "Jules": "Fortune Teller",
+    "Kit": "Monk"
+  },
+  "final": {
+    "Alex": "Spy",
+    "Blair": "Librarian",
+    "Casey": "Poisoner",
+    "Drew": "Virgin",
+    "Ellis": "Soldier",
+    "Frankie": "Imp",
+    "Gray": "Butler",
+    "Harper": "Investigator",
+    "Indigo": "Washerwoman",
+    "Jules": "Fortune Teller",
+    "Kit": "Monk"
+  },
+  "bluffs": [
+    "Chef",
+    "Empath",
+    "Ravenkeeper"
+  ],
+  "red_herring": "Blair",
+  "drunk_as": null,
+  "cost": 26.2142,
+  "calls": 619,
+  "tokens": {
+    "input": 655177,
+    "cache_read": 7481265,
+    "cache_write": 1278715,
+    "output": 1080624
+  },
+  "seconds": 12567.5,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "gpt-5.4",
+    "Casey": "claude-opus-5-5",
+    "Drew": "gpt-5.4",
+    "Ellis": "gpt-5.4",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "gpt-5.4",
+    "Harper": "gpt-5.4",
+    "Indigo": "gpt-5.4",
+    "Jules": "gpt-5.4",
+    "Kit": "gpt-5.4"
+  }
+}
