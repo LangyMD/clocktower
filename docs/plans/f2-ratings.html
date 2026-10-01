@@ -1,0 +1,118 @@
+<title>Clocktower 2026 Ratings</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column; the chart is the page, the tables support it. */
+:root {
+  --bg: #f4f6f8; --panel: #ffffff; --ink: #18202b; --ink-2: #4a5566; --muted: #6f7a8a; --rule: #dbe1e8; --grid: #e8ecf0;
+  --anth: #C2562E; --oai: #0A7FA0; --accent: #8a5a12;
+  --display: "Newsreader", Georgia, serif; --body: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #14171c; --panel: #1b2027; --ink: #e7ebf0; --ink-2: #b4bdca; --muted: #8b95a4; --rule: #2c333d; --grid: #252b33;
+  --anth: #D9714A; --oai: #1FA3B3; --accent: #d9a54f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #14171c; --panel: #1b2027; --ink: #e7ebf0; --ink-2: #b4bdca; --muted: #8b95a4; --rule: #2c333d; --grid: #252b33;
+  --anth: #D9714A; --oai: #1FA3B3; --accent: #d9a54f; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.page { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 56px; display: grid; gap: 30px; }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 600 clamp(28px, 4.6vw, 40px)/1.12 var(--display); margin: 6px 0 10px; text-wrap: balance; }
+h2 { font: 600 23px/1.2 var(--display); margin: 0; }
+p, li { max-width: 70ch; margin: 0; }
+section { display: grid; gap: 12px; min-width: 0; }
+.figure { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; overflow-x: auto; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button { font: 500 13px var(--body); padding: 6px 12px; border-radius: 4px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+.legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; }
+svg text { font-family: var(--body); fill: var(--ink-2); }
+svg .mono { font-family: var(--mono); }
+.caption { font-size: 13px; color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font: 500 11.5px/1.3 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.pick td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; padding: 7px 9px; border-radius: 4px; line-height: 1.4; z-index: 5; }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">Clocktower · f2 · 109 games · 11 models released in 2026</div>
+    <h1>Ratings after one side-swapped pair per matchup</h1>
+    <p>Elo from one Bradley–Terry fit, P(good wins) = σ(good − evil + h), with h = +153 for the good side. Bars are 90% intervals from 1,000 bootstrap resamples of side-swapped pairs. The average model is 1500.</p>
+  </header>
+
+  <section>
+    <div class="tabs" role="group" aria-label="Rating">
+      <button id="t-c" aria-pressed="true">Combined</button>
+      <button id="t-d" aria-pressed="false">Detection (as good)</button>
+      <button id="t-v" aria-pressed="false">Deception (as evil)</button>
+    </div>
+    <div class="legend"><span><i style="background:var(--anth);border-radius:50%"></i>Anthropic</span><span><i style="background:var(--oai);border-radius:2px"></i>OpenAI</span><span>x-axis: release date</span></div>
+    <div class="figure"><svg id="chart" role="img" aria-label="Elo rating by release date with 90% intervals"></svg></div>
+    <p class="caption">Two tiers are clear: every model from Fable 5 (June 2026) on sits about 360 Elo above the five earlier ones. Inside each tier the intervals overlap, so neighbours can't be ranked yet. Opus 4.6 and 4.7 have identical ratings because their win counts are identical. Opus 4.8 lost 76 turns to the retry bug and will be re-run. Detection and deception separately rest on 10 games each, so their intervals are wide.</p>
+  </section>
+
+  <section>
+    <h2>Spending the next ~$10k</h2>
+    <p>Expected precision, computed from each design's Fisher information using the current ratings (relative comparisons are reliable; absolute widths run a little narrower than the bootstrap's).</p>
+    <div class="figure"><table>
+      <thead><tr><th>Design</th><th class="n">Cost</th><th class="n">Games</th><th class="n">Per-model ±</th><th class="n">Neighbour gap ±</th></tr></thead>
+      <tbody>
+        <tr><td>Now (f2)</td><td class="n">—</td><td class="n">109</td><td class="n">142</td><td class="n">207</td></tr>
+        <tr><td>Every matchup +1 pair</td><td class="n">$4.3k</td><td class="n">+110</td><td class="n">104</td><td class="n">151</td></tr>
+        <tr><td>Every matchup +2 pairs</td><td class="n">$8.7k</td><td class="n">+220</td><td class="n">86</td><td class="n">125</td></tr>
+        <tr><td>Every matchup +3 pairs</td><td class="n">$13.0k</td><td class="n">+330</td><td class="n">75</td><td class="n">109</td></tr>
+        <tr class="pick"><td><b>Optimal allocation</b> (near neighbours, cost-weighted)</td><td class="n">$10.0k</td><td class="n">+730</td><td class="n">62</td><td class="n">85</td></tr>
+      </tbody>
+    </table></div>
+    <p class="caption">± is the 90% half-width in Elo. "Neighbour gap" is the difference between models adjacent in release order: the number that decides whether we can say each release beat the last.</p>
+  </section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const D = [{"name": "Opus 4.6", "lab": "Anthropic", "date": "2026-02-05", "combined": 1336, "detection": 1397, "deception": 1286, "c90": [1158, 1502], "d90": [1220, 1584], "v90": [1131, 1434]}, {"name": "GPT-5.4", "lab": "OpenAI", "date": "2026-03-05", "combined": 1305, "detection": 1365, "deception": 1290, "c90": [1163, 1426], "d90": [1185, 1531], "v90": [1156, 1429]}, {"name": "Opus 4.7", "lab": "Anthropic", "date": "2026-04-16", "combined": 1336, "detection": 1397, "deception": 1286, "c90": [1175, 1489], "d90": [1239, 1566], "v90": [1126, 1469]}, {"name": "GPT-5.5", "lab": "OpenAI", "date": "2026-04-23", "combined": 1336, "detection": 1233, "deception": 1494, "c90": [1145, 1467], "d90": [1087, 1366], "v90": [1297, 1661]}, {"name": "Opus 4.8", "lab": "Anthropic", "date": "2026-05-28", "combined": 1194, "detection": 1174, "deception": 1317, "c90": [989, 1347], "d90": [1025, 1309], "v90": [1146, 1481]}, {"name": "Fable 5", "lab": "Anthropic", "date": "2026-06-09", "combined": 1665, "detection": 1700, "deception": 1603, "c90": [1587, 1774], "d90": [1554, 1853], "v90": [1462, 1736]}, {"name": "GPT-5.6 Sol", "lab": "OpenAI", "date": "2026-07-09", "combined": 1610, "detection": 1709, "deception": 1488, "c90": [1480, 1751], "d90": [1562, 1843], "v90": [1307, 1647]}, {"name": "Fable 5.1", "lab": "Anthropic", "date": "2026-09-01", "combined": 1581, "detection": 1516, "deception": 1619, "c90": [1481, 1696], "d90": [1349, 1710], "v90": [1459, 1759]}, {"name": "GPT-6 Astra", "lab": "OpenAI", "date": "2026-09-03", "combined": 1756, "detection": 1820, "deception": 1668, "c90": [1591, 1921], "d90": [1705, 1894], "v90": [1481, 1856]}, {"name": "Opus 5.5", "lab": "Anthropic", "date": "2026-09-22", "combined": 1623, "detection": 1507, "deception": 1696, "c90": [1516, 1772], "d90": [1362, 1689], "v90": [1559, 1826]}, {"name": "GPT-6.1 Sol", "lab": "OpenAI", "date": "2026-09-27", "combined": 1756, "detection": 1681, "deception": 1754, "c90": [1641, 1924], "d90": [1527, 1836], "v90": [1609, 1910]}];
+const KEY = { c: ['combined', 'c90', 'Combined'], d: ['detection', 'd90', 'Detection'], v: ['deception', 'v90', 'Deception'] };
+const NS = 'http://www.w3.org/2000/svg', tip = document.getElementById('tip');
+const el = (t, a, p, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; p.appendChild(e); return e; };
+function draw(which) {
+  const [val, ci] = KEY[which];
+  const svg = document.getElementById('chart'); svg.innerHTML = '';
+  const W = 860, H = 440, L = 56, R = 20, T = 18, B = 70;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  const lo = 950, hi = 2000, y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  const t0 = Date.parse('2026-01-15'), t1 = Date.parse('2026-10-15');
+  const x = d => L + (Date.parse(d) - t0) / (t1 - t0) * (W - L - R);
+  for (let v = 1000; v <= 2000; v += 100) {
+    el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: v === 1500 ? 'var(--muted)' : 'var(--grid)', 'stroke-dasharray': v === 1500 ? '3 3' : '' }, svg);
+    el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, class: 'mono' }, svg, v);
+  }
+  ['2026-02-01', '2026-04-01', '2026-06-01', '2026-08-01', '2026-10-01'].forEach(d => {
+    el('text', { x: x(d), y: H - B + 18, 'text-anchor': 'middle', 'font-size': 11, class: 'mono' }, svg, new Date(d).toLocaleString('en', { month: 'short', timeZone: 'UTC' }) + ' 2026');
+  });
+  // jitter close dates so marks don't collide
+  const placed = [];
+  D.forEach(m => {
+    let xx = x(m.date); while (placed.some(p => Math.abs(p - xx) < 14)) xx += 14; placed.push(xx);
+    const c = m.lab === 'Anthropic' ? 'var(--anth)' : 'var(--oai)';
+    el('line', { x1: xx, x2: xx, y1: y(m[ci][0]), y2: y(m[ci][1]), stroke: c, 'stroke-width': 2, 'stroke-linecap': 'round' }, svg);
+    const mark = m.lab === 'Anthropic'
+      ? el('circle', { cx: xx, cy: y(m[val]), r: 5.5, fill: c, stroke: 'var(--panel)', 'stroke-width': 2 }, svg)
+      : el('rect', { x: xx - 5, y: y(m[val]) - 5, width: 10, height: 10, rx: 1.5, fill: c, stroke: 'var(--panel)', 'stroke-width': 2 }, svg);
+    el('text', { x: 0, y: 0, 'font-size': 11, transform: `translate(${xx + 3},${H - B + 30}) rotate(40)`, style: 'fill:var(--ink)' }, svg, m.name);
+    const hit = el('rect', { x: xx - 10, y: y(m[ci][1]) - 6, width: 20, height: y(m[ci][0]) - y(m[ci][1]) + 12, fill: 'transparent' }, svg);
+    hit.addEventListener('mousemove', e => { tip.innerHTML = `<b>${m.name}</b> · ${m.date}<br>${KEY[which][2]} ${m[val]} (90%: ${m[ci][0]}–${m[ci][1]})`; tip.hidden = false; tip.style.left = Math.min(e.clientX + 12, innerWidth - 230) + 'px'; tip.style.top = e.clientY + 14 + 'px'; });
+    hit.addEventListener('mouseleave', () => tip.hidden = true);
+  });
+}
+for (const k of ['c', 'd', 'v']) document.getElementById('t-' + k).onclick = () => {
+  for (const j of ['c', 'd', 'v']) document.getElementById('t-' + j).setAttribute('aria-pressed', j === k);
+  draw(k);
+};
+draw('c');
+</script>
