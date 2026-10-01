@@ -1,0 +1,62 @@
+{
+  "winner": null,
+  "reason": "seat failed: Drew: SeatFailed('Drew (gpt-5.5): no usable reply in 4 attempts')",
+  "stopped": "seat failed: Drew: SeatFailed('Drew (gpt-5.5): no usable reply in 4 attempts')",
+  "days": 1,
+  "seed": 150600,
+  "starting": {
+    "Alex": "Chef",
+    "Blair": "Poisoner",
+    "Casey": "Monk",
+    "Drew": "Imp",
+    "Ellis": "Ravenkeeper",
+    "Frankie": "Scarlet Woman",
+    "Gray": "Empath",
+    "Harper": "Fortune Teller",
+    "Indigo": "Undertaker",
+    "Jules": "Librarian"
+  },
+  "final": {
+    "Alex": "Chef",
+    "Blair": "Poisoner",
+    "Casey": "Monk",
+    "Drew": "Imp",
+    "Ellis": "Ravenkeeper",
+    "Frankie": "Scarlet Woman",
+    "Gray": "Empath",
+    "Harper": "Fortune Teller",
+    "Indigo": "Undertaker",
+    "Jules": "Librarian"
+  },
+  "bluffs": [
+    "Investigator",
+    "Slayer",
+    "Mayor"
+  ],
+  "red_herring": "Ellis",
+  "drunk_as": null,
+  "cost": 0.4251,
+  "calls": 25,
+  "tokens": {
+    "input": 9457,
+    "cache_read": 77519,
+    "cache_write": 4973,
+    "output": 10953
+  },
+  "seconds": 99.1,
+  "errors": [
+    "Drew: SeatFailed('Drew (gpt-5.5): no usable reply in 4 attempts')"
+  ],
+  "models": {
+    "Alex": "claude-opus-4-8",
+    "Blair": "gpt-5.5",
+    "Casey": "claude-opus-4-8",
+    "Drew": "gpt-5.5",
+    "Ellis": "claude-opus-4-8",
+    "Frankie": "gpt-5.5",
+    "Gray": "claude-opus-4-8",
+    "Harper": "claude-opus-4-8",
+    "Indigo": "claude-opus-4-8",
+    "Jules": "claude-opus-4-8"
+  }
+}
