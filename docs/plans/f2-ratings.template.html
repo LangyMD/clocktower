@@ -1,0 +1,130 @@
+<title>Clocktower 2026 Ratings</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column; the chart is the page, the tables support it. */
+:root {
+  --bg: #f4f6f8; --panel: #ffffff; --ink: #18202b; --ink-2: #4a5566; --muted: #6f7a8a; --rule: #dbe1e8; --grid: #e8ecf0;
+  --anth: #C2562E; --oai: #0A7FA0; --accent: #8a5a12;
+  --display: "Newsreader", Georgia, serif; --body: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #14171c; --panel: #1b2027; --ink: #e7ebf0; --ink-2: #b4bdca; --muted: #8b95a4; --rule: #2c333d; --grid: #252b33;
+  --anth: #D9714A; --oai: #1FA3B3; --accent: #d9a54f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #14171c; --panel: #1b2027; --ink: #e7ebf0; --ink-2: #b4bdca; --muted: #8b95a4; --rule: #2c333d; --grid: #252b33;
+  --anth: #D9714A; --oai: #1FA3B3; --accent: #d9a54f; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.page { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 56px; display: grid; gap: 30px; }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 600 clamp(28px, 4.6vw, 40px)/1.12 var(--display); margin: 6px 0 10px; text-wrap: balance; }
+h2 { font: 600 23px/1.2 var(--display); margin: 0; }
+p, li { max-width: 70ch; margin: 0; }
+section { display: grid; gap: 12px; min-width: 0; }
+.figure { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; overflow-x: auto; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button { font: 500 13px var(--body); padding: 6px 12px; border-radius: 4px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+.legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; }
+svg text { font-family: var(--body); fill: var(--ink-2); }
+svg .mono { font-family: var(--mono); }
+.caption { font-size: 13px; color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font: 500 11.5px/1.3 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.pick td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; padding: 7px 9px; border-radius: 4px; line-height: 1.4; z-index: 5; }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">Clocktower · 2026 models · __GAMES__ games · protocol v16–v17</div>
+    <h1>Detection and deception ratings for the 11 models released in 2026</h1>
+    <p>One Bradley–Terry fit: P(good wins) = σ(good − evil + h + setup), where setup is which Minions were in play and the table size. Bars are 90% intervals from 500 bootstrap resamples of side-swapped pairs. The average model is 1500. Opus 4.8's 20 games with lost turns (v16 retry bug) are replaced by fresh v17 games.</p>
+  </header>
+
+  <section>
+    <div class="tabs" role="group" aria-label="Rating">
+      <button id="t-c" aria-pressed="true">Combined</button>
+      <button id="t-d" aria-pressed="false">Detection (as good)</button>
+      <button id="t-v" aria-pressed="false">Deception (as evil)</button>
+    </div>
+    <div class="legend"><span><i style="background:var(--anth);border-radius:50%"></i>Anthropic</span><span><i style="background:var(--oai);border-radius:2px"></i>OpenAI</span><span><i style="background:var(--muted);height:2px;width:16px;vertical-align:3px"></i>trend, all models</span></div>
+    <div class="figure"><svg id="chart" role="img" aria-label="Elo rating by release date with 90% intervals"></svg></div>
+    <p class="caption" id="trendcap"></p>
+  </section>
+
+  <section>
+    <h2>Win rates</h2>
+    <div class="figure"><table id="wins"><thead><tr><th>Model</th><th>Released</th><th class="n">Wins as good</th><th class="n">Wins as evil</th><th class="n">Combined Elo</th></tr></thead><tbody></tbody></table></div>
+    <p class="caption" id="setupcap"></p>
+  </section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const R = __DATA__;
+const D = R.models;
+const NAMES = {'claude-opus-4-6':'Opus 4.6','gpt-5.4':'GPT-5.4','claude-opus-4-7':'Opus 4.7','gpt-5.5':'GPT-5.5','claude-opus-4-8':'Opus 4.8','claude-fable-5':'Fable 5','gpt-5.6-sol':'GPT-5.6 Sol','claude-fable-5-1':'Fable 5.1','gpt-6-astra':'GPT-6 Astra','claude-opus-5-5':'Opus 5.5','gpt-6.1-sol':'GPT-6.1 Sol'};
+D.forEach(m => { m.name = NAMES[m.id] || m.id; });
+const TREND = { c: R.trend_per_year.c, d: R.trend_per_year.d, v: R.trend_per_year.v };
+const KEY = { c: ['combined', 'c90', 'Combined'], d: ['detection', 'd90', 'Detection'], v: ['deception', 'v90', 'Deception'] };
+const NS = 'http://www.w3.org/2000/svg', tip = document.getElementById('tip');
+const el = (t, a, p, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; p.appendChild(e); return e; };
+function draw(which) {
+  const [val, ci] = KEY[which];
+  const svg = document.getElementById('chart'); svg.innerHTML = '';
+  const W = 860, H = 450, L = 56, R = 70, T = 18, B = 80;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  const lo = 950, hi = 2050, y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  const t0 = Date.parse('2026-01-15'), t1 = Date.parse('2026-10-15');
+  const x = d => L + (Date.parse(d) - t0) / (t1 - t0) * (W - L - R);
+  for (let v = 1000; v <= 2000; v += 100) {
+    el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: v === 1500 ? 'var(--muted)' : 'var(--grid)', 'stroke-dasharray': v === 1500 ? '3 3' : '' }, svg);
+    el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, class: 'mono' }, svg, v);
+  }
+  ['2026-02-01', '2026-04-01', '2026-06-01', '2026-08-01', '2026-10-01'].forEach(d => {
+    el('text', { x: x(d), y: H - B + 18, 'text-anchor': 'middle', 'font-size': 11, class: 'mono' }, svg, new Date(d).toLocaleString('en', { month: 'short', timeZone: 'UTC' }) + ' 2026');
+  });
+  { // least-squares trend over release date, all models
+    const yrs = D.map(m => (Date.parse(m.date) - Date.parse('2026-01-01')) / 3.156e10), vs = D.map(m => m[val]);
+    const mx = yrs.reduce((a, b) => a + b) / yrs.length, my = vs.reduce((a, b) => a + b) / vs.length;
+    const sl = yrs.reduce((a, t, i) => a + (t - mx) * (vs[i] - my), 0) / yrs.reduce((a, t) => a + (t - mx) ** 2, 0);
+    const f = d => my + sl * ((Date.parse(d) - Date.parse('2026-01-01')) / 3.156e10 - mx);
+    el('line', { x1: x('2026-02-01'), x2: x('2026-10-01'), y1: y(f('2026-02-01')), y2: y(f('2026-10-01')), stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '6 4' }, svg);
+    const [t, ci] = TREND[which];
+    document.getElementById('trendcap').textContent = `${KEY[which][2]}: about +${t} Elo per year across 2026 releases (90% interval ${ci[0]} to ${ci[1]}). A gap of 400 Elo means the stronger model wins about 91% of otherwise even games.`;
+  }
+  // jitter close dates so marks don't collide
+  const placed = [];
+  D.forEach(m => {
+    let xx = x(m.date); while (placed.some(p => Math.abs(p - xx) < 14)) xx += 14; placed.push(xx);
+    const c = m.lab === 'Anthropic' ? 'var(--anth)' : 'var(--oai)';
+    el('line', { x1: xx, x2: xx, y1: y(m[ci][0]), y2: y(m[ci][1]), stroke: c, 'stroke-width': 2, 'stroke-linecap': 'round' }, svg);
+    const mark = m.lab === 'Anthropic'
+      ? el('circle', { cx: xx, cy: y(m[val]), r: 5.5, fill: c, stroke: 'var(--panel)', 'stroke-width': 2 }, svg)
+      : el('rect', { x: xx - 5, y: y(m[val]) - 5, width: 10, height: 10, rx: 1.5, fill: c, stroke: 'var(--panel)', 'stroke-width': 2 }, svg);
+    el('text', { x: 0, y: 0, 'font-size': 11, transform: `translate(${xx + 3},${H - B + 30}) rotate(40)`, style: 'fill:var(--ink)' }, svg, m.name);
+    const hit = el('rect', { x: xx - 10, y: y(m[ci][1]) - 6, width: 20, height: y(m[ci][0]) - y(m[ci][1]) + 12, fill: 'transparent' }, svg);
+    hit.addEventListener('mousemove', e => { tip.innerHTML = `<b>${m.name}</b> · ${m.date}<br>${KEY[which][2]} ${m[val]} (90%: ${m[ci][0]}–${m[ci][1]})`; tip.hidden = false; tip.style.left = Math.min(e.clientX + 12, innerWidth - 230) + 'px'; tip.style.top = e.clientY + 14 + 'px'; });
+    hit.addEventListener('mouseleave', () => tip.hidden = true);
+  });
+}
+for (const k of ['c', 'd', 'v']) document.getElementById('t-' + k).onclick = () => {
+  for (const j of ['c', 'd', 'v']) document.getElementById('t-' + j).setAttribute('aria-pressed', j === k);
+  draw(k);
+};
+draw('c');
+const tb = document.querySelector('#wins tbody');
+[...D].sort((a, b) => b.combined - a.combined).forEach(m => {
+  const tr = document.createElement('tr');
+  const pc = (w, n) => `${Math.round(100 * w / n)}% <span style="color:var(--muted)">(${w}/${n})</span>`;
+  tr.innerHTML = `<td>${m.name}</td><td class="n">${m.date}</td><td class="n">${pc(m.good_wins, m.good_games)}</td><td class="n">${pc(m.evil_wins, m.evil_games)}</td><td class="n">${m.combined}</td>`;
+  tb.appendChild(tr);
+});
+const se = R.setup_effects;
+document.getElementById('setupcap').textContent = `Raw win rates depend on opponents, so compare the Elo column. Evil wins ${Math.round(100 * R.evil_win_rate)}% overall; the fit gives good a base edge of ${R.good_advantage} Elo, and adjusts for setup (Elo toward good, relative to a Poisoner and a 10-player table): Spy ${se['Spy']}, Scarlet Woman ${se['Scarlet Woman']}, Baron ${se['Baron']}, 11 players ${se['11 players']}, 12 players ${se['12 players']}.`;
+</script>
