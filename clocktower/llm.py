@@ -25,6 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import anthropic
+import ssl
 from concurrent.futures import ThreadPoolExecutor
 
 MODEL = 'claude-opus-5-5'
@@ -133,6 +134,7 @@ def limiter(n):
 # min(32, cpus + 4) threads (8 on a 4-CPU machine), which silently capped a whole batch at
 # 8 requests in flight, so they get their own large pool.
 HTTP_POOL = ThreadPoolExecutor(max_workers=1024, thread_name_prefix='openai')
+TLS = ssl.create_default_context()  # one context for every request: loading the CA bundle per request was 60% of CPU
 
 
 class BudgetExceeded(RuntimeError):
@@ -342,7 +344,7 @@ class OpenAIConversation(_Base):
         closed connection") at high and max effort."""
         req = urllib.request.Request(self.URL, data=json.dumps({**body, 'stream': True}).encode(), method='POST',
                                      headers={'Authorization': f'Bearer {self.key}', 'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=900) as resp:  # the timeout is per read, between events
+        with urllib.request.urlopen(req, timeout=900, context=TLS) as resp:  # the timeout is per read, between events
             for raw in resp:
                 line = raw.decode(errors='replace').strip()
                 if not line.startswith('data: '):
@@ -464,7 +466,7 @@ class OpenRouterConversation(_Base):
     def _post(self, body):
         req = urllib.request.Request(self.URL, data=json.dumps(body).encode(), method='POST',
                                      headers={'Authorization': f'Bearer {self.key}', 'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=900) as resp:
+        with urllib.request.urlopen(req, timeout=900, context=TLS) as resp:
             return json.load(resp)
 
     _request = OpenAIConversation._request
