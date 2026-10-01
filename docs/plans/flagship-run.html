@@ -1,0 +1,252 @@
+<title>Clocktower Flagship Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with wide figures that scroll inside their own frames. */
+:root {
+  --bg: #f4f6f8; --panel: #ffffff; --ink: #18202b; --ink-2: #4a5566; --muted: #6f7a8a; --rule: #dbe1e8;
+  --accent: #8a5a12; --anth: #C2562E; --oai: #0A7FA0;
+  --seq-1: #dfe6ee; --seq-2: #a9b9cc; --seq-3: #5f7898; --seq-4: #2f4566; --off: #eef1f4;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #14171c; --panel: #1b2027; --ink: #e7ebf0; --ink-2: #b4bdca; --muted: #8b95a4; --rule: #2c333d;
+  --accent: #d9a54f; --anth: #D9714A; --oai: #1FA3B3;
+  --seq-1: #26303c; --seq-2: #3d5470; --seq-3: #6787ad; --seq-4: #a9c1de; --off: #1d2229; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #14171c; --panel: #1b2027; --ink: #e7ebf0; --ink-2: #b4bdca; --muted: #8b95a4; --rule: #2c333d;
+  --accent: #d9a54f; --anth: #D9714A; --oai: #1FA3B3;
+  --seq-1: #26303c; --seq-2: #3d5470; --seq-3: #6787ad; --seq-4: #a9c1de; --off: #1d2229; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body); }
+.page { max-width: 880px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 64px; display: grid; gap: 44px; }
+header { display: grid; gap: 14px; }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 600 clamp(30px, 5vw, 44px)/1.1 var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h2 { font: 600 26px/1.2 var(--display); margin: 0; text-wrap: balance; }
+h3 { font: 600 15px/1.4 var(--body); margin: 0; }
+p, li { max-width: 68ch; margin: 0; }
+section { display: grid; gap: 14px; min-width: 0; }
+.lede { font-size: 17px; color: var(--ink-2); }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.facts div { background: var(--panel); padding: 12px 14px; display: grid; gap: 2px; }
+.facts b { font: 500 22px/1.2 var(--mono); font-variant-numeric: tabular-nums; }
+.facts span { font-size: 12.5px; color: var(--muted); }
+.figure { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; min-width: 0; }
+.scroll { overflow-x: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+.legend i { display: inline-block; width: 11px; height: 11px; margin-right: 6px; vertical-align: -1px; }
+.dot { border-radius: 50%; } .sq { border-radius: 2px; }
+.caption { font-size: 13px; color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 500 11.5px/1.3 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.note { color: var(--ink-2); min-width: 220px; }
+#models td:first-child { white-space: nowrap; }
+.lab { display: inline-block; width: 9px; height: 9px; margin-right: 7px; vertical-align: 0; }
+.tag { font: 500 11px/1 var(--mono); padding: 3px 6px; border-radius: 3px; background: var(--off); color: var(--ink-2); white-space: nowrap; }
+svg text { font-family: var(--body); fill: var(--ink-2); }
+svg .mono { font-family: var(--mono); }
+#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; padding: 7px 9px; border-radius: 4px; max-width: 260px; line-height: 1.4; z-index: 5; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; }
+.card .big { font: 500 26px/1.1 var(--mono); font-variant-numeric: tabular-nums; }
+.verdict { border-left: 3px solid var(--accent); padding-left: 14px; }
+ol { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
+a { color: var(--oai); }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">Clocktower · protocol v16 · plan, not yet launched</div>
+    <h1>The flagship run: 21 models, May 2024 to September 2026</h1>
+    <p class="lede">Every model still served that was its lab's best at release plays Blood on the Clocktower against the models released near it. Each game rates one model's <b>detection</b> (playing the good team, finding the Demon) against another's <b>deception</b> (playing evil, hiding it). The result is two Elo ratings per model, plotted against release date for Anthropic and OpenAI.</p>
+    <div class="facts">
+      <div><b>21</b><span>models (9 Anthropic, 12 OpenAI)</span></div>
+      <div><b>155</b><span>matchups</span></div>
+      <div><b>310</b><span>games in phase 1</span></div>
+      <div><b id="f-cost">~$8.3k</b><span>phase 1, measured per-seat costs</span></div>
+      <div><b>±380</b><span>Elo, typical 95% interval per model</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>How a game works</h2>
+    <ul>
+      <li><b>One model plays every good seat, another every evil seat.</b> 10 to 12 players by seed: two Minions, the Imp, and 7 to 9 good players. A scripted Storyteller runs the night; no LLM judges anything.</li>
+      <li><b>Each day:</b> 6 private beats (each player may send one whisper per turn, to one or two players, unseen by everyone else), then 3 beats of public talk, then nominations and votes. Every day runs the same length. (In calibration, 8 private beats gave deeper conversations but the same outcomes, for 25% more cost per day.)</li>
+      <li><b>Equal settings:</b> every model at its lab's "high" effort, one 8K-token ceiling per turn (a turn that hits it retries once at low effort), and the same typography for all speech so no model's punctuation gives it away.</li>
+      <li><b>Side-swapped pairs.</b> Every matchup is 2 games on one seed: the same characters and seats, with model A good and then model B good. Setup luck cancels out.</li>
+      <li><b>Memory</b> is each model's own conversation. Eight older models only see their earlier replies, not their earlier reasoning (marked <span class="tag">replies only</span> below), which is part of what they're rated on.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The models, by release date</h2>
+    <div class="legend"><span><i class="dot" style="background:var(--anth)"></i>Anthropic</span><span><i class="sq" style="background:var(--oai)"></i>OpenAI</span></div>
+    <div class="figure scroll"><svg id="timeline" role="img" aria-label="Release timeline of the 21 models"></svg></div>
+    <div class="figure scroll"><table id="models">
+      <thead><tr><th>Model</th><th>Released</th><th>Memory</th><th class="num">$ / seat-game</th><th class="num">Games</th><th class="num">Own spend</th><th>Why it's in</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <p class="caption">$ per seat-game is measured from 50–100 recent games where we have them (v13–v15), otherwise from the e1 pilot (marked ~). "Own spend" is that model's own seats across its games, at 6 private beats (about 20% above the 4-beat measurements). Not available anywhere now: Claude Opus 4, 3.7 Sonnet, 3.5 Sonnet, 3 Opus, o1-preview, GPT-4.5; Sonnet 4 stands in for Opus 4.</p>
+  </section>
+
+  <section>
+    <h2>Who plays whom</h2>
+    <p>Every pair of models at most 10 places apart in release order plays one side-swapped pair. Far-apart games are nearly certain wins for the newer model and carry little information, so this band is about 10% sharper than a full round robin with a quarter fewer games. Models in the middle of the timeline play 40 games; the two ends play 20.</p>
+    <div class="legend"><span><i class="sq" style="background:var(--seq-1)"></i>under $30</span><span><i class="sq" style="background:var(--seq-2)"></i>$30–60</span><span><i class="sq" style="background:var(--seq-3)"></i>$60–100</span><span><i class="sq" style="background:var(--seq-4)"></i>over $100</span><span><i class="sq" style="background:var(--off);outline:1px dashed var(--rule)"></i>not played</span></div>
+    <div class="figure scroll"><svg id="matrix" role="img" aria-label="Matchup matrix: which pairs play, shaded by cost"></svg></div>
+    <p class="caption">Rows and columns in release order. Each filled cell is one matchup (2 games). Hover a cell for its cost. The darkest band is o1 and Opus 4.1, the two expensive older models.</p>
+  </section>
+
+  <section>
+    <h2>How certain the answer will be</h2>
+    <p>From simulating the 310-game plan many times with realistic win rates (good wins about two-thirds):</p>
+    <div class="two">
+      <div class="card"><span class="caption">Each model's rating</span><span class="big">±380 Elo</span><p>Typical 95% interval per model and per skill. The two ends of the timeline (GPT-4o, GPT-6.1 Sol) are widest, about ±600, because they play only 20 games.</p></div>
+      <div class="card"><span class="caption">Telling two models apart</span><span class="big">~1 generation</span><p>Neighbours a few months apart (typical gap interval ±450) can't be separated. Models a generation apart, about 300+ Elo, can. The trend over 2.5 years is clear.</p></div>
+      <div class="card"><span class="caption">Detection slope − deception slope</span><span class="big">−114 to +414</span><p>Elo per year, 95% interval, with both labs pooled. Phase 1 alone can't say which skill is improving faster unless the gap is large.</p></div>
+      <div class="card"><span class="caption">Per lab trend</span><span class="big">√2 wider</span><p>Splitting by lab halves the data per line. The pooled trend is the headline; the lab lines are context.</p></div>
+    </div>
+    <p class="verdict"><b>What sharpens it.</b> Phase 2 top-ups (below). Probe scores as a second outcome: every game records how much probability good seats put on the real Demon, which carries information even when the winner is a foregone conclusion. Halving every interval would take four times the games, about $33k.</p>
+  </section>
+
+  <section>
+    <h2>Cost and time</h2>
+    <div class="figure scroll"><table>
+      <thead><tr><th>Item</th><th class="num">Games</th><th class="num">Estimate</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td>Phase 1: the band</td><td class="num">310</td><td class="num" id="c-p1">$8.3k</td><td class="note">Measured cost per seat-game × 11 seats per side-swapped pair per model, +20% for 6 private beats. c3 cost $10–12 a game for the newest models.</td></tr>
+        <tr><td>Phase 2: top-ups</td><td class="num">~150–200</td><td class="num">$2–3k</td><td class="note">Suggested. Added where intervals are widest, by a rule and budget fixed before looking at results.</td></tr>
+        <tr><td>Already spent on the eval</td><td class="num">—</td><td class="num">~$9.0k</td><td class="note">All protocol versions, pilots and calibrations through c3 (ledger).</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>Two models are over a quarter of the bill.</b> o1 (~$6.90 a seat-game) and Opus 4.1 (~$7) are the most expensive by far: their own seats cost about $1k and $1.3k. Dropping them would leave a hole in 2024–25.</li>
+      <li><b>Wall clock: about half a day.</b> Every game launches at once. Most take 30 minutes to 2 hours; the slowest models (GPT-5.1, GPT-5.4, o3) take up to 3–4 hours. Games checkpoint every night, so a container restart costs only the current day.</li>
+      <li>Logs go to the Hugging Face dataset every 30 minutes; configs and results go to git.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Phase 2: top-ups</h2>
+    <p>After phase 1, fit the ratings, then add side-swapped pairs where they shrink uncertainty most: models close in rating with wide intervals, and the two ends of the timeline. The rule and the budget are fixed in advance and allocate by uncertainty only, never by which way results lean, so the ratings stay unbiased.</p>
+  </section>
+
+  <section>
+    <h2>Before launch</h2>
+    <ol>
+      <li><b>GPT-5.1's ceiling.</b> About 12% of its turns hit the 8K ceiling (it re-derives the whole game each turn because it can't see its earlier reasoning), and the retry thinks only briefly. Accept that as part of the model, or give it a higher ceiling (32K) as an exception.</li>
+      <li><b>Phase 2 budget</b>, fixed now so it can't be steered by results.</li>
+      <li><b>Go-ahead.</b> The plan is ready (<span class="tag">plans/f1-timeline.json</span>, seeds 120000+, output games/v16/f1).</li>
+    </ol>
+  </section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+// name, lab, released, replies-only, $/seat-game, measured?, why
+const M = [
+  ['GPT-4o','OpenAI','2024-05-13',true,0.52,true,'Flagship before reasoning models (no reasoning)'],
+  ['o1','OpenAI','2024-12-17',true,6.86,true,'First reasoning flagship'],
+  ['o3','OpenAI','2025-04-16',true,1.39,true,'Flagship'],
+  ['Sonnet 4','Anthropic','2025-05-22',false,0.95,true,'Oldest Anthropic model still served (stands in for Opus 4)'],
+  ['Opus 4.1','Anthropic','2025-08-05',false,7.0,false,'Flagship (via OpenRouter)'],
+  ['GPT-5','OpenAI','2025-08-07',true,1.2,false,'Flagship'],
+  ['Sonnet 4.5','Anthropic','2025-09-29',true,0.57,true,'Best at release (beat Opus 4.1)'],
+  ['GPT-5.1','OpenAI','2025-11-12',true,1.20,false,'Flagship'],
+  ['Opus 4.5','Anthropic','2025-11-24',false,1.32,true,'Flagship'],
+  ['GPT-5.2','OpenAI','2025-12-11',true,1.54,false,'Flagship'],
+  ['Opus 4.6','Anthropic','2026-02-05',false,2.65,false,'Flagship'],
+  ['GPT-5.4','OpenAI','2026-03-05',true,1.08,true,'Flagship'],
+  ['Opus 4.7','Anthropic','2026-04-16',false,1.15,false,'Flagship'],
+  ['GPT-5.5','OpenAI','2026-04-23',false,3.21,false,'Flagship'],
+  ['Opus 4.8','Anthropic','2026-05-28',false,3.71,false,'Flagship'],
+  ['Fable 5','Anthropic','2026-06-09',false,1.88,false,'Flagship (new top tier)'],
+  ['GPT-5.6 Sol','OpenAI','2026-07-09',false,0.78,true,'Flagship (Sol was the top tier)'],
+  ['Fable 5.1','Anthropic','2026-09-01',false,3.35,true,'Flagship'],
+  ['GPT-6 Astra','OpenAI','2026-09-03',false,1.76,true,'Flagship'],
+  ['Opus 5.5','Anthropic','2026-09-22',false,0.81,true,'Newest Anthropic release, cheaper tier'],
+  ['GPT-6.1 Sol','OpenAI','2026-09-27',false,0.31,true,'Newest OpenAI release, cheaper tier'],
+];
+const BAND = 10, SEATS = 11, SIX = 1.2, NS = 'http://www.w3.org/2000/svg';
+const n = M.length;
+const pairCost = (i, j) => SEATS * (M[i][4] + M[j][4]) * SIX;
+const plays = (i, j) => i !== j && Math.abs(i - j) <= BAND;
+let total = 0;
+const games = M.map(() => 0), own = M.map(() => 0);
+for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) if (plays(i, j)) {
+  total += pairCost(i, j); games[i] += 2; games[j] += 2;
+  own[i] += SEATS * M[i][4] * SIX; own[j] += SEATS * M[j][4] * SIX;
+}
+const k = v => '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v));
+document.getElementById('f-cost').textContent = '~' + k(total);
+document.getElementById('c-p1').textContent = k(total);
+const color = lab => lab === 'Anthropic' ? 'var(--anth)' : 'var(--oai)';
+const tip = document.getElementById('tip');
+function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; const x = Math.min(e.clientX + 12, innerWidth - 270); tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px'; }
+const hideTip = () => { tip.hidden = true; };
+function el(tag, attrs, parent, text) { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); if (text != null) e.textContent = text; parent && parent.appendChild(e); return e; }
+
+// table
+const tb = document.querySelector('#models tbody');
+M.forEach((m, i) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><span class="lab ${m[1] === 'Anthropic' ? 'dot' : 'sq'}" style="background:${color(m[1])}"></span>${m[0]}</td><td class="num">${m[2]}</td>` +
+    `<td>${m[3] ? '<span class="tag">replies only</span>' : 'reasoning'}</td><td class="num">${m[5] ? '' : '~'}${m[4].toFixed(2)}</td>` +
+    `<td class="num">${games[i]}</td><td class="num">${k(own[i])}</td><td class="note">${m[6]}</td>`;
+  tb.appendChild(tr);
+});
+
+// timeline
+(function () {
+  const W = 840, H = 250, L = 30, R = 30, mid = 125;
+  const svg = document.getElementById('timeline');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  const t0 = Date.parse('2024-04-01'), t1 = Date.parse('2026-11-01');
+  const x = d => L + (Date.parse(d) - t0) / (t1 - t0) * (W - L - R);
+  el('line', { x1: L, x2: W - R, y1: mid, y2: mid, stroke: 'var(--rule)', 'stroke-width': 2 }, svg);
+  for (const [y, m] of [[2024, 7], [2025, 1], [2025, 7], [2026, 1], [2026, 7]]) {
+    const d = `${y}-${String(m).padStart(2, '0')}-01`, xx = x(d);
+    el('line', { x1: xx, x2: xx, y1: mid - 4, y2: mid + 4, stroke: 'var(--muted)' }, svg);
+    el('text', { x: xx, y: mid + 4 + (m === 1 ? 14 : 14), 'text-anchor': 'middle', 'font-size': 11, class: 'mono' }, svg, m === 1 ? `Jan ${y}` : `Jul ${y}`);
+  }
+  // stagger labels: Anthropic above, OpenAI below, alternate heights within each lab
+  const lanes = { Anthropic: [-30, -58, -86, -114], OpenAI: [44, 70, 96, 122] };
+  const count = { Anthropic: 0, OpenAI: 0 };
+  M.forEach((m, i) => {
+    const xx = x(m[2]), lab = m[1], off = lanes[lab][count[lab]++ % 4], y = mid + off;
+    el('line', { x1: xx, x2: xx, y1: mid, y2: lab === 'Anthropic' ? y + 4 : y - 12, stroke: 'var(--rule)' }, svg);
+    if (lab === 'Anthropic') el('circle', { cx: xx, cy: mid, r: 5.5, fill: color(lab), stroke: 'var(--panel)', 'stroke-width': 2 }, svg);
+    else el('rect', { x: xx - 5, y: mid - 5, width: 10, height: 10, rx: 1.5, fill: color(lab), stroke: 'var(--panel)', 'stroke-width': 2 }, svg);
+    const t = el('text', { x: xx, y: y, 'text-anchor': xx > W - 70 ? 'end' : xx < 60 ? 'start' : 'middle', 'font-size': 12, 'font-weight': 500, style: 'fill:var(--ink)' }, svg, m[0]);
+    t.addEventListener('mousemove', e => showTip(e, `<b>${m[0]}</b><br>${m[1]} · ${m[2]}<br>${games[i]} games`)); t.addEventListener('mouseleave', hideTip);
+  });
+})();
+
+// matrix
+(function () {
+  const C = 26, LBL = 104, W = LBL + n * C + 4, H = LBL + n * C + 4;
+  const svg = document.getElementById('matrix');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  const shade = c => c < 30 ? 'var(--seq-1)' : c < 60 ? 'var(--seq-2)' : c < 100 ? 'var(--seq-3)' : 'var(--seq-4)';
+  M.forEach((m, i) => {
+    el('text', { x: LBL - 20, y: LBL + i * C + C / 2 + 4, 'text-anchor': 'end', 'font-size': 11 }, svg, m[0]);
+    const t = el('text', { x: 0, y: 0, 'font-size': 11, transform: `translate(${LBL + i * C + C / 2 + 4},${LBL - 6}) rotate(-60)` }, svg, m[0]);
+    for (let j = 0; j < n; j++) {
+      const on = plays(i, j), c = on ? pairCost(i, j) : 0;
+      const r = el('rect', { x: LBL + j * C + 1, y: LBL + i * C + 1, width: C - 2, height: C - 2, rx: 3,
+        fill: i === j ? 'transparent' : on ? shade(c) : 'var(--off)', stroke: on || i === j ? 'none' : 'var(--rule)', 'stroke-dasharray': on ? '' : '2 2' }, svg);
+      if (i !== j) {
+        r.addEventListener('mousemove', e => showTip(e, on ? `<b>${M[i][0]} vs ${M[j][0]}</b><br>2 games, ~${k(c)}` : `<b>${M[i][0]} vs ${M[j][0]}</b><br>${Math.abs(i - j)} releases apart: not played`));
+        r.addEventListener('mouseleave', hideTip);
+      }
+    }
+    el('rect', { x: LBL - 14, y: LBL + i * C + C / 2 - 4, width: 8, height: 8, rx: m[1] === 'Anthropic' ? 4 : 1.5, fill: color(m[1]) }, svg);
+  });
+})();
+</script>
