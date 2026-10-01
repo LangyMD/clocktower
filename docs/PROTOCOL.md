@@ -57,8 +57,8 @@ what it is. A change that affects play bumps `PROTOCOL` in `cli.py` and adds a s
   no bullets, arrows, emoji or markdown), so writing style can't mark a team.
 - Every model plays at its lab's "high" effort, with the same per-turn output ceiling of 8K tokens
   (thinking included). A turn that hits the ceiling is retried once with the least thinking the
-  model allows (none for adaptive Claude models, a 1K budget for older Claude models, low effort for
-  OpenAI), so thinking stays bounded without losing the turn. Out of credit (auto-reload lagging), a
+  model allows (thinking off for adaptive Claude models that allow it, else low effort; a 1K budget
+  for older Claude models; low effort for OpenAI), so thinking stays bounded without losing the turn. Out of credit (auto-reload lagging), a
   call waits up to 30 minutes and retries. A turn cut
   off twice or refused twice passes; a turn with no usable reply after four attempts stops the game,
   which resumes from its last checkpoint.

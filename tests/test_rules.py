@@ -891,6 +891,10 @@ class CeilingTests(unittest.TestCase):
                                model='claude-opus-4-8')
         self.assertEqual(c._thinking()['thinking']['type'], 'adaptive')
         self.assertEqual(c._thinking(low=True)['thinking'], {'type': 'disabled'})
+        f = ClaudeConversation(None, 'rules', {}, label='x', ledger=Ledger(tempfile.mktemp()), semaphore=NO_LIMIT,
+                               model='claude-fable-5')  # can't switch thinking off: lowest effort instead
+        self.assertEqual(f._thinking(low=True)['thinking']['type'], 'adaptive')
+        self.assertEqual(f._thinking(low=True)['output_config']['effort'], 'low')
 
     def test_openai_waits_for_credit_instead_of_failing(self):
         from clocktower import llm

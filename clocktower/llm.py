@@ -9,7 +9,7 @@ reads everything before the new turn from cache.
 
 Every model gets the same per-turn output ceiling (`max_tokens`, thinking included).
 A turn that hits the ceiling is retried once with the least thinking the model allows (none for adaptive
-Claude models, a 1K budget for older ones, low effort for OpenAI); a turn with no usable reply after four
+Claude models that allow it, else low effort; a 1K budget for older ones; low effort for OpenAI); a turn with no usable reply after four
 attempts stops the game (SeatFailed), which then resumes from its last checkpoint.
 """
 from __future__ import annotations
@@ -123,6 +123,7 @@ class NoLimit:
 
 NO_LIMIT = NoLimit()
 CREDIT_WAIT = 1800  # seconds a call waits for the account's credit to be topped up
+ALWAYS_THINKS = {'claude-fable-5', 'claude-fable-5-1', 'claude-opus-5-5', 'claude-sonnet-5-5'}  # reject thinking off
 
 
 def limiter(n):
@@ -242,7 +243,7 @@ class ClaudeConversation(_Base):
             out['effort'] = self.turn_effort(low)
         if sp['thinking'] == 'budget':  # older models: a budget of 3/4 of the ceiling (the minimum when retrying)
             thinking = {'type': 'enabled', 'budget_tokens': 1024 if low else self.max_tokens * 3 // 4}
-        elif low:  # adaptive models can't take a budget, and low effort doesn't bound them (v16 Opus 4.8): no thinking
+        elif low and self.model not in ALWAYS_THINKS:  # low effort doesn't bound adaptive models (v16 Opus 4.8): none
             thinking = {'type': 'disabled'}
         else:
             thinking = {'type': 'adaptive', 'display': 'summarized'}
@@ -262,6 +263,9 @@ class ClaudeConversation(_Base):
                         **self._thinking(low)) as stream:
                     return await stream.get_final_message()
             except anthropic.APIStatusError as e:
+                if low and 'thinking.type.disabled' in str(e) and self.model not in ALWAYS_THINKS:
+                    ALWAYS_THINKS.add(self.model)  # can't switch thinking off (Fable 5, Fable 5.1, Opus 5.5): low effort
+                    continue
                 # out of credit (auto-reload lagging) or overloaded after the client's own retries: wait
                 transient = 'credit balance' in str(e) or 'Overloaded' in str(e) or getattr(e, 'status_code', 0) >= 500
                 if not transient or waited >= CREDIT_WAIT:
