@@ -1,0 +1,62 @@
+{
+  "winner": null,
+  "reason": "seat failed: Harper: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_0",
+  "stopped": "seat failed: Harper: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_0",
+  "days": 4,
+  "seed": 140103,
+  "starting": {
+    "Alex": "Spy",
+    "Blair": "Chef",
+    "Casey": "Scarlet Woman",
+    "Drew": "Mayor",
+    "Ellis": "Soldier",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Virgin",
+    "Harper": "Slayer",
+    "Indigo": "Undertaker",
+    "Jules": "Imp"
+  },
+  "final": {
+    "Alex": "Spy",
+    "Blair": "Chef",
+    "Casey": "Scarlet Woman",
+    "Drew": "Mayor",
+    "Ellis": "Soldier",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Virgin",
+    "Harper": "Slayer",
+    "Indigo": "Undertaker",
+    "Jules": "Imp"
+  },
+  "bluffs": [
+    "Empath",
+    "Fortune Teller",
+    "Investigator"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 16.0304,
+  "calls": 457,
+  "tokens": {
+    "input": 1683,
+    "cache_read": 9393409,
+    "cache_write": 446479,
+    "output": 196388
+  },
+  "seconds": 2168.7,
+  "errors": [
+    "Harper: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_011Cfbrf5EWumeaD6gtViDtB\\'}')"
+  ],
+  "models": {
+    "Alex": "gpt-5.6-sol",
+    "Blair": "claude-fable-5-1",
+    "Casey": "gpt-5.6-sol",
+    "Drew": "claude-fable-5-1",
+    "Ellis": "claude-fable-5-1",
+    "Frankie": "claude-fable-5-1",
+    "Gray": "claude-fable-5-1",
+    "Harper": "claude-fable-5-1",
+    "Indigo": "claude-fable-5-1",
+    "Jules": "gpt-5.6-sol"
+  }
+}
