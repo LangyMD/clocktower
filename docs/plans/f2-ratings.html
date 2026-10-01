@@ -41,9 +41,9 @@ ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
 
 <div class="page">
   <header>
-    <div class="eyebrow">Clocktower · f2 · 109 games · 11 models released in 2026</div>
-    <h1>Ratings after one side-swapped pair per matchup</h1>
-    <p>Elo from one Bradley–Terry fit, P(good wins) = σ(good − evil + h), with h = +153 for the good side. Bars are 90% intervals from 1,000 bootstrap resamples of side-swapped pairs. The average model is 1500.</p>
+    <div class="eyebrow">Clocktower · 2026 models · 348 games · protocol v16–v17</div>
+    <h1>Detection and deception ratings for the 11 models released in 2026</h1>
+    <p>One Bradley–Terry fit: P(good wins) = σ(good − evil + h + setup), where setup is which Minions were in play and the table size. Bars are 90% intervals from 500 bootstrap resamples of side-swapped pairs. The average model is 1500. Opus 4.8's 20 games with lost turns (v16 retry bug) are replaced by fresh v17 games.</p>
   </header>
 
   <section>
@@ -52,31 +52,25 @@ ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
       <button id="t-d" aria-pressed="false">Detection (as good)</button>
       <button id="t-v" aria-pressed="false">Deception (as evil)</button>
     </div>
-    <div class="legend"><span><i style="background:var(--anth);border-radius:50%"></i>Anthropic</span><span><i style="background:var(--oai);border-radius:2px"></i>OpenAI</span><span>x-axis: release date</span></div>
+    <div class="legend"><span><i style="background:var(--anth);border-radius:50%"></i>Anthropic</span><span><i style="background:var(--oai);border-radius:2px"></i>OpenAI</span><span><i style="background:var(--muted);height:2px;width:16px;vertical-align:3px"></i>trend, all models</span></div>
     <div class="figure"><svg id="chart" role="img" aria-label="Elo rating by release date with 90% intervals"></svg></div>
-    <p class="caption">Two tiers are clear: every model from Fable 5 (June 2026) on sits about 360 Elo above the five earlier ones. Inside each tier the intervals overlap, so neighbours can't be ranked yet. Opus 4.6 and 4.7 have identical ratings because their win counts are identical. Opus 4.8 lost 76 turns to the retry bug and will be re-run. Detection and deception separately rest on 10 games each, so their intervals are wide.</p>
+    <p class="caption" id="trendcap"></p>
   </section>
 
   <section>
-    <h2>Spending the next ~$10k</h2>
-    <p>Expected precision, computed from each design's Fisher information using the current ratings (relative comparisons are reliable; absolute widths run a little narrower than the bootstrap's).</p>
-    <div class="figure"><table>
-      <thead><tr><th>Design</th><th class="n">Cost</th><th class="n">Games</th><th class="n">Per-model ±</th><th class="n">Neighbour gap ±</th></tr></thead>
-      <tbody>
-        <tr><td>Now (f2)</td><td class="n">—</td><td class="n">109</td><td class="n">142</td><td class="n">207</td></tr>
-        <tr><td>Every matchup +1 pair</td><td class="n">$4.3k</td><td class="n">+110</td><td class="n">104</td><td class="n">151</td></tr>
-        <tr><td>Every matchup +2 pairs</td><td class="n">$8.7k</td><td class="n">+220</td><td class="n">86</td><td class="n">125</td></tr>
-        <tr><td>Every matchup +3 pairs</td><td class="n">$13.0k</td><td class="n">+330</td><td class="n">75</td><td class="n">109</td></tr>
-        <tr class="pick"><td><b>Optimal allocation</b> (near neighbours, cost-weighted)</td><td class="n">$10.0k</td><td class="n">+730</td><td class="n">62</td><td class="n">85</td></tr>
-      </tbody>
-    </table></div>
-    <p class="caption">± is the 90% half-width in Elo. "Neighbour gap" is the difference between models adjacent in release order: the number that decides whether we can say each release beat the last.</p>
+    <h2>Win rates</h2>
+    <div class="figure"><table id="wins"><thead><tr><th>Model</th><th>Released</th><th class="n">Wins as good</th><th class="n">Wins as evil</th><th class="n">Combined Elo</th></tr></thead><tbody></tbody></table></div>
+    <p class="caption" id="setupcap"></p>
   </section>
 </div>
 <div id="tip" hidden></div>
 
 <script>
-const D = [{"name": "Opus 4.6", "lab": "Anthropic", "date": "2026-02-05", "combined": 1336, "detection": 1397, "deception": 1286, "c90": [1158, 1502], "d90": [1220, 1584], "v90": [1131, 1434]}, {"name": "GPT-5.4", "lab": "OpenAI", "date": "2026-03-05", "combined": 1305, "detection": 1365, "deception": 1290, "c90": [1163, 1426], "d90": [1185, 1531], "v90": [1156, 1429]}, {"name": "Opus 4.7", "lab": "Anthropic", "date": "2026-04-16", "combined": 1336, "detection": 1397, "deception": 1286, "c90": [1175, 1489], "d90": [1239, 1566], "v90": [1126, 1469]}, {"name": "GPT-5.5", "lab": "OpenAI", "date": "2026-04-23", "combined": 1336, "detection": 1233, "deception": 1494, "c90": [1145, 1467], "d90": [1087, 1366], "v90": [1297, 1661]}, {"name": "Opus 4.8", "lab": "Anthropic", "date": "2026-05-28", "combined": 1194, "detection": 1174, "deception": 1317, "c90": [989, 1347], "d90": [1025, 1309], "v90": [1146, 1481]}, {"name": "Fable 5", "lab": "Anthropic", "date": "2026-06-09", "combined": 1665, "detection": 1700, "deception": 1603, "c90": [1587, 1774], "d90": [1554, 1853], "v90": [1462, 1736]}, {"name": "GPT-5.6 Sol", "lab": "OpenAI", "date": "2026-07-09", "combined": 1610, "detection": 1709, "deception": 1488, "c90": [1480, 1751], "d90": [1562, 1843], "v90": [1307, 1647]}, {"name": "Fable 5.1", "lab": "Anthropic", "date": "2026-09-01", "combined": 1581, "detection": 1516, "deception": 1619, "c90": [1481, 1696], "d90": [1349, 1710], "v90": [1459, 1759]}, {"name": "GPT-6 Astra", "lab": "OpenAI", "date": "2026-09-03", "combined": 1756, "detection": 1820, "deception": 1668, "c90": [1591, 1921], "d90": [1705, 1894], "v90": [1481, 1856]}, {"name": "Opus 5.5", "lab": "Anthropic", "date": "2026-09-22", "combined": 1623, "detection": 1507, "deception": 1696, "c90": [1516, 1772], "d90": [1362, 1689], "v90": [1559, 1826]}, {"name": "GPT-6.1 Sol", "lab": "OpenAI", "date": "2026-09-27", "combined": 1756, "detection": 1681, "deception": 1754, "c90": [1641, 1924], "d90": [1527, 1836], "v90": [1609, 1910]}];
+const R = {"games": 348, "evil_win_rate": 0.31, "good_advantage": 94, "setup_effects": {"Spy": 72, "Scarlet Woman": -53, "Baron": 86, "11 players": 24, "12 players": 75}, "trend_per_year": {"c": [625, [509, 788]], "d": [606, [442, 814]], "v": [677, [559, 877]]}, "models": [{"id": "claude-opus-4-6", "date": "2026-02-05", "lab": "Anthropic", "combined": 1427, "c90": [1343, 1504], "detection": 1505, "d90": [1405, 1639], "deception": 1291, "v90": [1125, 1394], "good_games": 27, "good_wins": 18, "evil_games": 27, "evil_wins": 3}, {"id": "gpt-5.4", "date": "2026-03-05", "lab": "OpenAI", "combined": 1291, "c90": [1207, 1371], "detection": 1330, "d90": [1214, 1436], "deception": 1244, "v90": [1125, 1348], "good_games": 29, "good_wins": 15, "evil_games": 33, "evil_wins": 3}, {"id": "claude-opus-4-7", "date": "2026-04-16", "lab": "Anthropic", "combined": 1265, "c90": [1133, 1360], "detection": 1285, "d90": [1148, 1400], "deception": 1269, "v90": [1110, 1398], "good_games": 27, "good_wins": 13, "evil_games": 27, "evil_wins": 4}, {"id": "gpt-5.5", "date": "2026-04-23", "lab": "OpenAI", "combined": 1470, "c90": [1391, 1547], "detection": 1357, "d90": [1245, 1452], "deception": 1567, "v90": [1455, 1681], "good_games": 33, "good_wins": 22, "evil_games": 32, "evil_wins": 16}, {"id": "claude-opus-4-8", "date": "2026-05-28", "lab": "Anthropic", "combined": 1196, "c90": [1050, 1302], "detection": 1174, "d90": [1027, 1314], "deception": 1296, "v90": [1143, 1417], "good_games": 19, "good_wins": 8, "evil_games": 19, "evil_wins": 4}, {"id": "claude-fable-5", "date": "2026-06-09", "lab": "Anthropic", "combined": 1559, "c90": [1457, 1669], "detection": 1457, "d90": [1295, 1631], "deception": 1646, "v90": [1500, 1794], "good_games": 19, "good_wins": 12, "evil_games": 19, "evil_wins": 7}, {"id": "gpt-5.6-sol", "date": "2026-07-09", "lab": "OpenAI", "combined": 1588, "c90": [1531, 1644], "detection": 1647, "d90": [1558, 1760], "deception": 1525, "v90": [1426, 1625], "good_games": 55, "good_wins": 45, "evil_games": 53, "evil_wins": 16}, {"id": "claude-fable-5-1", "date": "2026-09-01", "lab": "Anthropic", "combined": 1592, "c90": [1537, 1678], "detection": 1568, "d90": [1471, 1677], "deception": 1595, "v90": [1479, 1721], "good_games": 36, "good_wins": 26, "evil_games": 36, "evil_wins": 13}, {"id": "gpt-6-astra", "date": "2026-09-03", "lab": "OpenAI", "combined": 1855, "c90": [1773, 1970], "detection": 1927, "d90": [1861, 1991], "deception": 1801, "v90": [1680, 1943], "good_games": 25, "good_wins": 25, "evil_games": 25, "evil_wins": 15}, {"id": "claude-opus-5-5", "date": "2026-09-22", "lab": "Anthropic", "combined": 1531, "c90": [1465, 1599], "detection": 1477, "d90": [1380, 1584], "deception": 1579, "v90": [1465, 1686], "good_games": 44, "good_wins": 25, "evil_games": 43, "evil_wins": 11}, {"id": "gpt-6.1-sol", "date": "2026-09-27", "lab": "OpenAI", "combined": 1727, "c90": [1672, 1811], "detection": 1773, "d90": [1671, 1942], "deception": 1686, "v90": [1591, 1811], "good_games": 34, "good_wins": 31, "evil_games": 34, "evil_wins": 16}]};
+const D = R.models;
+const NAMES = {'claude-opus-4-6':'Opus 4.6','gpt-5.4':'GPT-5.4','claude-opus-4-7':'Opus 4.7','gpt-5.5':'GPT-5.5','claude-opus-4-8':'Opus 4.8','claude-fable-5':'Fable 5','gpt-5.6-sol':'GPT-5.6 Sol','claude-fable-5-1':'Fable 5.1','gpt-6-astra':'GPT-6 Astra','claude-opus-5-5':'Opus 5.5','gpt-6.1-sol':'GPT-6.1 Sol'};
+D.forEach(m => { m.name = NAMES[m.id] || m.id; });
+const TREND = { c: R.trend_per_year.c, d: R.trend_per_year.d, v: R.trend_per_year.v };
 const KEY = { c: ['combined', 'c90', 'Combined'], d: ['detection', 'd90', 'Detection'], v: ['deception', 'v90', 'Deception'] };
 const NS = 'http://www.w3.org/2000/svg', tip = document.getElementById('tip');
 const el = (t, a, p, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; p.appendChild(e); return e; };
@@ -85,7 +79,7 @@ function draw(which) {
   const svg = document.getElementById('chart'); svg.innerHTML = '';
   const W = 860, H = 440, L = 56, R = 20, T = 18, B = 70;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);
-  const lo = 950, hi = 2000, y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  const lo = 950, hi = 2050, y = v => T + (hi - v) / (hi - lo) * (H - T - B);
   const t0 = Date.parse('2026-01-15'), t1 = Date.parse('2026-10-15');
   const x = d => L + (Date.parse(d) - t0) / (t1 - t0) * (W - L - R);
   for (let v = 1000; v <= 2000; v += 100) {
@@ -95,6 +89,15 @@ function draw(which) {
   ['2026-02-01', '2026-04-01', '2026-06-01', '2026-08-01', '2026-10-01'].forEach(d => {
     el('text', { x: x(d), y: H - B + 18, 'text-anchor': 'middle', 'font-size': 11, class: 'mono' }, svg, new Date(d).toLocaleString('en', { month: 'short', timeZone: 'UTC' }) + ' 2026');
   });
+  { // least-squares trend over release date, all models
+    const yrs = D.map(m => (Date.parse(m.date) - Date.parse('2026-01-01')) / 3.156e10), vs = D.map(m => m[val]);
+    const mx = yrs.reduce((a, b) => a + b) / yrs.length, my = vs.reduce((a, b) => a + b) / vs.length;
+    const sl = yrs.reduce((a, t, i) => a + (t - mx) * (vs[i] - my), 0) / yrs.reduce((a, t) => a + (t - mx) ** 2, 0);
+    const f = d => my + sl * ((Date.parse(d) - Date.parse('2026-01-01')) / 3.156e10 - mx);
+    el('line', { x1: x('2026-02-01'), x2: x('2026-10-01'), y1: y(f('2026-02-01')), y2: y(f('2026-10-01')), stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '6 4' }, svg);
+    const [t, ci] = TREND[which];
+    document.getElementById('trendcap').textContent = `${KEY[which][2]}: about +${t} Elo per year across 2026 releases (90% interval ${ci[0]} to ${ci[1]}). A gap of 400 Elo means the stronger model wins about 91% of otherwise even games.`;
+  }
   // jitter close dates so marks don't collide
   const placed = [];
   D.forEach(m => {
@@ -115,4 +118,13 @@ for (const k of ['c', 'd', 'v']) document.getElementById('t-' + k).onclick = () 
   draw(k);
 };
 draw('c');
+const tb = document.querySelector('#wins tbody');
+[...D].sort((a, b) => b.combined - a.combined).forEach(m => {
+  const tr = document.createElement('tr');
+  const pc = (w, n) => `${Math.round(100 * w / n)}% <span style="color:var(--muted)">(${w}/${n})</span>`;
+  tr.innerHTML = `<td>${m.name}</td><td class="n">${m.date}</td><td class="n">${pc(m.good_wins, m.good_games)}</td><td class="n">${pc(m.evil_wins, m.evil_games)}</td><td class="n">${m.combined}</td>`;
+  tb.appendChild(tr);
+});
+const se = R.setup_effects;
+document.getElementById('setupcap').textContent = `Raw win rates depend on opponents, so compare the Elo column. Evil wins ${Math.round(100 * R.evil_win_rate)}% overall; the fit gives good a base edge of ${R.good_advantage} Elo, and adjusts for setup (Elo toward good, relative to a Poisoner and a 10-player table): Spy ${se['Spy']}, Scarlet Woman ${se['Scarlet Woman']}, Baron ${se['Baron']}, 11 players ${se['11 players']}, 12 players ${se['12 players']}.`;
 </script>
