@@ -6,7 +6,7 @@ pits one model's detection (finding the Demon) against another's deception (hidi
 game of claims, whispers, bluffs and votes. It measures whether a model can hold coherent state and
 a consistent story for hours of play.
 
-- **The rules of the eval:** [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (v15). Why each rule is what it
+- **The rules of the eval:** [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (v16). Why each rule is what it
   is: [`docs/protocol-history.md`](docs/protocol-history.md).
 - **Experiments so far and planned:** [`CLAUDE.md`](CLAUDE.md) (also the handbook for agent sessions).
 - **Game logs:** the private Hugging Face dataset `dwarkesh/clocktower-games` (every transcript, event,
@@ -25,9 +25,9 @@ python -m clocktower run --good-model claude-opus-5-5,gpt-6.1-sol ...      # a m
 python -m clocktower run ... --seat-model good:claude-opus-5-5:1          # upgrade one good seat
 python -m clocktower run ... --seat-model Imp:gpt-6-astra                 # a different model plays the Imp
 
-python -m clocktower plan plans/timeline-models.json --within 10 --pairs 1 --seed 80000 --out games/v13/f1 > plans/f1.json
+python -m clocktower plan plans/timeline-models.json --within 10 --pairs 1 --seed 120000 --out games/v16/f1 > plans/f1.json
 python -m clocktower tournament plans/f1.json      # every matchup at once, resumable
-python -m clocktower analyze games/v13/f1-*/game-* # win rates, probes, detection and deception ratings
+python -m clocktower analyze games/v16/f1-*/game-* # win rates, probes, detection and deception ratings
 python -m clocktower fetch v9/e1-*                 # download logs from the dataset
 python -m clocktower play --seat Casey             # play a seat yourself at http://127.0.0.1:8765
 python -m clocktower watch                         # spectator app; `site` builds it as static files

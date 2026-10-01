@@ -283,7 +283,7 @@ both). The harness read found model tells (GPT-5.1 non-breaking hyphens, o3 bull
 "[cut off]") and silent passes on repeated non-answers; both fixed. Three container restarts during w1
 killed games in progress, which led to checkpoints at every dusk and Hugging Face snapshots.
 
-## v15 — current (Oct 2): a public whisper log, 6 beats
+## v15 (Oct 2): a public whisper log, 6 beats
 v14 with three changes, all the user's. (1) After each private beat everyone, the dead too, sees who
 whispered to whom (not the words), as at a real table where you see who steps aside together. The w1
 realism read found "swarms" (many players whispering the same popular player) and evil briefing both
@@ -294,3 +294,15 @@ are left today, and both say the log is public. Also from the w1 harness read: o
 hyphen variants, bullets, arrows and emoji; cut text ends "..." for every model; a seat with no usable
 reply after 4 attempts fails the game instead of passing silently; a notice when someone speaks aloud in
 private time. c3 calibrates it: the same 10 side-swapped pairs at 6 beats (arm A) and 8 beats (arm C).
+
+c3 (Oct 2, 40 games, seeds 110000+, `games/v15/c3-*`): evil won 4/19 at 6 private beats and 4/20 at 8,
+against about a third without the log (w1). Evil did not adapt to the public log: 97% of evil seats sent
+their first whisper to a teammate, and 43–46% of evil's day-1 whispers went to teammates (about 20% by
+chance). 6 and 8 beats did not differ. c3h (10 games on arm A's seeds) added one neutral line to the
+prompt ("The whisper log is evidence ... players who huddle early and often get read as a team"): evil's
+first whisper still went to a teammate 83% of the time, and evil won 1 of 9. The user dropped the log.
+
+## v16 — current (Oct 2): private whispers again, 6 beats
+v15 without the public whisper log (and without the c3h hint): whispers are invisible again, as in v14.
+Kept from v15: 6 private beats, the prompt's statement of the number of beats ("choose carefully whom to
+spend them on") and the whispers left on each private turn, and the harness fixes.

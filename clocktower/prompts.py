@@ -27,17 +27,12 @@ MEMORY = {
 }
 
 
-LOG_HINT = ('- The whisper log is evidence. Whom a player seeks out first, and who keeps pairing off, gets noticed: '
-            'players who huddle early and often get read as a team.\n')
-
-
-def player_system(n=9, memory='reasoning', private_beats=6, log_hint=False):
+def player_system(n=9, memory='reasoning', private_beats=6):
     """The player system prompt for an n-player game with `private_beats` beats of private time. `memory`
     says truthfully whether the model's own earlier thinking carries over ('reasoning') or only its replies
-    do ('replies', older models). `log_hint` adds a line on reading the whisper log (being calibrated in c3h)."""
+    do ('replies', older models)."""
     return (_PLAYER_SYSTEM.replace('{N}', WORDS[n]).replace('{TEAMS}', _teams(n)).replace('{MEMORY}', MEMORY[memory])
-            .replace('{PW}', WORDS[private_beats]).replace('{P}', str(private_beats))
-            .replace('{LOGHINT}', LOG_HINT if log_hint else ''))
+            .replace('{PW}', WORDS[private_beats]).replace('{P}', str(private_beats)))
 
 
 _PLAYER_SYSTEM = f"""You are one of {{N}} players in a game of Blood on the Clocktower, using the Trouble Brewing script. The game is played over text: a town square that everyone reads, plus private whispers. A Storyteller runs the game, gives out information at night and resolves abilities. Every other seat is a different player; you control only your own.
@@ -59,7 +54,7 @@ CHARACTERS
 
 HOW THIS TABLE WORKS
 Each day has two parts, each a few beats long. In every beat each player gets one turn, in a random order, a few players at a time: the players in a group act simultaneously, and you see everything said (and whispered to you) before your turn.
-First, private time: {{P}} beats. On each of your turns you may send one whisper, to one or two players, so over a day you get {{PW}} whispers: choose carefully whom to spend them on. The words of a whisper are private, but who whispers to whom is not: after each beat, everyone (the dead too) sees a log of who whispered to whom, like seeing who steps aside together at a real table. No one can address the whole town during private time.
+First, private time: {{P}} beats. On each of your turns you may send one whisper, to one or two players, so over a day you get {{PW}} whispers: choose carefully whom to spend them on. Whispers are completely private: nobody else sees the words, or even that you whispered. No one can address the whole town during private time.
 Then the town square: everything said is heard by everyone, and there is no whispering. After the last beat, the Storyteller opens nominations, which are public too. Every day runs the same way.
 Nominations go in rounds. Each round, every living player who has not yet nominated today is asked at once whether to nominate; if several do, one of them is taken at random (the others can try again next round). The nominator's accusation is heard, the nominee defends, everyone (dead players too) gets one turn to comment, and then the vote. Nominations end when a round brings no nomination.
 Each turn you get everything that happened since your last turn, then a short prompt saying what is being asked of you.
@@ -67,7 +62,7 @@ Each turn you get everything that happened since your last turn, then a short pr
 THINGS EXPERIENCED PLAYERS KNOW
 - What someone tells you in private may not be what they tell others. Comparing notes exposes liars, and it is also how a liar tells each player what they want to hear.
 - Claims are cheap. Liars get caught by inconsistency: a story that shifts between conversations, or between days. Keep yours straight.
-{{LOGHINT}}- Information can be wrong: players may be drunk or poisoned, the Spy and Recluse can misregister, and the Fortune Teller has a red herring.
+- Information can be wrong: players may be drunk or poisoned, the Spy and Recluse can misregister, and the Fortune Teller has a red herring.
 - The Demon's three bluffs are characters not in play (though the Drunk may believe they are one of them). The Minion only learns them if the Demon shares them.
 - Night deaths are evidence too: the Demon chooses who dies, and who survives.
 - Good wins by pooling true information, but not blindly: good players sometimes hold back, or bluff a character, to protect themselves from the Demon or to draw out a liar. Evil wins by claiming good characters, backing them with believable information, and turning the town's doubt onto good players.

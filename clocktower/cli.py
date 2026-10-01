@@ -32,7 +32,7 @@ from .schema import player_schema
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
-PROTOCOL = 'v15'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
+PROTOCOL = 'v16'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
 DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
@@ -124,7 +124,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
             assigned.update(seat_models(game.g, args, seed))
         model, effort = assigned[name]
         game.meta['models'][name] = model if effort == args.effort else f'{model}@{effort}'
-        system = player_system(len(names), spec(model)['memory'], args.private_beats, args.log_hint)
+        system = player_system(len(names), spec(model)['memory'], args.private_beats)
         c = conversation(env.client, system, player_schema(names), label=name, ledger=env.ledger,
                          semaphore=env.semaphore, on_call=game.record_call, model=model, effort=effort,
                          max_tokens=args.max_output, ttl=ttl, flex=args.flex)
@@ -141,11 +141,11 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'storyteller': 'scripted',
               'seed': seed,
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
-              'whispers': 'log', 'log_hint': args.log_hint, 'waves': args.waves, 'minion': minion,
+              'whispers': 'private', 'waves': args.waves, 'minion': minion,
               'max_days': args.days, 'human': human, 'characters': characters, 'probes': args.probes,
               'openai_tier': 'flex' if args.flex else 'default',
               'players': len(names), 'players_arg': str(args.players),
-              'player_prompt_sha': hashlib.sha256(player_system(len(names), private_beats=args.private_beats, log_hint=args.log_hint).encode()).hexdigest()[:12]}
+              'player_prompt_sha': hashlib.sha256(player_system(len(names), private_beats=args.private_beats).encode()).hexdigest()[:12]}
     (out / 'config.json').write_text(json.dumps(config, indent=2))
     return game, convs
 
@@ -266,7 +266,6 @@ def main(argv=None):
         p = sub.add_parser(name)
         p.add_argument('--seed', type=int)
         p.add_argument('--private-beats', type=int, default=6, help='whisper-only beats each day')
-        p.add_argument('--log-hint', action='store_true', help='tell players the whisper log is evidence (c3h)')
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=15, help='stop after this many days')

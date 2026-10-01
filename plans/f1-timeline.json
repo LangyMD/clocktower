@@ -1,6 +1,6 @@
 {
- "out": "games/v13/f1",
- "seed": 80000,
+ "out": "games/v16/f1",
+ "seed": 120000,
  "players": "10-12",
  "matchups": [
   {

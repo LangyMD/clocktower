@@ -249,23 +249,15 @@ class DayTests(unittest.TestCase):
         self.assertEqual(sum(e['kind'] == 'say' for e in g.events), 9)
         self.assertEqual(sum(e['kind'] == 'whisper' for e in g.events), 1)
 
-    def test_everyone_sees_who_whispered_to_whom_after_each_private_beat(self):
+    def test_nobody_else_learns_that_a_whisper_happened(self):
         def policy(name, req):
             if req.kind == 'beat':
-                return {'whispers': [{'to': [B, C], 'text': 'psst'}] if name == A else []}
+                return {'whispers': [{'to': [B], 'text': 'psst'}] if name == A else []}
         g = self.prepared(BASE, policy)
-        g.g[D].alive = False
-        run(g.beat(1, 2, private=True))
-        log = next(e for e in g.events if e['kind'] == 'whisper_log')
-        self.assertEqual(log['to'], 'public')
-        self.assertEqual(log['data']['sent'][A], [B, C])
-        self.assertEqual(log['data']['sent'][E], [])
-        line = g.buf[D][-1]  # the dead see it too
-        self.assertIn(f'{A} → {B} and {C}', line)
-        self.assertIn(f'{E} → no one', line)
-        self.assertNotIn('psst', line)
+        run(g.beat(1, 1, private=True))
+        self.assertFalse(any(A in x and B in x for x in g.buf[C]))
 
-    def test_private_turn_counts_whispers_left_and_warns_the_log_is_public(self):
+    def test_private_turn_counts_whispers_left(self):
         prompts = {}
         def policy(name, req):
             prompts[name] = req.prompt
@@ -274,18 +266,14 @@ class DayTests(unittest.TestCase):
         g.private_beats = 6
         run(g.beat(1, 2, private=True))
         self.assertIn('private time 2 of 6 — your turn (4 whispers left today after this one).', prompts[A])
-        self.assertIn('Everyone will see whom you whispered to', prompts[A])
 
-    def test_system_prompt_states_the_beats_and_the_public_log(self):
+    def test_system_prompt_states_the_beats(self):
         from clocktower.prompts import player_system
         s = player_system(10, private_beats=8)
         self.assertIn('private time: 8 beats', s)
         self.assertIn('you get eight whispers', s)
-        self.assertIn('who whispers to whom is not', s)
+        self.assertIn('nobody else sees the words, or even that you whispered', s)
         self.assertNotIn('{P', s)
-        self.assertNotIn('{LOGHINT}', s)
-        self.assertNotIn('whisper log is evidence', s)
-        self.assertIn('- The whisper log is evidence.', player_system(10, log_hint=True))
 
     def test_tie_means_no_execution(self):
         def policy(name, req):
