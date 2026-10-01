@@ -1,0 +1,60 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 5,
+  "seed": 140103,
+  "starting": {
+    "Alex": "Spy",
+    "Blair": "Chef",
+    "Casey": "Scarlet Woman",
+    "Drew": "Mayor",
+    "Ellis": "Soldier",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Virgin",
+    "Harper": "Slayer",
+    "Indigo": "Undertaker",
+    "Jules": "Imp"
+  },
+  "final": {
+    "Alex": "Spy",
+    "Blair": "Chef",
+    "Casey": "Scarlet Woman",
+    "Drew": "Mayor",
+    "Ellis": "Soldier",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Virgin",
+    "Harper": "Slayer",
+    "Indigo": "Undertaker",
+    "Jules": "Imp"
+  },
+  "bluffs": [
+    "Empath",
+    "Fortune Teller",
+    "Investigator"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 24.9741,
+  "calls": 591,
+  "tokens": {
+    "input": 2172,
+    "cache_read": 15260080,
+    "cache_write": 938803,
+    "output": 240994
+  },
+  "seconds": 2799.7,
+  "errors": [],
+  "models": {
+    "Alex": "gpt-5.6-sol",
+    "Blair": "claude-fable-5-1",
+    "Casey": "gpt-5.6-sol",
+    "Drew": "claude-fable-5-1",
+    "Ellis": "claude-fable-5-1",
+    "Frankie": "claude-fable-5-1",
+    "Gray": "claude-fable-5-1",
+    "Harper": "claude-fable-5-1",
+    "Indigo": "claude-fable-5-1",
+    "Jules": "gpt-5.6-sol"
+  }
+}
