@@ -27,12 +27,17 @@ MEMORY = {
 }
 
 
-def player_system(n=9, memory='reasoning', private_beats=6):
+LOG_HINT = ('- The whisper log is evidence. Whom a player seeks out first, and who keeps pairing off, gets noticed: '
+            'players who huddle early and often get read as a team.\n')
+
+
+def player_system(n=9, memory='reasoning', private_beats=6, log_hint=False):
     """The player system prompt for an n-player game with `private_beats` beats of private time. `memory`
     says truthfully whether the model's own earlier thinking carries over ('reasoning') or only its replies
-    do ('replies', older models)."""
+    do ('replies', older models). `log_hint` adds a line on reading the whisper log (being calibrated in c3h)."""
     return (_PLAYER_SYSTEM.replace('{N}', WORDS[n]).replace('{TEAMS}', _teams(n)).replace('{MEMORY}', MEMORY[memory])
-            .replace('{PW}', WORDS[private_beats]).replace('{P}', str(private_beats)))
+            .replace('{PW}', WORDS[private_beats]).replace('{P}', str(private_beats))
+            .replace('{LOGHINT}', LOG_HINT if log_hint else ''))
 
 
 _PLAYER_SYSTEM = f"""You are one of {{N}} players in a game of Blood on the Clocktower, using the Trouble Brewing script. The game is played over text: a town square that everyone reads, plus private whispers. A Storyteller runs the game, gives out information at night and resolves abilities. Every other seat is a different player; you control only your own.
@@ -62,7 +67,7 @@ Each turn you get everything that happened since your last turn, then a short pr
 THINGS EXPERIENCED PLAYERS KNOW
 - What someone tells you in private may not be what they tell others. Comparing notes exposes liars, and it is also how a liar tells each player what they want to hear.
 - Claims are cheap. Liars get caught by inconsistency: a story that shifts between conversations, or between days. Keep yours straight.
-- Information can be wrong: players may be drunk or poisoned, the Spy and Recluse can misregister, and the Fortune Teller has a red herring.
+{{LOGHINT}}- Information can be wrong: players may be drunk or poisoned, the Spy and Recluse can misregister, and the Fortune Teller has a red herring.
 - The Demon's three bluffs are characters not in play (though the Drunk may believe they are one of them). The Minion only learns them if the Demon shares them.
 - Night deaths are evidence too: the Demon chooses who dies, and who survives.
 - Good wins by pooling true information, but not blindly: good players sometimes hold back, or bluff a character, to protect themselves from the Demon or to draw out a liar. Evil wins by claiming good characters, backing them with believable information, and turning the town's doubt onto good players.

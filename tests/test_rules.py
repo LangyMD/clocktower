@@ -283,6 +283,9 @@ class DayTests(unittest.TestCase):
         self.assertIn('you get eight whispers', s)
         self.assertIn('who whispers to whom is not', s)
         self.assertNotIn('{P', s)
+        self.assertNotIn('{LOGHINT}', s)
+        self.assertNotIn('whisper log is evidence', s)
+        self.assertIn('- The whisper log is evidence.', player_system(10, log_hint=True))
 
     def test_tie_means_no_execution(self):
         def policy(name, req):

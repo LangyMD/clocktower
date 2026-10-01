@@ -1,0 +1,27 @@
+{
+ "out": "games/v15/c3h",
+ "seed": 110000,
+ "players": "10-12",
+ "matchups": [
+  {
+   "name": "opus55-v-sol61",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 3,
+   "seed": 110000,
+   "args": [
+    "--log-hint"
+   ]
+  },
+  {
+   "name": "sonnet55-v-sol61",
+   "good": "claude-sonnet-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 2,
+   "seed": 110100,
+   "args": [
+    "--log-hint"
+   ]
+  }
+ ]
+}
