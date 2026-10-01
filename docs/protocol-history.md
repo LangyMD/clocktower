@@ -271,3 +271,14 @@ and the good team read as one mind). More beats with one whisper each gives more
 makes whom you talk to a visible choice. Cost: private time was ~34% of spend with 3 beats; 4 beats of
 one whisper is roughly +10% cost and wall-clock. A 6-beat variant (`--private-beats 6`) is tested
 alongside. The w1 experiment (50 games) checks whether it tilts balance toward either side.
+
+w1 (Oct 1, 50 games, seeds 90000+, `games/v14/w1-*`; reader reports in docs/analysis/w1/): evil won 12/38
+at 4 private beats (32%) and 5/12 at 6 (42%), against 19/58 (33%) under the old 3x2 rule for the same
+model pairings: no detectable shift (adjusted odds ratios 1.06 and 1.38, wide intervals). The "hive mind"
+comes from public day-1 claims, not whispers: good players named their role to ~2 people in private
+under both rules, and two-thirds claim publicly on day 1. Private talk reads more like a real table;
+6 beats raises real back-and-forth threads (3+ messages, 2+ turn changes) from 24% to 36% (old rule
+33%) for ~30% more private-time spend. Evil still briefs both Minions in beat 1 (39/40, one whisper to
+both). The harness read found model tells (GPT-5.1 non-breaking hyphens, o3 bullets/emoji, o3-only
+"[cut off]") and silent passes on repeated non-answers; both fixed. Three container restarts during w1
+killed games in progress, which led to checkpoints at every dusk and Hugging Face snapshots.

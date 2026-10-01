@@ -39,7 +39,10 @@ is what it is, and every past run: `docs/protocol-history.md`.
 4. Watch it yourself (the user wants an agent, not a script that kills batches): `clocktower.supervise.
    scan/alarms/report` give spend, lost/capped/refused turns and stalls; read a few transcripts early.
    Pause only if the design is broken. Kill processes by exact PID: `pkill -f PATTERN` matches your own
-   shell and kills it. Tournament processes start with the full python path, so match `clocktower run`.
+   shell and kills it. Tournament processes start with the full python path, so match `clocktower run`,
+   and write the pattern as `'[c]locktower run'` so a watcher's own command line doesn't match itself.
+   The container restarts every so often (three times on Oct 1); every game checkpoints at each dusk, so
+   after a restart rerun the same `tournament` command and games resume from their last dusk.
 5. After: `python -m clocktower analyze games/v13/NAME-*/game-*`; upload logs with
    `hf upload dwarkesh/clocktower-games games/v13 v13 --repo-type dataset`; commit configs, results and
    the ledger; republish the viewer if asked (`python -m clocktower site`, then the Artifact tool with
