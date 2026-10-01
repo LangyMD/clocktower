@@ -1,0 +1,66 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 6,
+  "seed": 150602,
+  "starting": {
+    "Alex": "Soldier",
+    "Blair": "Butler",
+    "Casey": "Empath",
+    "Drew": "Monk",
+    "Ellis": "Recluse",
+    "Frankie": "Scarlet Woman",
+    "Gray": "Saint",
+    "Harper": "Drunk",
+    "Indigo": "Baron",
+    "Jules": "Imp",
+    "Kit": "Investigator",
+    "Logan": "Mayor"
+  },
+  "final": {
+    "Alex": "Soldier",
+    "Blair": "Butler",
+    "Casey": "Empath",
+    "Drew": "Monk",
+    "Ellis": "Recluse",
+    "Frankie": "Imp",
+    "Gray": "Saint",
+    "Harper": "Drunk",
+    "Indigo": "Baron",
+    "Jules": "Imp",
+    "Kit": "Investigator",
+    "Logan": "Mayor"
+  },
+  "bluffs": [
+    "Undertaker",
+    "Librarian",
+    "Washerwoman"
+  ],
+  "red_herring": null,
+  "drunk_as": "Ravenkeeper",
+  "cost": 146.0478,
+  "calls": 1188,
+  "tokens": {
+    "input": 566392,
+    "cache_read": 79149251,
+    "cache_write": 11006355,
+    "output": 1364967
+  },
+  "seconds": 10675.0,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-4-8",
+    "Blair": "claude-opus-4-8",
+    "Casey": "claude-opus-4-8",
+    "Drew": "claude-opus-4-8",
+    "Ellis": "claude-opus-4-8",
+    "Frankie": "gpt-5.5",
+    "Gray": "claude-opus-4-8",
+    "Harper": "claude-opus-4-8",
+    "Indigo": "gpt-5.5",
+    "Jules": "gpt-5.5",
+    "Kit": "claude-opus-4-8",
+    "Logan": "claude-opus-4-8"
+  }
+}
