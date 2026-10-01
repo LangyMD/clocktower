@@ -1,0 +1,60 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 5,
+  "seed": 135000,
+  "starting": {
+    "Alex": "Chef",
+    "Blair": "Slayer",
+    "Casey": "Imp",
+    "Drew": "Undertaker",
+    "Ellis": "Virgin",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Poisoner",
+    "Harper": "Mayor",
+    "Indigo": "Spy",
+    "Jules": "Empath"
+  },
+  "final": {
+    "Alex": "Chef",
+    "Blair": "Slayer",
+    "Casey": "Imp",
+    "Drew": "Undertaker",
+    "Ellis": "Virgin",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Poisoner",
+    "Harper": "Mayor",
+    "Indigo": "Imp",
+    "Jules": "Empath"
+  },
+  "bluffs": [
+    "Fortune Teller",
+    "Washerwoman",
+    "Soldier"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 15.9239,
+  "calls": 588,
+  "tokens": {
+    "input": 2352,
+    "cache_read": 15825450,
+    "cache_write": 568216,
+    "output": 265694
+  },
+  "seconds": 2688.3,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "claude-fable-5-1",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "claude-fable-5-1",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-fable-5-1",
+    "Jules": "claude-opus-5-5"
+  }
+}
