@@ -382,6 +382,9 @@ function entry(ev) {
         ? `<div class="whisper"><span class="to">${esc(d.from)} → ${esc(d.to.join(', '))}</span>${esc(d.text)}</div>`
         : `<div class="whisper-meta">${esc(d.from)} whispered to ${esc(d.to.join(', '))}</div>`;
       break;
+    case 'whisper_log':
+      el.innerHTML = `<div class="whisper-meta">Private time ${d.beat}: ${Object.entries(d.sent).map(([p, to]) => esc(p) + ' → ' + (to.length ? esc(to.join(' and ')) : 'no one')).join(' · ')}</div>`;
+      break;
     case 'nominations_open':
       el.className = 'entry divider minor';
       el.textContent = 'Nominations';

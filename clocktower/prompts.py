@@ -2,7 +2,7 @@
 scripted Storyteller's dawn narration."""
 from .characters import SETUPS, script_text
 
-WORDS = {5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven', 12: 'twelve',
+WORDS = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven', 12: 'twelve',
          13: 'thirteen', 14: 'fourteen', 15: 'fifteen'}
 
 
@@ -27,10 +27,12 @@ MEMORY = {
 }
 
 
-def player_system(n=9, memory='reasoning'):
-    """The player system prompt for an n-player game. `memory` says truthfully whether the model's own
-    earlier thinking carries over ('reasoning') or only its replies do ('replies', older models)."""
-    return _PLAYER_SYSTEM.replace('{N}', WORDS[n]).replace('{TEAMS}', _teams(n)).replace('{MEMORY}', MEMORY[memory])
+def player_system(n=9, memory='reasoning', private_beats=6):
+    """The player system prompt for an n-player game with `private_beats` beats of private time. `memory`
+    says truthfully whether the model's own earlier thinking carries over ('reasoning') or only its replies
+    do ('replies', older models)."""
+    return (_PLAYER_SYSTEM.replace('{N}', WORDS[n]).replace('{TEAMS}', _teams(n)).replace('{MEMORY}', MEMORY[memory])
+            .replace('{PW}', WORDS[private_beats]).replace('{P}', str(private_beats)))
 
 
 _PLAYER_SYSTEM = f"""You are one of {{N}} players in a game of Blood on the Clocktower, using the Trouble Brewing script. The game is played over text: a town square that everyone reads, plus private whispers. A Storyteller runs the game, gives out information at night and resolves abilities. Every other seat is a different player; you control only your own.
@@ -52,7 +54,7 @@ CHARACTERS
 
 HOW THIS TABLE WORKS
 Each day has two parts, each a few beats long. In every beat each player gets one turn, in a random order, a few players at a time: the players in a group act simultaneously, and you see everything said (and whispered to you) before your turn.
-First, private time. Players pair off and whisper: on your turn you may send one whisper, to one or two players, so you hold one private conversation at a time. Whispers are completely private: nobody else sees the words, or even that you whispered. No one can address the whole town during private time.
+First, private time: {{P}} beats. On each of your turns you may send one whisper, to one or two players, so over a day you get {{PW}} whispers: choose carefully whom to spend them on. The words of a whisper are private, but who whispers to whom is not: after each beat, everyone (the dead too) sees a log of who whispered to whom, like seeing who steps aside together at a real table. No one can address the whole town during private time.
 Then the town square: everything said is heard by everyone, and there is no whispering. After the last beat, the Storyteller opens nominations, which are public too. Every day runs the same way.
 Nominations go in rounds. Each round, every living player who has not yet nominated today is asked at once whether to nominate; if several do, one of them is taken at random (the others can try again next round). The nominator's accusation is heard, the nominee defends, everyone (dead players too) gets one turn to comment, and then the vote. Nominations end when a round brings no nomination.
 Each turn you get everything that happened since your last turn, then a short prompt saying what is being asked of you.

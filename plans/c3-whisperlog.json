@@ -1,0 +1,97 @@
+{
+ "out": "games/v15/c3",
+ "seed": 110000,
+ "players": "10-12",
+ "matchups": [
+  {
+   "name": "opus55-v-sol61-b6",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 5,
+   "seed": 110000
+  },
+  {
+   "name": "sonnet55-v-sol61-b6",
+   "good": "claude-sonnet-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 2,
+   "seed": 110100
+  },
+  {
+   "name": "fable51-v-astra-b6",
+   "good": "claude-fable-5-1",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "seed": 110200
+  },
+  {
+   "name": "opus55-v-astra-b6",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "seed": 110300
+  },
+  {
+   "name": "sonnet45-v-gpt54-b6",
+   "good": "claude-sonnet-4-5-20250929",
+   "evil": "gpt-5.4",
+   "pairs": 1,
+   "seed": 110400
+  },
+  {
+   "name": "opus55-v-sol61-b8",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 5,
+   "seed": 110000,
+   "args": [
+    "--private-beats",
+    "8"
+   ]
+  },
+  {
+   "name": "sonnet55-v-sol61-b8",
+   "good": "claude-sonnet-5-5",
+   "evil": "gpt-6.1-sol",
+   "pairs": 2,
+   "seed": 110100,
+   "args": [
+    "--private-beats",
+    "8"
+   ]
+  },
+  {
+   "name": "fable51-v-astra-b8",
+   "good": "claude-fable-5-1",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "seed": 110200,
+   "args": [
+    "--private-beats",
+    "8"
+   ]
+  },
+  {
+   "name": "opus55-v-astra-b8",
+   "good": "claude-opus-5-5",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "seed": 110300,
+   "args": [
+    "--private-beats",
+    "8"
+   ]
+  },
+  {
+   "name": "sonnet45-v-gpt54-b8",
+   "good": "claude-sonnet-4-5-20250929",
+   "evil": "gpt-5.4",
+   "pairs": 1,
+   "seed": 110400,
+   "args": [
+    "--private-beats",
+    "8"
+   ]
+  }
+ ]
+}

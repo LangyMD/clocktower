@@ -262,7 +262,7 @@ GPT-5 (verified Oct 2) thinks ~3K tokens even on trivial turns and sees only its
 Calls record the effort each attempt used. The GPT-5 family's 400K window is registered so an
 oversized game is trimmed, not failed.
 
-## v14 — current (Oct 2): one conversation at a time
+## v14 (Oct 2): one conversation at a time
 v13 with private time restructured, at the user's suggestion: 4 private beats (was 3) and one whisper
 per turn (was up to 2), still to one or two players. In a real game a player is in one private
 conversation at a time; two whispers a turn let a player run two secret conversations at once and
@@ -282,3 +282,15 @@ under both rules, and two-thirds claim publicly on day 1. Private talk reads mor
 both). The harness read found model tells (GPT-5.1 non-breaking hyphens, o3 bullets/emoji, o3-only
 "[cut off]") and silent passes on repeated non-answers; both fixed. Three container restarts during w1
 killed games in progress, which led to checkpoints at every dusk and Hugging Face snapshots.
+
+## v15 — current (Oct 2): a public whisper log, 6 beats
+v14 with three changes, all the user's. (1) After each private beat everyone, the dead too, sees who
+whispered to whom (not the words), as at a real table where you see who steps aside together. The w1
+realism read found "swarms" (many players whispering the same popular player) and evil briefing both
+Minions in beat 1 unseen; at a real table both would be visible. Expected to cost evil something. (2)
+6 private beats by default (w1: more real back-and-forth than 4). (3) The prompt states the number of
+beats ("6 beats ... choose carefully whom to spend them on"), each private turn says how many whispers
+are left today, and both say the log is public. Also from the w1 harness read: one typography filter for
+hyphen variants, bullets, arrows and emoji; cut text ends "..." for every model; a seat with no usable
+reply after 4 attempts fails the game instead of passing silently; a notice when someone speaks aloud in
+private time. c3 calibrates it: the same 10 side-swapped pairs at 6 beats (arm A) and 8 beats (arm C).

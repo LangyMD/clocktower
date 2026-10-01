@@ -244,10 +244,45 @@ class DayTests(unittest.TestCase):
         self.assertFalse(any(e['kind'] == 'say' for e in g.events))
         w = next(e for e in g.events if e['kind'] == 'whisper')
         self.assertEqual(w['to'], [A, B])
-        self.assertEqual(sum('psst' in x or 'whispered' in x for x in g.buf[C]), 0)
+        self.assertEqual(sum('psst' in x for x in g.buf[C]), 0)
         run(g.beat(1, 1, private=False))
         self.assertEqual(sum(e['kind'] == 'say' for e in g.events), 9)
         self.assertEqual(sum(e['kind'] == 'whisper' for e in g.events), 1)
+
+    def test_everyone_sees_who_whispered_to_whom_after_each_private_beat(self):
+        def policy(name, req):
+            if req.kind == 'beat':
+                return {'whispers': [{'to': [B, C], 'text': 'psst'}] if name == A else []}
+        g = self.prepared(BASE, policy)
+        g.g[D].alive = False
+        run(g.beat(1, 2, private=True))
+        log = next(e for e in g.events if e['kind'] == 'whisper_log')
+        self.assertEqual(log['to'], 'public')
+        self.assertEqual(log['data']['sent'][A], [B, C])
+        self.assertEqual(log['data']['sent'][E], [])
+        line = g.buf[D][-1]  # the dead see it too
+        self.assertIn(f'{A} → {B} and {C}', line)
+        self.assertIn(f'{E} → no one', line)
+        self.assertNotIn('psst', line)
+
+    def test_private_turn_counts_whispers_left_and_warns_the_log_is_public(self):
+        prompts = {}
+        def policy(name, req):
+            prompts[name] = req.prompt
+            return BLANK
+        g = self.prepared(BASE, policy)
+        g.private_beats = 6
+        run(g.beat(1, 2, private=True))
+        self.assertIn('private time 2 of 6 — your turn (4 whispers left today after this one).', prompts[A])
+        self.assertIn('Everyone will see whom you whispered to', prompts[A])
+
+    def test_system_prompt_states_the_beats_and_the_public_log(self):
+        from clocktower.prompts import player_system
+        s = player_system(10, private_beats=8)
+        self.assertIn('private time: 8 beats', s)
+        self.assertIn('you get eight whispers', s)
+        self.assertIn('who whispers to whom is not', s)
+        self.assertNotIn('{P', s)
 
     def test_tie_means_no_execution(self):
         def policy(name, req):
@@ -294,7 +329,7 @@ class DayTests(unittest.TestCase):
         g = self.prepared(BASE, lambda n, r: None)  # nobody ever says or whispers anything
         run(g.daytime(1))
         beats = [e['data']['text'] for e in g.events if e['kind'] == 'header' and '·' in e['data']['text']]
-        self.assertEqual(beats, [f'Day 1 · private time {k}' for k in (1, 2, 3, 4)]
+        self.assertEqual(beats, [f'Day 1 · private time {k}' for k in range(1, 7)]
                          + [f'Day 1 · town square {k}' for k in (1, 2, 3)])
 
     def test_mayor_wins_with_three_alive_and_no_execution(self):

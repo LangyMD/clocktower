@@ -47,6 +47,9 @@ def render(ev, viewer, dead=()):
         if viewer in ('storyteller', 'omniscient') or viewer == d['from'] or viewer in d['to']:
             return f"[whisper] {nm(d['from'])} → {to}: {d['text']}"
         return f"[{d['from']} whispered to {', '.join(d['to'])}]"
+    if k == 'whisper_log':
+        sent = ' · '.join(f"{nm(p)} → {' and '.join(nm(x) for x in to) if to else 'no one'}" for p, to in d['sent'].items())
+        return f"Who whispered to whom in private time {d['beat']}: {sent}"
     if k == 'slayer':
         head = f"{nm(d['shooter'])} claims the Slayer's power and shoots at {d['target']}."
         return head + (f" {d['target']} dies!" if d['died'] else ' Nothing happens.')

@@ -17,7 +17,7 @@ import sys
 import threading
 from pathlib import Path
 
-SEEDS_PER_MATCHUP = 100  # matchup i uses seeds seed + 100*i onwards
+SEEDS_PER_MATCHUP = 100  # matchup i uses seeds seed + 100*i onwards, unless it sets its own `seed`
 UPLOAD_EVERY = 1800  # seconds between snapshots of the plan's games to the Hugging Face dataset
 
 
@@ -49,7 +49,7 @@ def make_plan(models, within=None, pairs=1, seed=80000, out='games/v12/f1', play
 def commands(plan):
     for i, m in enumerate(plan['matchups']):
         cmd = [sys.executable, '-m', 'clocktower', 'run', '--games', str(m.get('pairs', 1)), '--swap',
-               '--seed', str(plan['seed'] + SEEDS_PER_MATCHUP * i), '--players', str(plan.get('players', '10-12')),
+               '--seed', str(m.get('seed', plan['seed'] + SEEDS_PER_MATCHUP * i)), '--players', str(plan.get('players', '10-12')),
                '--good-model', m['good'], '--evil-model', m['evil'], '--out', f"{plan['out']}-{m['name']}",
                '--budget', str(plan.get('budget', 100000))]
         for flag in ('good_effort', 'evil_effort'):

@@ -2,7 +2,7 @@
 
 An eval where language models play Blood on the Clocktower (Trouble Brewing) against each other: one
 model plays the good team, another the evil team, so each game rates detection against deception.
-The rules are protocol v14 (frozen pending the w1 test of its private-time change): read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
+The rules are protocol v15 (frozen pending the c3 calibration of its public whisper log): read `docs/PROTOCOL.md` first, then `README.md`. Why each rule
 is what it is, and every past run: `docs/protocol-history.md`.
 
 ## Where things are
@@ -52,8 +52,9 @@ is what it is, and every past run: `docs/protocol-history.md`.
 
 ## Design decisions the user made (don't undo without asking)
 - Memory is the model's own carried-over conversation; no notebook, no state re-sent.
-- Each day: 4 private beats (one whisper per turn, to one or two players: one conversation at a time;
-  v14, the user's idea; v7–v13 had 3 beats of up to 2), 3 town-square beats, nominations; same every
+- Each day: 6 private beats (one whisper per turn, to one or two players: one conversation at a time;
+  v14, the user's idea; v7–v13 had 3 beats of up to 2; after each beat everyone sees who whispered to
+  whom, v15), 3 town-square beats, nominations; same every
   day, fixed length. Dead players talk and whisper; only the living nominate.
 - Scripted Storyteller (`state.POLICY`), no LLM; every rule explainable in one line, no special cases.
 - Equal settings: every model at its lab's "high" effort, one per-turn ceiling (8K); a turn that hits

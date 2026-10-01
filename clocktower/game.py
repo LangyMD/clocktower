@@ -1,7 +1,7 @@
 """The table: setup, nights, beats, nominations and votes.
 
 A day has two parts, each a series of beats: private time (whispers only; nobody
-else sees them, or that they happened) and then the town square (public talk only).
+else sees the words, but after each beat everyone sees who whispered to whom) and then the town square (public talk only).
 In a beat every seat gets one turn, in a random order, a wave of a few seats at a
 time: a wave acts in parallel and later waves see what earlier ones said. Then
 nominations: each round, living players who have not nominated may nominate (or
@@ -68,7 +68,7 @@ def fmt(value):
 
 
 class Game:
-    def __init__(self, seats, storyteller=None, *, names=NAMES, seed=None, private_beats=4, public_beats=3, max_days=10,
+    def __init__(self, seats, storyteller=None, *, names=NAMES, seed=None, private_beats=6, public_beats=3, max_days=10,
                  waves=3, characters=None, minion=None, out=None, seat_factory=None, probes=True):
         """`seats` maps names to seats; alternatively `seat_factory(name, team)` creates them once the
         characters are dealt (so, for example, the evil team can use a different model). `probes` asks
@@ -375,17 +375,18 @@ class Game:
             self.emit('notice', {'text': f'({text[:1].upper()}{text[1:]}.)'}, [name])
         return out
 
-    async def turns(self, n, order, kind, head, tail, words, beat=None, private=False):
+    async def turns(self, n, order, kind, head, tail, words, beat=None, private=False, note=''):
         """One turn each for `order`, a wave of a few players at a time: a wave acts simultaneously
         and later waves see what earlier ones said. A private turn is whispers; a public turn is
         speech plus, for anyone claiming to be the Slayer, a shot."""
         g = self.g
+        sent = {}  # private time: whom each player whispered to
         size = math.ceil(len(order) / self.waves)
         waves = [order[i:i + size] for i in range(0, len(order), size)]
         for w, wave in enumerate(waves, start=1):
             requests = {}
             for name in wave:
-                prompt = f'{head} — your turn. {tail}'
+                prompt = f'{head} — your turn{note}. {tail}'
                 if not g[name].alive:
                     prompt += ' (You are dead, but you can still ' + ('whisper.)' if private else 'talk.)')
                 requests[name] = Request(kind, prompt, n, beat=beat, alive=g[name].alive,
@@ -398,6 +399,7 @@ class Game:
                                                      'whisper to them.)'}, [name])
                     for msg in self.whispers(name, acts[name]):
                         self.emit('whisper', {'from': name, **msg}, [name, *msg['to']])
+                        sent[name] = msg['to']
                 continue
             for name in wave:
                 say = clip(acts[name].get('say'), words)
@@ -406,6 +408,7 @@ class Game:
             self.shots(wave, acts)
             if g.winner:
                 return
+        return sent
 
     async def beat(self, n, k, private):
         """Everyone gets one turn, in a random order. In private time players can only whisper;
@@ -415,14 +418,18 @@ class Game:
         self.rng.shuffle(order)
         self.emit('header', {'text': f'Day {n} · {"private time" if private else "town square"} {k}'})
         if private:
-            tail = (f'You may send one whisper this turn, to one or two players, or none. Nobody can address the town '
-                    'until the town square.')
+            left = total - k
+            note = f' ({left} whisper{"" if left == 1 else "s"} left today after this one)'
+            tail = ('You may send one whisper, to one or two players, or none. Everyone will see whom you whispered to, '
+                    'but not what you said. Nobody can address the town until the town square.')
         else:
-            tail = 'Say something to the town, or nothing. No whispering now.'
+            note, tail = '', 'Say something to the town, or nothing. No whispering now.'
             if k == total:
                 tail += ' This is the last beat before nominations.'
-        await self.turns(n, order, 'beat', f'Day {n}, {"private time" if private else "town square"} {k} of {total}',
-                         tail, WORDS['beat'], beat=k, private=private)
+        sent = await self.turns(n, order, 'beat', f'Day {n}, {"private time" if private else "town square"} {k} of {total}',
+                                tail, WORDS['beat'], beat=k, private=private, note=note)
+        if private and not self.g.winner:
+            self.emit('whisper_log', {'beat': k, 'sent': {p: sent.get(p, []) for p in self.names}})
 
     def shots(self, names, acts):
         """Slayer shots taken on these public turns, in order."""
