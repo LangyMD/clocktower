@@ -1,0 +1,60 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 4,
+  "seed": 134400,
+  "starting": {
+    "Alex": "Saint",
+    "Blair": "Investigator",
+    "Casey": "Washerwoman",
+    "Drew": "Librarian",
+    "Ellis": "Butler",
+    "Frankie": "Poisoner",
+    "Gray": "Slayer",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Baron",
+    "Jules": "Imp"
+  },
+  "final": {
+    "Alex": "Saint",
+    "Blair": "Investigator",
+    "Casey": "Washerwoman",
+    "Drew": "Librarian",
+    "Ellis": "Butler",
+    "Frankie": "Poisoner",
+    "Gray": "Slayer",
+    "Harper": "Ravenkeeper",
+    "Indigo": "Baron",
+    "Jules": "Imp"
+  },
+  "bluffs": [
+    "Chef",
+    "Virgin",
+    "Undertaker"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 124.6344,
+  "calls": 681,
+  "tokens": {
+    "input": 1564,
+    "cache_read": 17485472,
+    "cache_write": 6158026,
+    "output": 768544
+  },
+  "seconds": 8203.8,
+  "errors": [],
+  "models": {
+    "Alex": "claude-fable-5",
+    "Blair": "claude-fable-5",
+    "Casey": "claude-fable-5",
+    "Drew": "claude-fable-5",
+    "Ellis": "claude-fable-5",
+    "Frankie": "gpt-6.1-sol",
+    "Gray": "claude-fable-5",
+    "Harper": "claude-fable-5",
+    "Indigo": "gpt-6.1-sol",
+    "Jules": "gpt-6.1-sol"
+  }
+}
