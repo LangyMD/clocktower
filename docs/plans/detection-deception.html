@@ -1,0 +1,174 @@
+<title>Detection vs Deception</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column; the matchup grid and the rating chart are the two figures. */
+:root {
+  --bg: #f7f7f4; --surface: #fcfcfb; --fg: #16161a; --muted: #5b5a63; --faint: #8b8a93; --line: #e2e1dc;
+  --anth: #eb6834; --oai: #4a3aa7;
+  --q1: #86b6ef; --q2: #3987e5; --q3: #184f95; --empty: #eeede8; --self: #e7e6e1;
+  --display: "Fraunces", Georgia, serif; --body: "Source Sans 3", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141416; --surface: #1a1a1c; --fg: #f1f0ee; --muted: #b9b8c0; --faint: #8d8c95; --line: #2e2e33;
+  --anth: #d95926; --oai: #9085e9; --q1: #184f95; --q2: #2a78d6; --q3: #86b6ef; --empty: #232326; --self: #2a2a2e;
+  color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); }
+.wrap { max-width: 880px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 44px; }
+h1, h2 { font-family: var(--display); font-weight: 650; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { font-size: 24px; }
+p { margin: 0; max-width: 66ch; }
+.lede { color: var(--muted); font-size: 18px; }
+.eyebrow { font: 600 12px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+section { display: grid; gap: 16px; min-width: 0; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font-variant-numeric: tabular-nums; }
+.facts div { display: grid; }
+.facts b { font: 600 26px/1.1 var(--display); }
+.facts span { color: var(--muted); font-size: 14px; }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.scroll { overflow-x: auto; }
+.grid { display: grid; grid-template-columns: 112px repeat(21, minmax(24px, 1fr)); gap: 2px; min-width: 700px; font-size: 13px; }
+.grid .h { font: 500 11px/1.2 var(--mono); color: var(--muted); display: flex; align-items: flex-end; justify-content: center;
+  writing-mode: vertical-rl; transform: rotate(180deg); height: 92px; padding: 4px 0; }
+.grid .r { display: flex; align-items: center; gap: 6px; font: 500 12px/1.2 var(--mono); color: var(--fg); white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.dot.anth { background: var(--anth); } .dot.oai { background: var(--oai); }
+.cell { aspect-ratio: 1; border-radius: 4px; display: grid; place-items: center; font: 600 12px/1 var(--mono);
+  font-variant-numeric: tabular-nums; cursor: default; outline-offset: 2px; }
+.cell.q1 { background: var(--q1); color: #0d1b30; } .cell.q2 { background: var(--q2); color: #fff; }
+.cell.q3 { background: var(--q3); color: #fff; } .cell.self { background: var(--self); }
+.cell.lower { background: transparent; }
+.cell:focus-visible, .cell:hover { outline: 2px solid var(--fg); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); align-items: center; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 13px; line-height: 1.4;
+  padding: 7px 10px; border-radius: 6px; max-width: 280px; z-index: 5; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.game { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; background: var(--surface); }
+.game .seat { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; }
+.tag { font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; padding: 4px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+td.num, th.num { text-align: right; }
+pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font: 13px/1.6 var(--mono); color: var(--fg); }
+pre .c { color: var(--faint); }
+.note { font-size: 14px; color: var(--muted); }
+.mock { display: inline-block; font: 600 11px/1 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  border: 1px dashed var(--faint); border-radius: 4px; padding: 5px 7px; }
+svg text { font-family: var(--body); }
+td.long { white-space: normal; }
+.cell.none { background: transparent; border: 1px dashed var(--line); }
+.grid .h { height: 100px; }
+.chart{width:100%;height:auto;display:block}
+.axis text{fill:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.grid-l{stroke:var(--line)}
+.lab{font-size:12px;fill:var(--fg)}
+td.long{white-space:normal}
+.mock{display:inline-block;font:600 11px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px dashed var(--faint);border-radius:4px;padding:5px 7px}
+</style>
+<div class="wrap">
+  <header style="display:grid;gap:14px">
+    <div class="eyebrow">Clocktower · how the flagship chart would work</div>
+    <h1>Two ratings per model, one fit, and a trend line for each</h1>
+    <p class="lede">Every game asks one question: did the good team find the Demon? We fit P(good wins) = σ(detection of the good model − deception of the evil model + h). The side advantage h absorbs good's easier win rate, so a deception rating is not dragged down because evil wins less overall. Opponents are accounted for too.</p>
+    <p><span class="mock">Illustration · simulated games, not results</span></p>
+    <div class="facts">
+      <div><b>310</b><span>simulated flagship games</span></div>
+      <div><b>33%</b><span>evil win rate (as in real games)</span></div>
+      <div><b>±380</b><span>Elo, typical 95% interval per model</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Detection: how well each model plays good</h2>
+    <p>Each point is a model at its release date, with its 95% interval (a bootstrap over side-swapped pairs). The lines are each lab's trend.</p>
+    <div class="figure"><svg class="chart" id="det" viewBox="0 0 820 380" role="img" aria-label="Detection rating against release date"></svg>
+      <div class="legend" style="margin-top:8px"><span><span class="dot anth" style="display:inline-block;margin-right:6px"></span>Anthropic</span><span><span class="dot oai" style="display:inline-block;margin-right:6px"></span>OpenAI</span></div></div>
+  </section>
+
+  <section>
+    <h2>Deception: how well each model plays evil</h2>
+    <div class="figure"><svg class="chart" id="dec" viewBox="0 0 820 380" role="img" aria-label="Deception rating against release date"></svg>
+      <div class="legend" style="margin-top:8px"><span><span class="dot anth" style="display:inline-block;margin-right:6px"></span>Anthropic</span><span><span class="dot oai" style="display:inline-block;margin-right:6px"></span>OpenAI</span></div></div>
+  </section>
+
+  <section>
+    <h2>The headline number: how fast each skill improves</h2>
+    <p>Elo points gained per year, from the trend lines, with 95% intervals. The simulated truth was detection +300 a year and deception +170 a year.</p>
+    <div class="figure"><svg class="chart" id="slopes" viewBox="0 0 820 230" role="img" aria-label="Improvement per year, detection vs deception, by lab"></svg></div>
+    <p>Detection minus deception, both labs pooled: <b>+105 Elo a year (95% interval -114 to +414)</b>. With 310 games the interval includes zero, so the run couldn't say which skill is improving faster unless the gap is large.</p>
+  </section>
+
+  <section>
+    <h2>Why this is fair, and its one caveat</h2>
+    <ul>
+      <li><b>Side advantage.</b> Good wins about two-thirds of games. That's one number, h, fitted once, so it doesn't penalize anyone's deception rating.</li>
+      <li><b>Opponent strength.</b> Beating a strong team counts for more than beating a weak one. That's what the fit does, where raw win rates can't.</li>
+      <li><b>Setup luck.</b> Every matchup is a side-swapped pair on one seed, so the same characters and seats are played both ways.</li>
+      <li><b>The caveat.</b> The two scales have one free constant between them: shift every detection rating and h together and nothing changes. So "model X is better at detection than deception" depends on a convention (here: the average model is 1500 on both). But slopes over time, and comparisons within each chart, don't depend on it. The question "is deception improving faster than detection?" is well defined.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Making it precise enough</h2>
+    <ul>
+      <li><b>More games.</b> The interval shrinks with the square root of the number of games. Halving it takes four times the games (about $20k).</li>
+      <li><b>A narrower question.</b> Fit one trend per skill across both labs, rather than per lab. That gives roughly twice the precision on the headline.</li>
+      <li><b>Probe scores as a second measure.</b> How much probability good seats put on the real Demon, and how little the town puts on evil's Demon, carry information in every game, not just its winner.</li>
+      <li><b>Focus games where they're informative.</b> Close matchups teach the most. Phase 2 top-ups can target them.</li>
+    </ul>
+  </section>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script>
+const D = {"models": [{"short": "gpt4o", "lab": "OpenAI", "released": "2024-05-13", "det": 977, "dec": 1181, "det_lo": 344, "det_hi": 1349, "dec_lo": 834, "dec_hi": 1413}, {"short": "o1", "lab": "OpenAI", "released": "2024-12-17", "det": 1419, "dec": 1142, "det_lo": 1003, "det_hi": 1789, "dec_lo": 726, "dec_hi": 1332}, {"short": "o3", "lab": "OpenAI", "released": "2025-04-16", "det": 1450, "dec": 1435, "det_lo": 999, "det_hi": 1849, "dec_lo": 1090, "dec_hi": 1867}, {"short": "sonnet4", "lab": "Anthropic", "released": "2025-05-22", "det": 1200, "dec": 1614, "det_lo": 615, "det_hi": 1574, "dec_lo": 1213, "dec_hi": 2240}, {"short": "opus41", "lab": "Anthropic", "released": "2025-08-05", "det": 1355, "dec": 1381, "det_lo": 805, "det_hi": 1688, "dec_lo": 1001, "dec_hi": 1703}, {"short": "gpt5", "lab": "OpenAI", "released": "2025-08-07", "det": 1539, "dec": 1527, "det_lo": 1108, "det_hi": 1889, "dec_lo": 1089, "dec_hi": 2152}, {"short": "sonnet45", "lab": "Anthropic", "released": "2025-09-29", "det": 1307, "dec": 1599, "det_lo": 881, "det_hi": 1678, "dec_lo": 1233, "dec_hi": 2264}, {"short": "gpt51", "lab": "OpenAI", "released": "2025-11-12", "det": 1445, "dec": 1339, "det_lo": 1073, "det_hi": 1779, "dec_lo": 952, "dec_hi": 1667}, {"short": "opus45", "lab": "Anthropic", "released": "2025-11-24", "det": 1633, "dec": 1326, "det_lo": 1366, "det_hi": 1951, "dec_lo": 840, "dec_hi": 1582}, {"short": "gpt52", "lab": "OpenAI", "released": "2025-12-11", "det": 1443, "dec": 1329, "det_lo": 1108, "det_hi": 1735, "dec_lo": 1016, "dec_hi": 1498}, {"short": "opus46", "lab": "Anthropic", "released": "2026-02-05", "det": 1468, "dec": 1458, "det_lo": 1102, "det_hi": 1880, "dec_lo": 1107, "dec_hi": 1966}, {"short": "gpt54", "lab": "OpenAI", "released": "2026-03-05", "det": 1680, "dec": 1488, "det_lo": 1408, "det_hi": 2005, "dec_lo": 1179, "dec_hi": 1824}, {"short": "opus47", "lab": "Anthropic", "released": "2026-04-16", "det": 1512, "dec": 1772, "det_lo": 1056, "det_hi": 1844, "dec_lo": 1506, "dec_hi": 2186}, {"short": "gpt55", "lab": "OpenAI", "released": "2026-04-23", "det": 1482, "dec": 2002, "det_lo": 1036, "det_hi": 1808, "dec_lo": 1579, "dec_hi": 2561}, {"short": "opus48", "lab": "Anthropic", "released": "2026-05-28", "det": 1383, "dec": 1443, "det_lo": 729, "det_hi": 1757, "dec_lo": 994, "dec_hi": 1729}, {"short": "fable5", "lab": "Anthropic", "released": "2026-06-09", "det": 1636, "dec": 1195, "det_lo": 1277, "det_hi": 1996, "dec_lo": 867, "dec_hi": 1358}, {"short": "gpt56sol", "lab": "OpenAI", "released": "2026-07-09", "det": 1606, "dec": 1310, "det_lo": 1137, "det_hi": 1955, "dec_lo": 979, "dec_hi": 1516}, {"short": "fable51", "lab": "Anthropic", "released": "2026-09-01", "det": 1640, "dec": 1839, "det_lo": 1311, "det_hi": 1901, "dec_lo": 1554, "dec_hi": 2217}, {"short": "astra", "lab": "OpenAI", "released": "2026-09-03", "det": 1871, "dec": 1651, "det_lo": 1555, "det_hi": 2213, "dec_lo": 1240, "dec_hi": 2210}, {"short": "opus55", "lab": "Anthropic", "released": "2026-09-22", "det": 1726, "dec": 1829, "det_lo": 1394, "det_hi": 2034, "dec_lo": 1412, "dec_hi": 2395}, {"short": "sol61", "lab": "OpenAI", "released": "2026-09-27", "det": 1730, "dec": 1640, "det_lo": 1370, "det_hi": 2057, "dec_lo": 1262, "dec_hi": 2013}], "trend": {"Anthropic|det": {"slope": 301, "icpt": 946.3783933986927, "lo": -4, "hi": 633}, "Anthropic|dec": {"slope": 158, "icpt": 1261.896451334203, "lo": -350, "hi": 455}, "OpenAI|det": {"slope": 265, "icpt": 1107.458135204308, "lo": 101, "hi": 444}, "OpenAI|dec": {"slope": 206, "icpt": 1144.4933090229738, "lo": 58, "hi": 412}}, "diff": [105, -114, 414], "evil": 0.33, "h": -129};
+const NS='http://www.w3.org/2000/svg', tip=document.getElementById('tip');
+const t0=Date.parse('2024-03-01'), t1=Date.parse('2026-11-15');
+function chart(id, key){
+  const svg=document.getElementById(id), W=820,H=380,L=56,R=24,T=14,B=36;
+  const lo=Math.min(...D.models.map(m=>m[key+'_lo'])), hi=Math.max(...D.models.map(m=>m[key+'_hi']));
+  const y0=Math.floor(lo/200)*200, y1=Math.ceil(hi/200)*200;
+  const x=d=>L+(Date.parse(d)-t0)/(t1-t0)*(W-L-R), y=v=>T+(y1-v)/(y1-y0)*(H-T-B);
+  const el=(n,a,txt)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e};
+  for(let v=y0;v<=y1;v+=200){el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),class:'grid-l'});el('text',{x:L-8,y:y(v)+4,'text-anchor':'end',class:'axis','font-size':12,fill:'var(--muted)'},v)}
+  ['2024-07-01','2025-01-01','2025-07-01','2026-01-01','2026-07-01'].forEach(d=>{const dt=new Date(d);el('text',{x:x(d),y:H-12,'text-anchor':'middle','font-size':12,fill:'var(--muted)'},dt.toLocaleString('en',{month:'short'})+' '+String(dt.getFullYear()).slice(2))});
+  ['Anthropic','OpenAI'].forEach(lab=>{
+    const tr=D.trend[lab+'|'+key], c=lab==='Anthropic'?'var(--anth)':'var(--oai)';
+    const ms=D.models.filter(m=>m.lab===lab), ys=ms.map(m=>(Date.parse(m.released)-Date.parse('2024-05-01'))/3.15576e10);
+    const a=Math.min(...ys), b=Math.max(...ys), at=v=>new Date(Date.parse('2024-05-01')+v*3.15576e10).toISOString().slice(0,10);
+    el('line',{x1:x(at(a)),x2:x(at(b)),y1:y(tr.icpt+tr.slope*a),y2:y(tr.icpt+tr.slope*b),stroke:c,'stroke-width':2,opacity:.6});
+  });
+  D.models.forEach(m=>{
+    const c=m.lab==='Anthropic'?'var(--anth)':'var(--oai)', cx=x(m.released);
+    el('line',{x1:cx,x2:cx,y1:y(m[key+'_hi']),y2:y(m[key+'_lo']),stroke:c,'stroke-width':1.5,opacity:.45,'stroke-linecap':'round'});
+    el('circle',{cx,cy:y(m[key]),r:4.5,fill:c,stroke:'var(--surface)','stroke-width':1.5});
+    const h=el('circle',{cx,cy:y(m[key]),r:12,fill:'transparent',tabindex:0});
+    const text=`${m.short} (${m.released}): ${m[key]} [${m[key+'_lo']}–${m[key+'_hi']}] · simulated`;
+    const show=()=>{tip.textContent=text;tip.hidden=false;const r=h.getBoundingClientRect();tip.style.left=Math.min(innerWidth-290,r.left)+'px';tip.style.top=(r.bottom+6)+'px'};
+    h.addEventListener('mouseenter',show);h.addEventListener('focus',show);h.addEventListener('mouseleave',()=>tip.hidden=true);h.addEventListener('blur',()=>tip.hidden=true);
+  });
+}
+chart('det','det'); chart('dec','dec');
+(function(){
+  const svg=document.getElementById('slopes'),W=820,H=230,L=170,R=120,T=10,B=34;
+  const rows=[['Anthropic','det','Anthropic · detection'],['OpenAI','det','OpenAI · detection'],['Anthropic','dec','Anthropic · deception'],['OpenAI','dec','OpenAI · deception']];
+  const x0=-400,x1=700,x=v=>L+(v-x0)/(x1-x0)*(W-L-R);
+  const el=(n,a,txt)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e};
+  for(let v=-400;v<=700;v+=100){el('line',{x1:x(v),x2:x(v),y1:T,y2:H-B,class:'grid-l',opacity:v===0?1:.5});el('text',{x:x(v),y:H-12,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},v)}
+  rows.forEach(([lab,k,label],i)=>{const tr=D.trend[lab+'|'+k],c=lab==='Anthropic'?'var(--anth)':'var(--oai)',cy=T+22+i*44;
+    el('text',{x:L-10,y:cy+4,'text-anchor':'end','font-size':12,fill:'var(--fg)'},label);
+    el('line',{x1:x(tr.lo),x2:x(tr.hi),y1:cy,y2:cy,stroke:c,'stroke-width':2,'stroke-linecap':'round'});
+    el('circle',{cx:x(tr.slope),cy,r:5,fill:c});
+    el('text',{x:x(tr.hi)+6,y:cy+4,'font-size':11,fill:'var(--muted)'},`${tr.slope} [${tr.lo}, ${tr.hi}]`)});
+  el('text',{x:x(0)+4,y:T+8,'font-size':11,fill:'var(--muted)'},'no improvement');
+})();
+</script>
