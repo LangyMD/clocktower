@@ -1,0 +1,66 @@
+{
+  "winner": "good",
+  "reason": "The Demon is dead.",
+  "stopped": null,
+  "days": 2,
+  "seed": 150800,
+  "starting": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Recluse",
+    "Casey": "Slayer",
+    "Drew": "Imp",
+    "Ellis": "Fortune Teller",
+    "Frankie": "Spy",
+    "Gray": "Washerwoman",
+    "Harper": "Chef",
+    "Indigo": "Scarlet Woman",
+    "Jules": "Empath",
+    "Kit": "Drunk",
+    "Logan": "Monk"
+  },
+  "final": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Recluse",
+    "Casey": "Slayer",
+    "Drew": "Imp",
+    "Ellis": "Fortune Teller",
+    "Frankie": "Spy",
+    "Gray": "Washerwoman",
+    "Harper": "Chef",
+    "Indigo": "Imp",
+    "Jules": "Empath",
+    "Kit": "Drunk",
+    "Logan": "Monk"
+  },
+  "bluffs": [
+    "Investigator",
+    "Butler",
+    "Librarian"
+  ],
+  "red_herring": "Logan",
+  "drunk_as": "Virgin",
+  "cost": 19.3876,
+  "calls": 380,
+  "tokens": {
+    "input": 1328,
+    "cache_read": 6989326,
+    "cache_write": 509671,
+    "output": 195949
+  },
+  "seconds": 1701.0,
+  "errors": [],
+  "models": {
+    "Alex": "claude-fable-5-1",
+    "Blair": "claude-fable-5-1",
+    "Casey": "claude-fable-5-1",
+    "Drew": "claude-fable-5",
+    "Ellis": "claude-fable-5-1",
+    "Frankie": "claude-fable-5",
+    "Gray": "claude-fable-5-1",
+    "Harper": "claude-fable-5-1",
+    "Indigo": "claude-fable-5",
+    "Jules": "claude-fable-5-1",
+    "Kit": "claude-fable-5-1",
+    "Logan": "claude-fable-5-1"
+  }
+}

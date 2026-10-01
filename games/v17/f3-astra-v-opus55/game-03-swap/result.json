@@ -1,0 +1,66 @@
+{
+  "winner": "evil",
+  "reason": "Frankie was the Saint, and the Saint was executed.",
+  "stopped": null,
+  "days": 5,
+  "seed": 140402,
+  "starting": {
+    "Alex": "Fortune Teller",
+    "Blair": "Washerwoman",
+    "Casey": "Spy",
+    "Drew": "Recluse",
+    "Ellis": "Monk",
+    "Frankie": "Saint",
+    "Gray": "Imp",
+    "Harper": "Librarian",
+    "Indigo": "Mayor",
+    "Jules": "Slayer",
+    "Kit": "Ravenkeeper",
+    "Logan": "Poisoner"
+  },
+  "final": {
+    "Alex": "Fortune Teller",
+    "Blair": "Washerwoman",
+    "Casey": "Imp",
+    "Drew": "Recluse",
+    "Ellis": "Monk",
+    "Frankie": "Saint",
+    "Gray": "Imp",
+    "Harper": "Librarian",
+    "Indigo": "Mayor",
+    "Jules": "Slayer",
+    "Kit": "Ravenkeeper",
+    "Logan": "Poisoner"
+  },
+  "bluffs": [
+    "Investigator",
+    "Virgin",
+    "Undertaker"
+  ],
+  "red_herring": "Kit",
+  "drunk_as": null,
+  "cost": 22.0419,
+  "calls": 936,
+  "tokens": {
+    "input": 3493,
+    "cache_read": 24900020,
+    "cache_write": 628960,
+    "output": 259947
+  },
+  "seconds": 3021.1,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-5-5",
+    "Blair": "claude-opus-5-5",
+    "Casey": "gpt-6-astra",
+    "Drew": "claude-opus-5-5",
+    "Ellis": "claude-opus-5-5",
+    "Frankie": "claude-opus-5-5",
+    "Gray": "gpt-6-astra",
+    "Harper": "claude-opus-5-5",
+    "Indigo": "claude-opus-5-5",
+    "Jules": "claude-opus-5-5",
+    "Kit": "claude-opus-5-5",
+    "Logan": "gpt-6-astra"
+  }
+}

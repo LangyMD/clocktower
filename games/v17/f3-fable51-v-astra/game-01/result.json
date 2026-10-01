@@ -1,0 +1,65 @@
+{
+  "winner": null,
+  "reason": "seat failed: Blair: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_01",
+  "stopped": "seat failed: Blair: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_01",
+  "days": 5,
+  "seed": 142900,
+  "starting": {
+    "Alex": "Poisoner",
+    "Blair": "Soldier",
+    "Casey": "Undertaker",
+    "Drew": "Baron",
+    "Ellis": "Imp",
+    "Frankie": "Investigator",
+    "Gray": "Drunk",
+    "Harper": "Chef",
+    "Indigo": "Saint",
+    "Jules": "Empath",
+    "Kit": "Butler"
+  },
+  "final": {
+    "Alex": "Poisoner",
+    "Blair": "Soldier",
+    "Casey": "Undertaker",
+    "Drew": "Baron",
+    "Ellis": "Imp",
+    "Frankie": "Investigator",
+    "Gray": "Drunk",
+    "Harper": "Chef",
+    "Indigo": "Saint",
+    "Jules": "Empath",
+    "Kit": "Butler"
+  },
+  "bluffs": [
+    "Ravenkeeper",
+    "Recluse",
+    "Mayor"
+  ],
+  "red_herring": null,
+  "drunk_as": "Washerwoman",
+  "cost": 26.3492,
+  "calls": 763,
+  "tokens": {
+    "input": 7796,
+    "cache_read": 17993387,
+    "cache_write": 518770,
+    "output": 242006
+  },
+  "seconds": 3250.7,
+  "errors": [
+    "Blair: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_011Cfbt3w1QpxK8yAiwGDLyL\\'}')"
+  ],
+  "models": {
+    "Alex": "gpt-6-astra",
+    "Blair": "claude-fable-5-1",
+    "Casey": "claude-fable-5-1",
+    "Drew": "gpt-6-astra",
+    "Ellis": "gpt-6-astra",
+    "Frankie": "claude-fable-5-1",
+    "Gray": "claude-fable-5-1",
+    "Harper": "claude-fable-5-1",
+    "Indigo": "claude-fable-5-1",
+    "Jules": "claude-fable-5-1",
+    "Kit": "claude-fable-5-1"
+  }
+}

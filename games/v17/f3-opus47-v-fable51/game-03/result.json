@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Harper: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_0",
+  "stopped": "seat failed: Harper: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_0",
+  "days": 4,
+  "seed": 141602,
+  "starting": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Poisoner",
+    "Casey": "Mayor",
+    "Drew": "Recluse",
+    "Ellis": "Scarlet Woman",
+    "Frankie": "Monk",
+    "Gray": "Empath",
+    "Harper": "Imp",
+    "Indigo": "Butler",
+    "Jules": "Slayer",
+    "Kit": "Investigator",
+    "Logan": "Librarian"
+  },
+  "final": {
+    "Alex": "Ravenkeeper",
+    "Blair": "Poisoner",
+    "Casey": "Mayor",
+    "Drew": "Recluse",
+    "Ellis": "Scarlet Woman",
+    "Frankie": "Monk",
+    "Gray": "Empath",
+    "Harper": "Imp",
+    "Indigo": "Butler",
+    "Jules": "Slayer",
+    "Kit": "Investigator",
+    "Logan": "Librarian"
+  },
+  "bluffs": [
+    "Chef",
+    "Virgin",
+    "Undertaker"
+  ],
+  "red_herring": null,
+  "drunk_as": null,
+  "cost": 24.2829,
+  "calls": 626,
+  "tokens": {
+    "input": 3426,
+    "cache_read": 19018915,
+    "cache_write": 738872,
+    "output": 355773
+  },
+  "seconds": 2739.3,
+  "errors": [
+    "Harper: BadRequestError('Error code: 400 - {\\'type\\': \\'error\\', \\'error\\': {\\'type\\': \\'invalid_request_error\\', \\'message\\': \\'\"thinking.type.disabled\" is not supported for this model. Use \"thinking.type.adaptive\" and \"output_config.effort\" to control thinking behavior.\\'}, \\'request_id\\': \\'req_011CfbsP7eY6mqrU9SaKm1oe\\'}')"
+  ],
+  "models": {
+    "Alex": "claude-opus-4-7",
+    "Blair": "claude-fable-5-1",
+    "Casey": "claude-opus-4-7",
+    "Drew": "claude-opus-4-7",
+    "Ellis": "claude-fable-5-1",
+    "Frankie": "claude-opus-4-7",
+    "Gray": "claude-opus-4-7",
+    "Harper": "claude-fable-5-1",
+    "Indigo": "claude-opus-4-7",
+    "Jules": "claude-opus-4-7",
+    "Kit": "claude-opus-4-7",
+    "Logan": "claude-opus-4-7"
+  }
+}
