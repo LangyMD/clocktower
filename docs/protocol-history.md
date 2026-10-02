@@ -320,3 +320,9 @@ models); the guaranteed Minion is set per game by the plan so a batch balances t
 OpenRouter calls wait for credit (auto-reload) like Claude calls. Opus 4.8's 20 f2 games are dropped from
 the fit; f3 adds 184 games (~$3.8k); f3b 78 more (~$1.2k) replacing Opus 4.8's 20 f2 games with fresh balanced ones by an information-per-dollar allocation (at most 4 extra pairs
 per matchup, mostly near neighbours), with guaranteed Minions chosen to balance the totals.
+
+Result (Oct 2): 352 games (f2 minus Opus 4.8's 20 + f3 + f3b; 262 v17 games, ~$7.2k). Evil wins 32%. The 2026
+releases gain ~645 Elo a year (90% CI 530 to 820); detection +634, deception +692, not separable. Top:
+GPT-6 Astra 1858, GPT-6.1 Sol 1729; Anthropic's best Fable 5.1 1595; lowest Opus 4.8 1194. Setup effects
+(Elo toward good vs Poisoner): Spy +67, Scarlet Woman -67, Baron +80; 12 players +68. Ratings page:
+https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (scripts/ratings2026.py, docs/plans/f2-ratings.json).
