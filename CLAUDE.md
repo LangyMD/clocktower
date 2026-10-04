@@ -117,6 +117,8 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 - Hosting: this cloud container can't serve players (no inbound; cloudflared's edge port 7844 is blocked).
   `render.yaml` deploys to Render free tier; `CLOCKTOWER_HOST_KEY` fixes the host link; links follow the
   request's Host header; the lobby lists only models with a key present.
+- Human-game spend goes to `games/play/ledger.jsonl` (git-ignored), not the eval ledger, so a 0.1-CPU host
+  doesn't parse 42 MB at start; `--budget` caps it per server start.
 - Ideas: show the seat's own past whispers grouped by person; spectator mode for dead/late joiners.
 
 ## 2026-10-04: state at the end of the Sept 30 – Oct 2 sessions

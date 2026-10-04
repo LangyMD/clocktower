@@ -355,7 +355,8 @@ def main(argv=None):
         asyncio.run(run_batch(args))
     elif args.command == 'play':
         from .web import Table, serve
-        args.cap = Ledger(GAMES / 'ledger.jsonl').spent + args.budget
+        args.ledger = GAMES / 'play' / 'ledger.jsonl'  # human games keep their own small ledger (the eval's is 40+ MB)
+        args.cap = Ledger(args.ledger).spent + args.budget
         server = serve(Table(args), args.host, args.port)
         try:
             server.serve_forever()

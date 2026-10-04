@@ -397,7 +397,7 @@ def run_game(table, cfg):
 
     async def go():
         os.environ.setdefault('ANTHROPIC_WORKSPACE_ID', args.workspace)
-        env = Shared(make_client(), Ledger(GAMES / 'ledger.jsonl', cap=table.args.cap), limiter(args.concurrency))
+        env = Shared(make_client(), Ledger(getattr(table.args, 'ledger', None) or GAMES / 'play' / 'ledger.jsonl', cap=table.args.cap), limiter(args.concurrency))
         return await play_one(args, seed, out, env, humans=table.humans, serve=serve)
     return asyncio.run(go())
 
