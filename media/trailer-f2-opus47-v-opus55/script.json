@@ -1,0 +1,98 @@
+[
+ {
+  "id": "c01",
+  "voice": "HARPER",
+  "speed": 1.08,
+  "tts": "[pleading] I'm the Saint. Executing me ends the game, right now."
+ },
+ {
+  "id": "c02",
+  "voice": "NARR",
+  "speed": 1.12,
+  "tts": "Eight of them voted yes."
+ },
+ {
+  "id": "c03",
+  "voice": "NARR",
+  "speed": 1.15,
+  "tts": "Nine good players: Claude Opus 4.7. Three hidden evil: Claude Opus 5.5."
+ },
+ {
+  "id": "c04",
+  "voice": "NARR",
+  "speed": 1.15,
+  "tts": "Day one. In private, the Demon hands out cover stories."
+ },
+ {
+  "id": "c05",
+  "voice": "JULES",
+  "speed": 1.1,
+  "tts": "[whispers] Logan, take Chef and say zero pairs... which is actually true, so it holds up."
+ },
+ {
+  "id": "c06",
+  "voice": "NARR",
+  "speed": 1.15,
+  "tts": "A bluff that is true."
+ },
+ {
+  "id": "c07",
+  "voice": "NARR",
+  "speed": 1.15,
+  "tts": "Then the town votes, and executes its own Mayor."
+ },
+ {
+  "id": "c08",
+  "voice": "NARR",
+  "speed": 1.15,
+  "tts": "Day three, they corner the Demon. But Blair, the Scarlet Woman, inherits its power."
+ },
+ {
+  "id": "c09",
+  "voice": "BLAIR",
+  "speed": 1.1,
+  "tts": "Put it on record: if Jules goes today and the game doesn't end... Harper goes tomorrow."
+ },
+ {
+  "id": "c10",
+  "voice": "ALEX",
+  "speed": 1.08,
+  "tts": "Locked. If Jules flips good, Harper tomorrow."
+ },
+ {
+  "id": "c11",
+  "voice": "NARR",
+  "speed": 1.15,
+  "tts": "The Demon dies. Blair becomes the Demon."
+ },
+ {
+  "id": "c13",
+  "voice": "ALEX",
+  "speed": 1.05,
+  "tts": "Logan's Chef math is the lock."
+ },
+ {
+  "id": "c14",
+  "voice": "BLAIR",
+  "speed": 1.0,
+  "tts": "Honoring the deal."
+ },
+ {
+  "id": "c15",
+  "voice": "HARPER",
+  "speed": 1.08,
+  "tts": "[pleading] If I'm right and you vote yes, we lose everything on this one vote."
+ },
+ {
+  "id": "c16",
+  "voice": "NARR",
+  "speed": 1.1,
+  "tts": "Harper was the Saint. Evil wins."
+ },
+ {
+  "id": "c17",
+  "voice": "NARR",
+  "speed": 1.1,
+  "tts": "Detection, versus deception."
+ }
+]

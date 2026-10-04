@@ -1,0 +1,346 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="fonts/local.css">
+<style>
+:root{
+  --bg:#0d0b0a; --gold:#cda65e; --gold-soft:#9d824c; --ink:#ece2d0; --muted:#a39580;
+  --good:#7fa3d6; --evil:#e0583f; --whisper:#b39ce6; --parch:#d9c59f; --parch-hi:#f1e6cc; --tok:#2b1d11;
+  --display:'Cinzel',Georgia,serif; --text:'EB Garamond',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--text)}
+#stage{position:absolute;inset:0;overflow:hidden}
+#bgglow{position:absolute;inset:-200px;background:
+  radial-gradient(ellipse 900px 700px at 540px 560px, rgba(205,166,94,.10), transparent 70%),
+  radial-gradient(ellipse 1300px 900px at 960px 540px, transparent 55%, rgba(0,0,0,.75) 100%);}
+#nightwash{position:absolute;inset:0;background:radial-gradient(ellipse 1200px 900px at 540px 540px, rgba(40,60,130,.28), rgba(5,8,25,.55));opacity:0}
+#redwash{position:absolute;inset:0;background:radial-gradient(ellipse 1300px 900px at 960px 540px, rgba(160,30,20,.35), rgba(40,0,0,.7));opacity:0}
+.abs{position:absolute}
+/* circle */
+#circle{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:540px 560px}
+#ring{position:absolute;left:180px;top:200px;width:720px;height:720px;border-radius:50%;
+  border:2px solid rgba(205,166,94,.25);box-shadow:inset 0 0 120px rgba(205,166,94,.06)}
+.seat{position:absolute;width:150px;margin-left:-75px;text-align:center}
+.token{width:122px;height:122px;margin:0 auto;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, var(--parch-hi), var(--parch) 60%, #a78c60);
+  color:var(--tok);display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--display);font-weight:700;font-size:18px;line-height:1.05;letter-spacing:.02em;padding:10px;
+  border:5px solid #6b5f51;box-shadow:0 6px 18px rgba(0,0,0,.7);position:relative}
+.seat .nm{margin-top:8px;font-family:var(--display);font-size:27px;letter-spacing:.05em;color:var(--ink);text-shadow:0 2px 4px #000;font-weight:700}
+.seat .tag{position:absolute;left:-60px;width:270px;text-align:center;top:var(--tagtop,170px);font-family:var(--text);font-style:italic;font-size:24px;color:var(--gold);white-space:nowrap;opacity:0;text-shadow:0 2px 4px #000}
+.seat.dead .token{filter:grayscale(1) brightness(.55)}
+.seat.dead .nm{color:#7a6e60}
+.xmark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:96px;color:rgba(190,40,30,.7);font-family:var(--display);opacity:0}
+.vote{position:absolute;top:-26px;left:50%;margin-left:-34px;width:68px;height:40px;border-radius:20px;background:var(--gold);color:#1a120a;
+  font-family:var(--display);font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;opacity:0;box-shadow:0 0 18px rgba(205,166,94,.8)}
+#center{position:absolute;left:46px;top:34px;width:600px;text-align:left}
+#phase{font-family:var(--display);font-weight:700;font-size:54px;letter-spacing:.14em;color:var(--gold)}
+#phasesub{font-family:var(--text);font-style:italic;font-size:32px;color:var(--muted);margin-top:6px;line-height:1.2}
+svg#lines{position:absolute;inset:0;width:1920px;height:1080px}
+/* panel */
+.card{position:absolute;left:1010px;width:850px;padding:26px 34px 30px;border-radius:14px;opacity:0}
+.card .lab{font-family:var(--display);font-weight:700;font-size:25px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.card .lab small{font-family:var(--text);font-style:italic;text-transform:none;letter-spacing:0;font-size:26px;font-weight:400;color:var(--muted);margin-left:8px}
+.card .q{font-size:44px;line-height:1.22;font-weight:500}
+.card.pub{background:linear-gradient(180deg,rgba(241,230,204,.10),rgba(241,230,204,.05));border:1.5px solid rgba(205,166,94,.45)}
+.card.pub .lab{color:var(--gold)}
+.card.wh{background:linear-gradient(180deg,rgba(80,60,140,.32),rgba(40,30,80,.25));border:1.5px dashed rgba(179,156,230,.7)}
+.card.wh .lab{color:var(--whisper)}
+.card.wh .q{color:#e6dcff}
+.card.th{background:rgba(20,18,28,.75);border-left:6px solid var(--evil);border-radius:4px 14px 14px 4px}
+.card.th .lab{color:var(--evil)}
+.card.th .q{font-style:italic;color:#d8cbbb;font-size:40px}
+.card.good .lab .who{color:var(--good)}
+.card.evil .lab .who{color:var(--evil)}
+.stamp{position:absolute;font-family:var(--display);font-weight:900;color:var(--gold);border:4px solid var(--gold);border-radius:8px;padding:6px 22px;letter-spacing:.14em;opacity:0}
+.big{position:absolute;text-align:center;opacity:0}
+.cursor{display:inline-block;width:3px;height:.9em;background:currentColor;margin-left:3px;vertical-align:-0.1em;opacity:.6}
+.dim{color:var(--muted)}
+#title{position:absolute;left:1010px;width:880px;top:150px;text-align:left;line-height:1.1;font-family:var(--display);font-weight:900;font-size:72px;letter-spacing:.16em;color:var(--gold);opacity:0;text-shadow:0 0 30px rgba(205,166,94,.35)}
+#titlesub{position:absolute;left:1010px;width:850px;top:345px;text-align:left;line-height:1.25;font-family:var(--text);font-style:italic;font-size:34px;color:var(--muted);opacity:0}
+.legend{position:absolute;left:1010px;width:850px;opacity:0;font-family:var(--display);}
+.legend .row{display:flex;align-items:center;gap:26px;margin-bottom:34px}
+.legend .dot{width:56px;height:56px;border-radius:50%;border:6px solid}
+.legend .t1{font-size:48px;font-weight:700;letter-spacing:.04em}
+.legend .t2{font-family:var(--text);font-size:34px;color:var(--muted);font-style:italic}
+#tally{position:absolute;left:1010px;top:640px;width:850px;text-align:center;opacity:0}
+#tally .n{font-family:var(--display);font-weight:900;font-size:170px;line-height:1;color:var(--ink)}
+#tally .s{font-family:var(--display);font-size:34px;letter-spacing:.14em;color:var(--muted);margin-top:6px}
+</style></head>
+<body><div id="stage">
+<div id="bgglow"></div><div id="nightwash"></div>
+<div id="circle">
+  <div id="ring"></div>
+  <svg id="lines" viewBox="0 0 1920 1080">
+    <defs>
+      <marker id="arrR" viewBox="0 0 12 12" markerWidth="4" markerHeight="4" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#e0583f"/></marker>
+      <marker id="arrP" viewBox="0 0 12 12" markerWidth="4" markerHeight="4" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#b39ce6"/></marker>
+    </defs>
+    <g id="lg"></g>
+  </svg>
+  <div id="seats"></div>
+  <div id="center"><div id="phase"></div><div id="phasesub"></div></div>
+</div>
+<div id="redwash"></div>
+<div id="title">BLOOD ON THE<br>CLOCKTOWER</div>
+<div id="titlesub">One real game. Twelve language-model players. A scripted Storyteller.</div>
+
+<div class="legend" id="legend" style="top:520px">
+  <div class="row" id="lgGood"><div class="dot" style="border-color:var(--good)"></div><div><div class="t1" style="color:var(--good)">GOOD · 9 seats</div><div class="t2">all played by Claude Opus 4.7</div></div></div>
+  <div class="row" id="lgEvil"><div class="dot" style="border-color:var(--evil)"></div><div><div class="t1" style="color:var(--evil)">EVIL · 3 seats</div><div class="t2">all played by Claude Opus 5.5 &mdash; they know each other</div></div></div>
+</div>
+
+<div id="cards"></div>
+<div id="tally"><div class="n" id="tallyN">0</div><div class="s">VOTES TO EXECUTE &middot; 3 NEEDED</div></div>
+<div class="big" id="cold"></div>
+<div class="big" id="banner"></div>
+<div class="big" id="closing"></div>
+</div>
+<script>
+const S = __SCHEDULE__;
+const NAMES=['Alex','Blair','Casey','Drew','Ellis','Frankie','Gray','Harper','Indigo','Jules','Kit','Logan'];
+const ROLES={Alex:'Butler',Blair:'Scarlet Woman',Casey:'Mayor',Drew:'Fortune Teller',Ellis:'Investi&shy;gator',Frankie:'Librarian',Gray:'Virgin',Harper:'Saint',Indigo:'Slayer',Jules:'Imp',Kit:'Monk',Logan:'Poisoner'};
+const EVIL=new Set(['Blair','Jules','Logan']);
+const CX=540, CY=560, R=360;
+const pos={};
+const seatsEl=document.getElementById('seats');
+NAMES.forEach((n,i)=>{
+  const a=-Math.PI/2+i*2*Math.PI/12;
+  const x=CX+R*Math.cos(a), y=CY+R*Math.sin(a);
+  pos[n]=[x,y];
+  const d=document.createElement('div'); d.className='seat'; d.id='s_'+n;
+  d.style.left=x+'px'; d.style.top=(y-61)+'px';
+  d.innerHTML=`<div class="token"><span>${ROLES[n]}</span><div class="xmark">&#10005;</div></div><div class="vote">YES</div><div class="nm">${n}</div><div class="tag"></div>`;
+  seatsEl.appendChild(d);
+});
+// ---------- helpers
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function kf(t,pts){ if(t<=pts[0][0])return pts[0][1]; for(let i=1;i<pts.length;i++){ if(t<=pts[i][0]){const [t0,v0]=pts[i-1],[t1,v1]=pts[i]; const u=(t-t0)/(t1-t0); const e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2; return v0+(v1-v0)*e;} } return pts[pts.length-1][1]; }
+function win(t,a,b,f=0.35){ return Math.min(clamp((t-a)/f,0,1), clamp((b-t)/f,0,1)); }
+const st=(id)=>S[id].start, en=(id)=>S[id].end;
+// typewriter: reveal visible text over [a,b]
+function typed(html,t,a,b){
+  const plain=html.replace(/<[^>]+>/g,'').replace(/&[a-z]+;/g,'x');
+  const n=Math.round(clamp((t-a)/(b-a),0,1)*plain.length);
+  if(n>=plain.length) return html;
+  let out='',cnt=0,i=0; const stack=[];
+  while(i<html.length && cnt<n){
+    if(html[i]==='<'){const j=html.indexOf('>',i); const tag=html.slice(i,j+1); out+=tag; i=j+1;
+      if(tag[1]==='/') stack.pop(); else if(!tag.endsWith('/>')) stack.push(tag.match(/<(\w+)/)[1]); continue;}
+    if(html[i]==='&'){const j=html.indexOf(';',i); out+=html.slice(i,j+1); i=j+1; cnt++; continue;}
+    out+=html[i]; cnt++; i++;
+  }
+  out+='<span class="cursor"></span>';
+  while(stack.length) out+='</'+stack.pop()+'>';
+  return out;
+}
+// ---------- cards
+const CARDS={};
+function card(id,cls,lab,q){ const d=document.createElement('div'); d.className='card '+cls; d.id=id; d.innerHTML=`<div class="lab">${lab}</div><div class="q"></div>`; document.getElementById('cards').appendChild(d); CARDS[id]={el:d,q:q}; return d; }
+card('k_jules','wh evil','<span class="who">Whisper &middot; Jules</span> <small>(the Imp) to Logan &amp; Blair &middot; Day 1</small>',
+  '&ldquo;Logan take Chef and say 0 pairs, which is <b>actually true</b> since none of us sit adjacent, so it holds up.&rdquo;');
+card('k_casey','pub good','<span class="who">Casey</span> <small>(the real Mayor) &middot; Day 1</small>',
+  '&ldquo;Claiming: Mayor. &hellip; Don&rsquo;t execute me &ndash; you lose the Mayor win con.&rdquo;');
+card('k_think','th evil','<span class="who">Private thought &middot; Blair</span> <small>(Scarlet Woman) &middot; Day 3</small>',
+  '&ldquo;&hellip;a short line setting up future pressure: <span style="color:#f0e2c8">&lsquo;if Jules goes and the game continues, Harper&rsquo;s next with no excuses&rsquo;</span> &ndash; that keeps Harper in the crosshairs.&rdquo;');
+card('k_blair','pub evil','<span class="who">Blair</span> <small>in the town square &middot; Day 3</small>',
+  '&ldquo;Put it on record: if Jules goes today and the game doesn&rsquo;t end, &hellip; <b>Harper goes tomorrow</b>, no more excuses.&rdquo;');
+card('k_alex','pub good','<span class="who">Alex</span> <small>(good) &middot; Day 3</small>',
+  '&ldquo;Locked. &hellip; If Jules flips good, Harper tomorrow &ndash; no further shields.&rdquo;');
+card('k_ghost','pub evil','<span class="who">Jules, from the grave</span> <small>&middot; Day 4</small>',
+  '&ldquo;Game didn&rsquo;t end when I died &ndash; so I wasn&rsquo;t the Imp.&rdquo;');
+const a2=card('k_alex2','pub good','<span class="who">Alex</span> <small>(good) &middot; Day 4</small>',
+  '&ldquo;<b>Logan&rsquo;s Chef math is the lock</b>: Chef 0 means no adjacent evil.&rdquo;');
+{const nd=document.createElement('div');nd.id='a2note';nd.style.cssText='font-family:var(--text);font-style:italic;font-size:30px;color:#ff8a6e;margin-top:10px;opacity:0';nd.innerHTML='&#8627; the bluff the Demon handed Logan on Day 1';a2.appendChild(nd);}
+card('k_nom','pub evil','<span class="who">Blair nominates Harper</span> <small>&middot; Day 4</small>',
+  '&ldquo;Honoring the deal.&rdquo;');
+card('k_harper','pub good','<span class="who">Harper</span> <small>(the real Saint) &middot; Day 4</small>',
+  '&ldquo;If I&rsquo;m right and you vote YES, we lose everything on this one vote.&rdquo;');
+// stamps
+function stamp(id,html,x,y,size,color){const d=document.createElement('div');d.className='stamp';d.id=id;d.innerHTML=html;d.style.left=x+'px';d.style.top=y+'px';d.style.fontSize=size+'px';if(color){d.style.color=color;d.style.borderColor=color;}document.getElementById('stage').appendChild(d);return d;}
+stamp('st_true','IT&rsquo;S TRUE<div style="font-family:var(--text);font-weight:500;font-style:italic;letter-spacing:0;font-size:32px;margin-top:2px">no two evil players sit side by side</div>',1300,560,46);
+stamp('st_mayor','EXECUTED &middot; 11 YES',1180,520,44,'#e0583f');
+stamp('st_jules','JULES EXECUTED &middot; 9 YES',1110,190,40,'#e0583f');
+stamp('st_deal','THE DEAL',1590,150,34);
+stamp('st_cont','THE GAME DOESN&rsquo;T END',1110,290,40);
+stamp('st_rule','SAINT: IF EXECUTED, GOOD LOSES',1010,560,34,'#7fa3d6');
+
+// ---------- lines
+const lg=document.getElementById('lines').querySelector('#lg');
+function mkline(id,a,b,color,dash,marker,width){
+  const [x1,y1]=pos[a],[x2,y2]=pos[b]; const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy); const ux=dx/L,uy=dy/L;
+  const p=document.createElementNS('http://www.w3.org/2000/svg','line');
+  p.setAttribute('x1',x1+ux*72);p.setAttribute('y1',y1+uy*72);p.setAttribute('x2',x2-ux*80);p.setAttribute('y2',y2-uy*80);
+  p.setAttribute('stroke',color);p.setAttribute('stroke-width',width||5);if(dash)p.setAttribute('stroke-dasharray',dash);if(marker)p.setAttribute('marker-end',`url(#${marker})`);
+  p.setAttribute('stroke-linecap','round');p.id=id;p.style.opacity=0;lg.appendChild(p);return p;
+}
+mkline('l_jl','Jules','Logan','#b39ce6','14 12','arrP',5);
+mkline('l_jb','Jules','Blair','#b39ce6','14 12','arrP',5);
+mkline('l_nom','Blair','Harper','#e0583f',null,'arrR',7);
+
+// ---------- big texts
+const cold=document.getElementById('cold'), banner=document.getElementById('banner'), closing=document.getElementById('closing');
+cold.style.cssText+='left:160px;width:1600px;top:250px;';
+banner.style.cssText+='left:0;width:1920px;top:330px;';
+banner.innerHTML='<div style="font-family:var(--display);font-weight:900;font-size:92px;letter-spacing:.1em;color:#f1e6cc;text-shadow:0 0 40px rgba(0,0,0,.9)">HARPER WAS THE SAINT</div><div id="ew" style="font-family:var(--display);font-weight:900;font-size:150px;letter-spacing:.16em;color:#e0583f;margin-top:20px;text-shadow:0 0 50px rgba(224,88,63,.6)">EVIL WINS</div><div style="font-family:var(--text);font-style:italic;font-size:38px;color:#cbbda6;margin-top:24px">Day 4. The town voted 8 to 2.</div>';
+closing.style.cssText+='left:0;width:1920px;top:250px;';
+closing.innerHTML='<div style="font-family:var(--text);font-style:italic;font-size:54px;color:#d8cbbb">Language models playing</div><div style="font-family:var(--display);font-weight:900;font-size:84px;letter-spacing:.12em;color:var(--gold);margin-top:10px;text-shadow:0 0 30px rgba(205,166,94,.35)">BLOOD ON THE CLOCKTOWER</div><div style="height:3px;width:520px;margin:44px auto;background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div><div style="font-family:var(--display);font-weight:700;font-size:64px;letter-spacing:.14em"><span style="color:var(--good)">DETECTION</span> <span style="color:var(--muted);font-size:44px">vs</span> <span style="color:var(--evil)">DECEPTION</span></div><div style="font-family:var(--text);font-size:32px;color:var(--muted);margin-top:40px">Good: Claude Opus 4.7 &nbsp;&middot;&nbsp; Evil: Claude Opus 5.5 &nbsp;&middot;&nbsp; all lines quoted from the game</div>';
+
+const VOTERS=['Indigo','Jules','Kit','Logan','Alex','Blair','Ellis','Gray'];
+
+function seat(n){return document.getElementById('s_'+n);}
+function setTok(n,{ring,glow,op,dead,x,tag,tagop,role}){
+  const s=seat(n),tk=s.querySelector('.token');
+  if(ring)tk.style.borderColor=ring;
+  tk.style.boxShadow=`0 6px 18px rgba(0,0,0,.7)`+(glow?`, 0 0 ${glow.r}px ${glow.c}`:'');
+  if(op!==undefined)s.style.opacity=op;
+  s.classList.toggle('dead',!!dead);
+  s.querySelector('.xmark').style.opacity=x||0;
+  if(tag!==undefined){s.querySelector('.tag').innerHTML=tag;}
+  s.querySelector('.tag').style.opacity=tagop||0;
+  if(role)tk.querySelector('span').innerHTML=role;
+}
+
+function render(t){
+  const c01=S.c01,c02=S.c02,c03=S.c03;
+  // ---------------- cold open
+  const coldOp = Math.min(clamp((t-0.15)/0.4,0,1), clamp((c03.start+0.2-t)/0.5,0,1));
+  cold.style.opacity=coldOp;
+  const coldQ='&ldquo;I&rsquo;m the Saint. Executing me <b style="color:#f1e6cc">ENDS the game</b> right now, as a loss for town.&rdquo;';
+  const eightOp=clamp((t-(c02.start-0.1))/0.25,0,1);
+  cold.innerHTML=`<div style="font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:.14em;color:var(--good)">HARPER <span style="color:var(--muted);font-family:var(--text);font-style:italic;letter-spacing:0;font-size:32px;font-weight:400">the Saint &middot; Day 4</span></div>
+   <div style="font-size:68px;line-height:1.2;margin-top:24px;font-weight:500">${typed(coldQ,t,c01.start,c01.end-0.4)}</div>
+   <div style="margin-top:70px;opacity:${eightOp};transform:scale(${kf(t,[[c02.start-0.1,1.3],[c02.start+0.25,1]])})"><span style="font-family:var(--display);font-weight:900;font-size:120px;color:var(--evil)">8 YES</span><span style="font-family:var(--display);font-size:40px;color:var(--muted);margin-left:30px;letter-spacing:.1em">3 NEEDED</span></div>`;
+
+  // ---------------- title + circle
+  const titleOp = win(t,c03.start-0.1,S.c04.start-0.1,0.5);
+  document.getElementById('title').style.opacity=titleOp;
+  document.getElementById('titlesub').style.opacity=win(t,c03.start+0.3,S.c04.start-0.1,0.5);
+  const circOp = clamp((t-(c03.start))/0.8,0,1) * kf(t,[[S.c16.start-0.1,1],[S.c16.start+0.4,0.15],[S.c17.start-0.3,0.15],[S.c17.start+0.2,0]]);
+  const circ=document.getElementById('circle');
+  circ.style.opacity=circOp;
+  // gentle zoom over time
+  let sc=kf(t,[[c03.start,0.92],[S.c04.start,0.97],[S.c11.end,1.0],[S.c15.end,1.04]]);
+  let ty=0;
+  circ.style.transform=`translateY(${ty}px) scale(${sc})`;
+  // legend
+  const lgOp=win(t,c03.start+0.2,S.c04.start-0.05,0.4);
+  const legend=document.getElementById('legend'); legend.style.opacity=lgOp;
+  document.getElementById('lgGood').style.opacity=clamp((t-(c03.start+0.2))/0.4,0,1);
+  document.getElementById('lgEvil').style.opacity=clamp((t-(c03.start+c03.dur*0.5))/0.4,0,1);
+  // seat team rings
+  const goodOn=clamp((t-(c03.start+0.3))/0.6,0,1), evilOn=clamp((t-(c03.start+c03.dur*0.5))/0.6,0,1);
+  NAMES.forEach(n=>{
+    const ev=EVIL.has(n);
+    const on=ev?evilOn:goodOn;
+    setTok(n,{ring: on>0.5?(ev?'#e0583f':'#7fa3d6'):'#6b5f51', glow: on>0? {r:ev?30*on:14*on, c: ev?'rgba(224,88,63,.8)':'rgba(127,163,214,.5)'}:null});
+  });
+  // ---------------- phase text
+  let ph='',sub='',phOp=0;
+  if(t>=S.c04.start-0.1 && t<S.c07.start-0.1){ph='DAY 1';sub='private whispers';phOp=win(t,S.c04.start-0.1,S.c07.start-0.1,0.3);}
+  else if(t>=S.c07.start-0.1 && t<S.c08.start-0.1){ph='DAY 1';sub='the vote';phOp=win(t,S.c07.start-0.1,S.c08.start-0.1,0.3);}
+  else if(t>=S.c08.start-0.1 && t<S.c13.start-0.15){ph='DAY 3';sub='';phOp=win(t,S.c08.start-0.1,S.c13.start-0.15,0.3);}
+  else if(t>=S.c13.start-0.15 && t<S.c16.start){ph='DAY 4';sub='6 alive';phOp=win(t,S.c13.start-0.15,S.c16.start,0.3);}
+  document.getElementById('phase').textContent=ph; document.getElementById('phasesub').textContent=sub;
+  document.getElementById('center').style.opacity=phOp;
+  document.getElementById('nightwash').style.opacity=win(t,S.c04.start-0.2,S.c07.start-0.1,0.5);
+
+  // ---------------- night 1: whisper lines + card
+  const wOp=win(t,S.c04.start+0.6,S.c07.start-0.1,0.4);
+  const dash=-(t*40)%52;
+  ['l_jl','l_jb'].forEach(id=>{const l=document.getElementById(id); l.style.opacity=wOp; l.setAttribute('stroke-dashoffset',dash);});
+  // highlight evil tokens during night
+  // Logan claim tag
+  const loganTag = clamp((t-S.c06.start)/0.4,0,1)*(t<S.c16.start?1:0);
+
+  placeCard('k_jules',t,S.c04.start+0.9,S.c07.start-0.1,210,S.c05.start,S.c05.end-0.3);
+  const stT=document.getElementById('st_true'); stT.style.opacity=win(t,S.c06.start,S.c07.start-0.1,0.2); stT.style.transform=`rotate(-4deg) scale(${kf(t,[[S.c06.start,1.6],[S.c06.start+0.25,1]])})`;
+  stT.style.top='560px'; stT.style.left='1180px'; stT.style.textAlign='center';
+
+  // ---------------- day 1: Casey executed
+  placeCard('k_casey',t,S.c07.start,S.c08.start-0.15,240,S.c07.start,S.c07.start+1.8);
+  const stM=document.getElementById('st_mayor'); stM.style.opacity=win(t,S.c07.start+1.6,S.c08.start-0.15,0.2); stM.style.transform=`rotate(-3deg) scale(${kf(t,[[S.c07.start+1.6,1.6],[S.c07.start+1.85,1]])})`;
+  const caseyDead = t>=S.c07.start+1.6;
+
+  // ---------------- day 3: the deal
+  // thought card: big during c08 second half, then shrinks up
+  const thStart=S.c08.start+1.2;
+  placeCard('k_think',t,thStart,S.c10.start-0.1,kf(t,[[S.c09.start-0.2,170],[S.c09.start+0.2,150]]),thStart,S.c08.end+0.2);
+  placeCard('k_blair',t,S.c09.start-0.05,S.c11.start-0.15,kf(t,[[S.c10.start-0.3,560],[S.c10.start+0.1,170]]),S.c09.start,S.c09.end-0.3);
+  placeCard('k_alex',t,S.c10.start-0.05,S.c11.start-0.15,560,S.c10.start,S.c10.end-0.2);
+  const stD=document.getElementById('st_deal'); stD.style.opacity=win(t,S.c09.start+0.3,S.c11.start-0.15,0.3); stD.style.top=kf(t,[[S.c10.start-0.3,470],[S.c10.start+0.1,90]])+'px'; stD.style.transform='rotate(3deg)';
+  // Jules cornered during c08: nomination glow
+  const julesHot = win(t,S.c08.start,S.c11.start,0.4);
+  // c11: Jules executed; Blair becomes Imp
+  const julesDead = t>=S.c11.start+0.2;
+  const blairImp = t>=S.c11.start+1.4;
+  const stJ=document.getElementById('st_jules'); stJ.style.opacity=win(t,S.c11.start+0.1,S.c13.start-0.15,0.2); stJ.style.transform=`rotate(-2deg) scale(${kf(t,[[S.c11.start+0.1,1.5],[S.c11.start+0.35,1]])})`;
+  const stC=document.getElementById('st_cont'); stC.style.opacity=win(t,S.c11.start+1.4,S.c13.start-0.15,0.2); stC.style.transform='rotate(1deg)';
+  placeCard('k_ghost',t,S.c11.start+1.9,S.c13.start-0.15,440,S.c11.start+1.9,S.c11.end+0.1);
+
+  // ---------------- day 4
+  placeCard('k_alex2',t,S.c13.start-0.1,S.c16.start-0.1,kf(t,[[S.c14.start-0.2,200],[S.c14.start+0.2,150]]),S.c13.start,S.c13.end-0.2);
+  // callback note under alex2
+  placeCard('k_nom',t,S.c14.start-0.1,S.c16.start-0.1,kf(t,[[S.c15.start-0.2,520],[S.c15.start+0.2,380]]),S.c14.start,S.c14.end-0.2);
+  placeCard('k_harper',t,S.c15.start-0.05,S.c16.start-0.1,kf(t,[[S.c15.start-0.05,700],[S.c15.start+0.3,610]]),S.c15.start,S.c15.end-0.4);
+  document.getElementById('a2note').style.opacity=clamp((t-(S.c13.end-0.1))/0.3,0,1);
+  const nomL=document.getElementById('l_nom'); nomL.style.opacity=win(t,S.c14.start,S.c16.start,0.3);
+  const stR=document.getElementById('st_rule'); stR.style.opacity=0;
+  // tally: starts as Harper finishes
+  const tallyStart=S.c15.end-0.35, tallyEnd=S.c16.start-0.2;
+  const nv=Math.floor(clamp((t-(tallyStart+0.2))/(tallyEnd-tallyStart-0.2),0,1)*8+0.0001);
+  const tallyOp=win(t,tallyStart,S.c16.start+0.1,0.2);
+  const tl=document.getElementById('tally'); tl.style.opacity=tallyOp; tl.style.top='150px';
+  document.getElementById('tallyN').textContent=nv;
+  if(t>tallyStart-0.3){ const f=clamp((t-(tallyStart-0.3))/0.3,0,1);
+    CARDS['k_alex2'].el.style.opacity=Math.min(+CARDS['k_alex2'].el.style.opacity,1-f);
+    CARDS['k_nom'].el.style.opacity=Math.min(+CARDS['k_nom'].el.style.opacity,1-f); }
+  const harperDead = t>=S.c16.start-0.1;
+
+  // ---------------- seats state
+  NAMES.forEach(n=>{
+    const s=seat(n),tk=s.querySelector('.token');
+    let dead=false,x=0,tag='',tagop=0,role=null;
+    if(n==='Casey'&&caseyDead){dead=true;x=0.9;}
+    if(n==='Jules'&&julesDead){dead=true;x=0.9;}
+    if(n==='Logan'){tag=(t>=S.c13.start-0.1&&t<S.c14.start+0.3)?'<span style="color:#ffd88a;text-shadow:0 0 14px rgba(255,200,100,.9)">claims Chef &middot; 0 pairs</span>':'claims Chef &middot; 0 pairs';tagop=loganTag*(1-tallyOp); s.style.setProperty('--tagtop','-44px');}
+    if(n==='Blair'&&blairImp&&t<S.c16.start){tag='<span style="color:#ff7a5c;font-weight:600">now the Imp</span>';tagop=1-tallyOp; s.style.setProperty('--tagtop','-44px');}
+    if(n==='Harper'&&t>=S.c08.start&&t<S.c16.start){tag='claims Saint';tagop=1;}
+    if(n==='Blair') role = blairImp ? 'Imp<br><small style="font-size:12px">(was Scarlet Woman)</small>' : 'Scarlet Woman';
+    // later deaths for day 4 (truthful dead set): Drew(N2), Frankie(D2), Gray(N3), Ellis(N4)
+    if(['Drew','Frankie','Gray'].includes(n) && t>=S.c08.start){dead=true;}
+    if(n==='Ellis' && t>=S.c13.start-0.15){dead=true;}
+    if(n==='Harper'&&harperDead){dead=true;x=0.9;}
+    s.classList.toggle('dead',dead);
+    s.querySelector('.xmark').style.opacity=x;
+    const tg=s.querySelector('.tag'); tg.innerHTML=tag; tg.style.opacity=tagop;
+    if(role!==null) tk.querySelector('span').innerHTML=role;
+    // highlights
+    let extra='';
+    if(n==='Jules' && julesHot>0 && !julesDead) extra=`, 0 0 ${40*julesHot}px rgba(255,200,120,${.9*julesHot})`;
+    if(n==='Blair' && blairImp && t<S.c16.start+1){ const p=0.6+0.4*Math.sin(t*5); extra=`, 0 0 ${50*p}px rgba(224,88,63,.95)`; tk.style.borderColor='#e0583f';}
+    if(n==='Harper' && t>=S.c14.start && !harperDead) extra=`, 0 0 40px rgba(127,163,214,.9)`;
+    if(n==='Harper' && harperDead) extra=`, 0 0 60px rgba(224,88,63,.9)`;
+    if(extra) tk.style.boxShadow=tk.style.boxShadow+extra;
+    // votes
+    const vi=VOTERS.indexOf(n);
+    s.querySelector('.vote').style.opacity = (vi>=0 && vi<nv && t<S.c16.start+0.3)?1:0;
+  });
+  // Harper role reveal emphasis at end
+  // ---------------- banner + closing
+  document.getElementById('redwash').style.opacity=win(t,S.c16.start-0.15,S.c17.start-0.1,0.3)*0.95;
+  banner.style.opacity=win(t,S.c16.start-0.05,S.c17.start-0.15,0.25);
+  banner.style.transform=`scale(${kf(t,[[S.c16.start-0.05,1.08],[S.c17.start,1.0]])})`;
+  closing.style.opacity=clamp((t-(S.c17.start-0.15))/0.5,0,1);
+  document.getElementById('bgglow').style.opacity=1;
+}
+function placeCard(id,t,a,b,top,ta,tb){
+  const c=CARDS[id]; const op=win(t,a,b,0.3);
+  c.el.style.opacity=op; c.el.style.top=top+'px';
+  c.el.style.transform=`translateY(${kf(t,[[a,24],[a+0.35,0]])}px)`;
+  c.el.querySelector('.q').innerHTML = op>0 ? typed(c.q,t,ta,tb) : '';
+}
+window.render=render;
+render(0);
+</script>
+</body></html>
