@@ -134,7 +134,8 @@ function renderLobby(L) {
   $('start').hidden = !L.me.host;
   $('start').disabled = !!L.problem;
   $('start-err').textContent = L.me.host ? (L.problem || L.error || '') : '';
-  $('host-note').textContent = L.me.host ? '' : 'The host sets the table and rings the bell.';
+  $('host-note').textContent = L.me.host ? '' : 'Only the host can change these and ring the bell.';
+  $('claim').hidden = L.me.host;
   if (L.status === 'playing' && L.me.in_game) {
     $('start').hidden = false; $('start').disabled = true; $('start').textContent = 'Dealing the characters…';
   } else $('start').textContent = 'Ring the bell';
@@ -158,6 +159,12 @@ function wireLobby() {
   $('evil-model').onchange = (e) => set({ evil_model: e.target.value });
   $('timer').onchange = (e) => set({ timer: +e.target.value });
   $('share-copy').onclick = () => { navigator.clipboard?.writeText($('share-url').textContent); $('share-copy').textContent = 'Copied'; setTimeout(() => { $('share-copy').textContent = 'Copy'; }, 1500); };
+  $('claim-go').onclick = async () => {
+    $('claim-err').textContent = '';
+    try { await api('/api/host', { key: $('claim-key').value.trim() }); $('claim-key').value = ''; pollLobby(); }
+    catch (e) { $('claim-err').textContent = e.message; }
+  };
+  $('claim-key').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('claim-go').click(); });
   $('start').onclick = async () => {
     unlockAudio();
     try { await api('/api/start', {}); pollLobby(); } catch (e) { $('start-err').textContent = e.message; }

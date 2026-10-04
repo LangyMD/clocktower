@@ -165,6 +165,9 @@ select { appearance: none; background-image: linear-gradient(45deg, transparent 
 .share-row code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 8px 10px;
   background: #0f0d0b; border: 1px dashed var(--line); border-radius: 8px; color: var(--parchment); font-size: 14px; }
 .bell { margin-top: 8px; }
+.claim { display: flex; gap: 8px; margin-top: 6px; }
+.claim input { flex: 1; min-width: 0; }
+#settings.readonly .claim input { pointer-events: auto; }
 #settings.readonly .round, #settings.readonly select { pointer-events: none; opacity: .65; }
 @media (max-width: 420px) { .grid2 { grid-template-columns: 1fr; gap: 0; } }
 
