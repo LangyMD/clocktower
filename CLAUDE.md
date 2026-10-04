@@ -120,6 +120,13 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   request's Host header; the lobby lists only models with a key present.
 - Human-game spend goes to `games/play/ledger.jsonl` (git-ignored), not the eval ledger, so a 0.1-CPU host
   doesn't parse 42 MB at start; `--budget` caps it per server start.
+- Live test (Oct 4, user's Render app, 1 scripted human + 9 Opus 5.5, 10 players): whole game in 23 min
+  (4 days, 65 human turns, 5-100 s between turns, median ~20 s); evil won (Spy read the Grimoire and claimed
+  the Slayer the Washerwoman was shown). Fixed after: double-tap double-submit (dock now seals at once),
+  phone dock prompt clamps to 2 lines. Absent players pass after 120 s (`web.AWAY`); host can end a game.
+- Testing the live app from a cloud session: the sandbox proxy drops Chromium's parallel requests
+  (ERR_TOO_MANY_RETRIES); run a localhost relay (urllib + /root/.ccr/ca-bundle.crt) and point the browser
+  at it. Right after a Render deploy, requests can hit the old and new instance for a few minutes.
 - Ideas: show the seat's own past whispers grouped by person; spectator mode for dead/late joiners.
 
 ## 2026-10-04: state at the end of the Sept 30 – Oct 2 sessions

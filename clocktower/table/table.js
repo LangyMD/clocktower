@@ -593,6 +593,8 @@ function renderDock() {
   if (f.err) h += `<p class="err">${esc(f.err)}</p>`;
   dock.innerHTML = h;
 
+  const pr = dock.querySelector('.ask .prompt');
+  if (pr) { if (f.promptOpen) pr.classList.add('open'); pr.onclick = () => { f.promptOpen = !f.promptOpen; pr.classList.toggle('open'); setDockHeight(); }; }
   dock.querySelectorAll('[data-pick]').forEach((b) => b.onclick = () => togglePick(b.dataset.pick));
   dock.querySelectorAll('[data-shot]').forEach((b) => b.onclick = () => { f.shot = f.shot === b.dataset.shot ? null : b.dataset.shot; renderDock(); });
   const ta = $('say');
@@ -633,12 +635,15 @@ async function submit(pass, vote) {
     else a.say = f.text.trim();
     if (f.shot && (f.mode === 'speak' || f.mode === 'nominate')) a.slayer_shot = f.shot;
   } else if (f.shot && (f.mode === 'speak' || f.mode === 'nominate')) a.slayer_shot = f.shot;
+  if (T.sent === p.turn) return;  // already sent: a double tap must not answer twice
+  T.sent = p.turn;                // seal the dock at once, before the server replies
+  document.title = 'Clocktower';
+  renderDock(); renderTown();
   try {
     await api('/api/act', { turn: p.turn, action: a });
-    T.sent = p.turn;
-    document.title = 'Clocktower';
-    renderDock(); renderTown();
-  } catch (e) { f.err = e.message; renderDock(); }
+  } catch (e) {
+    if (T.pending && T.pending.turn === p.turn) { T.sent = null; f.err = e.message; renderDock(); }
+  }
 }
 
 // ---------------------------------------------------------------- turn alerts
