@@ -7,7 +7,7 @@ is what it is, and every past run: `docs/protocol-history.md`.
 
 This file has two parts. **Part 1 (guidelines)** is durable: keep it short and true, and edit it when
 something changes. **Part 2 (dated session notes)** holds longer, perishable observations, each block
-headed with its date; treat them as context, not rules, and prune them when they go stale.
+headed with its date; treat them as context, not rules. Sessions add to and prune Part 2 on their own (see "Keeping this file current").
 
 # Part 1 — guidelines
 
@@ -84,6 +84,16 @@ headed with its date; treat them as context, not rules, and prune them when they
   rating per model; split detection (good) and deception (evil) once each model has ~40+ games a side.
 - 10–12 players by seed (two Minions).
 - Allocate extra games by uncertainty per dollar with a rule fixed in advance, never by which way results lean.
+
+## Keeping this file current (every session, unprompted)
+- Before ending a session that ran games, changed code or design, or learned something non-obvious,
+  add a dated block to Part 2 (`## YYYY-MM-DD: topic`): what was done, results with numbers, lessons,
+  open questions, next steps. Write it for a future session that has none of this context.
+- Promote anything that became a rule or a lasting fact (a new protocol, a decision the user made, a
+  path, a command) into Part 1, and fix Part 1 wherever it went stale.
+- Prune Part 2: delete or shorten blocks that are superseded or done (git keeps the history), so Part 2
+  stays a page or two. Newest block first.
+- Commit CLAUDE.md with the work, and tell the user in one line what you added or pruned.
 
 ## Working with the user
 Be concise: lead with the answer, plain words, short tables; the user reads on their phone. Check
