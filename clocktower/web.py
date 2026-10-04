@@ -64,6 +64,7 @@ def available(model):
         return bool(os.environ.get('ANTHROPIC_API_KEY') or os.environ.get('MY_ANTHROPIC_API_KEY'))
     return bool(os.environ.get('OPENAI_API_KEY'))
 TIMERS = (0, 60, 120, 300, 600)  # seconds per turn; 0 = wait as long as it takes
+AWAY = 120  # a player whose page hasn't checked in for this long passes their turns
 
 
 def evil_seats(n):
@@ -115,6 +116,8 @@ class Table:
         self.runner = runner or run_game
         self.links = {}
         self.dealt = set()     # tokens of the people in the current game
+        self.seen = {}         # token -> when that player's page last checked in
+        self.ended = False     # the host ended the current game early
 
     # ---- lobby ---------------------------------------------------------------------------------
     def join(self, name, team, host_key=None):
@@ -215,6 +218,9 @@ class Table:
             for p in self.people.values():
                 p['seat'] = None
             self.status, self.error, self.result, self.game, self.seats = 'playing', None, None, None, {}
+            self.ended = False
+            now = time.time()
+            self.seen.update({t: now for t in self.people})
             self.game_id = secrets.token_hex(4)
             self.dealt = set(self.people)
             cfg = dict(self.config)
@@ -229,7 +235,7 @@ class Table:
             self.seats = {}
             for token, seat in seats.items():
                 self.people[token]['seat'] = seat
-                self.seats[seat] = HumanSeat(seat, timeout)
+                self.seats[seat] = HumanSeat(seat, timeout, away=lambda t=token: time.time() - self.seen.get(t, 0) > AWAY)
             return dict(self.seats)
 
     def _run(self, cfg):
@@ -256,6 +262,8 @@ class Table:
     # ---- views -----------------------------------------------------------------------------------
     def lobby(self, token, base=None):
         with self.lock:
+            if token in self.people:
+                self.seen[token] = time.time()
             me = self.people.get(token or '')
             n = self.config['players']
             tf, os_, mn = SETUPS[n]
@@ -273,9 +281,24 @@ class Table:
                                             self.links) if me and me['host'] else {},
             }
 
+    def end(self, token):
+        """The host ends the game for everyone: it halts at its next turn and the Grimoire is shown."""
+        with self.lock:
+            if not self.person(token)['host']:
+                raise PermissionError('Only the host can end the game.')
+            game = self.game
+            if self.status != 'playing' or not game or not game.out:
+                raise ValueError('No game is under way.')
+            self.ended = True
+            (game.out / game.STOP).touch()
+            seats = list(self.seats.values())
+        for seat in seats:  # anyone being waited on passes, so the game reaches its next turn now
+            seat.submit({})
+
     def state(self, token, since):
         with self.lock:
             p = self.person(token)
+            self.seen[token] = time.time()
             seat, game = p['seat'], self.game
         if not game or not seat or not game.g:
             return {'status': self.status, 'seated': False, 'error': self.error}
@@ -331,13 +354,14 @@ class Table:
                 'whisper_words': WORDS['whisper']},
             'waiting': req is None and not over,
             'spent': round(sum(c.get('cost', 0) for c in game.calls), 2),
-            'over': over, 'error': self.error,
+            'over': over, 'error': self.error, 'host': p['host'],
         }
         if over:
             models = game.meta.get('models', {})
             seat_of = {q['seat']: q['name'] for q in self.people.values() if q['seat']}
             out['reveal'] = {
-                'winner': g.winner, 'reason': g.reason or (self.result or {}).get('stopped') or self.error,
+                'winner': g.winner, 'reason': g.reason or ('The host ended the game.' if self.ended else None)
+                          or (self.result or {}).get('stopped') or self.error,
                 'seats': [{'name': q.name, 'character': q.character, 'started': start.get(q.name),
                            'shown': q.shown if q.shown != q.character else None, 'evil': q.evil,
                            'alive': q.alive, 'player': seat_of.get(q.name), 'model': models.get(q.name)}
@@ -464,6 +488,7 @@ def serve(table: Table, host='0.0.0.0', port=8765):
                 '/api/start': lambda: table.start(token),
                 '/api/reset': lambda: table.reset(token),
                 '/api/act': lambda: table.act(token, body),
+                '/api/end': lambda: table.end(token),
             }
             if url.path not in routes:
                 return self.send(404, '{}')

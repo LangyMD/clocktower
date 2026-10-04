@@ -83,10 +83,11 @@ class ScriptedStoryteller:
 
 class HumanSeat:
     """Waits for a move submitted through the web UI (see web.py). `timeout` (seconds, optional) passes
-    the turn when nobody answers in time, the way a seat that says nothing passes."""
+    the turn when nobody answers in time, the way a seat that says nothing passes; so does `away()`
+    turning true (the player's page has stopped checking in), so a closed tab never stalls the table."""
 
-    def __init__(self, name, timeout=None):
-        self.name, self.timeout = name, timeout
+    def __init__(self, name, timeout=None, away=None):
+        self.name, self.timeout, self.away = name, timeout, away
         self.pending: Request | None = None
         self.future: asyncio.Future | None = None
         self.loop: asyncio.AbstractEventLoop | None = None
@@ -100,8 +101,13 @@ class HumanSeat:
         self.deadline = time.time() + self.timeout if self.timeout else None
         self.pending = request
         try:
-            return Reply(await asyncio.wait_for(self.future, self.timeout) if self.timeout else await self.future)
-        except asyncio.TimeoutError:
+            while not (self.away and self.away()):  # someone already gone passes at once
+                wait = 2 if self.deadline is None else max(0, min(2, self.deadline - time.time()))
+                try:
+                    return Reply(await asyncio.wait_for(asyncio.shield(self.future), wait))
+                except asyncio.TimeoutError:
+                    if self.deadline and time.time() >= self.deadline:
+                        return Reply({})
             return Reply({})
         finally:
             self.pending, self.future, self.deadline = None, None, None

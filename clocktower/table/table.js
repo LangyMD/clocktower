@@ -201,7 +201,7 @@ async function pollState() {
   }
   if (S.game !== T.game) resetTable(S.game);
   T.since = S.next;
-  T.players = S.players; T.me = S.me; T.over = S.over; T.reveal = S.reveal; T.spent = S.spent;
+  T.players = S.players; T.me = S.me; T.over = S.over; T.reveal = S.reveal; T.spent = S.spent; T.host = S.host;
   const feed = $('feed'), stick = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 160;
   S.events.forEach(addEvent);
   const prevTurn = T.pending && T.pending.turn;
@@ -684,7 +684,14 @@ async function openSheet(kind) {
       <h4>Your neighbours</h4><div class="kv"><span>${esc(names[(i - 1 + n) % n])}</span><span>${esc(names[(i + 1) % n])}</span></div>
       ${known.length ? `<h4>Your evil team</h4><div class="kv">${known.map(([nm, r]) => `<span class="evil">${esc(nm)} · ${r}</span>`).join('')}</div>` : ''}
       ${me.bluffs.length ? `<h4>Not in play (safe bluffs)</h4><div class="kv">${me.bluffs.map((b) => `<span>${esc(b)}</span>`).join('')}</div>` : ''}
-      <h4>What the Storyteller has told you</h4>${[...$('feed').querySelectorAll('[data-cat="st"] .card-ev.st p')].map((p) => `<p>${esc(p.textContent)}</p>`).join('') || '<p class="fine">Nothing yet.</p>'}`;
+      <h4>What the Storyteller has told you</h4>${[...$('feed').querySelectorAll('[data-cat="st"] .card-ev.st p')].map((p) => `<p>${esc(p.textContent)}</p>`).join('') || '<p class="fine">Nothing yet.</p>'}`
+      + (T.host && !T.over ? `<h4>Host</h4><button class="ghost" id="end-game">End this game for everyone</button>
+        <p class="fine">Ends it now and opens the Grimoire. A player whose page is closed for two minutes passes their turns automatically.</p>` : '');
+    const eg = $('end-game');
+    if (eg) eg.onclick = async () => {
+      if (!confirm('End the game for everyone?')) return;
+      try { await api('/api/end', {}); closeSheet(); } catch (e) { alert(e.message); }
+    };
   } else if (kind === 'script') {
     $('sheet-title').textContent = 'Trouble Brewing';
     rules = rules || await api('/api/rules');

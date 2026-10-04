@@ -85,5 +85,36 @@ class GameTest(unittest.TestCase):
             self.assertIn('Night 1', t.transcript(a))
 
 
+class StallTest(unittest.TestCase):
+    def test_absent_player_and_host_end(self):
+        """A player whose page never checks in passes (no stall); the host can end the game early."""
+        import clocktower.web as web
+        with tempfile.TemporaryDirectory() as d:
+            old, web.AWAY = web.AWAY, 1
+            try:
+                t = Table(args(d))
+                a = t.join('Ann', 'good')
+                t.join('Ghost', 'evil')  # never polls
+                t.set_config(a, {'players': 7})
+                t.start(a)
+                deadline, turns = time.time() + 60, 0
+                while t.status == 'playing' and time.time() < deadline and turns < 30:
+                    s = t.state(a, 0)
+                    p = s.get('pending')
+                    if p:
+                        t.act(a, {'turn': p['turn'], 'action': {'vote': False} if p['kind'] == 'vote' else {}})
+                        turns += 1
+                    time.sleep(0.02)
+                self.assertGreaterEqual(turns, 30, 'the absent player stalled the game')
+                t.end(a)
+                deadline = time.time() + 30
+                while t.status == 'playing' and time.time() < deadline:
+                    time.sleep(0.05)
+                self.assertEqual(t.status, 'over')
+                self.assertEqual(t.state(a, 0)['reveal']['reason'], 'The host ended the game.')
+            finally:
+                web.AWAY = old
+
+
 if __name__ == '__main__':
     unittest.main()
