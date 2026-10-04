@@ -1,0 +1,17 @@
+# One-click hosting for the multiplayer table (python -m clocktower play) on Render's free tier.
+# Render asks for the values marked sync: false when you create the Blueprint.
+services:
+  - type: web
+    name: clocktower
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -e .
+    startCommand: python -m clocktower play --port $PORT --budget 50
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: ANTHROPIC_API_KEY     # leave blank to skip Claude models
+        sync: false
+      - key: OPENAI_API_KEY        # leave blank to skip GPT models
+        sync: false

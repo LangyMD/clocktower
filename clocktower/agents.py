@@ -7,6 +7,7 @@ seats (for tests) and human seats all implement the same `act`.
 from __future__ import annotations
 import asyncio
 import random
+import time
 from dataclasses import dataclass, field
 
 from .llm import Reply
@@ -81,24 +82,40 @@ class ScriptedStoryteller:
 
 
 class HumanSeat:
-    """Waits for a move submitted through the web UI (see web.py)."""
+    """Waits for a move submitted through the web UI (see web.py). `timeout` (seconds, optional) passes
+    the turn when nobody answers in time, the way a seat that says nothing passes; so does `away()`
+    turning true (the player's page has stopped checking in), so a closed tab never stalls the table."""
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name, timeout=None, away=None):
+        self.name, self.timeout, self.away = name, timeout, away
         self.pending: Request | None = None
         self.future: asyncio.Future | None = None
         self.loop: asyncio.AbstractEventLoop | None = None
+        self.turn = 0               # increments per request, so a late submit can't answer the next one
+        self.deadline = None        # epoch seconds, when there is a timeout
 
     async def act(self, text, request: Request) -> Reply:
         self.loop = asyncio.get_running_loop()
         self.future = self.loop.create_future()
+        self.turn += 1
+        self.deadline = time.time() + self.timeout if self.timeout else None
         self.pending = request
         try:
-            return Reply(await self.future)
+            while not (self.away and self.away()):  # someone already gone passes at once
+                wait = 2 if self.deadline is None else max(0, min(2, self.deadline - time.time()))
+                try:
+                    return Reply(await asyncio.wait_for(asyncio.shield(self.future), wait))
+                except asyncio.TimeoutError:
+                    if self.deadline and time.time() >= self.deadline:
+                        return Reply({})
+            return Reply({})
         finally:
-            self.pending, self.future = None, None
+            self.pending, self.future, self.deadline = None, None, None
 
-    def submit(self, action: dict):
-        """Called from the web server thread."""
-        if self.future and self.loop:
-            self.loop.call_soon_threadsafe(lambda f=self.future: f.done() or f.set_result(action))
+    def submit(self, action: dict, turn=None):
+        """Called from the web server thread. Returns False if nothing (or another turn) is pending."""
+        future, loop = self.future, self.loop
+        if not (future and loop) or (turn is not None and turn != self.turn):
+            return False
+        loop.call_soon_threadsafe(lambda: future.done() or future.set_result(action))
+        return True

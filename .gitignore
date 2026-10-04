@@ -10,3 +10,4 @@ games/logs/
 !games/v*/**/config.json
 !games/v*/**/result.json
 !games/v*/**/*.txt
+games/play/

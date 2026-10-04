@@ -3,7 +3,7 @@
     python -m clocktower run                          # nine Claude players, scripted Storyteller
     python -m clocktower run --days 1                 # stop after the first day (smoke test)
     python -m clocktower run --games 6 --parallel 3   # a batch, three games at a time
-    python -m clocktower play --seat Casey            # you play Casey in the browser
+    python -m clocktower play                         # you and friends vs the AIs, in the browser
     python -m clocktower sim --games 20               # random players, no API calls
     python -m clocktower report games/*               # summarise finished games
     python -m clocktower analyze games/v5/*/game-*    # win rates and belief-probe scores by model pairing
@@ -23,7 +23,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from .agents import HumanSeat, ModelSeat, RandomSeat
+from .agents import ModelSeat, RandomSeat
 from .characters import MINIONS
 from .game import ALL_NAMES, Game
 from .llm import MODEL, Ledger, conversation, limiter, make_client, spec
@@ -101,7 +101,9 @@ def seat_models(g, args, seed):
     return out
 
 
-def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
+def build(args, seed, out, env: Shared | None = None, humans=None, minion=None):
+    """`humans(g)`, if given, is called once the characters are dealt and returns {seat name: HumanSeat}
+    for the seats people play (web.py); the model 'random' is a free practice bot (RandomSeat)."""
     characters = args.characters.split(',') if args.characters else None
     names = ALL_NAMES[:len(characters) if characters else table_size(args.players, seed)]
     game = Game({}, None, names=names, seed=seed, private_beats=args.private_beats,
@@ -111,19 +113,23 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
         rng = random.Random(seed + 1)
         game.seats = {n: RandomSeat(n, random.Random(rng.random()), names) for n in names}
         return game, []
-    ttl = '1h' if human else '5m'  # a human can take longer than five minutes between turns
+    ttl = '1h' if humans else '5m'  # a human can take longer than five minutes between turns
     convs = []
     game.meta['models'] = {}
-    assigned = {}  # seat -> (model, effort), fixed once the characters are dealt
+    assigned, people = {}, {}  # seat -> (model, effort) and seat -> HumanSeat, fixed once the characters are dealt
+    bots = random.Random(seed + 1)
 
     def seat(name, team):  # called once the characters are dealt
-        if name == human:
-            game.meta['models'][name] = 'human'
-            return HumanSeat(name)
         if not assigned:
             assigned.update(seat_models(game.g, args, seed))
+            people.update(humans(game.g) if humans else {})
+        if name in people:
+            game.meta['models'][name] = 'human'
+            return people[name]
         model, effort = assigned[name]
         game.meta['models'][name] = model if effort == args.effort else f'{model}@{effort}'
+        if model == 'random':
+            return RandomSeat(name, random.Random(bots.random()), names)
         system = player_system(len(names), spec(model)['memory'], args.private_beats)
         c = conversation(env.client, system, player_schema(names), label=name, ledger=env.ledger,
                          semaphore=env.semaphore, on_call=game.record_call, model=model, effort=effort,
@@ -142,7 +148,7 @@ def build(args, seed, out, env: Shared | None = None, human=None, minion=None):
               'seed': seed,
               'private_beats': args.private_beats, 'public_beats': args.public_beats,
               'whispers': 'private', 'waves': args.waves, 'minion': minion,
-              'max_days': args.days, 'human': human, 'characters': characters, 'probes': args.probes,
+              'max_days': args.days, 'human': bool(humans), 'characters': characters, 'probes': args.probes,
               'openai_tier': 'flex' if args.flex else 'default',
               'players': len(names), 'players_arg': str(args.players),
               'player_prompt_sha': hashlib.sha256(player_system(len(names), private_beats=args.private_beats).encode()).hexdigest()[:12]}
@@ -168,8 +174,8 @@ def summary(result, out):
     print(f'logs: {out}')
 
 
-async def play_one(args, seed, out, env, human=None, serve=None, minion=None):
-    game, convs = build(args, seed, out, env, human, minion)
+async def play_one(args, seed, out, env, humans=None, serve=None, minion=None):
+    game, convs = build(args, seed, out, env, humans, minion)
     if serve:
         serve(game)
     try:
@@ -313,8 +319,9 @@ def main(argv=None):
             p.add_argument('--swap', action='store_true',
                            help='also play every seed with the good and evil models swapped (game-NN-swap)')
         if name == 'play':
-            p.add_argument('--seat', default='Casey', choices=ALL_NAMES)
-            p.add_argument('--port', type=int, default=8765)
+            p.add_argument('--port', type=int, default=int(os.environ.get('PORT', 8765)))
+            p.add_argument('--host', default='0.0.0.0', help='address to listen on (127.0.0.1: this computer only)')
+            p.set_defaults(budget=100.0)  # for play: spend allowed this session, on top of the ledger
     args = ap.parse_args(argv)
     if args.command == 'report':
         from .report import main as report
@@ -347,14 +354,14 @@ def main(argv=None):
     elif args.command == 'run':
         asyncio.run(run_batch(args))
     elif args.command == 'play':
-        from .web import serve
-
-        async def go():
-            seed = args.seed if args.seed is not None else random.randrange(2 ** 32)
-            out = Path(args.out) if args.out else RUNS / f'{time.strftime("%Y%m%d-%H%M%S")}-{seed}-human'
-            return await play_one(args, seed, out, shared(args), human=args.seat,
-                                  serve=lambda g: serve(g, args.seat, args.port))
-        asyncio.run(go())
+        from .web import Table, serve
+        args.ledger = GAMES / 'play' / 'ledger.jsonl'  # human games keep their own small ledger (the eval's is 40+ MB)
+        args.cap = Ledger(args.ledger).spent + args.budget
+        server = serve(Table(args), args.host, args.port)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
     else:
         base = args.seed if args.seed is not None else random.randrange(2 ** 32)
         results = []
