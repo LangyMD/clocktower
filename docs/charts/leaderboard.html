@@ -25,6 +25,20 @@ th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--rule)}
 th{font:500 11.5px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 #tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;padding:7px 9px;border-radius:4px;line-height:1.4;z-index:5}
+:root{--win:#2f6fd1;--lose:#c2364a;--mid:#eef0f2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--win:#5b93ea;--lose:#e0586b;--mid:#2a3038}}
+:root[data-theme="dark"]{--win:#5b93ea;--lose:#e0586b;--mid:#2a3038}
+h2{font:600 23px/1.2 var(--display);margin:10px 0 0}
+.mx{border-collapse:separate;border-spacing:2px;font-size:12.5px;width:auto}
+.mx th,.mx td{border:0;padding:0}
+.mx th.col{font:500 11px var(--body);color:var(--ink-2);text-transform:none;letter-spacing:0;height:96px;vertical-align:bottom;white-space:nowrap}
+.mx th.col span{display:inline-block;transform:rotate(-55deg);transform-origin:left bottom;width:18px;margin-left:24px}
+.mx th.row{font:500 12.5px var(--body);color:var(--ink);text-transform:none;letter-spacing:0;text-align:right;padding-right:8px;white-space:nowrap}
+.mx td{width:46px;height:34px;text-align:center;font:500 12px var(--mono);font-variant-numeric:tabular-nums;border-radius:3px;cursor:default}
+.mx td.self{background:transparent;color:var(--muted)}
+.lab{display:inline-block;width:8px;height:8px;margin-left:6px;vertical-align:0}
+.scale{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2)}
+.scale .bar{width:180px;height:10px;border-radius:2px;background:linear-gradient(90deg,var(--lose),var(--mid),var(--win))}
 </style>
 <div class="page">
   <header>
@@ -41,6 +55,17 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-
   <div class="figure"><svg id="chart" role="img" aria-label="Ranked Elo ratings with 90% intervals"></svg></div>
   <p class="note" id="cap"></p>
   <div class="figure"><table id="tbl"><thead><tr><th>Model</th><th>Released</th><th class="n">Overall</th><th class="n">Detection</th><th class="n">Deception</th><th class="n">Games</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>Head to head: expected win rate</h2>
+  <p>Each cell is the chance the row model beats the column model in one game, from the ratings (an average setup, sides as chosen below). Blue means the row is favoured, red the column. Hover a cell for the games actually played between the two.</p>
+  <div class="tabs" role="group" aria-label="Sides">
+    <button id="m-a" aria-pressed="true">Average of both sides</button>
+    <button id="m-g" aria-pressed="false">Row plays good</button>
+    <button id="m-e" aria-pressed="false">Row plays evil</button>
+  </div>
+  <div class="scale"><span>column favoured</span><span class="bar"></span><span>row favoured</span></div>
+  <div class="figure"><table class="mx" id="mx"></table></div>
+  <p class="note" id="mxcap"></p>
 </div>
 <div id="tip" hidden></div>
 <script>
@@ -77,4 +102,34 @@ draw('c');
 const tb=document.querySelector('#tbl tbody');
 [...D].sort((a,b)=>b.combined-a.combined).forEach(m=>{const tr=document.createElement('tr');
  tr.innerHTML=`<td>${m.name}</td><td>${m.date}</td><td class="n">${m.combined}</td><td class="n">${m.detection}</td><td class="n">${m.deception}</td><td class="n">${m.good_games+m.evil_games}</td>`;tb.appendChild(tr)});
+
+const H2H = {"gpt-5.4|claude-opus-4-7": [1, 2], "claude-opus-4-7|gpt-5.4": [2, 2], "gpt-5.5|gpt-6.1-sol": [0, 1], "gpt-6.1-sol|gpt-5.5": [1, 1], "claude-opus-4-6|gpt-5.4": [3, 3], "gpt-5.4|claude-opus-4-6": [3, 3], "gpt-5.4|claude-fable-5-1": [1, 1], "claude-fable-5-1|gpt-5.4": [1, 1], "gpt-5.5|gpt-6-astra": [0, 1], "gpt-6-astra|gpt-5.5": [1, 1], "claude-fable-5-1|claude-opus-5-5": [3, 5], "claude-opus-5-5|claude-fable-5-1": [4, 5], "claude-opus-4-6|claude-opus-4-7": [1, 2], "claude-opus-4-7|claude-opus-4-6": [2, 2], "gpt-6-astra|claude-opus-5-5": [9, 9], "claude-opus-5-5|gpt-6-astra": [3, 9], "claude-opus-4-6|claude-fable-5-1": [0, 1], "claude-fable-5-1|claude-opus-4-6": [1, 1], "claude-opus-4-6|gpt-6.1-sol": [3, 5], "gpt-6.1-sol|claude-opus-4-6": [5, 5], "claude-opus-4-7|claude-fable-5-1": [1, 4], "claude-fable-5-1|claude-opus-4-7": [4, 4], "gpt-5.5|claude-fable-5-1": [0, 1], "claude-fable-5-1|gpt-5.5": [0, 1], "gpt-5.4|gpt-5.6-sol": [3, 9], "gpt-5.6-sol|gpt-5.4": [9, 9], "gpt-5.4|gpt-6.1-sol": [0, 1], "gpt-6.1-sol|gpt-5.4": [1, 1], "claude-opus-4-7|claude-fable-5": [0, 1], "claude-fable-5|claude-opus-4-7": [1, 1], "claude-opus-4-6|claude-fable-5": [0, 1], "claude-fable-5|claude-opus-4-6": [1, 1], "gpt-5.5|gpt-5.6-sol": [1, 3], "gpt-5.6-sol|gpt-5.5": [2, 3], "gpt-5.6-sol|gpt-6-astra": [3, 5], "gpt-6-astra|gpt-5.6-sol": [5, 5], "claude-opus-4-6|gpt-6-astra": [1, 1], "gpt-6-astra|claude-opus-4-6": [1, 1], "gpt-6-astra|gpt-6.1-sol": [4, 4], "gpt-6.1-sol|gpt-6-astra": [2, 4], "gpt-5.4|gpt-6-astra": [0, 1], "gpt-6-astra|gpt-5.4": [1, 1], "claude-fable-5|gpt-5.6-sol": [2, 4], "gpt-5.6-sol|claude-fable-5": [3, 4], "gpt-5.6-sol|claude-opus-5-5": [8, 9], "claude-opus-5-5|gpt-5.6-sol": [6, 9], "claude-opus-4-6|gpt-5.6-sol": [6, 7], "gpt-5.6-sol|claude-opus-4-6": [7, 7], "claude-opus-4-7|claude-opus-5-5": [0, 3], "claude-opus-5-5|claude-opus-4-7": [3, 3], "claude-opus-4-7|gpt-6.1-sol": [0, 2], "gpt-6.1-sol|claude-opus-4-7": [2, 2], "gpt-5.5|claude-opus-5-5": [1, 3], "claude-opus-5-5|gpt-5.5": [2, 3], "claude-fable-5-1|gpt-6.1-sol": [4, 5], "gpt-6.1-sol|claude-fable-5-1": [5, 5], "gpt-5.6-sol|claude-fable-5-1": [6, 9], "claude-fable-5-1|gpt-5.6-sol": [7, 9], "gpt-5.4|gpt-5.5": [4, 9], "gpt-5.5|gpt-5.4": [8, 9], "claude-opus-4-6|claude-opus-5-5": [0, 2], "claude-opus-5-5|claude-opus-4-6": [1, 2], "claude-fable-5|gpt-6-astra": [0, 1], "gpt-6-astra|claude-fable-5": [1, 1], "claude-fable-5|gpt-6.1-sol": [1, 1], "gpt-6.1-sol|claude-fable-5": [1, 1], "claude-opus-4-6|gpt-5.5": [4, 5], "gpt-5.5|claude-opus-4-6": [3, 5], "gpt-5.5|claude-fable-5": [0, 1], "claude-fable-5|gpt-5.5": [1, 1], "gpt-5.6-sol|gpt-6.1-sol": [4, 6], "gpt-6.1-sol|gpt-5.6-sol": [5, 6], "claude-opus-4-7|gpt-5.6-sol": [2, 3], "gpt-5.6-sol|claude-opus-4-7": [3, 3], "claude-fable-5-1|gpt-6-astra": [0, 2], "gpt-6-astra|claude-fable-5-1": [2, 2], "claude-opus-5-5|gpt-6.1-sol": [2, 9], "gpt-6.1-sol|claude-opus-5-5": [9, 9], "gpt-5.4|claude-fable-5": [0, 1], "claude-fable-5|gpt-5.4": [1, 1], "claude-opus-4-7|gpt-5.5": [0, 1], "gpt-5.5|claude-opus-4-7": [1, 1], "gpt-5.4|claude-opus-5-5": [1, 3], "claude-opus-5-5|gpt-5.4": [3, 3], "claude-fable-5|claude-opus-5-5": [1, 1], "claude-opus-5-5|claude-fable-5": [1, 1], "claude-fable-5|claude-fable-5-1": [4, 8], "claude-fable-5-1|claude-fable-5": [6, 8], "claude-opus-4-7|gpt-6-astra": [1, 1], "gpt-6-astra|claude-opus-4-7": [1, 1], "gpt-5.4|claude-opus-4-8": [2, 3], "claude-opus-4-8|gpt-5.4": [1, 3], "claude-opus-4-8|gpt-5.5": [1, 8], "gpt-5.5|claude-opus-4-8": [8, 8], "claude-opus-4-8|claude-opus-4-7": [6, 8], "claude-opus-4-7|claude-opus-4-8": [5, 8]};
+const se=R.setup_effects, HEFF=R.good_advantage+0.5*(se['Spy']+se['Scarlet Woman']+se['Baron'])+(se['11 players']+se['12 players'])/3;
+const P=d=>1/(1+Math.pow(10,-d/400));
+function pwin(a,b,mode){ // a beats b
+  const g=P(a.detection-b.deception+HEFF), e=1-P(b.detection-a.deception+HEFF);
+  return mode==='g'?g:mode==='e'?e:(g+e)/2;
+}
+function matrix(mode){
+  const rows=[...D].sort((a,b)=>b.combined-a.combined), t=document.getElementById('mx'); t.innerHTML='';
+  const hd=document.createElement('tr'); hd.innerHTML='<th></th>'+rows.map(m=>`<th class="col"><span>${m.name}</span></th>`).join(''); t.appendChild(hd);
+  rows.forEach(a=>{const tr=document.createElement('tr');
+    const c=a.lab==='Anthropic'?'var(--anth)':'var(--oai)';
+    tr.innerHTML=`<th class="row">${a.name}<span class="lab" style="background:${c};border-radius:${a.lab==='Anthropic'?'50%':'1px'}"></span></th>`;
+    rows.forEach(b=>{const td=document.createElement('td');
+      if(a===b){td.className='self';td.textContent='·';tr.appendChild(td);return}
+      const p=pwin(a,b,mode), k=Math.min(Math.abs(p-0.5)*2,1), pct=Math.round(k*88);
+      td.style.background=`color-mix(in oklab, ${p>=0.5?'var(--win)':'var(--lose)'} ${pct}%, var(--mid))`;
+      td.style.color=pct>55?'#fff':'var(--ink)';
+      td.textContent=Math.round(p*100);
+      const ag=H2H[a.id+'|'+b.id]||[0,0], bg=H2H[b.id+'|'+a.id]||[0,0];
+      const won=ag[0]+(bg[1]-bg[0]), n=ag[1]+bg[1];
+      td.addEventListener('mousemove',ev=>{tip.innerHTML=`<b>${a.name}</b> vs <b>${b.name}</b><br>expected: ${a.name} wins ${Math.round(p*100)}%<br>played: ${n?`${a.name} won ${won} of ${n} games`:'no games played'}`;tip.hidden=false;tip.style.left=Math.min(ev.clientX+12,innerWidth-270)+'px';tip.style.top=ev.clientY+14+'px'});
+      td.addEventListener('mouseleave',()=>tip.hidden=true);
+      tr.appendChild(td)});
+    t.appendChild(tr)});
+  document.getElementById('mxcap').textContent={a:'Average of a game as good and a game as evil, as in a side-swapped pair.',g:`Row model plays every good seat, column model every evil seat. Good starts with an edge of about ${Math.round(HEFF)} Elo, so most cells lean blue.`,e:'Row model plays every evil seat, column model every good seat; good\'s edge makes most cells lean red.'}[mode]+' Numbers are percentages.';
+}
+for(const k of['a','g','e'])document.getElementById('m-'+k).onclick=()=>{for(const j of['a','g','e'])document.getElementById('m-'+j).setAttribute('aria-pressed',j===k);matrix(k)};
+matrix('a');
 </script>
