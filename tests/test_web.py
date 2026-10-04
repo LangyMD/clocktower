@@ -1,6 +1,7 @@
 """The multiplayer table (web.py): lobby rules, seat assignment, and a whole game played by two
 people through the API against practice bots (no API calls)."""
 import argparse
+import random
 import tempfile
 import time
 import unittest
@@ -49,6 +50,7 @@ class GameTest(unittest.TestCase):
             t.start(a)
             seen = {a: 0, b: 0}
             turns = 0
+            rng = random.Random(3)
             deadline = time.time() + 60
             while t.status == 'playing' and time.time() < deadline:
                 for tok in (a, b):
@@ -60,7 +62,8 @@ class GameTest(unittest.TestCase):
                         self.assertTrue(not ev['private'] or ev['kind'] in ('intro', 'info', 'notice', 'whisper'))
                     p = s['pending']
                     if p:
-                        act = {'vote': False} if p['kind'] == 'vote' else {'targets': p['options'][:p['n_targets']]}
+                        act = ({'vote': False} if p['kind'] == 'vote' else  # random targets: an Imp stuck on one dead player never ends
+                               {'targets': rng.sample(p['options'], min(p['n_targets'], len(p['options'])))})
                         if p['kind'] == 'beat' and p['mode'] == 'private':
                             other = next(x['name'] for x in s['players'] if x['name'] != s['me']['seat'])
                             act = {'whispers': [{'to': [other], 'text': 'hello there'}]}
