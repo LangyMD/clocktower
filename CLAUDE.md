@@ -22,6 +22,8 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
 - Planning and results pages (published as Artifacts): `docs/plans/*.html`. Reader reports:
   `docs/analysis/<batch>/`. The full player prompt with example turns: `docs/player-prompt.md`.
 - Spend ledger: `games/ledger.jsonl` (all-time API spend, ~$21.3k through Oct 2 2026).
+- Human play: `python -m clocktower play` (lobby + table in `clocktower/web.py` and `clocktower/table/`;
+  multi-device, secret allegiances, `random` practice bots; logs in `games/play/`, git-ignored).
 - Trailer pipeline (video of one game): `media/trailer-f2-opus47-v-opus55/` (the MP4 is on HF under `media/`).
 
 ## Keys and access (all in the environment)
@@ -102,6 +104,17 @@ realism and design before scaling up; ask before any rule change or spending pas
 plainly. When the user asks for readers, spin up several subagents on separate questions in parallel.
 
 # Part 2 — dated session notes
+
+## 2026-10-04: multiplayer human table
+- Replaced the one-seat `play` page with a lobby + table for several people on their own devices
+  (stdlib HTTP, 1 s polling, per-browser tokens). Host link carries a key (`#host=`); friends use the LAN
+  URL or a tunnel. Allegiance prefs are never shown to others (only counts in errors); seat mapping is
+  revealed at game end. Deaths shown to a seat are the publicly announced ones (the engine's own `dead`
+  list runs ahead at night). `build(humans=fn)` replaces `human=`; model `random` = RandomSeat.
+- Tested: `tests/test_web.py` (a whole two-person game through the API) and Playwright runs (desktop host
+  + phone friend, full games vs random bots). Not yet played against real models: first real game should
+  check AI latency vs human patience and the 1 h cache TTL cost.
+- Ideas: show the seat's own past whispers grouped by person; spectator mode for dead/late joiners.
 
 ## 2026-10-04: state at the end of the Sept 30 – Oct 2 sessions
 

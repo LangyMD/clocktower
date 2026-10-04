@@ -29,7 +29,7 @@ python -m clocktower plan plans/timeline-models.json --within 10 --pairs 1 --see
 python -m clocktower tournament plans/f1.json      # every matchup at once, resumable
 python -m clocktower analyze games/v16/f1-*/game-* # win rates, probes, detection and deception ratings
 python -m clocktower fetch v9/e1-*                 # download logs from the dataset
-python -m clocktower play --seat Casey             # play a seat yourself at http://127.0.0.1:8765
+python -m clocktower play                          # you and friends vs the AIs (see below)
 python -m clocktower watch                         # spectator app; `site` builds it as static files
 python -m clocktower replay games/X --view Casey --thinking
 ```
@@ -37,6 +37,22 @@ python -m clocktower replay games/X --view Casey --thinking
 Each game directory holds `transcript.md` (omniscient replay with every seat's thinking), `events.jsonl`,
 `calls.jsonl` (every API call with tokens and cost), `probes.jsonl` (belief probes), `conversations/`,
 `config.json` and `result.json`. Spend is logged to `games/ledger.jsonl`, capped by `--budget`.
+
+## Playing with friends
+
+`python -m clocktower play` opens a table at port 8765 and prints two links: one for you (the host) and one
+for friends. Everyone joins from their own phone or laptop, picks a name and an allegiance (good, evil or
+either; secret from everyone), and the host picks the table size (5-15), the models for the good and evil
+AI seats (`random` = free practice bots) and an optional turn timer, then rings the bell. Each person's seat
+gets exactly what a model in that seat gets: the same events, the same prompts, the same moves (one whisper
+per private-time turn, speech, nominations, votes, night choices, Slayer shots) and word limits. The rules
+panel shows the AI system prompt word for word. After the game the Grimoire is revealed, along with
+who played each seat and a link to the full transcript with every AI's reasoning. Logs go to `games/play/`
+(not in git); `--budget` caps this session's spend (default $100).
+
+Friends on the same Wi-Fi open the printed address directly. For friends elsewhere, put a tunnel in front of
+it, e.g. `cloudflared tunnel --url http://localhost:8765` (free, no account) or Tailscale, and share that URL.
+API keys stay on the host's machine.
 
 ## Code
 
@@ -52,5 +68,6 @@ Each game directory holds `transcript.md` (omniscient replay with every seat's t
 | `tournament.py` | Experiment plans and the parallel launcher |
 | `supervise.py` | Batch health numbers (lost turns, capped turns, refusals, spend) |
 | `store.py` | The Hugging Face log store |
-| `agents.py`, `web.py`, `watch.py`, `viewer/`, `site.py`, `render.py` | Seats, human play, spectator app |
+| `agents.py`, `web.py`, `table/` | Seats; the multiplayer table (lobby, API and page) for human play |
+| `watch.py`, `viewer/`, `site.py`, `render.py` | Spectator app |
 | `cli.py` | Every command |

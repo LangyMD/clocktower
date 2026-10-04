@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0b0a">
+<title>Clocktower</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22%23cda65e%22/%3E%3Cpath d=%22M16 16V8M16 16l5 3%22 stroke=%22%232a1d0e%22 stroke-width=%222.4%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="table.css">
+</head>
+<body>
+
+<!-- ============================================================ lobby -->
+<main id="lobby" hidden>
+  <div class="sky" aria-hidden="true"></div>
+  <div class="lobby-inner">
+    <header class="hero">
+      <svg class="emblem" viewBox="0 0 120 150" aria-hidden="true">
+        <defs><mask id="crescent"><rect width="120" height="150" fill="#fff"/><circle cx="99" cy="22" r="14" fill="#000"/></mask></defs>
+        <circle class="moon" cx="90" cy="28" r="16" mask="url(#crescent)"/>
+        <path class="stone" d="M60 3 L73 38 H47 Z"/>
+        <path class="stone" d="M40 38 H80 V45 H40 Z"/>
+        <path class="stone" d="M45 45 H75 V149 H45 Z"/>
+        <circle class="face" cx="60" cy="68" r="11"/>
+        <path class="tick" d="M60 58.5v2.5M60 75v2.5M50.5 68h2.5M67 68h2.5"/>
+        <path class="hands" d="M60 68 V61 M60 68 L65 71"/>
+        <path class="win" d="M55 104 v-6 a5 5 0 0 1 10 0 v6 z"/>
+        <path class="win dim" d="M55 128 v-6 a5 5 0 0 1 10 0 v6 z"/>
+      </svg>
+      <h1>Clocktower</h1>
+      <p class="tagline">Trouble Brewing &middot; you and your friends against the machines</p>
+    </header>
+
+    <section id="join" class="card" hidden>
+      <h2>Take your seat</h2>
+      <label class="field"><span>Your name <em>(only the other humans see it)</em></span>
+        <input id="join-name" maxlength="24" autocomplete="nickname" placeholder="e.g. Dwarkesh"></label>
+      <div class="field"><span>Your allegiance</span>
+        <div class="allegiance" id="join-team"></div></div>
+      <p class="fine">Your choice is secret: no one else at the table, human or AI, learns it, or which seat you
+        are dealt. Your character is dealt at random from the team you pick.</p>
+      <button class="primary" id="join-go">Enter the town</button>
+      <p class="err" id="join-err"></p>
+    </section>
+
+    <section id="gather" hidden>
+      <div class="card">
+        <h2>The town gathers</h2>
+        <ul id="people"></ul>
+        <div class="field"><span>Your allegiance <em>(secret)</em></span><div class="allegiance" id="my-team"></div></div>
+      </div>
+
+      <div class="card" id="settings">
+        <h2>The table</h2>
+        <div class="size">
+          <button class="round" id="size-minus" aria-label="Fewer players">&minus;</button>
+          <div class="size-n"><b id="size-n">10</b><span>players</span></div>
+          <button class="round" id="size-plus" aria-label="More players">+</button>
+        </div>
+        <div class="composition" id="composition"></div>
+        <p class="comp-text" id="comp-text"></p>
+        <div class="grid2">
+          <label class="field"><span><i class="dot good"></i>Good AI players</span><select id="good-model"></select></label>
+          <label class="field"><span><i class="dot evil"></i>Evil AI players</span><select id="evil-model"></select></label>
+        </div>
+        <label class="field"><span>Turn timer <em>(a human turn passes when it runs out)</em></span><select id="timer"></select></label>
+        <p class="fine" id="estimate"></p>
+        <div id="share" hidden>
+          <span class="fine">Friends join here (same Wi-Fi):</span>
+          <div class="share-row"><code id="share-url"></code><button class="ghost small" id="share-copy">Copy</button></div>
+        </div>
+        <button class="primary bell" id="start">Ring the bell</button>
+        <p class="err" id="start-err"></p>
+        <p class="fine center" id="host-note"></p>
+      </div>
+    </section>
+
+    <section id="busy" class="card" hidden>
+      <h2>A game is under way</h2>
+      <p>You'll be dealt in when the host starts the next one.</p>
+    </section>
+  </div>
+</main>
+
+<!-- ============================================================ the table -->
+<main id="table" hidden>
+  <header class="bar">
+    <button class="me-chip" id="me-chip" aria-label="Your character"><span class="mini-token" id="me-token"></span>
+      <span class="me-text"><b id="me-name"></b><small id="me-char"></small></span></button>
+    <div class="phase-mini" id="phase-mini"></div>
+    <nav class="tools">
+      <button class="icon" data-sheet="town" id="town-btn" aria-label="Town circle" title="Town circle"></button>
+      <button class="icon" data-sheet="script" aria-label="Characters" title="Characters"></button>
+      <button class="icon" data-sheet="rules" aria-label="Rules" title="Rules"></button>
+      <button class="icon" data-sheet="notes" aria-label="Notes" title="Your notes"></button>
+      <button class="icon" id="sound-btn" aria-label="Sound" title="Turn chime"></button>
+    </nav>
+  </header>
+  <div class="strip" id="strip"></div>
+
+  <div class="stage">
+    <section id="town">
+      <div class="circle" id="circle"></div>
+    </section>
+    <section id="chronicle">
+      <div class="filters" id="filters"></div>
+      <div id="feed" aria-live="polite"></div>
+      <button id="jump" hidden>New below &darr;</button>
+      <section id="dock"></section>
+    </section>
+  </div>
+</main>
+
+<!-- ============================================================ sheets -->
+<div id="scrim" hidden></div>
+<aside id="sheet" hidden>
+  <header><h3 id="sheet-title"></h3><button class="icon close" id="sheet-close" aria-label="Close">&times;</button></header>
+  <div id="sheet-body"></div>
+</aside>
+
+<div id="reveal" hidden></div>
+
+<script src="table.js"></script>
+</body>
+</html>
