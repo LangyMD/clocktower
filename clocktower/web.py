@@ -151,7 +151,7 @@ class Table:
     def claim_host(self, token, key):
         with self.lock:
             if key != self.host_key:
-                raise PermissionError('That isn't the host password.')
+                raise PermissionError('That is not the host password.')
             self.person(token)['host'] = True
 
     def set_config(self, token, cfg):
