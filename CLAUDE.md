@@ -114,6 +114,9 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 - Tested: `tests/test_web.py` (a whole two-person game through the API) and Playwright runs (desktop host
   + phone friend, full games vs random bots). Not yet played against real models: first real game should
   check AI latency vs human patience and the 1 h cache TTL cost.
+- Hosting: this cloud container can't serve players (no inbound; cloudflared's edge port 7844 is blocked).
+  `render.yaml` deploys to Render free tier; `CLOCKTOWER_HOST_KEY` fixes the host link; links follow the
+  request's Host header; the lobby lists only models with a key present.
 - Ideas: show the seat's own past whispers grouped by person; spectator mode for dead/late joiners.
 
 ## 2026-10-04: state at the end of the Sept 30 – Oct 2 sessions

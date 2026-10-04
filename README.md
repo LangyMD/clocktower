@@ -54,6 +54,12 @@ Friends on the same Wi-Fi open the printed address directly. For friends elsewhe
 it, e.g. `cloudflared tunnel --url http://localhost:8765` (free, no account) or Tailscale, and share that URL.
 API keys stay on the host's machine.
 
+No computer to host from? `render.yaml` deploys the table to Render's free tier: in Render, New → Blueprint →
+this repo, then enter a host password (`CLOCKTOWER_HOST_KEY`) and the API keys. Open
+`https://<your-app>.onrender.com/#host=<password>` yourself and send friends the plain URL. The lobby offers
+only models whose key the server has (`random` practice bots always). A free instance sleeps when unused and
+loses an unfinished game if it restarts.
+
 ## Code
 
 | File | What it does |

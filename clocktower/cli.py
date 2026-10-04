@@ -319,7 +319,7 @@ def main(argv=None):
             p.add_argument('--swap', action='store_true',
                            help='also play every seed with the good and evil models swapped (game-NN-swap)')
         if name == 'play':
-            p.add_argument('--port', type=int, default=8765)
+            p.add_argument('--port', type=int, default=int(os.environ.get('PORT', 8765)))
             p.add_argument('--host', default='0.0.0.0', help='address to listen on (127.0.0.1: this computer only)')
             p.set_defaults(budget=100.0)  # for play: spend allowed this session, on top of the ledger
     args = ap.parse_args(argv)

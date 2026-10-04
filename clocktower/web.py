@@ -52,6 +52,17 @@ MODELS = [
     ('random', 'Practice bots (random moves, free)', None, 0.0),
 ]
 TEAMS = ('good', 'evil', 'any')
+
+
+def available(model):
+    """Whether this server holds the API key the model needs (so the lobby offers only playable models)."""
+    if model == 'random':
+        return True
+    if model.startswith('openrouter:'):
+        return bool(os.environ.get('OPENROUTER_API_KEY'))
+    if model.startswith('claude'):
+        return bool(os.environ.get('ANTHROPIC_API_KEY') or os.environ.get('MY_ANTHROPIC_API_KEY'))
+    return bool(os.environ.get('OPENAI_API_KEY'))
 TIMERS = (0, 60, 120, 300, 600)  # seconds per turn; 0 = wait as long as it takes
 
 
@@ -93,10 +104,11 @@ class Table:
         self.args = args
         self.lock = threading.RLock()
         self.people = {}       # token -> {name, team, host, seat}
-        self.host_key = secrets.token_urlsafe(9)
-        default = args.good_model or args.model
-        self.config = {'players': 10, 'good_model': default, 'evil_model': args.evil_model or args.model,
-                       'timer': 0}
+        self.host_key = os.environ.get('CLOCKTOWER_HOST_KEY') or secrets.token_urlsafe(9)  # a fixed one for hosted servers
+        fallback = next((m[0] for m in MODELS if available(m[0])), 'random')
+        pick = lambda m: m if available(m) else fallback
+        self.config = {'players': 10, 'good_model': pick(args.good_model or args.model),
+                       'evil_model': pick(args.evil_model or args.model), 'timer': 0}
         self.status, self.error, self.game, self.result = 'lobby', None, None, None
         self.seats = {}        # seat name -> HumanSeat (current game)
         self.game_id = None
@@ -158,6 +170,8 @@ class Table:
                 if k in cfg:
                     if cfg[k] not in ids:
                         raise ValueError(f'Unknown model {cfg[k]}.')
+                    if not available(cfg[k]):
+                        raise ValueError(f'This server has no API key for {cfg[k]}.')
                     self.config[k] = cfg[k]
             if 'timer' in cfg:
                 t = int(cfg['timer'])
@@ -240,7 +254,7 @@ class Table:
                 p['seat'] = None
 
     # ---- views -----------------------------------------------------------------------------------
-    def lobby(self, token):
+    def lobby(self, token, base=None):
         with self.lock:
             me = self.people.get(token or '')
             n = self.config['players']
@@ -253,8 +267,10 @@ class Table:
                             **({'token': t} if me and me['host'] else {})} for t, p in self.people.items()],
                 'config': self.config, 'setup': {'townsfolk': tf, 'outsiders': os_, 'minions': mn, 'demons': 1},
                 'evil_seats': evil_seats(n), 'problem': self.problem(),
-                'models': [{'id': i, 'name': nm, 'elo': elo, 'seat_cost': c} for i, nm, elo, c in MODELS],
-                'timers': TIMERS, 'links': self.links if me and me['host'] else {},
+                'models': [{'id': i, 'name': nm, 'elo': elo, 'seat_cost': c} for i, nm, elo, c in MODELS
+                           if available(i)],
+                'timers': TIMERS, 'links': ({'friends': base, 'host': f'{base}/#host={self.host_key}'} if base else
+                                            self.links) if me and me['host'] else {},
             }
 
     def state(self, token, since):
@@ -416,7 +432,10 @@ def serve(table: Table, host='0.0.0.0', port=8765):
             q = {k: v[0] for k, v in parse_qs(url.query).items()}
             token = self.headers.get('X-Token') or q.get('token')
             if url.path == '/api/lobby':
-                return self.reply(lambda: table.lobby(token))
+                host = self.headers.get('X-Forwarded-Host') or self.headers.get('Host') or ''
+                proto = self.headers.get('X-Forwarded-Proto') or 'http'
+                public = host and not host.split(':')[0] in ('localhost', '127.0.0.1')
+                return self.reply(lambda: table.lobby(token, f'{proto}://{host}' if public else None))
             if url.path == '/api/state':
                 return self.reply(lambda: table.state(token, int(q.get('since', 0))))
             if url.path == '/api/rules':
