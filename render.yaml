@@ -5,7 +5,7 @@ services:
     name: clocktower
     runtime: python
     plan: free
-    branch: claude/multiplayer-game-ui-ekg3zd
+    branch: main
     buildCommand: pip install -e .
     startCommand: python -m clocktower play --port $PORT --budget 50
     envVars:
