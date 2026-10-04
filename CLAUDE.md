@@ -150,7 +150,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 ### Pages and artifacts
 - Ratings (current): https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (by release date)
 - Leaderboard chart (ranked, overall/detection/deception tabs): https://claude.ai/artifact/Sc8dfYHJMLHBQdQeLcWSMu
-  (`docs/charts/leaderboard.html`, PNG `docs/charts/clocktower-leaderboard.png`)
+  plus a head-to-head expected-win-rate grid (`docs/charts/leaderboard.html`; PNGs `docs/charts/*.png`)
 - Flagship plan explainer: https://claude.ai/artifact/MAbeLPxmENkdfEQT8j75mt (pre-v17 numbers)
 - Detection vs deception explainer (simulated): https://claude.ai/artifact/RwxbjAyo42RzzAM6FK7MiX
 - Spectator viewer, v1–v15 games (no v16/v17 yet): https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH
