@@ -127,7 +127,8 @@ class Table:
             if len(self.people) >= 15:
                 raise ValueError('The table is full.')
             token = secrets.token_urlsafe(12)
-            self.people[token] = {'name': name, 'team': team, 'host': host_key == self.host_key, 'seat': None}
+            first = not any(p['host'] for p in self.people.values())  # the first to join hosts
+            self.people[token] = {'name': name, 'team': team, 'host': first or host_key == self.host_key, 'seat': None}
             return token
 
     def person(self, token):
@@ -148,10 +149,9 @@ class Table:
                     raise ValueError('Choose good, evil or either.')
                 p['team'] = team
 
-    def claim_host(self, token, key):
+    def claim_host(self, token, key=None):
+        """Anyone at the table may become a host (friends trust each other); hosts set up and start games."""
         with self.lock:
-            if key != self.host_key:
-                raise PermissionError('That is not the host password.')
             self.person(token)['host'] = True
 
     def set_config(self, token, cfg):

@@ -35,8 +35,11 @@ class LobbyTest(unittest.TestCase):
         for i in range(evil_seats(5)):
             t.join(f'E{i}', 'evil')
         self.assertIn('Too many people chose evil', t.problem())
+        guest = t.join('Guest', 'good')
         with self.assertRaises(PermissionError):
-            t.set_config(t.join('Guest', 'good'), {'players': 9})
+            t.set_config(guest, {'players': 9})
+        t.claim_host(guest)  # anyone may take the host's chair
+        t.set_config(guest, {'players': 9})
         self.assertNotIn('team', str(t.lobby(None)['people']))
 
 

@@ -115,7 +115,8 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   + phone friend, full games vs random bots). Not yet played against real models: first real game should
   check AI latency vs human patience and the 1 h cache TTL cost.
 - Hosting: this cloud container can't serve players (no inbound; cloudflared's edge port 7844 is blocked).
-  `render.yaml` deploys to Render free tier; `CLOCKTOWER_HOST_KEY` fixes the host link; links follow the
+  `render.yaml` deploys to Render free tier (user's app: https://clocktower-ogul.onrender.com). No host
+  password (the user trusts players): the first joiner hosts, anyone can tap "Make me the host"; links follow the
   request's Host header; the lobby lists only models with a key present.
 - Human-game spend goes to `games/play/ledger.jsonl` (git-ignored), not the eval ledger, so a 0.1-CPU host
   doesn't parse 42 MB at start; `--budget` caps it per server start.

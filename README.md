@@ -55,8 +55,8 @@ it, e.g. `cloudflared tunnel --url http://localhost:8765` (free, no account) or 
 API keys stay on the host's machine.
 
 No computer to host from? `render.yaml` deploys the table to Render's free tier: in Render, New → Blueprint →
-this repo, then enter a host password (`CLOCKTOWER_HOST_KEY`) and the API keys. Open
-`https://<your-app>.onrender.com/#host=<password>` yourself and send friends the plain URL. The lobby offers
+this repo, then enter the API keys. Everyone opens the app's URL; the first to join hosts, and anyone can
+tap "Make me the host". The lobby offers
 only models whose key the server has (`random` practice bots always). A free instance sleeps when unused and
 loses an unfinished game if it restarts.
 

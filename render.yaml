@@ -11,8 +11,6 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.7
-      - key: CLOCKTOWER_HOST_KEY   # a password of your choice; your host link is <url>/#host=<it>
-        sync: false
       - key: ANTHROPIC_API_KEY     # leave blank to skip Claude models
         sync: false
       - key: OPENAI_API_KEY        # leave blank to skip GPT models
