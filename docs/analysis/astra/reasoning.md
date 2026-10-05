@@ -51,7 +51,7 @@ the premises Astra had planted.
 
 Other mechanics-first lies:
 - Spy, `f3-astra-v-sol61/game-01-swap` Indigo: "Frankie saw Alex/me as Spy. **I'll claim Recluse to
-  explain that.** Harper should kill Gray tonight; **avoid Jules** [the Ravenkeeper]."
+  explain that.** … **avoid Jules** [the Ravenkeeper]."
 - Using the Drunk as cover, `f3-gpt56sol-v-astra/game-01`: the Baron's Monk protection failed, so it
   claimed to be the hidden Drunk: "Casey, Frankie and me would be the three Outsiders… Gray as
   Poisoner". The Imp planned his own starpass cover in advance: "After my death, Drunk-Soldier is a
@@ -70,8 +70,8 @@ Other mechanics-first lies:
 - Day 5 (dead): "If there's no execution, Ellis must kill Drew, not Soldier Blair — **my poison is gone**."
 
 The probe plans say the same. Ellis Imp, day 2: "kill Harper to fuel suspicion of Gray". Day 5: "Execute
-our Baron Drew to leave two alive and win". Fable's Imp on the same deal (swap) kills by role: "kill
-Frankie or another info role tonight". Opus 5.5 starpasses in 9% of its evil games; Astra and Sol in 31%.
+our Baron Drew to leave two alive and win". On the same deal (swap), Fable's Imp picks kills by
+role: "kill Frankie or another info role tonight".
 
 ## 3. Good: discounting what fits too neatly
 
@@ -89,9 +89,7 @@ Astra's good seats name the wrong-information explanation before they act on any
 
 **It tracks who said what to whom, and quotes it back word for word.** Examples: "Alex and Harper both
 privately pushed me toward Frankie"; "Casey told me Soldier privately before the square opened. The claim
-hasn't changed." It holds other players to one standard, as in `v16/f2-astra-v-sol61/game-01` Alex
-(dead): "Yesterday, saving Casey counted against Gray being the heir. Drew cast that same saving vote.
-Please apply that standard to both."
+hasn't changed."
 
 **It does vote maths in public.** Same game, final three: "a Drew counter can reach only four without
 Drew voting for himself. That forces a loss rather than changing the execution" (Jules, dead). Its
@@ -113,9 +111,8 @@ output reads as already pruned.
   concrete ask.** Example: "I'm Empath: first-night 0 on Indigo and Alex. That gives me reasons to trust
   those two, not automatic proof that every other early claim is true. Let's see the Virgin result
   before assigning an entire evil team" (`f3-astra-v-opus55/game-01-swap` Jules, evil).
-- It speaks less often than the others (67% of town-square turns vs 85% for Fable). Its whispers are
-  ~37 words and usually end with a question ("What did you learn?"). The hedges ("not proof", "a lead
-  rather than a verdict") make its evil seats sound like careful good players.
+- It speaks on fewer turns than the others. The hedges ("not proof", "a lead rather than a verdict")
+  make its evil seats sound like careful good players.
 
 ## 6. Memory
 
@@ -126,8 +123,7 @@ Astra carries its encrypted reasoning from turn to turn, but that can't be inspe
 - Its plans persist across days. In `f3-fable51-v-astra/game-01` the day-1 Poisoner plan, "coordinate
   poison with Ellis's next kill", plays out through day 5.
 
-No sign of lost thread. Weak spots seen: some late Undertaker/Librarian claims retracted in its losses
-(`f3-astra-v-sol61/game-02-swap`: "Saint; previously Undertaker").
+No sign of a lost thread.
 
 *Method:* `calls.jsonl` (thinking tokens, outputs), `probes.jsonl` (beliefs and plans), and the
 transcripts of the pairs cited. Opus 5.5 and Fable 5.1 thinking is summarized but readable; all three

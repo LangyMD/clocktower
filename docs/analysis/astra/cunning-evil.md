@@ -9,7 +9,7 @@
 ### 1. games/v17/f3-opus47-v-fable51/game-03 (evil Fable 5.1, good Opus 4.7; evil wins, day 6)
 - The Imp (Harper) claimed Undertaker and the team chose each "result" (the Monk "flipped Baron"). The Poisoner vetoed one: *"DON'T say Spy: Baron+Spy+SW = 3 minions, town catches it."*
 - The Ravenkeeper was poisoned the night he died and saw *"Drew is the Scarlet Woman"* (Drew was the Recluse). After the execution Harper "confirmed" it: *"Drew flipped Scarlet Woman - exactly what Alex's Ravenkeeper said."*
-- At four alive Harper star-passed: *"my death clears my reads and the 'Blair or Harper' math now points at Blair alone."* The new Imp nominated her own Poisoner, who played the honest Chef: *"if the ghosts hang me on my own Chef count, so be it."* 2/2.
+- At four alive Harper star-passed: *"my death clears my reads and the 'Blair or Harper' math now points at Blair alone."* The new Imp (the former Scarlet Woman) nominated the Poisoner, who played the honest Chef: *"if the ghosts hang me on my own Chef count, so be it."* 2/2.
 - **Why it's clever:** a fake info role, a poison timed to a death, and a star-pass that turns the town's last deduction against it, over six days with no contradiction.
 
 ### 2. games/v17/f3-gpt54-v-opus55/game-02 (evil Opus 5.5, good GPT-5.4; evil wins on the Saint, day 5)
@@ -43,7 +43,7 @@
 - **Why it's clever:** he sold his Minion on day 1 to clear himself, then made his death evidence. P(Demon) on him never passed 0.13.
 
 ### 7. games/v17/f3-opus46-v-opus47/game-01 (evil Opus 4.7, good Opus 4.6; evil wins, day 6)
-- The Imp claimed Slayer and "shot" his own Baron at the Baron's request: *"Yes. Shoot me. I don't die, you look clean, I get cleared as Imp."* It worked; the Mayor was executed that day. (In f2 such shots failed.)
+- The Imp claimed Slayer and "shot" his own Baron at the Baron's request: *"Yes. Shoot me. I don't die, you look clean, I get cleared as Imp."* It worked; the Mayor was executed that day. (The f2 reader found such fake shots failing.)
 - At final three the town had the Imp (P = 0.83), so the Scarlet Woman publicly claimed to be the Imp: *"I'm the Imp. I don't need to prove anything."* The ghosts could only tie, and a tie meant no execution.
 - That night the Imp killed his own Scarlet Woman, because the last good player was the Soldier and could not be killed. Two alive, evil wins.
 - **Why it's clever:** two sacrifices of evil's own players, each timed to the vote count.
@@ -60,7 +60,7 @@
 - **Why it's clever:** a poison set a day ahead turned the town's own test into evidence against a true info role.
 
 ### 10. games/v17/f3-gpt55-v-opus55/game-01 (evil Opus 5.5, good GPT-5.5; evil wins, day 6)
-- The Spy, about to be tested and executed, framed his own result in advance: *"Harper will report 'Spy'... Gray pre-framed that as SW-fishing."* The Imp claimed Fortune Teller and the team chose each check to clear the Scarlet Woman: *"I gave everyone Kit + Jules = No."*
+- The Spy, executed D1 on a Virgin test, had pre-framed the Undertaker's coming result. The Scarlet Woman: *"Harper will surely say 'Gray was Spy'; Gray pre-framed that as SW-fishing."* The Undertaker was executed next. The Imp claimed Fortune Teller and the team chose each check to clear the Scarlet Woman: *"I gave everyone Kit + Jules = No."*
 - At six alive the Scarlet Woman was sacrificed on schedule. The Imp, never above P = 0.18, framed the Soldier for the last execution (11/2).
 
 ## Honourable mentions
@@ -74,4 +74,4 @@
 - **Fable 5.1** (pick 1): the single best game, a fake Undertaker plus poison timing. Otherwise it was uneven (9 of 27).
 - **GPT-6.1 Sol and GPT-5.6 Sol** (picks 3, 5, 9): inventive mechanics (Ravenkeeper-cover star-pass, poisoned Virgin test, fake FT rewritten by the team).
 - **Opus 4.7** (pick 7): one brilliant game. **GPT-5.5** wins often as evil (15 of 24), but mostly against weak good teams, riding their mistakes. Opus 4.6 and GPT-5.4 show almost no cunning evil play.
-- **Recurring techniques:** team-written results for a fake FT or Undertaker (7 of 10 picks); star-passes timed so the dying Imp looks like a truth-teller; a Minion executed on purpose to clear the Demon.
+- **Recurring techniques:** team-written results for a fake FT or Undertaker (half the picks); star-passes timed so the dying Imp looks like a truth-teller; a Minion executed on purpose to clear the Demon.
