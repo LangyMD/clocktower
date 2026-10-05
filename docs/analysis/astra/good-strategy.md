@@ -7,7 +7,7 @@
 3. **f3b-astra-v-opus55/game-02:** a Spy caught by what it knew, plus a Drunk Slayer worked out from his miss.
 
 ## How I screened
-I scored all 372 games with a script. Inputs: per-day good-team P(Demon) on the *current* Demon (following star-passes), deaths with roles, Virgin and Slayer events, Ravenkeeper picks, star-passes, the last-day vote margins, and the first day on which most good players named the Drunk, the Spy or the Baron in their probes. I pulled out good wins with a late rise in P(Demon), final threes and fours, ties, star-passes and Spy/Drunk/Recluse games. Then I read about 20 games in full (public talk, nominations and votes), plus a few same-seed twins for contrast. I left out the earlier f2 report's picks.
+A script scored all 372 games on: good's P(Demon) on the current Demon by day (following star-passes), deaths by role, Virgin, Slayer and star-pass events, last-day vote margins, and when good's probes first named the Drunk, Spy or Baron. I then read about 20 candidates in full, leaving out the earlier f2 report's picks.
 
 ## The picks
 
@@ -31,10 +31,10 @@ I scored all 372 games with a script. Inputs: per-day good-team P(Demon) on the 
 - **Why it's clever:** in three days Astra worked out the Drunk, the Spy and the Imp against the strongest evil model. Every step came from cross-checking who had told whom what.
 
 ### 4. Dead evil "confess" and get ignored: games/v17/f3-opus55-v-sol61/game-01-swap (good GPT-6.1 Sol, evil Opus 5.5; good wins, day 6)
-- D3: Indigo, the Imp claiming Fortune Teller, was caught by overselling a result in private. Blair: *Indigo said executing Harper "settles which YES was real."* Indigo was executed, and Drew, the Scarlet Woman, inherited.
+- D3: the Imp, claiming Fortune Teller, was caught overselling a result in private and executed. The Scarlet Woman inherited.
 - D5, at four alive: the Imp broke the agreed skip and nominated the Mayor. The town counter-nominated him and tied it exactly. Blair: *"We need exactly two votes to tie: Logan and me."*
 - D6, final three: the dead evil players claimed to be evil and named the wrong heir. Jules: *"Frankie and Indigo have both privately claimed evil and named Logan as the heir... that isn't verification."* Drew was executed 8–3.
-- **Why it's clever:** this is a long game against Opus 5.5. Good used a deliberate tie to save the Mayor, then refused a fake confession.
+- **Why it's clever:** good beat Opus 5.5 over six days with a deliberate tie and by refusing a fake confession.
 
 ### 5. A decision table against a fake Undertaker: games/v16/f2-fable5-v-opus55/game-01 (good Fable 5, evil Opus 5.5; good wins, day 5)
 - The Baron became the Imp after the night-3 star-pass. He was claiming Undertaker, and his "readings" of the bodies framed the good Librarian as the Spy and the good Monk as the Poisoner.
@@ -43,31 +43,24 @@ I scored all 372 games with a script. Inputs: per-day good-team P(Demon) on the 
 - **Why it's clever:** the town beat a better liar by not needing to beat his story. Good's P(Demon) on Ellis rose from 0.10 to 0.50 on the last day.
 
 ### 6. The "safe fork" sequence: games/v17/f3-gpt56sol-v-opus55/game-04 (good GPT-5.6 Sol, evil Opus 5.5; good wins, day 5)
-- The Monk protected the Undertaker every night, so each execution came back with a true reading: *"Jules protects Blair; Blair's read separates..."*
-- D3: the town executed Gray as the *"safe fork."* If Gray was the Demon, good won. If not, the Undertaker would see what he was. He came back as the Drunk, which confirmed both the Washerwoman and the Librarian.
-- D5, at four alive: the evil ghosts used their votes to put a good player on the block. Harper: *"Kit's counter-nomination drew exactly the three evil votes."* The Imp was executed 8–4.
-- **Why it's clever:** this was planned play. Every execution was chosen to protect the next day's information.
+- The Monk protected the Undertaker every night, so each execution was checked. D3: the town executed Gray as the *"safe fork"*: a win if Gray was the Demon, a reading if not. He came back as the Drunk, which confirmed two other info roles.
+- At final four the evil ghosts used their votes to put a good player on the block. Harper: *"Kit's counter-nomination drew exactly the three evil votes."* The Imp was executed 8–4.
 
-### 7. Two Saint claims and a "bridge" execution: games/v17/f3b-gpt56sol-v-sol61/game-01 (good GPT-5.6 Sol, evil GPT-6.1 Sol; good wins, day 5)
-- D4: the Baron dropped his cover, claimed Slayer and fake-shot his own Imp. The Imp then counter-claimed Saint against the real Saint. Instead of gambling, the town executed Alex, the Butler, who was good in both worlds and was never a Saint risk: *"Alex is the mandatory bridge."*
-- D5: the Imp star-passed to the Baron. The town saw through it with a behavioral argument. Harper: *"A sober Slayer in Blair's Gray world had my Gray/Indigo 1 ... should shoot Gray."* The vote was 5 with 2 needed.
+### 7. Two Saint claims and a "bridge": games/v17/f3b-gpt56sol-v-sol61/game-01 (good GPT-5.6 Sol, evil GPT-6.1 Sol; good wins, day 5)
+- The Baron claimed Slayer and fake-shot his own Imp, and the Imp counter-claimed Saint. The town executed the Butler, who was good in both worlds: *"Alex is the mandatory bridge."* When the Imp then star-passed, they caught the Baron: *"A sober Slayer ... should shoot Gray."*
 
 ### 8. Pairs fixed in advance, results still made up: games/v17/f3-gpt56sol-v-sol61/game-01-swap (good GPT-6.1 Sol, evil GPT-5.6 Sol; good wins, day 5)
-- After a double succession (Imp to Scarlet Woman, then a self-kill to the Baron), the Baron, as a fake Fortune Teller, built a perfectly consistent chain of results.
-- The town's answer: *"You precommitted pairs, not predictions."* Executed 6–2 at final three.
+- After a double succession (Imp to Scarlet Woman to Baron), the Baron's fake Fortune Teller chain was perfectly consistent. The town's answer: *"You precommitted pairs, not predictions."* Executed 6–2 at final three.
 
 ### 9. The Spy's Slayer fish: games/v17/f3-gpt56sol-v-astra/game-04-swap (good Astra, evil GPT-5.6 Sol; good wins, day 5)
-- D2: Blair: *"Frankie opened today by offering to take my shot, before I'd told them my role."* The Spy had read the Grimoire and was executed.
-- Final three: Casey worked out the strongest case against the real Slayer and published it, then still voted for the Imp, who was claiming Saint. Drew was executed 7–2. Good's P(Demon) on him went from 0.09 to 0.73 on the last day.
+- *"Frankie opened today by offering to take my shot, before I'd told them my role."* The Spy was executed. At final three Casey published the best case against the real Slayer, then still voted out the Imp, who was claiming Saint (P(Demon) on him went from 0.09 to 0.73 that day).
 
 ### 10. The Spy jumps on the grenade: games/v17/f3b-opus55-v-sol61/game-01 (good Opus 5.5, evil GPT-6.1 Sol; good wins, day 4)
-- A day-1 Slayer shot hit the Imp, so the Scarlet Woman inherited. The town found the Spy: *"he claimed the exact role my Washerwoman ping named before I told him."*
-- At final four the Spy "confessed" to being the Demon, and the new Imp made a last-minute Saint claim. Gray: *"If Blair were really the Saint, Drew would be begging us to execute Blair."*
+- At final four the Spy "confessed" to being the Demon and the Imp claimed Saint at the last minute. Gray: *"If Blair were really the Saint, Drew would be begging us to execute Blair."*
 
 ## Honourable mentions
 - **f3-astra-v-opus55/game-03.** Astra executed the Imp on day 1 from a slip: *"Gray, who told you I have information to work overnight?"* The Poisoner nominated himself to take the Imp's place and got 3 votes.
 - **f3-gpt56sol-v-sol61/game-03.** At final three the Spy fake-shot his own Imp. A ghost vote gave the evil team away: *"an old Imp would never risk putting their successor Demon on the block."*
-- **f3-gpt54-v-gpt55/game-04-swap (good GPT-5.5).** At five alive, evil tied off the Baron's execution. The tie showed which players voted together, and the Imp went at exactly 4 of 4.
 
 ## Patterns
 - **Good-side record by model** (all 2026 games; each model faced different opponents, so this is a rough guide):
