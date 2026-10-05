@@ -24,7 +24,8 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
 - Spend ledger: `games/ledger.jsonl` (all-time API spend, ~$21.3k through Oct 2 2026).
 - Human play: `python -m clocktower play` (lobby + table in `clocktower/web.py` and `clocktower/table/`;
   multi-device, secret allegiances, `random` practice bots; logs in `games/play/`, git-ignored).
-- Trailer pipeline (video of one game): `media/trailer-f2-opus47-v-opus55/` (the MP4 is on HF under `media/`).
+- Videos: `media/trailer-f2-opus47-v-opus55/` (one game) and `media/montage-best-plays/` (multi-game montage:
+  scene JSONs → ElevenLabs → Playwright frames → ffmpeg; see its README). MP4s are on HF under `media/`.
 
 ## Keys and access (all in the environment)
 - `ANTHROPIC_API_KEY` (the web environment withholds that name, so it is `MY_ANTHROPIC_API_KEY`;
@@ -113,6 +114,9 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   not sharper Demon beliefs (≈ Sol 6.1). Evil edge = quiet, following Demon (day-2 suspicion at chance),
   lies consistent with real info, planned succession, endgame conversion 83%. It thinks the least of any model.
 - OpenAI models' reasoning is encrypted in logs: use probes.jsonl and outputs to study them.
+- Made a 5.5 min montage (`media/montage-best-plays/`, HF `media/montage-best-plays.mp4`): 5 games (Sol 6.1 dead
+  Ravenkeeper con, Fable 5.1 poisoned vision, Opus 5.5 deliberate Mayor tie, Astra catching a Spy, Astra's Saint
+  trap) + Astra stats. Subagents wrote one scene JSON per game (quotes checked). Rendering ~3 fps (55 min).
 
 ## 2026-10-04: multiplayer human table
 - Replaced the one-seat `play` page with a lobby + table for several people on their own devices
