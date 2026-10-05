@@ -1,0 +1,275 @@
+{
+ "id": "g3",
+ "game": "games/v17/f3-gpt56sol-v-opus55/game-02-swap",
+ "title": "The Deliberate Tie",
+ "kicker": "Evil: GPT-5.6 Sol · Good: Claude Opus 5.5",
+ "good_model": "Claude Opus 5.5",
+ "evil_model": "GPT-5.6 Sol",
+ "winner": "good",
+ "players": [
+  {
+   "name": "Alex",
+   "role": "Chef",
+   "team": "good"
+  },
+  {
+   "name": "Blair",
+   "role": "Imp",
+   "team": "evil"
+  },
+  {
+   "name": "Casey",
+   "role": "Fortune Teller",
+   "team": "good"
+  },
+  {
+   "name": "Drew",
+   "role": "Drunk",
+   "team": "good",
+   "thinks": "Undertaker"
+  },
+  {
+   "name": "Ellis",
+   "role": "Washerwoman",
+   "team": "good"
+  },
+  {
+   "name": "Frankie",
+   "role": "Soldier",
+   "team": "good"
+  },
+  {
+   "name": "Gray",
+   "role": "Spy",
+   "team": "evil"
+  },
+  {
+   "name": "Harper",
+   "role": "Mayor",
+   "team": "good"
+  },
+  {
+   "name": "Indigo",
+   "role": "Recluse",
+   "team": "good"
+  },
+  {
+   "name": "Jules",
+   "role": "Slayer",
+   "team": "good"
+  },
+  {
+   "name": "Kit",
+   "role": "Scarlet Woman",
+   "team": "evil"
+  },
+  {
+   "name": "Logan",
+   "role": "Investigator",
+   "team": "good"
+  }
+ ],
+ "voices": {
+  "Alex": "f",
+  "Logan": "m",
+  "Harper": "m"
+ },
+ "beats": [
+  {
+   "id": "g3b01",
+   "voice": "NARR",
+   "tts": "Four left, two evil. Harper is the Mayor: three alive, no execution, good wins.",
+   "visual": {
+    "phase": "DAY 5",
+    "sub": "4 alive",
+    "dies": [
+     "Indigo",
+     "Casey",
+     "Blair",
+     "Drew",
+     "Jules",
+     "Ellis",
+     "Frankie",
+     "Logan"
+    ],
+    "role_change": {
+     "Kit": "Imp"
+    },
+    "tags": {
+     "Harper": "claims Mayor",
+     "Gray": "claims Butler",
+     "Kit": "claims Virgin",
+     "Alex": "Chef"
+    },
+    "highlight": [
+     "Harper"
+    ]
+   }
+  },
+  {
+   "id": "g3b02",
+   "voice": "Alex",
+   "tts": "[confident] At four, today's shot and tomorrow's shot are the same single guess.",
+   "visual": {
+    "sub": "town square",
+    "card": {
+     "kind": "pub",
+     "who": "Alex",
+     "note": "(Chef) to the town · Day 5",
+     "text": "At 4, <b>today's shot and tomorrow's shot are the same single guess</b>, but waiting gives us a night kill to read and a possible Mayor win."
+    },
+    "highlight": [
+     "Alex"
+    ]
+   }
+  },
+  {
+   "id": "g3b03",
+   "voice": "NARR",
+   "tts": "So they skip. The Demon kills Alex.",
+   "visual": {
+    "phase": "NIGHT 6",
+    "sub": "no execution on day 5",
+    "night": true,
+    "dies": [
+     "Alex"
+    ],
+    "lines": [
+     [
+      "Kit",
+      "Alex",
+      "kill"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "g3b04",
+   "voice": "NARR",
+   "tts": "Final three. Kit puts the Mayor up; Kit and Gray vote yes. Two votes hang him.",
+   "visual": {
+    "phase": "DAY 6",
+    "sub": "final three · nominations",
+    "lines": [
+     [
+      "Kit",
+      "Harper",
+      "nominate"
+     ]
+    ],
+    "votes": {
+     "yes": 2,
+     "needed": 2,
+     "voters": [
+      "Kit",
+      "Gray"
+     ]
+    },
+    "stamp": "ON THE BLOCK · 2 VOTES",
+    "highlight": [
+     "Harper"
+    ]
+   }
+  },
+  {
+   "id": "g3b05",
+   "voice": "NARR",
+   "tts": "But Gray claims Butler: he votes only with his master. His master voted no.",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Frankie",
+     "note": "(dead, Soldier) to Gray · Day 6",
+     "text": "Gray, <b>you made me your Butler master - I'm voting no</b>, so you can't vote either."
+    },
+    "highlight": [
+     "Gray",
+     "Frankie"
+    ]
+   }
+  },
+  {
+   "id": "g3b06",
+   "voice": "Logan",
+   "tts": "[sharp] Gray voted YES on Harper while their master Frankie voted no. That's not a Butler.",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Logan",
+     "note": "(dead, Investigator) · Day 6",
+     "text": "Note Gray voted YES on Harper while their master Frankie voted no - <b>that's not a Butler.</b> Harper's tie plan wins whether Kit or Gray is the Imp."
+    },
+    "tags": {
+     "Gray": "fake Butler"
+    },
+    "highlight": [
+     "Gray"
+    ]
+   }
+  },
+  {
+   "id": "g3b07",
+   "voice": "NARR",
+   "tts": "Kit or Gray? Harper doesn't need to know.",
+   "visual": {
+    "card": {
+     "kind": "th",
+     "who": "Harper",
+     "note": "(Mayor) private thinking · Day 6",
+     "text": "I'm thinking a tie vote on Kit is strictly safer than executing him, since <b>a tie guarantees my Mayor win</b> while execution only wins if Kit happens to be the Imposter."
+    },
+    "highlight": [
+     "Kit",
+     "Gray"
+    ]
+   }
+  },
+  {
+   "id": "g3b08",
+   "voice": "Harper",
+   "tts": "[confident] Goal is a TIE at exactly 2. A tie means no execution and the Mayor wins.",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Harper",
+     "note": "(Mayor) nominating Kit · Day 6",
+     "text": "I nominate Kit. <b>Goal is a TIE at exactly 2</b> - a tie means no execution and the Mayor wins, no gamble. Logan, vote yes. Everyone else no."
+    },
+    "lines": [
+     [
+      "Harper",
+      "Kit",
+      "nominate"
+     ]
+    ],
+    "highlight": [
+     "Harper"
+    ]
+   }
+  },
+  {
+   "id": "g3b09",
+   "voice": "NARR",
+   "tts": "Two to two. Nobody dies. The Mayor wins.",
+   "visual": {
+    "votes": {
+     "yes": 2,
+     "needed": 3,
+     "voters": [
+      "Logan",
+      "Harper"
+     ]
+    },
+    "stamp": "TIE · 2–2 · NO EXECUTION",
+    "highlight": [
+     "Harper"
+    ],
+    "banner": {
+     "big": "GOOD WINS",
+     "small": "Mayor win by an exact tie · Day 6. Kit was the Imp, Gray the Spy."
+    }
+   }
+  }
+ ],
+ "why": "Having caught the fake Butler, the town still didn't know whether Kit or Gray was the Demon, so it engineered an exact 2–2 tie: no execution at three alive wins for the Mayor in every world."
+}

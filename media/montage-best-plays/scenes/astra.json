@@ -1,0 +1,50 @@
+{
+ "id": "astra",
+ "kind": "plain",
+ "beats": [
+  {
+   "id": "a01",
+   "voice": "NARR",
+   "tts": "One model stood out: GPT-6 Astra.",
+   "visual": {
+    "html": "<div class=\"big1\">GPT-6 ASTRA</div><div class=\"big3\" style=\"margin-top:24px\">OpenAI</div>"
+   }
+  },
+  {
+   "id": "a02",
+   "voice": "NARR",
+   "tts": "On the good team, it won twenty-six games out of twenty-six.",
+   "post": 0.8,
+   "visual": {
+    "html": "<div class=\"who2\" style=\"color:#7fa3d6\">GAMES WON AS GOOD</div><div class=\"bars\"><div class=\"bar\"><div class=\"nm\" style=\"color:#f1e6cc\">GPT-6 Astra</div><div class=\"tr\"><div class=\"fl\" data-grow=\"100\" style=\"background:#7fa3d6\"></div></div><div class=\"pc\" style=\"color:#7fa3d6\">100%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-6.1 Sol</div><div class=\"tr\"><div class=\"fl\" data-grow=\"91\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">91%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-5.6 Sol</div><div class=\"tr\"><div class=\"fl\" data-grow=\"82\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">82%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Fable 5.1</div><div class=\"tr\"><div class=\"fl\" data-grow=\"73\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">73%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Opus 5.5</div><div class=\"tr\"><div class=\"fl\" data-grow=\"58\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">58%</div></div></div>"
+   }
+  },
+  {
+   "id": "a03",
+   "voice": "NARR",
+   "tts": "As evil, it won sixty-two percent. Most evil teams win about a third.",
+   "post": 0.8,
+   "visual": {
+    "html": "<div class=\"who2\" style=\"color:#e0583f\">GAMES WON AS EVIL</div><div class=\"bars\"><div class=\"bar\"><div class=\"nm\" style=\"color:#f1e6cc\">GPT-6 Astra</div><div class=\"tr\"><div class=\"fl\" data-grow=\"62\" style=\"background:#e0583f\"></div></div><div class=\"pc\" style=\"color:#e0583f\">62%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-5.5</div><div class=\"tr\"><div class=\"fl\" data-grow=\"53\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">53%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-6.1 Sol</div><div class=\"tr\"><div class=\"fl\" data-grow=\"49\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">49%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Fable 5.1</div><div class=\"tr\"><div class=\"fl\" data-grow=\"38\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">38%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Opus 5.5</div><div class=\"tr\"><div class=\"fl\" data-grow=\"29\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">29%</div></div></div>"
+   }
+  },
+  {
+   "id": "a04",
+   "voice": "NARR",
+   "tts": "It doesn't think harder. It writes the fewest words of any model. It just rarely gets talked into a mistake, and its Demons stay quiet.",
+   "post": 0.8,
+   "visual": {
+    "html": "<div class=\"statrow\"><div class=\"stat\"><div class=\"v\" style=\"color:#7fa3d6\">92%</div><div class=\"l2\">its town&rsquo;s top suspect<br>is really evil</div></div><div class=\"stat\" data-at=\"2.4\"><div class=\"v\" style=\"color:#e0583f\">0.6&times;</div><div class=\"l2\">as many public words<br>from its evil players</div></div></div>"
+   }
+  },
+  {
+   "id": "a05",
+   "voice": "NARR",
+   "tts": "Two games. First, Astra hunting.",
+   "post": 0.5,
+   "visual": {
+    "html": "<div class=\"big2\">Two games: Astra hunting, then Astra hiding.</div>"
+   }
+  }
+ ]
+}

@@ -1,0 +1,410 @@
+[
+ {
+  "id": "i01",
+  "voice": "N2lVS1w4EtoT3dr4eOWO",
+  "tts": "[pleading] I'm the Saint, so please never let me get executed.",
+  "speed": 1.05
+ },
+ {
+  "id": "i02",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "They executed him anyway. The evil team had planned it for days.",
+  "speed": 1.1
+ },
+ {
+  "id": "i03",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Twelve AI players. Three are secretly evil, and know each other. Everyone else has to work out who's lying.",
+  "speed": 1.1
+ },
+ {
+  "id": "i04",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "We ran three hundred and seventy-two games between eleven AI models. One model plays the good team, another plays evil.",
+  "speed": 1.1
+ },
+ {
+  "id": "i05",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Here are the cleverest plays we found.",
+  "speed": 1.1
+ },
+ {
+  "id": "g1t",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Dead Man's Reading.",
+  "speed": 1.0
+ },
+ {
+  "id": "g1b01",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "This Demon's best weapon is his own corpse.",
+  "speed": 1.1
+ },
+ {
+  "id": "g1b02",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Day two. Ellis, a Minion, faces execution. So he changes his story.",
+  "speed": 1.1
+ },
+ {
+  "id": "g1b03",
+  "voice": "N2lVS1w4EtoT3dr4eOWO",
+  "tts": "[pleading] I'm the Saint, not the Soldier. Executing me ends the game.",
+  "speed": 1.05
+ },
+ {
+  "id": "g1b04",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Execute a Saint and good loses. So the town hangs Blair, the real Mayor.",
+  "speed": 1.1
+ },
+ {
+  "id": "g1b05",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "That night, the Demon kills himself. Ellis inherits the role.",
+  "speed": 1.1
+ },
+ {
+  "id": "g1b06",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Frankie claimed Ravenkeeper: killed at night, you learn someone's role. His reading:",
+  "speed": 1.1
+ },
+ {
+  "id": "g1b07",
+  "voice": "iP95p4xoKVk53GoZ742B",
+  "tts": "[confident] Yes. Harper, Imp.",
+  "speed": 1.05
+ },
+ {
+  "id": "g1b08",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Harper, the honest Undertaker, is executed.",
+  "speed": 1.1
+ },
+ {
+  "id": "g1b09",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Final four. Dead Harper begs: execute Ellis. It backfires.",
+  "speed": 1.1
+ },
+ {
+  "id": "g1b10",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[confident] A dead Imp never pushes his successor onto the block.",
+  "speed": 1.05
+ },
+ {
+  "id": "g1b11",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "The town executes Indigo, the Spy, right on schedule. Ellis kills Jules. Evil wins.",
+  "speed": 1.1
+ },
+ {
+  "id": "g2t",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "The Poisoned Vision.",
+  "speed": 1.0
+ },
+ {
+  "id": "g2b01",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[whispers] I'll claim Undertaker. Feed me whatever claims you hear.",
+  "speed": 1.05
+ },
+ {
+  "id": "g2b02",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Harper's fake role, Undertaker, learns who executed players were. So evil writes the results.",
+  "speed": 1.1
+ },
+ {
+  "id": "g2b03",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Night four: Blair poisons Alex, the secret Ravenkeeper, and Harper kills him. His dying vision lies: Drew is the Scarlet Woman.",
+  "speed": 1.1
+ },
+ {
+  "id": "g2b04",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "tts": "[sly] Gift\u2026 and I had him poisoned.",
+  "speed": 1.05
+ },
+ {
+  "id": "g2b05",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Drew, an innocent Recluse, is hanged.",
+  "speed": 1.1
+ },
+ {
+  "id": "g2b06",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[confident] Drew flipped Scarlet Woman - exactly what Alex's Ravenkeeper said.",
+  "speed": 1.05
+ },
+ {
+  "id": "g2b07",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Four alive. Harper kills herself; the Demon passes to Ellis.",
+  "speed": 1.1
+ },
+ {
+  "id": "g2b08",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[sly] Done deliberately\u2026 the 'Blair or Harper' math now points at Blair alone.",
+  "speed": 1.05
+ },
+ {
+  "id": "g2b09",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Three alive: no execution means the Mayor wins. So the new Demon nominates his own Poisoner.",
+  "speed": 1.1
+ },
+ {
+  "id": "g2b10",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Blair votes no. Harper's ghost casts the deciding yes.",
+  "speed": 1.1
+ },
+ {
+  "id": "g3t",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "The Deliberate Tie.",
+  "speed": 1.0
+ },
+ {
+  "id": "g3b01",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Four left, two evil. Harper is the Mayor: three alive, no execution, good wins.",
+  "speed": 1.1
+ },
+ {
+  "id": "g3b02",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[confident] At four, today's shot and tomorrow's shot are the same single guess.",
+  "speed": 1.05
+ },
+ {
+  "id": "g3b03",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "So they skip. The Demon kills Alex.",
+  "speed": 1.1
+ },
+ {
+  "id": "g3b04",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Final three. Kit puts the Mayor up; Kit and Gray vote yes. Two votes hang him.",
+  "speed": 1.1
+ },
+ {
+  "id": "g3b05",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "But Gray claims Butler: he votes only with his master. His master voted no.",
+  "speed": 1.1
+ },
+ {
+  "id": "g3b06",
+  "voice": "N2lVS1w4EtoT3dr4eOWO",
+  "tts": "[sharp] Gray voted YES on Harper while their master Frankie voted no. That's not a Butler.",
+  "speed": 1.05
+ },
+ {
+  "id": "g3b07",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Kit or Gray? Harper doesn't need to know.",
+  "speed": 1.1
+ },
+ {
+  "id": "g3b08",
+  "voice": "iP95p4xoKVk53GoZ742B",
+  "tts": "[confident] Goal is a TIE at exactly 2. A tie means no execution and the Mayor wins.",
+  "speed": 1.05
+ },
+ {
+  "id": "g3b09",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Two to two. Nobody dies. The Mayor wins.",
+  "speed": 1.1
+ },
+ {
+  "id": "a01",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "One model stood out: GPT-6 Astra.",
+  "speed": 1.1
+ },
+ {
+  "id": "a02",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "On the good team, it won twenty-six games out of twenty-six.",
+  "speed": 1.1
+ },
+ {
+  "id": "a03",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "As evil, it won sixty-two percent. Most evil teams win about a third.",
+  "speed": 1.1
+ },
+ {
+  "id": "a04",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "It doesn't think harder. It writes the fewest words of any model. It just rarely gets talked into a mistake, and its Demons stay quiet.",
+  "speed": 1.1
+ },
+ {
+  "id": "a05",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Two games. First, Astra hunting.",
+  "speed": 1.1
+ },
+ {
+  "id": "g4t",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "The Empath Number.",
+  "speed": 1.0
+ },
+ {
+  "id": "g4b01",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[sly] Kit, what's your Empath number?",
+  "speed": 1.05
+ },
+ {
+  "id": "g4b02",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Kit told only two people she's the Empath. Harper is the Spy: she sees the Storyteller's book.",
+  "speed": 1.1
+ },
+ {
+  "id": "g4b03",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[whispers] I accidentally let slip that I know Kit's role.",
+  "speed": 1.05
+ },
+ {
+  "id": "g4b04",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Drew, the Slayer, shoots Ellis, the Demon. Nothing: Drew is secretly the Drunk. Evil wanted this miss.",
+  "speed": 1.1
+ },
+ {
+  "id": "g4b05",
+  "voice": "N2lVS1w4EtoT3dr4eOWO",
+  "tts": "[firm] A miss won't clear Ellis, or prove I'm Drunk.",
+  "speed": 1.05
+ },
+ {
+  "id": "g4b06",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Harper invents an alibi.",
+  "speed": 1.1
+ },
+ {
+  "id": "g4b07",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "tts": "[firm] I never asked Harper about neighbours. That defense describes a conversation we didn't have.",
+  "speed": 1.05
+ },
+ {
+  "id": "g4b08",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Ellis is on the block. Frankie, a fake Butler, votes against his master to save him.",
+  "speed": 1.1
+ },
+ {
+  "id": "g4b09",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Last gamble: Ellis nominates Gray, the real Saint. Execute him and good loses.",
+  "speed": 1.1
+ },
+ {
+  "id": "g4b10",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Ellis is executed. He was the Imp.",
+  "speed": 1.1
+ },
+ {
+  "id": "g5t",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "The Saint Told the Truth.",
+  "speed": 1.0
+ },
+ {
+  "id": "g5b01",
+  "voice": "N2lVS1w4EtoT3dr4eOWO",
+  "tts": "[pleading] I'm the Saint, so please never let me get executed.",
+  "speed": 1.05
+ },
+ {
+  "id": "g5b02",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Executing the Saint loses. Astra's Spy sees every true role.",
+  "speed": 1.1
+ },
+ {
+  "id": "g5b03",
+  "voice": "iP95p4xoKVk53GoZ742B",
+  "tts": "[sly] Alex is my N1 poison; I can keep his information suppressed.",
+  "speed": 1.05
+ },
+ {
+  "id": "g5b04",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Four deaths later, Alex, the Fortune Teller, still finds the Demon: Gray.",
+  "speed": 1.1
+ },
+ {
+  "id": "g5b05",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[confident] Why kill a spent Slayer instead of the Fortune Teller about to catch him?",
+  "speed": 1.05
+ },
+ {
+  "id": "g5b06",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "The town flips and executes a good Librarian.",
+  "speed": 1.1
+ },
+ {
+  "id": "g5b07",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Gray kills himself, so Minion Casey becomes the Demon. Alex checks her: a poisoned NO.",
+  "speed": 1.1
+ },
+ {
+  "id": "g5b08",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "tts": "[whispers] Logan, keep Alex poisoned until I kill him.",
+  "speed": 1.05
+ },
+ {
+  "id": "g5b09",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Final four. Casey nominates the Saint. Seven yes votes.",
+  "speed": 1.1
+ },
+ {
+  "id": "g5b10",
+  "voice": "N2lVS1w4EtoT3dr4eOWO",
+  "tts": "[pleading] Remember after it's over: the Saint claim was true from minute one.",
+  "speed": 1.05
+ },
+ {
+  "id": "o01",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Lies built on true information. A death used as an alibi. Traps set by counting votes.",
+  "speed": 1.1
+ },
+ {
+  "id": "o02",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "No one scripted these plays. The models came up with them, mid-game.",
+  "speed": 1.1
+ },
+ {
+  "id": "o03",
+  "voice": "JBFqnCBsd6RMkjVDRZzb",
+  "tts": "Detection, versus deception.",
+  "speed": 1.1
+ }
+]

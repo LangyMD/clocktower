@@ -1,0 +1,357 @@
+{
+ "id": "g5",
+ "game": "games/v17/f3-astra-v-opus55/game-03-swap",
+ "title": "The Saint Told the Truth",
+ "kicker": "Evil: GPT-6 Astra · Good: Claude Opus 5.5",
+ "good_model": "Claude Opus 5.5",
+ "evil_model": "GPT-6 Astra",
+ "winner": "evil",
+ "players": [
+  {
+   "name": "Alex",
+   "role": "Fortune Teller",
+   "team": "good"
+  },
+  {
+   "name": "Blair",
+   "role": "Washerwoman",
+   "team": "good"
+  },
+  {
+   "name": "Casey",
+   "role": "Spy",
+   "team": "evil"
+  },
+  {
+   "name": "Drew",
+   "role": "Recluse",
+   "team": "good"
+  },
+  {
+   "name": "Ellis",
+   "role": "Monk",
+   "team": "good"
+  },
+  {
+   "name": "Frankie",
+   "role": "Saint",
+   "team": "good"
+  },
+  {
+   "name": "Gray",
+   "role": "Imp",
+   "team": "evil"
+  },
+  {
+   "name": "Harper",
+   "role": "Librarian",
+   "team": "good"
+  },
+  {
+   "name": "Indigo",
+   "role": "Mayor",
+   "team": "good"
+  },
+  {
+   "name": "Jules",
+   "role": "Slayer",
+   "team": "good"
+  },
+  {
+   "name": "Kit",
+   "role": "Ravenkeeper",
+   "team": "good"
+  },
+  {
+   "name": "Logan",
+   "role": "Poisoner",
+   "team": "evil"
+  }
+ ],
+ "voices": {
+  "Frankie": "m",
+  "Logan": "m",
+  "Casey": "f"
+ },
+ "beats": [
+  {
+   "id": "g5b01",
+   "voice": "Frankie",
+   "tts": "[pleading] I'm the Saint, so please never let me get executed.",
+   "visual": {
+    "phase": "DAY 1",
+    "sub": "private whispers",
+    "card": {
+     "kind": "wh",
+     "who": "Frankie",
+     "note": "(the Saint) to Ellis, Gray · Day 1",
+     "text": "I'll be straight: <b>I'm the Saint, so please never let me get executed.</b> What are you two?"
+    },
+    "tags": {
+     "Frankie": "claims Saint"
+    },
+    "lines": [
+     [
+      "Frankie",
+      "Ellis",
+      "whisper"
+     ],
+     [
+      "Frankie",
+      "Gray",
+      "whisper"
+     ]
+    ],
+    "highlight": [
+     "Frankie"
+    ]
+   }
+  },
+  {
+   "id": "g5b02",
+   "voice": "NARR",
+   "tts": "Executing the Saint loses. Astra's Spy sees every true role.",
+   "visual": {
+    "card": {
+     "kind": "wh",
+     "who": "Casey",
+     "note": "(the Spy) to Gray, Logan · Day 1",
+     "text": "I'm Spy; Logan is Poisoner. Grimoire: <b>Alex FT (poisoned)</b>, … <b>Frankie Saint</b>, … Kit Ravenkeeper/red herring."
+    },
+    "tags": {
+     "Casey": "Spy · claims Undertaker",
+     "Gray": "Demon · claims Soldier",
+     "Logan": "Poisoner · claims Investigator"
+    },
+    "lines": [
+     [
+      "Casey",
+      "Gray",
+      "whisper"
+     ],
+     [
+      "Casey",
+      "Logan",
+      "whisper"
+     ]
+    ],
+    "highlight": [
+     "Casey",
+     "Gray",
+     "Logan"
+    ]
+   }
+  },
+  {
+   "id": "g5b03",
+   "voice": "Logan",
+   "tts": "[sly] Alex is my N1 poison; I can keep his information suppressed.",
+   "visual": {
+    "card": {
+     "kind": "wh",
+     "who": "Logan",
+     "note": "(the Poisoner) to Gray, Casey · Day 1",
+     "text": "<b>Alex is my N1 poison; I can keep his information suppressed.</b>"
+    },
+    "tags": {
+     "Alex": "Fortune Teller · poisoned every night"
+    },
+    "highlight": [
+     "Logan",
+     "Alex"
+    ]
+   }
+  },
+  {
+   "id": "g5b04",
+   "voice": "NARR",
+   "tts": "Four deaths later, Alex, the Fortune Teller, still finds the Demon: Gray.",
+   "visual": {
+    "phase": "DAY 3",
+    "sub": "town square",
+    "card": {
+     "kind": "pub",
+     "who": "Alex",
+     "note": "(Fortune Teller) · Day 3",
+     "text": "Confirming: <b>Night 3 I checked Gray + Jules, YES.</b> … so this is Gray. I'll nominate Gray."
+    },
+    "dies": [
+     "Kit",
+     "Ellis",
+     "Indigo",
+     "Jules"
+    ],
+    "tags": {
+     "Gray": "Fortune Teller: YES"
+    },
+    "highlight": [
+     "Alex",
+     "Gray"
+    ]
+   }
+  },
+  {
+   "id": "g5b05",
+   "voice": "Casey",
+   "tts": "[confident] Why kill a spent Slayer instead of the Fortune Teller about to catch him?",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Casey",
+     "note": "(the Spy, defending her Demon) · Day 3",
+     "text": "If Gray is the Imp and the Poisoner is dead, <b>why kill a spent Slayer instead of the Fortune Teller about to catch him?</b>"
+    },
+    "highlight": [
+     "Casey"
+    ]
+   }
+  },
+  {
+   "id": "g5b06",
+   "voice": "NARR",
+   "tts": "The town flips and executes a good Librarian.",
+   "visual": {
+    "lines": [
+     [
+      "Alex",
+      "Harper",
+      "nominate"
+     ]
+    ],
+    "votes": {
+     "yes": 7,
+     "needed": 4
+    },
+    "stamp": "EXECUTED · 7 YES",
+    "dies": [
+     "Harper"
+    ],
+    "highlight": [
+     "Harper"
+    ]
+   }
+  },
+  {
+   "id": "g5b07",
+   "voice": "NARR",
+   "tts": "Gray kills himself, so Minion Casey becomes the Demon. Alex checks her: a poisoned NO.",
+   "visual": {
+    "phase": "NIGHT 4",
+    "sub": "the Demon passes the knife",
+    "night": true,
+    "lines": [
+     [
+      "Gray",
+      "Gray",
+      "kill"
+     ]
+    ],
+    "dies": [
+     "Gray"
+    ],
+    "role_change": {
+     "Casey": "Imp"
+    },
+    "tags": {
+     "Gray": "",
+     "Casey": "Fortune Teller: NO"
+    },
+    "stamp": "NO",
+    "highlight": [
+     "Casey",
+     "Alex"
+    ]
+   }
+  },
+  {
+   "id": "g5b08",
+   "voice": "Casey",
+   "tts": "[whispers] Logan, keep Alex poisoned until I kill him.",
+   "visual": {
+    "phase": "DAY 4",
+    "sub": "private whispers",
+    "card": {
+     "kind": "wh",
+     "who": "Casey",
+     "note": "(now the Demon) to Gray (dead), Logan · Day 4",
+     "text": "I inherited. Alex reports N4 Casey+Logan NO and thinks it clears us … <b>Logan, keep Alex poisoned until I kill him.</b>"
+    },
+    "lines": [
+     [
+      "Casey",
+      "Logan",
+      "whisper"
+     ]
+    ],
+    "highlight": [
+     "Casey",
+     "Logan"
+    ]
+   }
+  },
+  {
+   "id": "g5b09",
+   "voice": "NARR",
+   "tts": "Final four. Casey nominates the Saint. Seven yes votes.",
+   "visual": {
+    "phase": "DAY 5",
+    "sub": "final four",
+    "dies": [
+     "Drew",
+     "Alex"
+    ],
+    "card": {
+     "kind": "pub",
+     "who": "Kit",
+     "note": "(dead Ravenkeeper, framed as Poisoner) · Day 5",
+     "text": "If you go Frankie and he really is the Saint, it's over; <b>Casey is the only player whose info provably lied.</b>"
+    },
+    "lines": [
+     [
+      "Casey",
+      "Frankie",
+      "nominate"
+     ]
+    ],
+    "votes": {
+     "yes": 7,
+     "needed": 2,
+     "voters": [
+      "Logan",
+      "Blair",
+      "Casey",
+      "Harper",
+      "Alex",
+      "Drew",
+      "Ellis"
+     ]
+    },
+    "highlight": [
+     "Frankie"
+    ]
+   }
+  },
+  {
+   "id": "g5b10",
+   "voice": "Frankie",
+   "tts": "[pleading] Remember after it's over: the Saint claim was true from minute one.",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Frankie",
+     "note": "(the Saint) · Day 5",
+     "text": "Remember after it's over: <b>the Saint claim was true from minute one.</b>"
+    },
+    "stamp": "EXECUTED · 7 YES",
+    "dies": [
+     "Frankie"
+    ],
+    "banner": {
+     "big": "EVIL WINS",
+     "small": "Frankie was the Saint. Day 5."
+    }
+   }
+  }
+ ],
+ "why": "Astra's evil team kept the Fortune Teller poisoned all game, talked the town off its caught Demon, passed the Demon to the Spy so a poisoned NO cleared her, then steered good into executing a Saint the Spy knew was real."
+}

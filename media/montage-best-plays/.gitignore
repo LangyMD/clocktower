@@ -1,0 +1,9 @@
+audio/
+tight/
+frames/
+test/
+fonts/
+scene_built.html
+mix.f32
+*.mp4
+*.wav
