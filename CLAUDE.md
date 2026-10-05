@@ -105,6 +105,15 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-10-05: why Astra wins + best-games readers
+- Six parallel readers over all 372 2026 games (logs fetched with `HF_HUB_DISABLE_XET=1` and
+  `snapshot_download(..., ignore_patterns=['*.pkl'])`: Xet downloads of checkpoint.pkl fail size checks here,
+  and fetching everything at once hits HF 429s). Reports and summary: `docs/analysis/astra/README.md`.
+- Astra 26/26 good, 62% evil. Good edge = group decisions (top suspect evil 92%, executions 76–78% hit evil),
+  not sharper Demon beliefs (≈ Sol 6.1). Evil edge = quiet, following Demon (day-2 suspicion at chance),
+  lies consistent with real info, planned succession, endgame conversion 83%. It thinks the least of any model.
+- OpenAI models' reasoning is encrypted in logs: use probes.jsonl and outputs to study them.
+
 ## 2026-10-04: multiplayer human table
 - Replaced the one-seat `play` page with a lobby + table for several people on their own devices
   (stdlib HTTP, 1 s polling, per-browser tokens). Host link carries a key (`#host=`); friends use the LAN
