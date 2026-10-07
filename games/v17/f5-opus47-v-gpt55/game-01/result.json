@@ -1,0 +1,68 @@
+{
+  "winner": null,
+  "reason": "seat failed: Gray: SeatFailed('Gray (gpt-5.5): no usable reply in 4 attempts')",
+  "stopped": "seat failed: Gray: SeatFailed('Gray (gpt-5.5): no usable reply in 4 attempts')",
+  "days": 1,
+  "seed": 171200,
+  "starting": {
+    "Alex": "Undertaker",
+    "Blair": "Imp",
+    "Casey": "Chef",
+    "Drew": "Soldier",
+    "Ellis": "Baron",
+    "Frankie": "Saint",
+    "Gray": "Spy",
+    "Harper": "Recluse",
+    "Indigo": "Butler",
+    "Jules": "Empath",
+    "Kit": "Drunk",
+    "Logan": "Monk"
+  },
+  "final": {
+    "Alex": "Undertaker",
+    "Blair": "Imp",
+    "Casey": "Chef",
+    "Drew": "Soldier",
+    "Ellis": "Baron",
+    "Frankie": "Saint",
+    "Gray": "Spy",
+    "Harper": "Recluse",
+    "Indigo": "Butler",
+    "Jules": "Empath",
+    "Kit": "Drunk",
+    "Logan": "Monk"
+  },
+  "bluffs": [
+    "Librarian",
+    "Mayor",
+    "Ravenkeeper"
+  ],
+  "red_herring": null,
+  "drunk_as": "Virgin",
+  "cost": 0.5352,
+  "calls": 24,
+  "tokens": {
+    "input": 12118,
+    "cache_read": 68996,
+    "cache_write": 9134,
+    "output": 13622
+  },
+  "seconds": 129.2,
+  "errors": [
+    "Gray: SeatFailed('Gray (gpt-5.5): no usable reply in 4 attempts')"
+  ],
+  "models": {
+    "Alex": "claude-opus-4-7",
+    "Blair": "gpt-5.5",
+    "Casey": "claude-opus-4-7",
+    "Drew": "claude-opus-4-7",
+    "Ellis": "gpt-5.5",
+    "Frankie": "claude-opus-4-7",
+    "Gray": "gpt-5.5",
+    "Harper": "claude-opus-4-7",
+    "Indigo": "claude-opus-4-7",
+    "Jules": "claude-opus-4-7",
+    "Kit": "claude-opus-4-7",
+    "Logan": "claude-opus-4-7"
+  }
+}
