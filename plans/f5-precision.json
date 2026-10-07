@@ -1,0 +1,87 @@
+{
+ "note": "Allocated by clocktower.allocate {'target': 100.0, 'floor': 1, 'cap': 4, 'share': 0.25, 'z': 2.5}",
+ "out": "games/v17/f5",
+ "seed": 171000,
+ "players": "10-12",
+ "budget": 23318.0,
+ "matchups": [
+  {
+   "name": "opus46-v-opus47",
+   "good": "claude-opus-4-6",
+   "evil": "claude-opus-4-7",
+   "pairs": 1,
+   "seed": 171000,
+   "args": [
+    "--minions",
+    "Spy"
+   ],
+   "why": "precision 1",
+   "est_cost": 66
+  },
+  {
+   "name": "opus47-v-opus55",
+   "good": "claude-opus-4-7",
+   "evil": "claude-opus-5-5",
+   "pairs": 1,
+   "seed": 171100,
+   "args": [
+    "--minions",
+    "Spy"
+   ],
+   "why": "precision 1",
+   "est_cost": 41
+  },
+  {
+   "name": "opus47-v-gpt55",
+   "good": "claude-opus-4-7",
+   "evil": "gpt-5.5",
+   "pairs": 1,
+   "seed": 171200,
+   "args": [
+    "--minions",
+    "Spy"
+   ],
+   "why": "precision 1",
+   "est_cost": 55
+  },
+  {
+   "name": "opus47-v-gpt56sol",
+   "good": "claude-opus-4-7",
+   "evil": "gpt-5.6-sol",
+   "pairs": 1,
+   "seed": 171300,
+   "args": [
+    "--minions",
+    "Baron"
+   ],
+   "why": "precision 1",
+   "est_cost": 41
+  },
+  {
+   "name": "opus47-v-sol61",
+   "good": "claude-opus-4-7",
+   "evil": "gpt-6.1-sol",
+   "pairs": 2,
+   "seed": 171400,
+   "args": [
+    "--minions",
+    "Baron,Scarlet Woman"
+   ],
+   "why": "precision 2",
+   "est_cost": 70
+  },
+  {
+   "name": "opus48-v-opus55",
+   "good": "claude-opus-4-8",
+   "evil": "claude-opus-5-5",
+   "pairs": 3,
+   "seed": 171500,
+   "args": [
+    "--minions",
+    "Baron,Poisoner,Scarlet Woman"
+   ],
+   "why": "precision 3",
+   "est_cost": 303
+  }
+ ]
+}
