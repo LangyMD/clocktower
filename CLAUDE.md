@@ -118,6 +118,12 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   only (1) evil-only learners (evil already knows teams) or (2) a league of individual agents with private notes and
   alignment dealt independently of agent are clean. Notes cap ~10K tokens rewritten each round; reflection budget large.
 - Rating scale: anchor 1500 to the mean of the 11 2026 models permanently (not the mean of whatever is in the fit).
+- **Allocation rule in code:** `python -m clocktower.allocate MODELS RATINGS GAMEGLOBS... --target T` (floor of one pair
+  per matchup, one extra pair for a >2.5 SE style clash, then precision per dollar on models above ±T; cap 4 pairs per
+  matchup, no opponent >25% of a model's games; Minions least dealt). Half-widths calibrated to the bootstrap.
+- **f4 floor batch** (`plans/f4-floor.json`, 16 games, $986): Opus 4.8's 7 missing opponents + Opus 4.7 v Astra (clash).
+  Opus 4.8 won 2 of 14 → 1203 [1077, 1288] (was 1194 [1051, 1306]). Refit over 368 games (`scripts/ratings2026.py`
+  now includes f4): trend +650/yr. Worst half-width now Opus 4.7 ±109; reaching ±100 for all costs ~$575 more.
 
 ## 2026-10-04: multiplayer human table
 - Replaced the one-seat `play` page with a lobby + table for several people on their own devices
