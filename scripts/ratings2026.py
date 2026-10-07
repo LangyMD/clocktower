@@ -10,7 +10,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else 'docs/plans/f2-ratings.json'
 
 def load():
     games = []
-    for d in glob.glob('games/v16/f2-*/game-*') + glob.glob('games/v17/f3*-*/game-*') + glob.glob('games/v17/f4-*/game-*'):
+    for d in glob.glob('games/v16/f2-*/game-*') + glob.glob('games/v17/f3*-*/game-*') + glob.glob('games/v17/f4-*/game-*') + glob.glob('games/v17/f5-*/game-*'):
         if not os.path.exists(d + '/result.json'):
             continue
         r = json.load(open(d + '/result.json')); c = json.load(open(d + '/config.json'))

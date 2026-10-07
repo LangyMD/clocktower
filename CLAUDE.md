@@ -124,6 +124,13 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 - **f4 floor batch** (`plans/f4-floor.json`, 16 games, $986): Opus 4.8's 7 missing opponents + Opus 4.7 v Astra (clash).
   Opus 4.8 won 2 of 14 → 1203 [1077, 1288] (was 1194 [1051, 1306]). Refit over 368 games (`scripts/ratings2026.py`
   now includes f4): trend +650/yr. Worst half-width now Opus 4.7 ±109; reaching ±100 for all costs ~$575 more.
+- **f5 precision top-up** (`plans/f5-precision.json`, 18 games, $649): chosen by the rule for ±100. Refit over 386 games:
+  GPT-6 Astra 1859 > GPT-6.1 Sol 1734 > Fable 5.1 1595 ≈ GPT-5.6 Sol 1591 > Opus 5.5 1549 ≈ Fable 5 1544 > GPT-5.5 1482
+  > Opus 4.6 1432 > GPT-5.4 1276 > Opus 4.7 1241 > Opus 4.8 1198; trend +651/yr [553, 827]; evil wins 33%. Every model
+  within ±100 except Astra ±102 (lopsided range: it rarely loses). Pages (ratings, leaderboard, lab trends) not yet
+  rebuilt with these numbers.
+- Parser gap: GPT-5.5 once sent several JSON objects in one reply four times running (seat failed; game relaunched).
+  Fix to consider: accept the first object.
 
 ## 2026-10-04: multiplayer human table
 - Replaced the one-seat `play` page with a lobby + table for several people on their own devices

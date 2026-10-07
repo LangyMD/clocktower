@@ -1,34 +1,34 @@
 {
- "games": 368,
- "evil_win_rate": 0.332,
- "good_advantage": 102,
+ "games": 386,
+ "evil_win_rate": 0.334,
+ "good_advantage": 112,
  "setup_effects": {
-  "Spy": 79,
-  "Scarlet Woman": -73,
-  "Baron": 84,
-  "11 players": 8,
-  "12 players": 55
+  "Spy": 65,
+  "Scarlet Woman": -66,
+  "Baron": 70,
+  "11 players": 12,
+  "12 players": 46
  },
  "trend_per_year": {
   "c": [
-   650,
+   651,
    [
-    551,
-    828
+    553,
+    827
    ]
   ],
   "d": [
-   657,
+   670,
    [
-    507,
-    858
+    526,
+    866
    ]
   ],
   "v": [
-   695,
+   670,
    [
-    584,
-    920
+    547,
+    882
    ]
   ]
  },
@@ -37,44 +37,44 @@
    "id": "claude-opus-4-6",
    "date": "2026-02-05",
    "lab": "Anthropic",
-   "combined": 1420,
+   "combined": 1432,
    "c90": [
-    1323,
-    1506
+    1340,
+    1517
    ],
-   "detection": 1485,
+   "detection": 1489,
    "d90": [
-    1360,
-    1626
+    1370,
+    1637
    ],
-   "deception": 1307,
+   "deception": 1338,
    "v90": [
-    1145,
-    1422
+    1178,
+    1464
    ],
-   "good_games": 28,
-   "good_wins": 18,
-   "evil_games": 28,
-   "evil_wins": 4
+   "good_games": 29,
+   "good_wins": 19,
+   "evil_games": 29,
+   "evil_wins": 5
   },
   {
    "id": "gpt-5.4",
    "date": "2026-03-05",
    "lab": "OpenAI",
-   "combined": 1272,
+   "combined": 1276,
    "c90": [
-    1194,
-    1330
+    1193,
+    1335
    ],
-   "detection": 1303,
+   "detection": 1309,
    "d90": [
-    1196,
-    1395
+    1206,
+    1398
    ],
    "deception": 1228,
    "v90": [
-    1097,
-    1326
+    1092,
+    1317
    ],
    "good_games": 33,
    "good_wins": 15,
@@ -85,72 +85,72 @@
    "id": "claude-opus-4-7",
    "date": "2026-04-16",
    "lab": "Anthropic",
-   "combined": 1269,
+   "combined": 1241,
    "c90": [
-    1140,
-    1358
+    1126,
+    1323
    ],
-   "detection": 1313,
+   "detection": 1266,
    "d90": [
-    1188,
-    1420
+    1142,
+    1352
    ],
    "deception": 1224,
    "v90": [
-    1039,
-    1355
+    1045,
+    1348
    ],
-   "good_games": 28,
-   "good_wins": 13,
-   "evil_games": 28,
+   "good_games": 34,
+   "good_wins": 14,
+   "evil_games": 34,
    "evil_wins": 4
   },
   {
    "id": "gpt-5.5",
    "date": "2026-04-23",
    "lab": "OpenAI",
-   "combined": 1472,
+   "combined": 1482,
    "c90": [
-    1397,
-    1545
+    1408,
+    1551
    ],
-   "detection": 1382,
+   "detection": 1380,
    "d90": [
     1278,
-    1486
+    1483
    ],
-   "deception": 1544,
+   "deception": 1560,
    "v90": [
-    1436,
-    1655
+    1450,
+    1663
    ],
-   "good_games": 33,
-   "good_wins": 22,
-   "evil_games": 33,
-   "evil_wins": 17
+   "good_games": 34,
+   "good_wins": 23,
+   "evil_games": 34,
+   "evil_wins": 18
   },
   {
    "id": "claude-opus-4-8",
    "date": "2026-05-28",
    "lab": "Anthropic",
-   "combined": 1203,
+   "combined": 1198,
    "c90": [
-    1077,
-    1288
+    1076,
+    1275
    ],
-   "detection": 1113,
+   "detection": 1136,
    "d90": [
-    968,
-    1210
+    988,
+    1240
    ],
-   "deception": 1351,
+   "deception": 1320,
    "v90": [
-    1202,
-    1466
+    1175,
+    1425
    ],
-   "good_games": 26,
-   "good_wins": 8,
-   "evil_games": 26,
+   "good_games": 29,
+   "good_wins": 9,
+   "evil_games": 29,
    "evil_wins": 6
   },
   {
@@ -159,18 +159,18 @@
    "lab": "Anthropic",
    "combined": 1544,
    "c90": [
-    1458,
-    1640
+    1454,
+    1643
    ],
-   "detection": 1436,
+   "detection": 1438,
    "d90": [
-    1284,
-    1583
+    1291,
+    1581
    ],
-   "deception": 1648,
+   "deception": 1643,
    "v90": [
-    1510,
-    1805
+    1506,
+    1793
    ],
    "good_games": 20,
    "good_wins": 12,
@@ -181,44 +181,44 @@
    "id": "gpt-5.6-sol",
    "date": "2026-07-09",
    "lab": "OpenAI",
-   "combined": 1594,
+   "combined": 1591,
    "c90": [
-    1548,
-    1652
+    1543,
+    1647
    ],
-   "detection": 1663,
+   "detection": 1666,
    "d90": [
-    1569,
-    1779
+    1580,
+    1783
    ],
-   "deception": 1529,
+   "deception": 1519,
    "v90": [
-    1444,
-    1633
+    1438,
+    1615
    ],
-   "good_games": 56,
-   "good_wins": 46,
-   "evil_games": 56,
+   "good_games": 57,
+   "good_wins": 47,
+   "evil_games": 57,
    "evil_wins": 19
   },
   {
    "id": "claude-fable-5-1",
    "date": "2026-09-01",
    "lab": "Anthropic",
-   "combined": 1596,
+   "combined": 1595,
    "c90": [
     1537,
-    1672
+    1668
    ],
    "detection": 1582,
    "d90": [
-    1488,
-    1720
+    1487,
+    1712
    ],
-   "deception": 1592,
+   "deception": 1588,
    "v90": [
-    1493,
-    1705
+    1486,
+    1700
    ],
    "good_games": 37,
    "good_wins": 27,
@@ -229,20 +229,20 @@
    "id": "gpt-6-astra",
    "date": "2026-09-03",
    "lab": "OpenAI",
-   "combined": 1860,
+   "combined": 1859,
    "c90": [
-    1789,
-    1984
+    1779,
+    1983
    ],
-   "detection": 1939,
+   "detection": 1940,
    "d90": [
-    1883,
-    1997
+    1876,
+    1995
    ],
-   "deception": 1808,
+   "deception": 1806,
    "v90": [
-    1698,
-    1966
+    1697,
+    1965
    ],
    "good_games": 27,
    "good_wins": 27,
@@ -253,49 +253,49 @@
    "id": "claude-opus-5-5",
    "date": "2026-09-22",
    "lab": "Anthropic",
-   "combined": 1543,
+   "combined": 1549,
    "c90": [
-    1480,
-    1606
+    1489,
+    1612
    ],
-   "detection": 1490,
+   "detection": 1500,
    "d90": [
-    1387,
-    1599
+    1405,
+    1609
    ],
-   "deception": 1591,
+   "deception": 1585,
    "v90": [
-    1481,
-    1688
+    1482,
+    1684
    ],
-   "good_games": 45,
-   "good_wins": 26,
-   "evil_games": 45,
-   "evil_wins": 13
+   "good_games": 49,
+   "good_wins": 30,
+   "evil_games": 49,
+   "evil_wins": 16
   },
   {
    "id": "gpt-6.1-sol",
    "date": "2026-09-27",
    "lab": "OpenAI",
-   "combined": 1728,
+   "combined": 1734,
    "c90": [
-    1677,
-    1812
+    1684,
+    1815
    ],
-   "detection": 1794,
+   "detection": 1793,
    "d90": [
-    1691,
+    1687,
     1959
    ],
-   "deception": 1678,
+   "deception": 1688,
    "v90": [
-    1579,
-    1801
+    1604,
+    1811
    ],
-   "good_games": 35,
-   "good_wins": 32,
-   "evil_games": 35,
-   "evil_wins": 17
+   "good_games": 37,
+   "good_wins": 34,
+   "evil_games": 37,
+   "evil_wins": 19
   }
  ]
 }
