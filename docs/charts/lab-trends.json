@@ -1,0 +1,98 @@
+{
+ "Anthropic|c": {
+  "slope": 373,
+  "intercept": 1268,
+  "ci": [
+   238,
+   531
+  ]
+ },
+ "Anthropic|d": {
+  "slope": 186,
+  "intercept": 1333,
+  "ci": [
+   -35,
+   439
+  ]
+ },
+ "Anthropic|v": {
+  "slope": 590,
+  "intercept": 1188,
+  "ci": [
+   382,
+   875
+  ]
+ },
+ "OpenAI|c": {
+  "slope": 904,
+  "intercept": 1149,
+  "ci": [
+   755,
+   1126
+  ]
+ },
+ "OpenAI|d": {
+  "slope": 1083,
+  "intercept": 1082,
+  "ci": [
+   894,
+   1354
+  ]
+ },
+ "OpenAI|v": {
+  "slope": 764,
+  "intercept": 1198,
+  "ci": [
+   552,
+   1045
+  ]
+ },
+ "all|c": {
+  "slope": 645,
+  "intercept": 1206,
+  "ci": [
+   542,
+   801
+  ]
+ },
+ "all|d": {
+  "slope": 634,
+  "intercept": 1211,
+  "ci": [
+   486,
+   829
+  ]
+ },
+ "all|v": {
+  "slope": 692,
+  "intercept": 1185,
+  "ci": [
+   555,
+   895
+  ]
+ },
+ "gap|d": {
+  "slope": 897,
+  "ci": [
+   608,
+   1272
+  ],
+  "p_openai_faster": 1.0
+ },
+ "gap|v": {
+  "slope": 174,
+  "ci": [
+   -154,
+   532
+  ],
+  "p_openai_faster": 0.82
+ },
+ "gap|c": {
+  "slope": 531,
+  "ci": [
+   341,
+   754
+  ],
+  "p_openai_faster": 1.0
+ }
+}

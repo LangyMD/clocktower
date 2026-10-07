@@ -142,6 +142,9 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 ### Pages and artifacts
 - Ratings (current): https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (by release date)
+- Gains by lab (detection/deception vs release date, per-lab trends): https://claude.ai/artifact/HiPbbNTToUydW6Sjes6asq
+  (`scripts/lab_trends.py` → `docs/charts/lab-trends.json`, filled into `lab-trends.template.html`). Per year: detection
+  OpenAI +1083 vs Anthropic +186 (gap 608–1272, clear); deception +764 vs +590 (gap could be chance).
 - Leaderboard chart (ranked, overall/detection/deception tabs): https://claude.ai/artifact/Sc8dfYHJMLHBQdQeLcWSMu
   plus a head-to-head expected-win-rate grid (`docs/charts/leaderboard.html`; PNGs `docs/charts/*.png`)
 - Flagship plan explainer: https://claude.ai/artifact/MAbeLPxmENkdfEQT8j75mt (pre-v17 numbers)
