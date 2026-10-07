@@ -105,6 +105,20 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-10-07: mixed-team pilot (b1), design decisions
+- **Pilot B** (`plans/b1-mixed-pilot.json`, 16 games, $118): half Opus 5.5 + half GPT-5.6 Sol (seats random; two
+  matchups with opposite list order so each model gets the odd seat half the time) vs pure GPT-6.1 Sol, both sides.
+  Analysis `scripts/mixed_pilot.py` → `docs/analysis/b1-mixed-pilot.json`. Wins match the members' average rating
+  (good 4/8 vs 4.2 expected; evil 1/8 vs 1.1), too few games to see a mixing penalty. In-group: Opus seats start
+  conversations with Opus teammates 15 points above chance; Sol 5.6 leans 6 points toward Opus (seat/role pull), so
+  Opus's own preference ≈ 9–15 points; Sol shows none. Same-model vote agreement 72% vs 63% cross (partly voting style).
+- Opus 4.8's low rating: no bug (0 lost turns in v17); 1–15 vs GPT-5.5, only 3 opponents (its f2 round robin was
+  dropped). Rule agreed in principle: every model plays every other at least one pair before top-ups.
+- Learning-from-experience design (not built): shared notes on the good team leak alignment (a password), so
+  only (1) evil-only learners (evil already knows teams) or (2) a league of individual agents with private notes and
+  alignment dealt independently of agent are clean. Notes cap ~10K tokens rewritten each round; reflection budget large.
+- Rating scale: anchor 1500 to the mean of the 11 2026 models permanently (not the mean of whatever is in the fit).
+
 ## 2026-10-04: multiplayer human table
 - Replaced the one-seat `play` page with a lobby + table for several people on their own devices
   (stdlib HTTP, 1 s polling, per-browser tokens). Host link carries a key (`#host=`); friends use the LAN
