@@ -1,0 +1,13 @@
+{
+ "note": "Pilot B (Oct 7 2026): a mixed team (Opus 5.5 + GPT-5.6 Sol, seats split at random) vs a pure GPT-6.1 Sol team, both sides. The list order decides which model gets the extra seat on an odd-sized team, so the two matchups use opposite orders. Minions balanced per matchup.",
+ "out": "games/v17/b1",
+ "seed": 160000,
+ "players": "10-12",
+ "budget": 21700,
+ "matchups": [
+  {"name": "mixA-v-sol61", "good": "claude-opus-5-5,gpt-5.6-sol", "evil": "gpt-6.1-sol", "pairs": 4, "seed": 160000,
+   "args": ["--minions", "Poisoner,Spy,Scarlet Woman,Baron"]},
+  {"name": "mixB-v-sol61", "good": "gpt-5.6-sol,claude-opus-5-5", "evil": "gpt-6.1-sol", "pairs": 4, "seed": 160100,
+   "args": ["--minions", "Baron,Scarlet Woman,Spy,Poisoner"]}
+ ]
+}
