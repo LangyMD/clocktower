@@ -105,6 +105,18 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-10-07: style fingerprinting, good-side lying, probes (report: `docs/analysis/f2/style-lies-probes.md`)
+- No player ever inferred teams from "writes like me" or model identity (4 readers, 372 games). The signal
+  exists, though: 16 punctuation/length features of day-1 text separate teams with AUC 0.81, and a blind
+  2-cluster split is 69% evil, versus 38% evil for day-1 executions. Same-model good players echo each
+  other, and their teammates misread it as an evil bloc. This is a validity risk if models learn to
+  fingerprint.
+- Good seats rarely lie: 2.7% hard role lies and 4.6% fake info. Opus 4.7 lies most (17%), GPT-5.5 and
+  Astra least. Ravenkeeper bluffs most (18%, as bait). Data is in `docs/analysis/f2/good-lies.json`, from a
+  Sonnet 5.5 pass (~$53, not in the ledger).
+- Probes: good P(true Imp) correlates 0.87 with good win rate and 0.89 with detection Elo across models.
+  Day 1 is near chance for everyone.
+
 ## 2026-10-04: multiplayer human table
 - Replaced the one-seat `play` page with a lobby + table for several people on their own devices
   (stdlib HTTP, 1 s polling, per-browser tokens). Host link carries a key (`#host=`); friends use the LAN
