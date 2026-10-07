@@ -1,0 +1,60 @@
+{
+  "winner": "evil",
+  "reason": "Only two players remain alive.",
+  "stopped": null,
+  "days": 5,
+  "seed": 170100,
+  "starting": {
+    "Alex": "Fortune Teller",
+    "Blair": "Washerwoman",
+    "Casey": "Slayer",
+    "Drew": "Undertaker",
+    "Ellis": "Mayor",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Poisoner",
+    "Harper": "Scarlet Woman",
+    "Indigo": "Imp",
+    "Jules": "Monk"
+  },
+  "final": {
+    "Alex": "Fortune Teller",
+    "Blair": "Washerwoman",
+    "Casey": "Slayer",
+    "Drew": "Undertaker",
+    "Ellis": "Mayor",
+    "Frankie": "Ravenkeeper",
+    "Gray": "Poisoner",
+    "Harper": "Imp",
+    "Indigo": "Imp",
+    "Jules": "Monk"
+  },
+  "bluffs": [
+    "Librarian",
+    "Chef",
+    "Empath"
+  ],
+  "red_herring": "Casey",
+  "drunk_as": null,
+  "cost": 28.643,
+  "calls": 635,
+  "tokens": {
+    "input": 3237,
+    "cache_read": 19690133,
+    "cache_write": 781864,
+    "output": 390040
+  },
+  "seconds": 3717.7,
+  "errors": [],
+  "models": {
+    "Alex": "claude-opus-4-7",
+    "Blair": "claude-opus-4-7",
+    "Casey": "claude-opus-4-7",
+    "Drew": "claude-opus-4-7",
+    "Ellis": "claude-opus-4-7",
+    "Frankie": "claude-opus-4-7",
+    "Gray": "gpt-6-astra",
+    "Harper": "gpt-6-astra",
+    "Indigo": "gpt-6-astra",
+    "Jules": "claude-opus-4-7"
+  }
+}
