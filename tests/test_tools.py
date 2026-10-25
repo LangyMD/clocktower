@@ -1,4 +1,4 @@
-"""Experiment tooling: the ratings fit (no API, no game logs needed)."""
+"""Experiment tooling: plans' Minion balancing and the ratings fit (no API, no game logs needed)."""
 import collections
 import json
 import random
@@ -6,7 +6,58 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from clocktower.characters import MINIONS
 from clocktower.ratings import fit, load, ratings
+from clocktower.tournament import assign_minions, commands, make_plan
+
+
+def minion_flags(plan):
+    out = {}
+    for name, cmd in commands(plan):
+        out[name] = cmd[cmd.index('--minions') + 1].split(',') if '--minions' in cmd else None
+    return out
+
+
+class MinionTests(unittest.TestCase):
+    def test_a_round_robin_with_one_pair_each_deals_every_minion_evenly(self):
+        models = [f'm{i}' for i in range(8)]
+        plan = make_plan(models, pairs=1, seed=80000, out='x')  # seeds step by 100: by seed alone, all Poisoner
+        got = assign_minions(plan)
+        total = collections.Counter(m for ms in got.values() for m in ms)
+        self.assertEqual(sum(total.values()), 28)
+        self.assertEqual(set(total.values()), {7})
+        per = collections.defaultdict(collections.Counter)
+        for m in plan['matchups']:
+            for x in got[m['name']]:
+                per[m['good']][x] += 1; per[m['evil']][x] += 1
+        for model in models:  # 7 opponents each: every Minion 1-2 times
+            self.assertLessEqual(max(per[model].values()) - min(per[model][x] for x in MINIONS), 1, model)
+
+    def test_a_matchup_with_several_pairs_cycles(self):
+        plan = make_plan(['a', 'b'], pairs=4, out='x')
+        self.assertEqual(sorted(assign_minions(plan)['a-v-b']), sorted(MINIONS))
+
+    def test_forced_minions_are_kept_and_counted(self):
+        plan = make_plan(['a', 'b', 'c'], pairs=1, out='x')
+        plan['matchups'][0]['args'] = ['--minions', 'Spy']
+        plan['matchups'][1]['minions'] = ['Baron']
+        flags = minion_flags(plan)
+        self.assertEqual(flags['a-v-b'], ['Spy'])
+        self.assertEqual(flags['a-v-c'], ['Baron'])
+        self.assertNotIn(flags['b-v-c'][0], ('Spy', 'Baron'))  # b already had Spy, c already had Baron
+        cmd = dict(commands(plan))['a-v-b']
+        self.assertEqual(cmd.count('--minions'), 1)  # an explicit flag is passed once, as written
+
+    def test_choices_depend_on_the_whole_plan_so_a_single_game_rerun_matches(self):
+        plan = make_plan([f'm{i}' for i in range(5)], pairs=2, out='x')
+        full = minion_flags(plan)
+        for name, cmd in commands(plan, per_game=True):
+            self.assertEqual(cmd[cmd.index('--minions') + 1].split(','), full[name.split('/')[0]])
+
+    def test_forced_setups_get_no_minion(self):
+        plan = make_plan(['a', 'b'], out='x')
+        plan['matchups'][0]['args'] = ['--characters', 'Imp,Spy,Chef,Saint,Monk']
+        self.assertIsNone(minion_flags(plan)['a-v-b'])
 
 
 def synthetic(strength, n_pairs=60, h=0.4, seed=3):

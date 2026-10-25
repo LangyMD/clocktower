@@ -301,7 +301,8 @@ def main(argv=None):
         p = sub.add_parser(name)
         p.add_argument('--seed', type=int)
         p.add_argument('--private-beats', type=int, default=6, help='whisper-only beats each day')
-        p.add_argument('--minions', help='comma-separated guaranteed Minion for game 1, 2, ... (default: by seed)')
+        p.add_argument('--minions', help='comma-separated guaranteed Minion for game 1, 2, ... (tournament passes a balanced choice; '
+                                            'default for a bare run: by seed)')
         p.add_argument('--public-beats', type=int, default=3, help='town-square beats before nominations')
         p.add_argument('--waves', type=int, default=3, help='groups per beat; later groups see earlier ones')
         p.add_argument('--days', type=int, default=15, help='stop after this many days')

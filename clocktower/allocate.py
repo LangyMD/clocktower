@@ -7,7 +7,8 @@
    the target, per dollar, until every model's 90% half-width is within `target` Elo (or the money runs out). Never add to
    a matchup that already has `cap` pairs, or whose opponent is already `share` of either model's games.
 
-Each new pair's guaranteed Minion is the one its two models have been dealt least. Half-widths are the
+Each new pair's guaranteed Minion is the one its two models have been dealt least (written as the matchup's
+`minions`, which `tournament` uses). Half-widths are the
 analytic (Fisher) ones for the combined rating, scaled per model to match the bootstrap in the ratings file.
 
     python -m clocktower allocate plans/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f3*' \\
@@ -147,7 +148,7 @@ def main(argv=None):
     for i, x in enumerate(sorted(alloc, key=lambda x: x['pair'])):
         g, e = x['pair']
         matchups.append({'name': f'{short[g]}-v-{short[e]}', 'good': g, 'evil': e, 'pairs': x['pairs'],
-                         'seed': a.seed + 100 * i, 'args': ['--minions', ','.join(x['minions'])], 'why': x['why'],
+                         'seed': a.seed + 100 * i, 'minions': x['minions'], 'why': x['why'],
                          'est_cost': x['cost']})
         print(f"  {matchups[-1]['name']:24} {x['pairs']} pair(s)  ${x['cost']:>4}  {x['why']}", file=sys.stderr)
     rule = {k: getattr(a, k) for k in ('target', 'floor', 'cap', 'share', 'z')}

@@ -6,11 +6,17 @@ process (one process per matchup, so one failure never stops the others), each w
 seeds, and resumes: finished games are kept, unfinished ones continue from their last checkpoint.
 Logs go to `<out>-logs/`.
 
+Each game's guaranteed Minion is chosen here, from the plan alone (so a rerun or `--only` gets the same
+choice): a matchup's `args` may force them (`["--minions", "Spy,Baron"]`, one per pair), a matchup may list
+them (`"minions": [...]`, as `clocktower.allocate` writes), and otherwise each pair gets the Minion its two
+models have been dealt least so far in the plan, then the least dealt in the whole plan, cycling.
+
     python -m clocktower plan plans/models.json --within 10 --pairs 1 --seed 80000 --out games/v17/f1 > plans/f1.json
     python -m clocktower tournament plans/f1.json
     python -m clocktower tournament plans/f1.json --resume-stopped   # relaunch stopped games, one process each
 """
 from __future__ import annotations
+import collections
 import itertools
 import json
 import os
@@ -18,6 +24,8 @@ import subprocess
 import sys
 import threading
 from pathlib import Path
+
+from .characters import MINIONS
 
 SEEDS_PER_MATCHUP = 100  # matchup i uses seeds seed + 100*i onwards, unless it sets its own `seed`
 UPLOAD_EVERY = 1800  # seconds between snapshots of the plan's games to the Hugging Face dataset
@@ -61,7 +69,41 @@ def commands(plan, per_game=False):
                 yield f'{name}/g{k:02d}{suffix}', cmd + ['--only', str(k), '--side', side]
 
 
+def assign_minions(plan):
+    """{matchup name: [guaranteed Minion for pair 1, 2, ...]}, balanced per model and across the plan."""
+    per_model = collections.defaultdict(collections.Counter); total = collections.Counter(); out = {}
+
+    def deal(m, minion):
+        for model in (m['good'], m['evil']):
+            per_model[model][minion] += 2  # both games of the side-swapped pair
+        total[minion] += 2
+
+    auto = []
+    for m in plan['matchups']:  # forced choices count first, wherever they are in the plan
+        args = m.get('args', [])
+        if '--characters' in args:
+            out[m['name']] = None
+        elif '--minions' in args or m.get('minions'):
+            forced = args[args.index('--minions') + 1].split(',') if '--minions' in args else m['minions']
+            forced = [x.strip() for x in forced]
+            out[m['name']] = forced
+            for k in range(m.get('pairs', 1)):
+                deal(m, forced[k % len(forced)])
+        else:
+            auto.append(m)
+    for i, m in enumerate(auto):
+        ms = []
+        for k in range(m.get('pairs', 1)):
+            pick = min(MINIONS, key=lambda x: (max(per_model[m['good']][x], per_model[m['evil']][x]),
+                                               per_model[m['good']][x] + per_model[m['evil']][x], total[x],
+                                               (MINIONS.index(x) - i - k) % len(MINIONS)))
+            ms.append(pick); deal(m, pick)
+        out[m['name']] = ms
+    return out
+
+
 def _matchup_commands(plan):
+    minions = assign_minions(plan)
     for i, m in enumerate(plan['matchups']):
         cmd = [sys.executable, '-m', 'clocktower', 'run', '--games', str(m.get('pairs', 1)), '--swap',
                '--seed', str(m.get('seed', plan['seed'] + SEEDS_PER_MATCHUP * i)), '--players', str(plan.get('players', '10-12')),
@@ -72,6 +114,8 @@ def _matchup_commands(plan):
                 cmd += [f"--{flag.replace('_', '-')}", m[flag]]
         for s in m.get('seat_models', []):
             cmd += ['--seat-model', s]
+        if minions[m['name']] and '--minions' not in m.get('args', []):
+            cmd += ['--minions', ','.join(minions[m['name']])]
         cmd += m.get('args', [])  # any other run flags, e.g. ["--private-beats", "6"] for a protocol variant
         yield m['name'], cmd, m.get('pairs', 1)
 
