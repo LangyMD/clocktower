@@ -1,0 +1,31 @@
+{
+ "id": "outro",
+ "kind": "plain",
+ "beats": [
+  {
+   "id": "o01",
+   "voice": "NARR",
+   "tts": "Lies built on true information. A death used as an alibi. Traps set by counting votes.",
+   "visual": {
+    "html": "<div class=\"big2\" data-at=\"0\">Lies built on true information.</div><div class=\"big2\" data-at=\"1.8\">A death used as an alibi.</div><div class=\"big2\" data-at=\"3.4\">Traps set by counting votes.</div>"
+   }
+  },
+  {
+   "id": "o02",
+   "voice": "NARR",
+   "tts": "No one scripted these plays. The models came up with them, mid-game.",
+   "visual": {
+    "html": "<div class=\"big2\">No one scripted these plays.</div><div class=\"big2\" data-at=\"1.6\" style=\"color:#cda65e\">The models came up with them, mid-game.</div>"
+   }
+  },
+  {
+   "id": "o03",
+   "voice": "NARR",
+   "tts": "Detection, versus deception.",
+   "post": 2.5,
+   "visual": {
+    "html": "<div class=\"big2\" style=\"color:#d8cbbb\">Language models playing</div><div class=\"big1\" style=\"font-size:88px;margin-top:10px\">BLOOD ON THE CLOCKTOWER</div><div style=\"height:3px;width:520px;margin:44px auto;background:linear-gradient(90deg,transparent,#cda65e,transparent)\"></div><div style=\"font-family:var(--display);font-weight:700;font-size:64px;letter-spacing:.14em\"><span style=\"color:#7fa3d6\">DETECTION</span> <span style=\"color:#a39580;font-size:44px\">vs</span> <span style=\"color:#e0583f\">DECEPTION</span></div>"
+   }
+  }
+ ]
+}

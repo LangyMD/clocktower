@@ -1,0 +1,151 @@
+{
+ "id": "g4",
+ "game": "games/v17/f3b-astra-v-opus55/game-02",
+ "title": "The Empath Number",
+ "kicker": "Evil: Claude Opus 5.5 · Good: GPT-6 Astra",
+ "good_model": "GPT-6 Astra",
+ "evil_model": "Claude Opus 5.5",
+ "winner": "good",
+ "players": [
+  {"name": "Alex", "role": "Virgin", "team": "good"},
+  {"name": "Blair", "role": "Recluse", "team": "good"},
+  {"name": "Casey", "role": "Undertaker", "team": "good"},
+  {"name": "Drew", "role": "Drunk", "team": "good", "thinks": "Slayer"},
+  {"name": "Ellis", "role": "Imp", "team": "evil"},
+  {"name": "Frankie", "role": "Baron", "team": "evil"},
+  {"name": "Gray", "role": "Saint", "team": "good"},
+  {"name": "Harper", "role": "Spy", "team": "evil"},
+  {"name": "Indigo", "role": "Washerwoman", "team": "good"},
+  {"name": "Jules", "role": "Chef", "team": "good"},
+  {"name": "Kit", "role": "Empath", "team": "good"}
+ ],
+ "voices": {"Harper": "f", "Kit": "f", "Drew": "m"},
+ "beats": [
+  {
+   "id": "g4b01",
+   "voice": "Harper",
+   "tts": "[sly] Kit, what's your Empath number?",
+   "visual": {
+    "phase": "DAY 2",
+    "sub": "private whispers",
+    "card": {"kind": "wh", "who": "Harper", "note": "(the Spy, claiming Librarian) to Alex, Kit · Day 2",
+             "text": "…Gray's Saint only came out through whispers, and it's the one claim built to make us afraid to execute. <b>Kit, what's your Empath number?</b>"},
+    "dies": ["Jules", "Casey"],
+    "tags": {"Harper": "claims Librarian", "Kit": "Empath · told 2"},
+    "lines": [["Harper", "Kit", "whisper"]],
+    "highlight": ["Harper"]
+   }
+  },
+  {
+   "id": "g4b02",
+   "voice": "NARR",
+   "tts": "Kit told only two people she's the Empath. Harper is the Spy: she sees the Storyteller's book.",
+   "visual": {
+    "card": {"kind": "wh", "who": "Kit", "note": "(Empath) to Harper, Alex · Day 2",
+             "text": "Harper, <b>who told you my exact role?</b> I've only hard-claimed it to Alex and Jules."},
+    "lines": [["Kit", "Harper", "whisper"]],
+    "highlight": ["Kit", "Harper"]
+   }
+  },
+  {
+   "id": "g4b03",
+   "voice": "Harper",
+   "tts": "[whispers] I accidentally let slip that I know Kit's role.",
+   "visual": {
+    "card": {"kind": "th", "who": "Harper", "note": "(the Spy) private thinking · Day 2",
+             "text": "<b>I accidentally let slip that I know Kit's role</b> — I need a cover story."},
+    "highlight": ["Harper"]
+   }
+  },
+  {
+   "id": "g4b04",
+   "voice": "NARR",
+   "tts": "Drew, the Slayer, shoots Ellis, the Demon. Nothing: Drew is secretly the Drunk. Evil wanted this miss.",
+   "visual": {
+    "sub": "town square",
+    "card": {"kind": "wh", "who": "Harper", "note": "(the Spy) to Ellis, Frankie · Day 1",
+             "text": "Idea: Drew's Slayer shot is fake, so <b>if he shoots Ellis and nothing happens, town treats Ellis as cleared.</b>"},
+    "tags": {"Drew": "claims Slayer", "Ellis": "claims Ravenkeeper"},
+    "lines": [["Drew", "Ellis", "kill"]],
+    "highlight": ["Drew", "Ellis"],
+    "stamp": "NOTHING HAPPENS"
+   }
+  },
+  {
+   "id": "g4b05",
+   "voice": "Drew",
+   "tts": "[firm] A miss won't clear Ellis, or prove I'm Drunk.",
+   "visual": {
+    "card": {"kind": "pub", "who": "Drew", "note": "(the Drunk, thinks Slayer) · Day 2",
+             "text": "Ellis asked me yesterday to shoot them, saying a miss would buy a confirmed player. It wouldn't. … I'm taking that shot now - but <b>a miss won't clear Ellis or prove I'm Drunk.</b>"},
+    "highlight": ["Drew"]
+   }
+  },
+  {
+   "id": "g4b06",
+   "voice": "NARR",
+   "tts": "Harper invents an alibi.",
+   "visual": {
+    "sub": "nominations",
+    "card": {"kind": "pub", "who": "Harper", "note": "(the Spy) defense · Day 2",
+             "text": "Kit, <b>you asked me about neighbours in our whisper</b>, not in the square. That's where my read came from."},
+    "lines": [["Kit", "Harper", "nominate"]],
+    "highlight": ["Harper"]
+   }
+  },
+  {
+   "id": "g4b07",
+   "voice": "Kit",
+   "tts": "[firm] I never asked Harper about neighbours. That defense describes a conversation we didn't have.",
+   "visual": {
+    "card": {"kind": "pub", "who": "Kit", "note": "(Empath) · Day 2",
+             "text": "No. My first whisper to Harper was after they asked for my Empath number, asking who had told them my role. I never asked Harper about neighbours. <b>That defense describes a conversation we didn't have.</b>"},
+    "votes": {"yes": 8, "needed": 5},
+    "stamp": "EXECUTED · 8 YES",
+    "dies": ["Harper"],
+    "highlight": ["Kit"]
+   }
+  },
+  {
+   "id": "g4b08",
+   "voice": "NARR",
+   "tts": "Ellis is on the block. Frankie, a fake Butler, votes against his master to save him.",
+   "visual": {
+    "phase": "DAY 3",
+    "sub": "nominations",
+    "card": {"kind": "pub", "who": "Blair", "note": "(Recluse) voting on a tie attempt · Day 3",
+             "text": "Frankie, <b>you claimed Kit as your master, but voted yes while Kit voted no.</b>"},
+    "dies": ["Alex"],
+    "tags": {"Frankie": "claims Butler · master Kit", "Ellis": "on the block · 5 votes"},
+    "lines": [["Drew", "Ellis", "nominate"], ["Frankie", "Blair", "nominate"]],
+    "votes": {"yes": 3, "needed": 6, "voters": ["Ellis", "Frankie", "Harper"]},
+    "highlight": ["Frankie"]
+   }
+  },
+  {
+   "id": "g4b09",
+   "voice": "NARR",
+   "tts": "Last gamble: Ellis nominates Gray, the real Saint. Execute him and good loses.",
+   "visual": {
+    "card": {"kind": "pub", "who": "Gray", "note": "(Saint) defense · Day 3",
+             "text": "I'm the Saint; executing me loses the game. <b>Frankie just broke their claimed Butler restriction to save Ellis</b>…"},
+    "tags": {"Gray": "Saint"},
+    "lines": [["Ellis", "Gray", "nominate"]],
+    "votes": {"yes": 2, "needed": 6, "voters": ["Ellis", "Frankie"]},
+    "highlight": ["Gray"]
+   }
+  },
+  {
+   "id": "g4b10",
+   "voice": "NARR",
+   "tts": "Ellis is executed. He was the Imp.",
+   "visual": {
+    "stamp": "EXECUTED · 5 YES",
+    "dies": ["Ellis"],
+    "highlight": ["Ellis"],
+    "banner": {"big": "GOOD WINS", "small": "Ellis was the Imp. Day 3."}
+   }
+  }
+ ],
+ "why": "GPT-6 Astra's town tracked who knew what: the Spy asked for a role only two players had heard, her alibi described a whisper that never happened, and the Drunk Slayer refused to let his fake miss clear the Demon."
+}

@@ -1,0 +1,367 @@
+{
+ "id": "g2",
+ "game": "games/v17/f3-opus47-v-fable51/game-03",
+ "title": "The Poisoned Vision",
+ "kicker": "Evil: Claude Fable 5.1 · Good: Claude Opus 4.7",
+ "good_model": "Claude Opus 4.7",
+ "evil_model": "Claude Fable 5.1",
+ "winner": "evil",
+ "players": [
+  {
+   "name": "Alex",
+   "role": "Ravenkeeper",
+   "team": "good"
+  },
+  {
+   "name": "Blair",
+   "role": "Poisoner",
+   "team": "evil"
+  },
+  {
+   "name": "Casey",
+   "role": "Mayor",
+   "team": "good"
+  },
+  {
+   "name": "Drew",
+   "role": "Recluse",
+   "team": "good"
+  },
+  {
+   "name": "Ellis",
+   "role": "Scarlet Woman",
+   "team": "evil"
+  },
+  {
+   "name": "Frankie",
+   "role": "Monk",
+   "team": "good"
+  },
+  {
+   "name": "Gray",
+   "role": "Empath",
+   "team": "good"
+  },
+  {
+   "name": "Harper",
+   "role": "Imp",
+   "team": "evil"
+  },
+  {
+   "name": "Indigo",
+   "role": "Butler",
+   "team": "good"
+  },
+  {
+   "name": "Jules",
+   "role": "Slayer",
+   "team": "good"
+  },
+  {
+   "name": "Kit",
+   "role": "Investigator",
+   "team": "good"
+  },
+  {
+   "name": "Logan",
+   "role": "Librarian",
+   "team": "good"
+  }
+ ],
+ "voices": {
+  "Harper": "f",
+  "Blair": "f"
+ },
+ "beats": [
+  {
+   "id": "g2b01",
+   "voice": "Harper",
+   "tts": "[whispers] I'll claim Undertaker. Feed me whatever claims you hear.",
+   "visual": {
+    "phase": "DAY 1",
+    "sub": "evil team whispers",
+    "card": {
+     "kind": "wh",
+     "who": "Harper",
+     "note": "(the Imp) to Blair, Ellis · Day 1",
+     "text": "Bluffs are Chef, Virgin, Undertaker. <b>I'll claim Undertaker.</b> … Feed me whatever claims you hear so we can pick tonight's kill."
+    },
+    "lines": [
+     [
+      "Harper",
+      "Blair",
+      "whisper"
+     ],
+     [
+      "Harper",
+      "Ellis",
+      "whisper"
+     ]
+    ],
+    "highlight": [
+     "Harper",
+     "Blair",
+     "Ellis"
+    ],
+    "tags": {
+     "Harper": "claims Undertaker",
+     "Blair": "claims Chef",
+     "Ellis": "claims Virgin"
+    }
+   }
+  },
+  {
+   "id": "g2b02",
+   "voice": "NARR",
+   "tts": "Harper's fake role, Undertaker, learns who executed players were. So evil writes the results.",
+   "visual": {
+    "phase": "DAY 3",
+    "sub": "private whispers",
+    "card": {
+     "kind": "wh",
+     "who": "Blair",
+     "note": "(the Poisoner) to Harper, Ellis · Day 3",
+     "text": "Harper: <b>say Frankie flipped Baron</b> - it explains the 10-claim count…"
+    },
+    "dies": [
+     "Jules",
+     "Frankie",
+     "Gray"
+    ],
+    "tags": {
+     "Frankie": "really Monk · \"Baron\""
+    },
+    "highlight": [
+     "Frankie"
+    ]
+   }
+  },
+  {
+   "id": "g2b03",
+   "voice": "NARR",
+   "tts": "Night four: Blair poisons Alex, the secret Ravenkeeper, and Harper kills him. His dying vision lies: Drew is the Scarlet Woman.",
+   "visual": {
+    "phase": "NIGHT 4",
+    "sub": "Ravenkeeper wakes",
+    "night": true,
+    "card": {
+     "kind": "wh",
+     "who": "Alex",
+     "note": "(dead Ravenkeeper) to Harper, Blair · Day 4",
+     "text": "RAVENKEEPER - I bluffed Soldier. Imp killed me N4. <b>I learned Drew is the Scarlet Woman.</b>"
+    },
+    "dies": [
+     "Logan",
+     "Alex"
+    ],
+    "lines": [
+     [
+      "Harper",
+      "Alex",
+      "kill"
+     ]
+    ],
+    "highlight": [
+     "Alex",
+     "Drew"
+    ],
+    "tags": {
+     "Alex": "Ravenkeeper · poisoned",
+     "Drew": "really Recluse"
+    }
+   }
+  },
+  {
+   "id": "g2b04",
+   "voice": "Blair",
+   "tts": "[sly] Gift… and I had him poisoned.",
+   "visual": {
+    "phase": "DAY 4",
+    "sub": "evil team whispers",
+    "card": {
+     "kind": "wh",
+     "who": "Blair",
+     "note": "(the Poisoner) to Harper, Ellis · Day 4",
+     "text": "Gift: Alex just whispered me+Harper he was RAVENKEEPER bluffing Soldier - <b>and I had him poisoned</b>, so his 'Drew is Scarlet Woman' is false info he believes."
+    },
+    "lines": [
+     [
+      "Blair",
+      "Harper",
+      "whisper"
+     ],
+     [
+      "Blair",
+      "Ellis",
+      "whisper"
+     ]
+    ],
+    "highlight": [
+     "Blair"
+    ]
+   }
+  },
+  {
+   "id": "g2b05",
+   "voice": "NARR",
+   "tts": "Drew, an innocent Recluse, is hanged.",
+   "visual": {
+    "card": {
+     "kind": "wh",
+     "who": "Blair",
+     "note": "(the Poisoner) to Harper, Ellis · Day 4",
+     "text": "Harper, <b>DON'T say Spy</b>: Baron+Spy+SW = 3 minions, town catches it instantly. Say Logan flipped Librarian - admit the misexecution, it makes you look honest…"
+    },
+    "stamp": "DREW EXECUTED · 9 YES",
+    "votes": {
+     "yes": 9,
+     "needed": 4
+    },
+    "dies": [
+     "Drew"
+    ],
+    "highlight": [
+     "Drew"
+    ]
+   }
+  },
+  {
+   "id": "g2b06",
+   "voice": "Harper",
+   "tts": "[confident] Drew flipped Scarlet Woman - exactly what Alex's Ravenkeeper said.",
+   "visual": {
+    "phase": "DAY 5",
+    "sub": "town square",
+    "card": {
+     "kind": "pub",
+     "who": "Harper",
+     "note": "(the Imp, as Undertaker) · Day 5",
+     "text": "<b>Drew flipped Scarlet Woman - exactly what Alex's Ravenkeeper said.</b> A dead Minion telling Indigo 'Recluse' from the grave is the cheapest lie in the game."
+    },
+    "dies": [
+     "Kit"
+    ],
+    "highlight": [
+     "Harper"
+    ],
+    "tags": {
+     "Drew": "\"Scarlet Woman\""
+    }
+   }
+  },
+  {
+   "id": "g2b07",
+   "voice": "NARR",
+   "tts": "Four alive. Harper kills herself; the Demon passes to Ellis.",
+   "visual": {
+    "phase": "NIGHT 6",
+    "sub": "the Demon kills herself",
+    "night": true,
+    "dies": [
+     "Indigo",
+     "Harper"
+    ],
+    "role_change": {
+     "Ellis": "Imp"
+    },
+    "lines": [
+     [
+      "Harper",
+      "Harper",
+      "kill"
+     ]
+    ],
+    "highlight": [
+     "Harper",
+     "Ellis"
+    ],
+    "tags": {
+     "Ellis": "new Imp"
+    }
+   }
+  },
+  {
+   "id": "g2b08",
+   "voice": "Harper",
+   "tts": "[sly] Done deliberately… the 'Blair or Harper' math now points at Blair alone.",
+   "visual": {
+    "phase": "DAY 6",
+    "sub": "evil team whispers",
+    "card": {
+     "kind": "wh",
+     "who": "Harper",
+     "note": "(dead) to Blair, Ellis · Day 6",
+     "text": "Done deliberately - my death clears my reads and <b>the 'Blair or Harper' math now points at Blair alone.</b>"
+    },
+    "lines": [
+     [
+      "Harper",
+      "Blair",
+      "whisper"
+     ],
+     [
+      "Harper",
+      "Ellis",
+      "whisper"
+     ]
+    ],
+    "highlight": [
+     "Blair"
+    ]
+   }
+  },
+  {
+   "id": "g2b09",
+   "voice": "NARR",
+   "tts": "Three alive: no execution means the Mayor wins. So the new Demon nominates his own Poisoner.",
+   "visual": {
+    "sub": "nominations · 3 alive",
+    "card": {
+     "kind": "pub",
+     "who": "Ellis",
+     "note": "(the new Imp) nominates Blair · Day 6",
+     "text": "Every confirmed read this town has - Alex's Ravenkeeper, Harper's three Undertaker reads, Chef adjacency - leaves one seat that can hold the Imp, and <b>it's Blair.</b>"
+    },
+    "lines": [
+     [
+      "Ellis",
+      "Blair",
+      "nominate"
+     ]
+    ],
+    "highlight": [
+     "Ellis",
+     "Blair",
+     "Casey"
+    ],
+    "tags": {
+     "Casey": "Mayor"
+    }
+   }
+  },
+  {
+   "id": "g2b10",
+   "voice": "NARR",
+   "tts": "Blair votes no. Harper's ghost casts the deciding yes.",
+   "visual": {
+    "stamp": "BLAIR EXECUTED · 2 YES",
+    "votes": {
+     "yes": 2,
+     "needed": 2,
+     "voters": [
+      "Ellis",
+      "Harper"
+     ]
+    },
+    "dies": [
+     "Blair"
+    ],
+    "banner": {
+     "big": "EVIL WINS",
+     "small": "Two alive. The Imp hanged his own Poisoner. Day 6."
+    }
+   }
+  }
+ ],
+ "why": "Evil poisoned the Ravenkeeper the night it killed him, rode his false dying vision to hang an innocent Recluse, then the Demon killed herself so the town's last deduction pointed at a Minion the new Demon could hang to win."
+}

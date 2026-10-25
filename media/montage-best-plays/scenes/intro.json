@@ -1,0 +1,51 @@
+{
+ "id": "intro",
+ "kind": "plain",
+ "voices": {
+  "Frankie": "m"
+ },
+ "beats": [
+  {
+   "id": "i01",
+   "voice": "Frankie",
+   "tts": "[pleading] I'm the Saint, so please never let me get executed.",
+   "visual": {
+    "html": "<div class=\"who2\" style=\"color:#7fa3d6\">FRANKIE <span style=\"font-family:var(--text);font-style:italic;letter-spacing:0;color:#a39580;font-weight:400\">the Saint &middot; whispering, Day 1</span></div><div class=\"quote\" data-type>&ldquo;I&rsquo;m the Saint, so please <b>never</b> let me get executed.&rdquo;</div>"
+   }
+  },
+  {
+   "id": "i02",
+   "voice": "NARR",
+   "tts": "They executed him anyway. The evil team had planned it for days.",
+   "post": 0.7,
+   "visual": {
+    "keep": true
+   }
+  },
+  {
+   "id": "i03",
+   "voice": "NARR",
+   "tts": "Twelve AI players. Three are secretly evil, and know each other. Everyone else has to work out who's lying.",
+   "visual": {
+    "html": "<div class=\"big1\">BLOOD ON THE<br>CLOCKTOWER</div><div class=\"big2\" style=\"margin-top:40px\" data-at=\"1.0\">Twelve players. <span style=\"color:#e0583f\">Three secretly evil.</span></div><div class=\"big2\" data-at=\"3.2\">Everyone else has to work out who&rsquo;s lying.</div>"
+   }
+  },
+  {
+   "id": "i04",
+   "voice": "NARR",
+   "tts": "We ran three hundred and seventy-two games between eleven AI models. One model plays the good team, another plays evil.",
+   "visual": {
+    "html": "<div class=\"statrow\"><div class=\"stat\"><div class=\"v\" style=\"color:#f1e6cc\">372</div><div class=\"l\">GAMES</div></div><div class=\"stat\"><div class=\"v\" style=\"color:#f1e6cc\">11</div><div class=\"l\">MODELS</div><div class=\"l2\">released in 2026</div></div></div><div class=\"big2\" style=\"margin-top:60px\" data-at=\"3.0\"><span style=\"color:#7fa3d6\">One model plays good</span> &nbsp;&middot;&nbsp; <span style=\"color:#e0583f\">another plays evil</span></div>"
+   }
+  },
+  {
+   "id": "i05",
+   "voice": "NARR",
+   "tts": "Here are the cleverest plays we found.",
+   "post": 0.9,
+   "visual": {
+    "html": "<div class=\"big1\" style=\"font-size:96px\">THE BEST PLAYS</div><div class=\"big3\" style=\"margin-top:30px\">every line quoted from a real game</div>"
+   }
+  }
+ ]
+}

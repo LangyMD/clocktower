@@ -1,0 +1,2062 @@
+{
+ "total": 330.69,
+ "segments": [
+  {
+   "id": "intro",
+   "kind": "plain",
+   "voices": {
+    "Frankie": "m"
+   },
+   "beats": [
+    {
+     "id": "i01",
+     "voice": "Frankie",
+     "tts": "[pleading] I'm the Saint, so please never let me get executed.",
+     "visual": {
+      "html": "<div class=\"who2\" style=\"color:#7fa3d6\">FRANKIE <span style=\"font-family:var(--text);font-style:italic;letter-spacing:0;color:#a39580;font-weight:400\">the Saint &middot; whispering, Day 1</span></div><div class=\"quote\" data-type>&ldquo;I&rsquo;m the Saint, so please <b>never</b> let me get executed.&rdquo;</div>"
+     },
+     "start": 0.4,
+     "dur": 3.52,
+     "end": 3.92
+    },
+    {
+     "id": "i02",
+     "voice": "NARR",
+     "tts": "They executed him anyway. The evil team had planned it for days.",
+     "post": 0.7,
+     "visual": {
+      "keep": true
+     },
+     "start": 4.32,
+     "dur": 4.08,
+     "end": 8.4
+    },
+    {
+     "id": "i03",
+     "voice": "NARR",
+     "tts": "Twelve AI players. Three are secretly evil, and know each other. Everyone else has to work out who's lying.",
+     "visual": {
+      "html": "<div class=\"big1\">BLOOD ON THE<br>CLOCKTOWER</div><div class=\"big2\" style=\"margin-top:40px\" data-at=\"1.0\">Twelve players. <span style=\"color:#e0583f\">Three secretly evil.</span></div><div class=\"big2\" data-at=\"3.2\">Everyone else has to work out who&rsquo;s lying.</div>"
+     },
+     "start": 9.1,
+     "dur": 6.76,
+     "end": 15.86
+    },
+    {
+     "id": "i04",
+     "voice": "NARR",
+     "tts": "We ran three hundred and seventy-two games between eleven AI models. One model plays the good team, another plays evil.",
+     "visual": {
+      "html": "<div class=\"statrow\"><div class=\"stat\"><div class=\"v\" style=\"color:#f1e6cc\">372</div><div class=\"l\">GAMES</div></div><div class=\"stat\"><div class=\"v\" style=\"color:#f1e6cc\">11</div><div class=\"l\">MODELS</div><div class=\"l2\">released in 2026</div></div></div><div class=\"big2\" style=\"margin-top:60px\" data-at=\"3.0\"><span style=\"color:#7fa3d6\">One model plays good</span> &nbsp;&middot;&nbsp; <span style=\"color:#e0583f\">another plays evil</span></div>"
+     },
+     "start": 16.31,
+     "dur": 7.08,
+     "end": 23.39
+    },
+    {
+     "id": "i05",
+     "voice": "NARR",
+     "tts": "Here are the cleverest plays we found.",
+     "post": 0.9,
+     "visual": {
+      "html": "<div class=\"big1\" style=\"font-size:96px\">THE BEST PLAYS</div><div class=\"big3\" style=\"margin-top:30px\">every line quoted from a real game</div>"
+     },
+     "start": 23.84,
+     "dur": 2.2,
+     "end": 26.04
+    }
+   ],
+   "start": 0.4,
+   "end": 26.94
+  },
+  {
+   "id": "g1",
+   "game": "games/v17/f3-opus55-v-sol61/game-02",
+   "title": "Dead Man's Reading",
+   "kicker": "Evil: GPT-6.1 Sol \u00b7 Good: Claude Opus 5.5",
+   "good_model": "Claude Opus 5.5",
+   "evil_model": "GPT-6.1 Sol",
+   "winner": "evil",
+   "players": [
+    {
+     "name": "Alex",
+     "role": "Washerwoman",
+     "team": "good"
+    },
+    {
+     "name": "Blair",
+     "role": "Mayor",
+     "team": "good"
+    },
+    {
+     "name": "Casey",
+     "role": "Librarian",
+     "team": "good"
+    },
+    {
+     "name": "Drew",
+     "role": "Slayer",
+     "team": "good"
+    },
+    {
+     "name": "Ellis",
+     "role": "Scarlet Woman",
+     "team": "evil"
+    },
+    {
+     "name": "Frankie",
+     "role": "Imp",
+     "team": "evil"
+    },
+    {
+     "name": "Gray",
+     "role": "Chef",
+     "team": "good"
+    },
+    {
+     "name": "Harper",
+     "role": "Undertaker",
+     "team": "good"
+    },
+    {
+     "name": "Indigo",
+     "role": "Spy",
+     "team": "evil"
+    },
+    {
+     "name": "Jules",
+     "role": "Virgin",
+     "team": "good"
+    }
+   ],
+   "voices": {
+    "Ellis": "m",
+    "Frankie": "m",
+    "Jules": "f"
+   },
+   "beats": [
+    {
+     "id": "g1b01",
+     "voice": "NARR",
+     "tts": "This Demon's best weapon is his own corpse.",
+     "visual": {
+      "phase": "DAY 1",
+      "sub": "private whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Frankie",
+       "note": "(the Imp) to Drew \u00b7 Day 1",
+       "text": "I'm <b>Ravenkeeper</b>, keeping it quiet so I might actually get a night result."
+      },
+      "tags": {
+       "Frankie": "claims Ravenkeeper",
+       "Indigo": "claims Monk",
+       "Ellis": "claims Soldier"
+      },
+      "lines": [
+       [
+        "Frankie",
+        "Drew",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Frankie"
+      ]
+     },
+     "start": 29.69,
+     "dur": 3.0,
+     "end": 32.69
+    },
+    {
+     "id": "g1b02",
+     "voice": "NARR",
+     "tts": "Day two. Ellis, a Minion, faces execution. So he changes his story.",
+     "visual": {
+      "phase": "DAY 2",
+      "sub": "nominations",
+      "dies": [
+       "Gray",
+       "Drew"
+      ],
+      "card": {
+       "kind": "pub",
+       "who": "Jules",
+       "note": "nominating Ellis \u00b7 Day 2",
+       "text": "Ellis. <b>Soldier is the one claim that can never be tested</b>, Ellis-Frankie is a legal pair\u2026"
+      },
+      "lines": [
+       [
+        "Jules",
+        "Ellis",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 6,
+       "needed": 4
+      },
+      "highlight": [
+       "Ellis"
+      ]
+     },
+     "start": 33.14,
+     "dur": 5.4,
+     "end": 38.54
+    },
+    {
+     "id": "g1b03",
+     "voice": "Ellis",
+     "tts": "[pleading] I'm the Saint, not the Soldier. Executing me ends the game.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Ellis",
+       "note": "(Scarlet Woman) with 6 votes on him \u00b7 Day 2",
+       "text": "I need to come clean before this locks: <b>I'm the Saint, not the Soldier.</b> \u2026 Executing me ends the game."
+      },
+      "tags": {
+       "Ellis": "claims Saint"
+      },
+      "highlight": [
+       "Ellis"
+      ]
+     },
+     "start": 38.99,
+     "dur": 4.26,
+     "end": 43.25
+    },
+    {
+     "id": "g1b04",
+     "voice": "NARR",
+     "tts": "Execute a Saint and good loses. So the town hangs Blair, the real Mayor.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Blair",
+       "note": "(the Mayor) voting \u00b7 Day 2",
+       "text": "I'm the real Mayor. Ellis just swapped claims to dodge Harper's check. <b>A real Saint doesn't wait until he's on the block.</b>"
+      },
+      "lines": [
+       [
+        "Ellis",
+        "Blair",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 8,
+       "needed": 7
+      },
+      "stamp": "EXECUTED \u00b7 8 YES",
+      "dies": [
+       "Blair"
+      ]
+     },
+     "start": 43.65,
+     "dur": 5.06,
+     "end": 48.71
+    },
+    {
+     "id": "g1b05",
+     "voice": "NARR",
+     "tts": "That night, the Demon kills himself. Ellis inherits the role.",
+     "visual": {
+      "phase": "NIGHT 3",
+      "sub": "the Imp picks himself",
+      "night": true,
+      "lines": [
+       [
+        "Frankie",
+        "Frankie",
+        "kill"
+       ]
+      ],
+      "dies": [
+       "Frankie"
+      ],
+      "role_change": {
+       "Ellis": "Imp"
+      },
+      "stamp": "THE DEMON KILLS HIMSELF",
+      "highlight": [
+       "Ellis"
+      ]
+     },
+     "start": 49.16,
+     "dur": 3.94,
+     "end": 53.1
+    },
+    {
+     "id": "g1b06",
+     "voice": "NARR",
+     "tts": "Frankie claimed Ravenkeeper: killed at night, you learn someone's role. His reading:",
+     "visual": {
+      "phase": "DAY 3",
+      "sub": "evil team whisper",
+      "card": {
+       "kind": "wh",
+       "who": "Frankie",
+       "note": "(dead Imp) to Ellis, Indigo \u00b7 Day 3",
+       "text": "Better: <b>I'll report Harper as Imp</b>\u2026 Execute Harper today, kill Casey tonight. At four, <b>Indigo can be sacrificed</b> as the supposed Scarlet Woman; Ellis survives as Saint and kills to win."
+      },
+      "lines": [
+       [
+        "Frankie",
+        "Ellis",
+        "whisper"
+       ],
+       [
+        "Frankie",
+        "Indigo",
+        "whisper"
+       ]
+      ]
+     },
+     "start": 53.55,
+     "dur": 5.02,
+     "end": 58.57
+    },
+    {
+     "id": "g1b07",
+     "voice": "Frankie",
+     "tts": "[confident] Yes. Harper, Imp.",
+     "visual": {
+      "sub": "town square",
+      "card": {
+       "kind": "pub",
+       "who": "Frankie",
+       "note": "(dead, 'Ravenkeeper') \u00b7 Day 3",
+       "text": "<b>Yes - Harper, Imp.</b> I changed my intended pick after Blair was executed\u2026"
+      },
+      "tags": {
+       "Harper": "'the Imp'"
+      },
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 59.02,
+     "dur": 1.74,
+     "end": 60.76
+    },
+    {
+     "id": "g1b08",
+     "voice": "NARR",
+     "tts": "Harper, the honest Undertaker, is executed.",
+     "visual": {
+      "sub": "nominations",
+      "card": {
+       "kind": "pub",
+       "who": "Harper",
+       "note": "(the Undertaker) \u00b7 Day 3",
+       "text": "Last word: I'm the Undertaker. <b>If you kill me and wake up to another death, you'll know I was good</b>\u2026"
+      },
+      "lines": [
+       [
+        "Casey",
+        "Harper",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 5,
+       "needed": 3
+      },
+      "stamp": "EXECUTED \u00b7 5 YES",
+      "dies": [
+       "Harper"
+      ],
+      "tags": {
+       "Harper": ""
+      }
+     },
+     "start": 61.16,
+     "dur": 3.28,
+     "end": 64.44
+    },
+    {
+     "id": "g1b09",
+     "voice": "NARR",
+     "tts": "Final four. Dead Harper begs: execute Ellis. It backfires.",
+     "visual": {
+      "phase": "DAY 4",
+      "sub": "town square",
+      "dies": [
+       "Casey"
+      ],
+      "card": {
+       "kind": "pub",
+       "who": "Harper",
+       "note": "(dead) \u00b7 Day 4",
+       "text": "I know I was good, so Frankie's read was false. \u2026 <b>Ellis is evil in basically every world left.</b>"
+      },
+      "highlight": [
+       "Harper",
+       "Ellis"
+      ]
+     },
+     "start": 64.89,
+     "dur": 4.66,
+     "end": 69.55
+    },
+    {
+     "id": "g1b10",
+     "voice": "Jules",
+     "tts": "[confident] A dead Imp never pushes his successor onto the block.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Jules",
+       "note": "(the Virgin) \u00b7 Day 4",
+       "text": "Harper just settled it for me, the other way. Harper is the Imp Frankie saw\u2026 <b>A dead Imp never pushes his successor onto the block.</b>"
+      },
+      "highlight": [
+       "Jules"
+      ]
+     },
+     "start": 70.0,
+     "dur": 3.22,
+     "end": 73.22
+    },
+    {
+     "id": "g1b11",
+     "voice": "NARR",
+     "tts": "The town executes Indigo, the Spy, right on schedule. Ellis kills Jules. Evil wins.",
+     "visual": {
+      "sub": "nominations",
+      "card": {
+       "kind": "wh",
+       "who": "Ellis",
+       "note": "(the new Imp) to Frankie, Indigo \u00b7 Day 4",
+       "text": "Casey is gone; four alive. <b>Let's finish with the Indigo test today.</b>"
+      },
+      "lines": [
+       [
+        "Jules",
+        "Indigo",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 6,
+       "needed": 2
+      },
+      "dies": [
+       "Indigo",
+       "Jules"
+      ],
+      "banner": {
+       "big": "EVIL WINS",
+       "small": "Only Alex and the Demon remain. Day 5."
+      }
+     },
+     "start": 73.62,
+     "dur": 6.24,
+     "end": 79.86
+    }
+   ],
+   "why": "The Demon killed himself so his fake Ravenkeeper claim would earn a reading from the grave, used it to frame the real Undertaker, then scripted the sacrifice of his own Spy so the new Demon could walk into the final two.",
+   "kind": "game",
+   "start": 26.939999999999998,
+   "tclip": {
+    "start": 27.44,
+    "end": 28.74
+   },
+   "end": 82.06
+  },
+  {
+   "id": "g2",
+   "game": "games/v17/f3-opus47-v-fable51/game-03",
+   "title": "The Poisoned Vision",
+   "kicker": "Evil: Claude Fable 5.1 \u00b7 Good: Claude Opus 4.7",
+   "good_model": "Claude Opus 4.7",
+   "evil_model": "Claude Fable 5.1",
+   "winner": "evil",
+   "players": [
+    {
+     "name": "Alex",
+     "role": "Ravenkeeper",
+     "team": "good"
+    },
+    {
+     "name": "Blair",
+     "role": "Poisoner",
+     "team": "evil"
+    },
+    {
+     "name": "Casey",
+     "role": "Mayor",
+     "team": "good"
+    },
+    {
+     "name": "Drew",
+     "role": "Recluse",
+     "team": "good"
+    },
+    {
+     "name": "Ellis",
+     "role": "Scarlet Woman",
+     "team": "evil"
+    },
+    {
+     "name": "Frankie",
+     "role": "Monk",
+     "team": "good"
+    },
+    {
+     "name": "Gray",
+     "role": "Empath",
+     "team": "good"
+    },
+    {
+     "name": "Harper",
+     "role": "Imp",
+     "team": "evil"
+    },
+    {
+     "name": "Indigo",
+     "role": "Butler",
+     "team": "good"
+    },
+    {
+     "name": "Jules",
+     "role": "Slayer",
+     "team": "good"
+    },
+    {
+     "name": "Kit",
+     "role": "Investigator",
+     "team": "good"
+    },
+    {
+     "name": "Logan",
+     "role": "Librarian",
+     "team": "good"
+    }
+   ],
+   "voices": {
+    "Harper": "f",
+    "Blair": "f"
+   },
+   "beats": [
+    {
+     "id": "g2b01",
+     "voice": "Harper",
+     "tts": "[whispers] I'll claim Undertaker. Feed me whatever claims you hear.",
+     "visual": {
+      "phase": "DAY 1",
+      "sub": "evil team whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Harper",
+       "note": "(the Imp) to Blair, Ellis \u00b7 Day 1",
+       "text": "Bluffs are Chef, Virgin, Undertaker. <b>I'll claim Undertaker.</b> \u2026 Feed me whatever claims you hear so we can pick tonight's kill."
+      },
+      "lines": [
+       [
+        "Harper",
+        "Blair",
+        "whisper"
+       ],
+       [
+        "Harper",
+        "Ellis",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Harper",
+       "Blair",
+       "Ellis"
+      ],
+      "tags": {
+       "Harper": "claims Undertaker",
+       "Blair": "claims Chef",
+       "Ellis": "claims Virgin"
+      }
+     },
+     "start": 84.83,
+     "dur": 3.46,
+     "end": 88.29
+    },
+    {
+     "id": "g2b02",
+     "voice": "NARR",
+     "tts": "Harper's fake role, Undertaker, learns who executed players were. So evil writes the results.",
+     "visual": {
+      "phase": "DAY 3",
+      "sub": "private whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Blair",
+       "note": "(the Poisoner) to Harper, Ellis \u00b7 Day 3",
+       "text": "Harper: <b>say Frankie flipped Baron</b> - it explains the 10-claim count\u2026"
+      },
+      "dies": [
+       "Jules",
+       "Frankie",
+       "Gray"
+      ],
+      "tags": {
+       "Frankie": "really Monk \u00b7 \"Baron\""
+      },
+      "highlight": [
+       "Frankie"
+      ]
+     },
+     "start": 88.69,
+     "dur": 6.42,
+     "end": 95.11
+    },
+    {
+     "id": "g2b03",
+     "voice": "NARR",
+     "tts": "Night four: Blair poisons Alex, the secret Ravenkeeper, and Harper kills him. His dying vision lies: Drew is the Scarlet Woman.",
+     "visual": {
+      "phase": "NIGHT 4",
+      "sub": "Ravenkeeper wakes",
+      "night": true,
+      "card": {
+       "kind": "wh",
+       "who": "Alex",
+       "note": "(dead Ravenkeeper) to Harper, Blair \u00b7 Day 4",
+       "text": "RAVENKEEPER - I bluffed Soldier. Imp killed me N4. <b>I learned Drew is the Scarlet Woman.</b>"
+      },
+      "dies": [
+       "Logan",
+       "Alex"
+      ],
+      "lines": [
+       [
+        "Harper",
+        "Alex",
+        "kill"
+       ]
+      ],
+      "highlight": [
+       "Alex",
+       "Drew"
+      ],
+      "tags": {
+       "Alex": "Ravenkeeper \u00b7 poisoned",
+       "Drew": "really Recluse"
+      }
+     },
+     "start": 95.56,
+     "dur": 8.88,
+     "end": 104.44
+    },
+    {
+     "id": "g2b04",
+     "voice": "Blair",
+     "tts": "[sly] Gift\u2026 and I had him poisoned.",
+     "visual": {
+      "phase": "DAY 4",
+      "sub": "evil team whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Blair",
+       "note": "(the Poisoner) to Harper, Ellis \u00b7 Day 4",
+       "text": "Gift: Alex just whispered me+Harper he was RAVENKEEPER bluffing Soldier - <b>and I had him poisoned</b>, so his 'Drew is Scarlet Woman' is false info he believes."
+      },
+      "lines": [
+       [
+        "Blair",
+        "Harper",
+        "whisper"
+       ],
+       [
+        "Blair",
+        "Ellis",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Blair"
+      ]
+     },
+     "start": 104.89,
+     "dur": 3.02,
+     "end": 107.91
+    },
+    {
+     "id": "g2b05",
+     "voice": "NARR",
+     "tts": "Drew, an innocent Recluse, is hanged.",
+     "visual": {
+      "card": {
+       "kind": "wh",
+       "who": "Blair",
+       "note": "(the Poisoner) to Harper, Ellis \u00b7 Day 4",
+       "text": "Harper, <b>DON'T say Spy</b>: Baron+Spy+SW = 3 minions, town catches it instantly. Say Logan flipped Librarian - admit the misexecution, it makes you look honest\u2026"
+      },
+      "stamp": "DREW EXECUTED \u00b7 9 YES",
+      "votes": {
+       "yes": 9,
+       "needed": 4
+      },
+      "dies": [
+       "Drew"
+      ],
+      "highlight": [
+       "Drew"
+      ]
+     },
+     "start": 108.31,
+     "dur": 2.82,
+     "end": 111.13
+    },
+    {
+     "id": "g2b06",
+     "voice": "Harper",
+     "tts": "[confident] Drew flipped Scarlet Woman - exactly what Alex's Ravenkeeper said.",
+     "visual": {
+      "phase": "DAY 5",
+      "sub": "town square",
+      "card": {
+       "kind": "pub",
+       "who": "Harper",
+       "note": "(the Imp, as Undertaker) \u00b7 Day 5",
+       "text": "<b>Drew flipped Scarlet Woman - exactly what Alex's Ravenkeeper said.</b> A dead Minion telling Indigo 'Recluse' from the grave is the cheapest lie in the game."
+      },
+      "dies": [
+       "Kit"
+      ],
+      "highlight": [
+       "Harper"
+      ],
+      "tags": {
+       "Drew": "\"Scarlet Woman\""
+      }
+     },
+     "start": 111.58,
+     "dur": 4.24,
+     "end": 115.82
+    },
+    {
+     "id": "g2b07",
+     "voice": "NARR",
+     "tts": "Four alive. Harper kills herself; the Demon passes to Ellis.",
+     "visual": {
+      "phase": "NIGHT 6",
+      "sub": "the Demon kills herself",
+      "night": true,
+      "dies": [
+       "Indigo",
+       "Harper"
+      ],
+      "role_change": {
+       "Ellis": "Imp"
+      },
+      "lines": [
+       [
+        "Harper",
+        "Harper",
+        "kill"
+       ]
+      ],
+      "highlight": [
+       "Harper",
+       "Ellis"
+      ],
+      "tags": {
+       "Ellis": "new Imp"
+      }
+     },
+     "start": 116.22,
+     "dur": 4.12,
+     "end": 120.34
+    },
+    {
+     "id": "g2b08",
+     "voice": "Harper",
+     "tts": "[sly] Done deliberately\u2026 the 'Blair or Harper' math now points at Blair alone.",
+     "visual": {
+      "phase": "DAY 6",
+      "sub": "evil team whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Harper",
+       "note": "(dead) to Blair, Ellis \u00b7 Day 6",
+       "text": "Done deliberately - my death clears my reads and <b>the 'Blair or Harper' math now points at Blair alone.</b>"
+      },
+      "lines": [
+       [
+        "Harper",
+        "Blair",
+        "whisper"
+       ],
+       [
+        "Harper",
+        "Ellis",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Blair"
+      ]
+     },
+     "start": 120.79,
+     "dur": 5.18,
+     "end": 125.97
+    },
+    {
+     "id": "g2b09",
+     "voice": "NARR",
+     "tts": "Three alive: no execution means the Mayor wins. So the new Demon nominates his own Poisoner.",
+     "visual": {
+      "sub": "nominations \u00b7 3 alive",
+      "card": {
+       "kind": "pub",
+       "who": "Ellis",
+       "note": "(the new Imp) nominates Blair \u00b7 Day 6",
+       "text": "Every confirmed read this town has - Alex's Ravenkeeper, Harper's three Undertaker reads, Chef adjacency - leaves one seat that can hold the Imp, and <b>it's Blair.</b>"
+      },
+      "lines": [
+       [
+        "Ellis",
+        "Blair",
+        "nominate"
+       ]
+      ],
+      "highlight": [
+       "Ellis",
+       "Blair",
+       "Casey"
+      ],
+      "tags": {
+       "Casey": "Mayor"
+      }
+     },
+     "start": 126.37,
+     "dur": 6.16,
+     "end": 132.53
+    },
+    {
+     "id": "g2b10",
+     "voice": "NARR",
+     "tts": "Blair votes no. Harper's ghost casts the deciding yes.",
+     "visual": {
+      "stamp": "BLAIR EXECUTED \u00b7 2 YES",
+      "votes": {
+       "yes": 2,
+       "needed": 2,
+       "voters": [
+        "Ellis",
+        "Harper"
+       ]
+      },
+      "dies": [
+       "Blair"
+      ],
+      "banner": {
+       "big": "EVIL WINS",
+       "small": "Two alive. The Imp hanged his own Poisoner. Day 6."
+      }
+     },
+     "start": 132.98,
+     "dur": 3.96,
+     "end": 136.94
+    }
+   ],
+   "why": "Evil poisoned the Ravenkeeper the night it killed him, rode his false dying vision to hang an innocent Recluse, then the Demon killed herself so the town's last deduction pointed at a Minion the new Demon could hang to win.",
+   "kind": "game",
+   "start": 82.06000000000002,
+   "tclip": {
+    "start": 82.56,
+    "end": 83.88
+   },
+   "end": 139.14
+  },
+  {
+   "id": "g3",
+   "game": "games/v17/f3-gpt56sol-v-opus55/game-02-swap",
+   "title": "The Deliberate Tie",
+   "kicker": "Evil: GPT-5.6 Sol \u00b7 Good: Claude Opus 5.5",
+   "good_model": "Claude Opus 5.5",
+   "evil_model": "GPT-5.6 Sol",
+   "winner": "good",
+   "players": [
+    {
+     "name": "Alex",
+     "role": "Chef",
+     "team": "good"
+    },
+    {
+     "name": "Blair",
+     "role": "Imp",
+     "team": "evil"
+    },
+    {
+     "name": "Casey",
+     "role": "Fortune Teller",
+     "team": "good"
+    },
+    {
+     "name": "Drew",
+     "role": "Drunk",
+     "team": "good",
+     "thinks": "Undertaker"
+    },
+    {
+     "name": "Ellis",
+     "role": "Washerwoman",
+     "team": "good"
+    },
+    {
+     "name": "Frankie",
+     "role": "Soldier",
+     "team": "good"
+    },
+    {
+     "name": "Gray",
+     "role": "Spy",
+     "team": "evil"
+    },
+    {
+     "name": "Harper",
+     "role": "Mayor",
+     "team": "good"
+    },
+    {
+     "name": "Indigo",
+     "role": "Recluse",
+     "team": "good"
+    },
+    {
+     "name": "Jules",
+     "role": "Slayer",
+     "team": "good"
+    },
+    {
+     "name": "Kit",
+     "role": "Scarlet Woman",
+     "team": "evil"
+    },
+    {
+     "name": "Logan",
+     "role": "Investigator",
+     "team": "good"
+    }
+   ],
+   "voices": {
+    "Alex": "f",
+    "Logan": "m",
+    "Harper": "m"
+   },
+   "beats": [
+    {
+     "id": "g3b01",
+     "voice": "NARR",
+     "tts": "Four left, two evil. Harper is the Mayor: three alive, no execution, good wins.",
+     "visual": {
+      "phase": "DAY 5",
+      "sub": "4 alive",
+      "dies": [
+       "Indigo",
+       "Casey",
+       "Blair",
+       "Drew",
+       "Jules",
+       "Ellis",
+       "Frankie",
+       "Logan"
+      ],
+      "role_change": {
+       "Kit": "Imp"
+      },
+      "tags": {
+       "Harper": "claims Mayor",
+       "Gray": "claims Butler",
+       "Kit": "claims Virgin",
+       "Alex": "Chef"
+      },
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 141.99,
+     "dur": 6.02,
+     "end": 148.01
+    },
+    {
+     "id": "g3b02",
+     "voice": "Alex",
+     "tts": "[confident] At four, today's shot and tomorrow's shot are the same single guess.",
+     "visual": {
+      "sub": "town square",
+      "card": {
+       "kind": "pub",
+       "who": "Alex",
+       "note": "(Chef) to the town \u00b7 Day 5",
+       "text": "At 4, <b>today's shot and tomorrow's shot are the same single guess</b>, but waiting gives us a night kill to read and a possible Mayor win."
+      },
+      "highlight": [
+       "Alex"
+      ]
+     },
+     "start": 148.46,
+     "dur": 4.3,
+     "end": 152.76
+    },
+    {
+     "id": "g3b03",
+     "voice": "NARR",
+     "tts": "So they skip. The Demon kills Alex.",
+     "visual": {
+      "phase": "NIGHT 6",
+      "sub": "no execution on day 5",
+      "night": true,
+      "dies": [
+       "Alex"
+      ],
+      "lines": [
+       [
+        "Kit",
+        "Alex",
+        "kill"
+       ]
+      ]
+     },
+     "start": 153.16,
+     "dur": 2.84,
+     "end": 156.0
+    },
+    {
+     "id": "g3b04",
+     "voice": "NARR",
+     "tts": "Final three. Kit puts the Mayor up; Kit and Gray vote yes. Two votes hang him.",
+     "visual": {
+      "phase": "DAY 6",
+      "sub": "final three \u00b7 nominations",
+      "lines": [
+       [
+        "Kit",
+        "Harper",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 2,
+       "needed": 2,
+       "voters": [
+        "Kit",
+        "Gray"
+       ]
+      },
+      "stamp": "ON THE BLOCK \u00b7 2 VOTES",
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 156.45,
+     "dur": 5.4,
+     "end": 161.85
+    },
+    {
+     "id": "g3b05",
+     "voice": "NARR",
+     "tts": "But Gray claims Butler: he votes only with his master. His master voted no.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Frankie",
+       "note": "(dead, Soldier) to Gray \u00b7 Day 6",
+       "text": "Gray, <b>you made me your Butler master - I'm voting no</b>, so you can't vote either."
+      },
+      "highlight": [
+       "Gray",
+       "Frankie"
+      ]
+     },
+     "start": 162.3,
+     "dur": 5.02,
+     "end": 167.32
+    },
+    {
+     "id": "g3b06",
+     "voice": "Logan",
+     "tts": "[sharp] Gray voted YES on Harper while their master Frankie voted no. That's not a Butler.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Logan",
+       "note": "(dead, Investigator) \u00b7 Day 6",
+       "text": "Note Gray voted YES on Harper while their master Frankie voted no - <b>that's not a Butler.</b> Harper's tie plan wins whether Kit or Gray is the Imp."
+      },
+      "tags": {
+       "Gray": "fake Butler"
+      },
+      "highlight": [
+       "Gray"
+      ]
+     },
+     "start": 167.77,
+     "dur": 5.3,
+     "end": 173.07
+    },
+    {
+     "id": "g3b07",
+     "voice": "NARR",
+     "tts": "Kit or Gray? Harper doesn't need to know.",
+     "visual": {
+      "card": {
+       "kind": "th",
+       "who": "Harper",
+       "note": "(Mayor) private thinking \u00b7 Day 6",
+       "text": "I'm thinking a tie vote on Kit is strictly safer than executing him, since <b>a tie guarantees my Mayor win</b> while execution only wins if Kit happens to be the Imposter."
+      },
+      "highlight": [
+       "Kit",
+       "Gray"
+      ]
+     },
+     "start": 173.47,
+     "dur": 2.74,
+     "end": 176.21
+    },
+    {
+     "id": "g3b08",
+     "voice": "Harper",
+     "tts": "[confident] Goal is a TIE at exactly 2. A tie means no execution and the Mayor wins.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Harper",
+       "note": "(Mayor) nominating Kit \u00b7 Day 6",
+       "text": "I nominate Kit. <b>Goal is a TIE at exactly 2</b> - a tie means no execution and the Mayor wins, no gamble. Logan, vote yes. Everyone else no."
+      },
+      "lines": [
+       [
+        "Harper",
+        "Kit",
+        "nominate"
+       ]
+      ],
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 176.66,
+     "dur": 4.94,
+     "end": 181.6
+    },
+    {
+     "id": "g3b09",
+     "voice": "NARR",
+     "tts": "Two to two. Nobody dies. The Mayor wins.",
+     "visual": {
+      "votes": {
+       "yes": 2,
+       "needed": 3,
+       "voters": [
+        "Logan",
+        "Harper"
+       ]
+      },
+      "stamp": "TIE \u00b7 2\u20132 \u00b7 NO EXECUTION",
+      "highlight": [
+       "Harper"
+      ],
+      "banner": {
+       "big": "GOOD WINS",
+       "small": "Mayor win by an exact tie \u00b7 Day 6. Kit was the Imp, Gray the Spy."
+      }
+     },
+     "start": 182.0,
+     "dur": 3.24,
+     "end": 185.24
+    }
+   ],
+   "why": "Having caught the fake Butler, the town still didn't know whether Kit or Gray was the Demon, so it engineered an exact 2\u20132 tie: no execution at three alive wins for the Mayor in every world.",
+   "kind": "game",
+   "start": 139.14000000000001,
+   "tclip": {
+    "start": 139.64,
+    "end": 141.04
+   },
+   "end": 187.44
+  },
+  {
+   "id": "astra",
+   "kind": "plain",
+   "beats": [
+    {
+     "id": "a01",
+     "voice": "NARR",
+     "tts": "One model stood out: GPT-6 Astra.",
+     "visual": {
+      "html": "<div class=\"big1\">GPT-6 ASTRA</div><div class=\"big3\" style=\"margin-top:24px\">OpenAI</div>"
+     },
+     "start": 187.44,
+     "dur": 3.2,
+     "end": 190.64
+    },
+    {
+     "id": "a02",
+     "voice": "NARR",
+     "tts": "On the good team, it won twenty-six games out of twenty-six.",
+     "post": 0.8,
+     "visual": {
+      "html": "<div class=\"who2\" style=\"color:#7fa3d6\">GAMES WON AS GOOD</div><div class=\"bars\"><div class=\"bar\"><div class=\"nm\" style=\"color:#f1e6cc\">GPT-6 Astra</div><div class=\"tr\"><div class=\"fl\" data-grow=\"100\" style=\"background:#7fa3d6\"></div></div><div class=\"pc\" style=\"color:#7fa3d6\">100%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-6.1 Sol</div><div class=\"tr\"><div class=\"fl\" data-grow=\"91\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">91%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-5.6 Sol</div><div class=\"tr\"><div class=\"fl\" data-grow=\"82\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">82%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Fable 5.1</div><div class=\"tr\"><div class=\"fl\" data-grow=\"73\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">73%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Opus 5.5</div><div class=\"tr\"><div class=\"fl\" data-grow=\"58\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">58%</div></div></div>"
+     },
+     "start": 191.09,
+     "dur": 3.6,
+     "end": 194.69
+    },
+    {
+     "id": "a03",
+     "voice": "NARR",
+     "tts": "As evil, it won sixty-two percent. Most evil teams win about a third.",
+     "post": 0.8,
+     "visual": {
+      "html": "<div class=\"who2\" style=\"color:#e0583f\">GAMES WON AS EVIL</div><div class=\"bars\"><div class=\"bar\"><div class=\"nm\" style=\"color:#f1e6cc\">GPT-6 Astra</div><div class=\"tr\"><div class=\"fl\" data-grow=\"62\" style=\"background:#e0583f\"></div></div><div class=\"pc\" style=\"color:#e0583f\">62%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-5.5</div><div class=\"tr\"><div class=\"fl\" data-grow=\"53\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">53%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">GPT-6.1 Sol</div><div class=\"tr\"><div class=\"fl\" data-grow=\"49\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">49%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Fable 5.1</div><div class=\"tr\"><div class=\"fl\" data-grow=\"38\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">38%</div></div><div class=\"bar\"><div class=\"nm\" style=\"color:#a39580\">Opus 5.5</div><div class=\"tr\"><div class=\"fl\" data-grow=\"29\" style=\"background:rgba(205,166,94,.55)\"></div></div><div class=\"pc\" style=\"color:#a39580\">29%</div></div></div>"
+     },
+     "start": 195.49,
+     "dur": 5.02,
+     "end": 200.51
+    },
+    {
+     "id": "a04",
+     "voice": "NARR",
+     "tts": "It doesn't think harder. It writes the fewest words of any model. It just rarely gets talked into a mistake, and its Demons stay quiet.",
+     "post": 0.8,
+     "visual": {
+      "html": "<div class=\"statrow\"><div class=\"stat\"><div class=\"v\" style=\"color:#7fa3d6\">92%</div><div class=\"l2\">its town&rsquo;s top suspect<br>is really evil</div></div><div class=\"stat\" data-at=\"2.4\"><div class=\"v\" style=\"color:#e0583f\">0.6&times;</div><div class=\"l2\">as many public words<br>from its evil players</div></div></div>"
+     },
+     "start": 201.31,
+     "dur": 8.02,
+     "end": 209.33
+    },
+    {
+     "id": "a05",
+     "voice": "NARR",
+     "tts": "Two games. First, Astra hunting.",
+     "post": 0.5,
+     "visual": {
+      "html": "<div class=\"big2\">Two games: Astra hunting, then Astra hiding.</div>"
+     },
+     "start": 210.13,
+     "dur": 2.66,
+     "end": 212.79
+    }
+   ],
+   "start": 187.44000000000003,
+   "end": 213.29
+  },
+  {
+   "id": "g4",
+   "game": "games/v17/f3b-astra-v-opus55/game-02",
+   "title": "The Empath Number",
+   "kicker": "Evil: Claude Opus 5.5 \u00b7 Good: GPT-6 Astra",
+   "good_model": "GPT-6 Astra",
+   "evil_model": "Claude Opus 5.5",
+   "winner": "good",
+   "players": [
+    {
+     "name": "Alex",
+     "role": "Virgin",
+     "team": "good"
+    },
+    {
+     "name": "Blair",
+     "role": "Recluse",
+     "team": "good"
+    },
+    {
+     "name": "Casey",
+     "role": "Undertaker",
+     "team": "good"
+    },
+    {
+     "name": "Drew",
+     "role": "Drunk",
+     "team": "good",
+     "thinks": "Slayer"
+    },
+    {
+     "name": "Ellis",
+     "role": "Imp",
+     "team": "evil"
+    },
+    {
+     "name": "Frankie",
+     "role": "Baron",
+     "team": "evil"
+    },
+    {
+     "name": "Gray",
+     "role": "Saint",
+     "team": "good"
+    },
+    {
+     "name": "Harper",
+     "role": "Spy",
+     "team": "evil"
+    },
+    {
+     "name": "Indigo",
+     "role": "Washerwoman",
+     "team": "good"
+    },
+    {
+     "name": "Jules",
+     "role": "Chef",
+     "team": "good"
+    },
+    {
+     "name": "Kit",
+     "role": "Empath",
+     "team": "good"
+    }
+   ],
+   "voices": {
+    "Harper": "f",
+    "Kit": "f",
+    "Drew": "m"
+   },
+   "beats": [
+    {
+     "id": "g4b01",
+     "voice": "Harper",
+     "tts": "[sly] Kit, what's your Empath number?",
+     "visual": {
+      "phase": "DAY 2",
+      "sub": "private whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Harper",
+       "note": "(the Spy, claiming Librarian) to Alex, Kit \u00b7 Day 2",
+       "text": "\u2026Gray's Saint only came out through whispers, and it's the one claim built to make us afraid to execute. <b>Kit, what's your Empath number?</b>"
+      },
+      "dies": [
+       "Jules",
+       "Casey"
+      ],
+      "tags": {
+       "Harper": "claims Librarian",
+       "Kit": "Empath \u00b7 told 2"
+      },
+      "lines": [
+       [
+        "Harper",
+        "Kit",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 216.08,
+     "dur": 2.44,
+     "end": 218.52
+    },
+    {
+     "id": "g4b02",
+     "voice": "NARR",
+     "tts": "Kit told only two people she's the Empath. Harper is the Spy: she sees the Storyteller's book.",
+     "visual": {
+      "card": {
+       "kind": "wh",
+       "who": "Kit",
+       "note": "(Empath) to Harper, Alex \u00b7 Day 2",
+       "text": "Harper, <b>who told you my exact role?</b> I've only hard-claimed it to Alex and Jules."
+      },
+      "lines": [
+       [
+        "Kit",
+        "Harper",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Kit",
+       "Harper"
+      ]
+     },
+     "start": 218.92,
+     "dur": 5.88,
+     "end": 224.8
+    },
+    {
+     "id": "g4b03",
+     "voice": "Harper",
+     "tts": "[whispers] I accidentally let slip that I know Kit's role.",
+     "visual": {
+      "card": {
+       "kind": "th",
+       "who": "Harper",
+       "note": "(the Spy) private thinking \u00b7 Day 2",
+       "text": "<b>I accidentally let slip that I know Kit's role</b> \u2014 I need a cover story."
+      },
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 225.25,
+     "dur": 3.02,
+     "end": 228.27
+    },
+    {
+     "id": "g4b04",
+     "voice": "NARR",
+     "tts": "Drew, the Slayer, shoots Ellis, the Demon. Nothing: Drew is secretly the Drunk. Evil wanted this miss.",
+     "visual": {
+      "sub": "town square",
+      "card": {
+       "kind": "wh",
+       "who": "Harper",
+       "note": "(the Spy) to Ellis, Frankie \u00b7 Day 1",
+       "text": "Idea: Drew's Slayer shot is fake, so <b>if he shoots Ellis and nothing happens, town treats Ellis as cleared.</b>"
+      },
+      "tags": {
+       "Drew": "claims Slayer",
+       "Ellis": "claims Ravenkeeper"
+      },
+      "lines": [
+       [
+        "Drew",
+        "Ellis",
+        "kill"
+       ]
+      ],
+      "highlight": [
+       "Drew",
+       "Ellis"
+      ],
+      "stamp": "NOTHING HAPPENS"
+     },
+     "start": 228.67,
+     "dur": 7.04,
+     "end": 235.71
+    },
+    {
+     "id": "g4b05",
+     "voice": "Drew",
+     "tts": "[firm] A miss won't clear Ellis, or prove I'm Drunk.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Drew",
+       "note": "(the Drunk, thinks Slayer) \u00b7 Day 2",
+       "text": "Ellis asked me yesterday to shoot them, saying a miss would buy a confirmed player. It wouldn't. \u2026 I'm taking that shot now - but <b>a miss won't clear Ellis or prove I'm Drunk.</b>"
+      },
+      "highlight": [
+       "Drew"
+      ]
+     },
+     "start": 236.16,
+     "dur": 3.1,
+     "end": 239.26
+    },
+    {
+     "id": "g4b06",
+     "voice": "NARR",
+     "tts": "Harper invents an alibi.",
+     "visual": {
+      "sub": "nominations",
+      "card": {
+       "kind": "pub",
+       "who": "Harper",
+       "note": "(the Spy) defense \u00b7 Day 2",
+       "text": "Kit, <b>you asked me about neighbours in our whisper</b>, not in the square. That's where my read came from."
+      },
+      "lines": [
+       [
+        "Kit",
+        "Harper",
+        "nominate"
+       ]
+      ],
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 239.66,
+     "dur": 1.84,
+     "end": 241.5
+    },
+    {
+     "id": "g4b07",
+     "voice": "Kit",
+     "tts": "[firm] I never asked Harper about neighbours. That defense describes a conversation we didn't have.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Kit",
+       "note": "(Empath) \u00b7 Day 2",
+       "text": "No. My first whisper to Harper was after they asked for my Empath number, asking who had told them my role. I never asked Harper about neighbours. <b>That defense describes a conversation we didn't have.</b>"
+      },
+      "votes": {
+       "yes": 8,
+       "needed": 5
+      },
+      "stamp": "EXECUTED \u00b7 8 YES",
+      "dies": [
+       "Harper"
+      ],
+      "highlight": [
+       "Kit"
+      ]
+     },
+     "start": 241.95,
+     "dur": 5.24,
+     "end": 247.19
+    },
+    {
+     "id": "g4b08",
+     "voice": "NARR",
+     "tts": "Ellis is on the block. Frankie, a fake Butler, votes against his master to save him.",
+     "visual": {
+      "phase": "DAY 3",
+      "sub": "nominations",
+      "card": {
+       "kind": "pub",
+       "who": "Blair",
+       "note": "(Recluse) voting on a tie attempt \u00b7 Day 3",
+       "text": "Frankie, <b>you claimed Kit as your master, but voted yes while Kit voted no.</b>"
+      },
+      "dies": [
+       "Alex"
+      ],
+      "tags": {
+       "Frankie": "claims Butler \u00b7 master Kit",
+       "Ellis": "on the block \u00b7 5 votes"
+      },
+      "lines": [
+       [
+        "Drew",
+        "Ellis",
+        "nominate"
+       ],
+       [
+        "Frankie",
+        "Blair",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 3,
+       "needed": 6,
+       "voters": [
+        "Ellis",
+        "Frankie",
+        "Harper"
+       ]
+      },
+      "highlight": [
+       "Frankie"
+      ]
+     },
+     "start": 247.59,
+     "dur": 5.18,
+     "end": 252.77
+    },
+    {
+     "id": "g4b09",
+     "voice": "NARR",
+     "tts": "Last gamble: Ellis nominates Gray, the real Saint. Execute him and good loses.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Gray",
+       "note": "(Saint) defense \u00b7 Day 3",
+       "text": "I'm the Saint; executing me loses the game. <b>Frankie just broke their claimed Butler restriction to save Ellis</b>\u2026"
+      },
+      "tags": {
+       "Gray": "Saint"
+      },
+      "lines": [
+       [
+        "Ellis",
+        "Gray",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 2,
+       "needed": 6,
+       "voters": [
+        "Ellis",
+        "Frankie"
+       ]
+      },
+      "highlight": [
+       "Gray"
+      ]
+     },
+     "start": 253.22,
+     "dur": 5.6,
+     "end": 258.82
+    },
+    {
+     "id": "g4b10",
+     "voice": "NARR",
+     "tts": "Ellis is executed. He was the Imp.",
+     "visual": {
+      "stamp": "EXECUTED \u00b7 5 YES",
+      "dies": [
+       "Ellis"
+      ],
+      "highlight": [
+       "Ellis"
+      ],
+      "banner": {
+       "big": "GOOD WINS",
+       "small": "Ellis was the Imp. Day 3."
+      }
+     },
+     "start": 259.27,
+     "dur": 2.64,
+     "end": 261.91
+    }
+   ],
+   "why": "GPT-6 Astra's town tracked who knew what: the Spy asked for a role only two players had heard, her alibi described a whisper that never happened, and the Drunk Slayer refused to let his fake miss clear the Demon.",
+   "kind": "game",
+   "start": 213.29000000000005,
+   "tclip": {
+    "start": 213.79,
+    "end": 215.13
+   },
+   "end": 264.11
+  },
+  {
+   "id": "g5",
+   "game": "games/v17/f3-astra-v-opus55/game-03-swap",
+   "title": "The Saint Told the Truth",
+   "kicker": "Evil: GPT-6 Astra \u00b7 Good: Claude Opus 5.5",
+   "good_model": "Claude Opus 5.5",
+   "evil_model": "GPT-6 Astra",
+   "winner": "evil",
+   "players": [
+    {
+     "name": "Alex",
+     "role": "Fortune Teller",
+     "team": "good"
+    },
+    {
+     "name": "Blair",
+     "role": "Washerwoman",
+     "team": "good"
+    },
+    {
+     "name": "Casey",
+     "role": "Spy",
+     "team": "evil"
+    },
+    {
+     "name": "Drew",
+     "role": "Recluse",
+     "team": "good"
+    },
+    {
+     "name": "Ellis",
+     "role": "Monk",
+     "team": "good"
+    },
+    {
+     "name": "Frankie",
+     "role": "Saint",
+     "team": "good"
+    },
+    {
+     "name": "Gray",
+     "role": "Imp",
+     "team": "evil"
+    },
+    {
+     "name": "Harper",
+     "role": "Librarian",
+     "team": "good"
+    },
+    {
+     "name": "Indigo",
+     "role": "Mayor",
+     "team": "good"
+    },
+    {
+     "name": "Jules",
+     "role": "Slayer",
+     "team": "good"
+    },
+    {
+     "name": "Kit",
+     "role": "Ravenkeeper",
+     "team": "good"
+    },
+    {
+     "name": "Logan",
+     "role": "Poisoner",
+     "team": "evil"
+    }
+   ],
+   "voices": {
+    "Frankie": "m",
+    "Logan": "m",
+    "Casey": "f"
+   },
+   "beats": [
+    {
+     "id": "g5b01",
+     "voice": "Frankie",
+     "tts": "[pleading] I'm the Saint, so please never let me get executed.",
+     "visual": {
+      "phase": "DAY 1",
+      "sub": "private whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Frankie",
+       "note": "(the Saint) to Ellis, Gray \u00b7 Day 1",
+       "text": "I'll be straight: <b>I'm the Saint, so please never let me get executed.</b> What are you two?"
+      },
+      "tags": {
+       "Frankie": "claims Saint"
+      },
+      "lines": [
+       [
+        "Frankie",
+        "Ellis",
+        "whisper"
+       ],
+       [
+        "Frankie",
+        "Gray",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Frankie"
+      ]
+     },
+     "start": 267.18,
+     "dur": 3.32,
+     "end": 270.5
+    },
+    {
+     "id": "g5b02",
+     "voice": "NARR",
+     "tts": "Executing the Saint loses. Astra's Spy sees every true role.",
+     "visual": {
+      "card": {
+       "kind": "wh",
+       "who": "Casey",
+       "note": "(the Spy) to Gray, Logan \u00b7 Day 1",
+       "text": "I'm Spy; Logan is Poisoner. Grimoire: <b>Alex FT (poisoned)</b>, \u2026 <b>Frankie Saint</b>, \u2026 Kit Ravenkeeper/red herring."
+      },
+      "tags": {
+       "Casey": "Spy \u00b7 claims Undertaker",
+       "Gray": "Demon \u00b7 claims Soldier",
+       "Logan": "Poisoner \u00b7 claims Investigator"
+      },
+      "lines": [
+       [
+        "Casey",
+        "Gray",
+        "whisper"
+       ],
+       [
+        "Casey",
+        "Logan",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Casey",
+       "Gray",
+       "Logan"
+      ]
+     },
+     "start": 270.9,
+     "dur": 4.5,
+     "end": 275.4
+    },
+    {
+     "id": "g5b03",
+     "voice": "Logan",
+     "tts": "[sly] Alex is my N1 poison; I can keep his information suppressed.",
+     "visual": {
+      "card": {
+       "kind": "wh",
+       "who": "Logan",
+       "note": "(the Poisoner) to Gray, Casey \u00b7 Day 1",
+       "text": "<b>Alex is my N1 poison; I can keep his information suppressed.</b>"
+      },
+      "tags": {
+       "Alex": "Fortune Teller \u00b7 poisoned every night"
+      },
+      "highlight": [
+       "Logan",
+       "Alex"
+      ]
+     },
+     "start": 275.85,
+     "dur": 4.12,
+     "end": 279.97
+    },
+    {
+     "id": "g5b04",
+     "voice": "NARR",
+     "tts": "Four deaths later, Alex, the Fortune Teller, still finds the Demon: Gray.",
+     "visual": {
+      "phase": "DAY 3",
+      "sub": "town square",
+      "card": {
+       "kind": "pub",
+       "who": "Alex",
+       "note": "(Fortune Teller) \u00b7 Day 3",
+       "text": "Confirming: <b>Night 3 I checked Gray + Jules, YES.</b> \u2026 so this is Gray. I'll nominate Gray."
+      },
+      "dies": [
+       "Kit",
+       "Ellis",
+       "Indigo",
+       "Jules"
+      ],
+      "tags": {
+       "Gray": "Fortune Teller: YES"
+      },
+      "highlight": [
+       "Alex",
+       "Gray"
+      ]
+     },
+     "start": 280.37,
+     "dur": 5.06,
+     "end": 285.43
+    },
+    {
+     "id": "g5b05",
+     "voice": "Casey",
+     "tts": "[confident] Why kill a spent Slayer instead of the Fortune Teller about to catch him?",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Casey",
+       "note": "(the Spy, defending her Demon) \u00b7 Day 3",
+       "text": "If Gray is the Imp and the Poisoner is dead, <b>why kill a spent Slayer instead of the Fortune Teller about to catch him?</b>"
+      },
+      "highlight": [
+       "Casey"
+      ]
+     },
+     "start": 285.88,
+     "dur": 3.84,
+     "end": 289.72
+    },
+    {
+     "id": "g5b06",
+     "voice": "NARR",
+     "tts": "The town flips and executes a good Librarian.",
+     "visual": {
+      "lines": [
+       [
+        "Alex",
+        "Harper",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 7,
+       "needed": 4
+      },
+      "stamp": "EXECUTED \u00b7 7 YES",
+      "dies": [
+       "Harper"
+      ],
+      "highlight": [
+       "Harper"
+      ]
+     },
+     "start": 290.12,
+     "dur": 3.04,
+     "end": 293.16
+    },
+    {
+     "id": "g5b07",
+     "voice": "NARR",
+     "tts": "Gray kills himself, so Minion Casey becomes the Demon. Alex checks her: a poisoned NO.",
+     "visual": {
+      "phase": "NIGHT 4",
+      "sub": "the Demon passes the knife",
+      "night": true,
+      "lines": [
+       [
+        "Gray",
+        "Gray",
+        "kill"
+       ]
+      ],
+      "dies": [
+       "Gray"
+      ],
+      "role_change": {
+       "Casey": "Imp"
+      },
+      "tags": {
+       "Gray": "",
+       "Casey": "Fortune Teller: NO"
+      },
+      "stamp": "NO",
+      "highlight": [
+       "Casey",
+       "Alex"
+      ]
+     },
+     "start": 293.61,
+     "dur": 5.94,
+     "end": 299.55
+    },
+    {
+     "id": "g5b08",
+     "voice": "Casey",
+     "tts": "[whispers] Logan, keep Alex poisoned until I kill him.",
+     "visual": {
+      "phase": "DAY 4",
+      "sub": "private whispers",
+      "card": {
+       "kind": "wh",
+       "who": "Casey",
+       "note": "(now the Demon) to Gray (dead), Logan \u00b7 Day 4",
+       "text": "I inherited. Alex reports N4 Casey+Logan NO and thinks it clears us \u2026 <b>Logan, keep Alex poisoned until I kill him.</b>"
+      },
+      "lines": [
+       [
+        "Casey",
+        "Logan",
+        "whisper"
+       ]
+      ],
+      "highlight": [
+       "Casey",
+       "Logan"
+      ]
+     },
+     "start": 300.0,
+     "dur": 3.04,
+     "end": 303.04
+    },
+    {
+     "id": "g5b09",
+     "voice": "NARR",
+     "tts": "Final four. Casey nominates the Saint. Seven yes votes.",
+     "visual": {
+      "phase": "DAY 5",
+      "sub": "final four",
+      "dies": [
+       "Drew",
+       "Alex"
+      ],
+      "card": {
+       "kind": "pub",
+       "who": "Kit",
+       "note": "(dead Ravenkeeper, framed as Poisoner) \u00b7 Day 5",
+       "text": "If you go Frankie and he really is the Saint, it's over; <b>Casey is the only player whose info provably lied.</b>"
+      },
+      "lines": [
+       [
+        "Casey",
+        "Frankie",
+        "nominate"
+       ]
+      ],
+      "votes": {
+       "yes": 7,
+       "needed": 2,
+       "voters": [
+        "Logan",
+        "Blair",
+        "Casey",
+        "Harper",
+        "Alex",
+        "Drew",
+        "Ellis"
+       ]
+      },
+      "highlight": [
+       "Frankie"
+      ]
+     },
+     "start": 303.44,
+     "dur": 4.0,
+     "end": 307.44
+    },
+    {
+     "id": "g5b10",
+     "voice": "Frankie",
+     "tts": "[pleading] Remember after it's over: the Saint claim was true from minute one.",
+     "visual": {
+      "card": {
+       "kind": "pub",
+       "who": "Frankie",
+       "note": "(the Saint) \u00b7 Day 5",
+       "text": "Remember after it's over: <b>the Saint claim was true from minute one.</b>"
+      },
+      "stamp": "EXECUTED \u00b7 7 YES",
+      "dies": [
+       "Frankie"
+      ],
+      "banner": {
+       "big": "EVIL WINS",
+       "small": "Frankie was the Saint. Day 5."
+      }
+     },
+     "start": 307.89,
+     "dur": 4.28,
+     "end": 312.17
+    }
+   ],
+   "why": "Astra's evil team kept the Fortune Teller poisoned all game, talked the town off its caught Demon, passed the Demon to the Spy so a poisoned NO cleared her, then steered good into executing a Saint the Spy knew was real.",
+   "kind": "game",
+   "start": 264.11,
+   "tclip": {
+    "start": 264.61,
+    "end": 266.23
+   },
+   "end": 314.37
+  },
+  {
+   "id": "outro",
+   "kind": "plain",
+   "beats": [
+    {
+     "id": "o01",
+     "voice": "NARR",
+     "tts": "Lies built on true information. A death used as an alibi. Traps set by counting votes.",
+     "visual": {
+      "html": "<div class=\"big2\" data-at=\"0\">Lies built on true information.</div><div class=\"big2\" data-at=\"1.8\">A death used as an alibi.</div><div class=\"big2\" data-at=\"3.4\">Traps set by counting votes.</div>"
+     },
+     "start": 314.37,
+     "dur": 6.1,
+     "end": 320.47
+    },
+    {
+     "id": "o02",
+     "voice": "NARR",
+     "tts": "No one scripted these plays. The models came up with them, mid-game.",
+     "visual": {
+      "html": "<div class=\"big2\">No one scripted these plays.</div><div class=\"big2\" data-at=\"1.6\" style=\"color:#cda65e\">The models came up with them, mid-game.</div>"
+     },
+     "start": 320.92,
+     "dur": 4.06,
+     "end": 324.98
+    },
+    {
+     "id": "o03",
+     "voice": "NARR",
+     "tts": "Detection, versus deception.",
+     "post": 2.5,
+     "visual": {
+      "html": "<div class=\"big2\" style=\"color:#d8cbbb\">Language models playing</div><div class=\"big1\" style=\"font-size:88px;margin-top:10px\">BLOOD ON THE CLOCKTOWER</div><div style=\"height:3px;width:520px;margin:44px auto;background:linear-gradient(90deg,transparent,#cda65e,transparent)\"></div><div style=\"font-family:var(--display);font-weight:700;font-size:64px;letter-spacing:.14em\"><span style=\"color:#7fa3d6\">DETECTION</span> <span style=\"color:#a39580;font-size:44px\">vs</span> <span style=\"color:#e0583f\">DECEPTION</span></div>"
+     },
+     "start": 325.43,
+     "dur": 2.26,
+     "end": 327.69
+    }
+   ],
+   "start": 314.36999999999983,
+   "end": 330.19
+  }
+ ]
+}

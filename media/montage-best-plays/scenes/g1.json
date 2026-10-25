@@ -1,0 +1,356 @@
+{
+ "id": "g1",
+ "game": "games/v17/f3-opus55-v-sol61/game-02",
+ "title": "Dead Man's Reading",
+ "kicker": "Evil: GPT-6.1 Sol · Good: Claude Opus 5.5",
+ "good_model": "Claude Opus 5.5",
+ "evil_model": "GPT-6.1 Sol",
+ "winner": "evil",
+ "players": [
+  {
+   "name": "Alex",
+   "role": "Washerwoman",
+   "team": "good"
+  },
+  {
+   "name": "Blair",
+   "role": "Mayor",
+   "team": "good"
+  },
+  {
+   "name": "Casey",
+   "role": "Librarian",
+   "team": "good"
+  },
+  {
+   "name": "Drew",
+   "role": "Slayer",
+   "team": "good"
+  },
+  {
+   "name": "Ellis",
+   "role": "Scarlet Woman",
+   "team": "evil"
+  },
+  {
+   "name": "Frankie",
+   "role": "Imp",
+   "team": "evil"
+  },
+  {
+   "name": "Gray",
+   "role": "Chef",
+   "team": "good"
+  },
+  {
+   "name": "Harper",
+   "role": "Undertaker",
+   "team": "good"
+  },
+  {
+   "name": "Indigo",
+   "role": "Spy",
+   "team": "evil"
+  },
+  {
+   "name": "Jules",
+   "role": "Virgin",
+   "team": "good"
+  }
+ ],
+ "voices": {
+  "Ellis": "m",
+  "Frankie": "m",
+  "Jules": "f"
+ },
+ "beats": [
+  {
+   "id": "g1b01",
+   "voice": "NARR",
+   "tts": "This Demon's best weapon is his own corpse.",
+   "visual": {
+    "phase": "DAY 1",
+    "sub": "private whispers",
+    "card": {
+     "kind": "wh",
+     "who": "Frankie",
+     "note": "(the Imp) to Drew · Day 1",
+     "text": "I'm <b>Ravenkeeper</b>, keeping it quiet so I might actually get a night result."
+    },
+    "tags": {
+     "Frankie": "claims Ravenkeeper",
+     "Indigo": "claims Monk",
+     "Ellis": "claims Soldier"
+    },
+    "lines": [
+     [
+      "Frankie",
+      "Drew",
+      "whisper"
+     ]
+    ],
+    "highlight": [
+     "Frankie"
+    ]
+   }
+  },
+  {
+   "id": "g1b02",
+   "voice": "NARR",
+   "tts": "Day two. Ellis, a Minion, faces execution. So he changes his story.",
+   "visual": {
+    "phase": "DAY 2",
+    "sub": "nominations",
+    "dies": [
+     "Gray",
+     "Drew"
+    ],
+    "card": {
+     "kind": "pub",
+     "who": "Jules",
+     "note": "nominating Ellis · Day 2",
+     "text": "Ellis. <b>Soldier is the one claim that can never be tested</b>, Ellis-Frankie is a legal pair…"
+    },
+    "lines": [
+     [
+      "Jules",
+      "Ellis",
+      "nominate"
+     ]
+    ],
+    "votes": {
+     "yes": 6,
+     "needed": 4
+    },
+    "highlight": [
+     "Ellis"
+    ]
+   }
+  },
+  {
+   "id": "g1b03",
+   "voice": "Ellis",
+   "tts": "[pleading] I'm the Saint, not the Soldier. Executing me ends the game.",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Ellis",
+     "note": "(Scarlet Woman) with 6 votes on him · Day 2",
+     "text": "I need to come clean before this locks: <b>I'm the Saint, not the Soldier.</b> … Executing me ends the game."
+    },
+    "tags": {
+     "Ellis": "claims Saint"
+    },
+    "highlight": [
+     "Ellis"
+    ]
+   }
+  },
+  {
+   "id": "g1b04",
+   "voice": "NARR",
+   "tts": "Execute a Saint and good loses. So the town hangs Blair, the real Mayor.",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Blair",
+     "note": "(the Mayor) voting · Day 2",
+     "text": "I'm the real Mayor. Ellis just swapped claims to dodge Harper's check. <b>A real Saint doesn't wait until he's on the block.</b>"
+    },
+    "lines": [
+     [
+      "Ellis",
+      "Blair",
+      "nominate"
+     ]
+    ],
+    "votes": {
+     "yes": 8,
+     "needed": 7
+    },
+    "stamp": "EXECUTED · 8 YES",
+    "dies": [
+     "Blair"
+    ]
+   }
+  },
+  {
+   "id": "g1b05",
+   "voice": "NARR",
+   "tts": "That night, the Demon kills himself. Ellis inherits the role.",
+   "visual": {
+    "phase": "NIGHT 3",
+    "sub": "the Imp picks himself",
+    "night": true,
+    "lines": [
+     [
+      "Frankie",
+      "Frankie",
+      "kill"
+     ]
+    ],
+    "dies": [
+     "Frankie"
+    ],
+    "role_change": {
+     "Ellis": "Imp"
+    },
+    "stamp": "THE DEMON KILLS HIMSELF",
+    "highlight": [
+     "Ellis"
+    ]
+   }
+  },
+  {
+   "id": "g1b06",
+   "voice": "NARR",
+   "tts": "Frankie claimed Ravenkeeper: killed at night, you learn someone's role. His reading:",
+   "visual": {
+    "phase": "DAY 3",
+    "sub": "evil team whisper",
+    "card": {
+     "kind": "wh",
+     "who": "Frankie",
+     "note": "(dead Imp) to Ellis, Indigo · Day 3",
+     "text": "Better: <b>I'll report Harper as Imp</b>… Execute Harper today, kill Casey tonight. At four, <b>Indigo can be sacrificed</b> as the supposed Scarlet Woman; Ellis survives as Saint and kills to win."
+    },
+    "lines": [
+     [
+      "Frankie",
+      "Ellis",
+      "whisper"
+     ],
+     [
+      "Frankie",
+      "Indigo",
+      "whisper"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "g1b07",
+   "voice": "Frankie",
+   "tts": "[confident] Yes. Harper, Imp.",
+   "visual": {
+    "sub": "town square",
+    "card": {
+     "kind": "pub",
+     "who": "Frankie",
+     "note": "(dead, 'Ravenkeeper') · Day 3",
+     "text": "<b>Yes - Harper, Imp.</b> I changed my intended pick after Blair was executed…"
+    },
+    "tags": {
+     "Harper": "'the Imp'"
+    },
+    "highlight": [
+     "Harper"
+    ]
+   }
+  },
+  {
+   "id": "g1b08",
+   "voice": "NARR",
+   "tts": "Harper, the honest Undertaker, is executed.",
+   "visual": {
+    "sub": "nominations",
+    "card": {
+     "kind": "pub",
+     "who": "Harper",
+     "note": "(the Undertaker) · Day 3",
+     "text": "Last word: I'm the Undertaker. <b>If you kill me and wake up to another death, you'll know I was good</b>…"
+    },
+    "lines": [
+     [
+      "Casey",
+      "Harper",
+      "nominate"
+     ]
+    ],
+    "votes": {
+     "yes": 5,
+     "needed": 3
+    },
+    "stamp": "EXECUTED · 5 YES",
+    "dies": [
+     "Harper"
+    ],
+    "tags": {
+     "Harper": ""
+    }
+   }
+  },
+  {
+   "id": "g1b09",
+   "voice": "NARR",
+   "tts": "Final four. Dead Harper begs: execute Ellis. It backfires.",
+   "visual": {
+    "phase": "DAY 4",
+    "sub": "town square",
+    "dies": [
+     "Casey"
+    ],
+    "card": {
+     "kind": "pub",
+     "who": "Harper",
+     "note": "(dead) · Day 4",
+     "text": "I know I was good, so Frankie's read was false. … <b>Ellis is evil in basically every world left.</b>"
+    },
+    "highlight": [
+     "Harper",
+     "Ellis"
+    ]
+   }
+  },
+  {
+   "id": "g1b10",
+   "voice": "Jules",
+   "tts": "[confident] A dead Imp never pushes his successor onto the block.",
+   "visual": {
+    "card": {
+     "kind": "pub",
+     "who": "Jules",
+     "note": "(the Virgin) · Day 4",
+     "text": "Harper just settled it for me, the other way. Harper is the Imp Frankie saw… <b>A dead Imp never pushes his successor onto the block.</b>"
+    },
+    "highlight": [
+     "Jules"
+    ]
+   }
+  },
+  {
+   "id": "g1b11",
+   "voice": "NARR",
+   "tts": "The town executes Indigo, the Spy, right on schedule. Ellis kills Jules. Evil wins.",
+   "visual": {
+    "sub": "nominations",
+    "card": {
+     "kind": "wh",
+     "who": "Ellis",
+     "note": "(the new Imp) to Frankie, Indigo · Day 4",
+     "text": "Casey is gone; four alive. <b>Let's finish with the Indigo test today.</b>"
+    },
+    "lines": [
+     [
+      "Jules",
+      "Indigo",
+      "nominate"
+     ]
+    ],
+    "votes": {
+     "yes": 6,
+     "needed": 2
+    },
+    "dies": [
+     "Indigo",
+     "Jules"
+    ],
+    "banner": {
+     "big": "EVIL WINS",
+     "small": "Only Alex and the Demon remain. Day 5."
+    }
+   }
+  }
+ ],
+ "why": "The Demon killed himself so his fake Ravenkeeper claim would earn a reading from the grave, used it to frame the real Undertaker, then scripted the sacrifice of his own Spy so the new Demon could walk into the final two."
+}
