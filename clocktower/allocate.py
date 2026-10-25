@@ -10,7 +10,7 @@
 Each new pair's guaranteed Minion is the one its two models have been dealt least. Half-widths are the
 analytic (Fisher) ones for the combined rating, scaled per model to match the bootstrap in the ratings file.
 
-    python -m clocktower.allocate plans/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f3*' \\
+    python -m clocktower allocate plans/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f3*' \\
         --exclude 'v16/f2-*opus48*' --target 100 --seed 170000 --out games/v17/f4 --budget 23000 > plans/f4.json
 """
 import argparse, fnmatch, glob, itertools, json, math, os, sys, collections
@@ -129,7 +129,7 @@ def plan(models, ratings, games, target=100, floor=1, cap=4, share=0.25, z=2.5, 
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    ap = argparse.ArgumentParser(prog='clocktower allocate', description=__doc__.split('\n')[0])
     ap.add_argument('models'); ap.add_argument('ratings'); ap.add_argument('games', nargs='+')
     ap.add_argument('--exclude', action='append', default=[])
     ap.add_argument('--target', type=float, default=100); ap.add_argument('--floor', type=int, default=1)

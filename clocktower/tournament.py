@@ -3,10 +3,12 @@
 A plan lists matchups (a good model and an evil model, optional efforts and per-seat overrides) and how
 many side-swapped pairs each plays. `tournament` launches every matchup at once as its own `run`
 process (one process per matchup, so one failure never stops the others), each with its own block of
-seeds, and resumes: finished games are kept, unfinished ones restart. Logs go to `<out>/logs/`.
+seeds, and resumes: finished games are kept, unfinished ones continue from their last checkpoint.
+Logs go to `<out>-logs/`.
 
-    python -m clocktower plan plans/models.json --within 10 --pairs 1 --seed 80000 --out games/v12/f1 > plans/f1.json
+    python -m clocktower plan plans/models.json --within 10 --pairs 1 --seed 80000 --out games/v17/f1 > plans/f1.json
     python -m clocktower tournament plans/f1.json
+    python -m clocktower tournament plans/f1.json --resume-stopped   # relaunch stopped games, one process each
 """
 from __future__ import annotations
 import itertools
@@ -72,6 +74,25 @@ def _matchup_commands(plan):
             cmd += ['--seat-model', s]
         cmd += m.get('args', [])  # any other run flags, e.g. ["--private-beats", "6"] for a protocol variant
         yield m['name'], cmd, m.get('pairs', 1)
+
+
+def stopped(path):
+    """Games of the plan that stopped (seat failed, budget, halted: a result.json with no winner, and no STOP
+    file) and that no running process is playing, as MATCHUP/gNN[-swap] names."""
+    plan = json.loads(Path(path).read_text())
+    running = subprocess.run(['pgrep', '-af', 'clocktower run'], capture_output=True, text=True).stdout
+    names = []
+    for m in plan['matchups']:
+        root = Path(f"{plan['out']}-{m['name']}")
+        for d in sorted(root.glob('game-*')):
+            r = d / 'result.json'
+            if not r.exists() or json.loads(r.read_text()).get('winner') or (d / 'STOP').exists():
+                continue
+            k = int(d.name.split('-')[1]); swap = d.name.endswith('-swap')
+            if f"--out {root} " in running and f"--only {k} --side {'swap' if swap else 'normal'}" in running:
+                continue
+            names.append(f"{m['name']}/g{k:02d}{'-swap' if swap else ''}")
+    return names
 
 
 def run(path, dry=False, only=None):

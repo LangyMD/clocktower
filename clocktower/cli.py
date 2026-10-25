@@ -7,6 +7,11 @@
     python -m clocktower sim --games 20               # random players, no API calls
     python -m clocktower report games/*               # summarise finished games
     python -m clocktower analyze games/v5/*/game-*    # win rates and belief-probe scores by model pairing
+    python -m clocktower plan MODELS.json ... > P.json  # a tournament plan; `tournament P.json` runs it
+    python -m clocktower tournament P.json --resume-stopped  # relaunch a plan's stopped games
+    python -m clocktower ratings [--lab-trends]       # the 2026 Bradley-Terry fit and its pages
+    python -m clocktower allocate ...                 # where extra games go (clocktower/allocate.py)
+    python -m clocktower mixed games/v17/b1-          # mixed-team pilot analysis
     python -m clocktower replay games/X --view Casey  # re-read a game from one seat (or public/omniscient)
     python -m clocktower watch                        # spectator app at http://127.0.0.1:8800
     python -m clocktower site                         # the spectator app as static files in site/, to publish
@@ -19,6 +24,7 @@ import json
 import os
 import random
 import shutil
+import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -242,6 +248,10 @@ def parse_only(spec):
 
 
 def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] in ('allocate', 'mixed'):  # commands with their own argument parsers
+        from importlib import import_module
+        return import_module(f'.{argv[0]}', __package__).main(argv[1:])
     ap = argparse.ArgumentParser(prog='clocktower')
     sub = ap.add_subparsers(dest='command', required=True)
     rp = sub.add_parser('report')
@@ -269,6 +279,18 @@ def main(argv=None):
     tp.add_argument('plan')
     tp.add_argument('--dry-run', action='store_true', help='print the commands instead')
     tp.add_argument('--only', help='comma-separated matchup names: run just these (same seeds as in the full plan)')
+    tp.add_argument('--resume-stopped', action='store_true',
+                    help='relaunch, one process each, every game that stopped (seat failed, budget, halted) and is not running')
+    ra = sub.add_parser('ratings', help='the 2026 Bradley-Terry fit (docs/plans/f2-ratings.json) and its pages')
+    ra.add_argument('--games', default=str(GAMES), help='folder holding v16/ and v17/ game logs (events.jsonl needed)')
+    ra.add_argument('--models', default=str(ROOT / 'plans/models-2026.json'))
+    ra.add_argument('--out', default=str(ROOT / 'docs/plans/f2-ratings.json'))
+    ra.add_argument('--boot', type=int, default=500, help='bootstrap resamples (over side-swapped pairs)')
+    ra.add_argument('--no-page', dest='page', action='store_false', help="don't rebuild the HTML pages")
+    ra.add_argument('--lab-trends', action='store_true', help='also per-lab gains (docs/charts/lab-trends.json)')
+    for name, text in (('allocate', 'where extra games go, by a fixed rule (see clocktower/allocate.py)'),
+                       ('mixed', 'mixed-team pilot analysis (clocktower/mixed.py)')):
+        sub.add_parser(name, help=text)  # dispatched above, before parsing
     fp = sub.add_parser('fetch', help='download game logs from the Hugging Face dataset (e.g. v9/e1-*)')
     fp.add_argument('patterns', nargs='+')
     rv = sub.add_parser('replay')
@@ -343,8 +365,18 @@ def main(argv=None):
         models = json.loads(Path(args.models).read_text())
         print(json.dumps(make_plan(models, args.within, args.pairs, args.seed, args.out, args.players), indent=1))
     elif args.command == 'tournament':
-        from .tournament import run as tournament
-        raise SystemExit(tournament(args.plan, args.dry_run, set(args.only.split(',')) if args.only else None))
+        from .tournament import run as tournament, stopped
+        only = set(args.only.split(',')) if args.only else None
+        if args.resume_stopped:
+            names = stopped(args.plan)
+            print(len(names), 'stopped games:', ' '.join(names), flush=True)
+            if not names:
+                return
+            only = set(names)
+        raise SystemExit(tournament(args.plan, args.dry_run, only))
+    elif args.command == 'ratings':
+        from .ratings import main as ratings
+        ratings(args.games, args.out, args.models, args.boot, args.page, args.lab_trends)
     elif args.command == 'fetch':
         from .store import fetch
         print(fetch(args.patterns))
