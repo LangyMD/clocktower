@@ -1,0 +1,276 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+:root{--bg:#10141c;--panel:#181e29;--ink:#eef1f6;--muted:#8b95a8;--line:#2c3443;--good:#86b8ff;--evil:#ff5f5f;--poison:#b48cff;--amber:#ffc24d}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;background:var(--bg);overflow:hidden;font-family:Inter,"DejaVu Sans",sans-serif;color:var(--ink)}
+#stage{position:absolute;inset:0;background:radial-gradient(ellipse at 35% 45%,#161c27 0%,#10141c 70%)}
+.abs{position:absolute}
+.tok{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;
+  background:#1c2331;border:2px solid #3a4457;color:var(--ink);letter-spacing:.2px}
+.tok.evil{background:#3a1d22;border:3px solid var(--evil);color:#ffd9d9}
+.tok.demon{border-width:5px}
+.tok .x{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c9d0dc;font-weight:300}
+.pill{position:absolute;white-space:nowrap;font-weight:700;border-radius:999px;padding:5px 16px;font-size:24px;letter-spacing:.3px}
+.pill.evil{background:var(--evil);color:#1a0b0d}
+.pill.good{background:var(--good);color:#0b1420}
+.pill.poison{background:var(--poison);color:#160b24}
+.pill.note{background:#2a3241;color:var(--ink)}
+.pill.death{background:#0c0f15;color:#c6ccd8;border:2px solid #4a5366;font-weight:600}
+.hdr .num{display:inline-block;width:56px;height:56px;border-radius:50%;background:var(--ink);color:var(--bg);font-weight:800;
+  font-size:34px;text-align:center;line-height:56px;margin-right:18px;vertical-align:middle}
+.hdr .t{font-size:44px;font-weight:800;vertical-align:middle;letter-spacing:-.5px}
+.hdr .s{font-size:25px;color:var(--muted);margin-top:10px;font-weight:500}
+.bubble{background:var(--panel);border-radius:18px;padding:22px 28px 24px;border-left:8px solid var(--good);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.bubble.evil{border-left-color:var(--evil)}
+.bubble .who{font-size:30px;font-weight:800}
+.bubble .role{font-size:26px;font-weight:600}
+.bubble.good .role{color:var(--good)} .bubble.evil .role{color:var(--evil)}
+.bubble .ctx{font-size:21px;color:var(--muted);margin-top:4px;font-weight:500}
+.bubble .q{font-size:37px;line-height:1.32;margin-top:12px;font-weight:400;color:#dfe4ec}
+.bubble .q b{color:#fff;font-weight:700}
+.meter .lab{font-size:23px;color:var(--muted);font-weight:500}
+.meter .lab b{color:var(--ink);font-weight:700}
+.meter .row{display:flex;align-items:center;gap:20px;margin-top:8px}
+.meter .bar{flex:1;height:16px;border-radius:8px;background:#262e3c;overflow:hidden}
+.meter .fill{height:100%;background:var(--amber);border-radius:8px}
+.meter .val{font-size:46px;font-weight:800;color:var(--amber);min-width:120px;text-align:right;font-variant-numeric:tabular-nums}
+.meter .note{font-size:21px;color:var(--muted);margin-top:4px}
+.center{position:absolute;transform:translate(-50%,-50%);text-align:center}
+.day{font-size:28px;font-weight:700;color:var(--muted);letter-spacing:3px;text-transform:uppercase}
+.votes .n{font-size:96px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.votes .l{font-size:25px;color:var(--muted);font-weight:600;margin-top:4px}
+.votes .on{font-size:25px;color:var(--ink);font-weight:600;margin-bottom:6px}
+.outcome .b{font-size:46px;font-weight:800}
+.outcome .s{font-size:24px;font-weight:600;color:var(--muted);margin-top:4px}
+#cap{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);max-width:1640px;text-align:center;font-size:54px;font-weight:600;
+  line-height:1.22;background:rgba(5,7,11,.78);padding:12px 30px 15px;border-radius:14px;color:#fff;letter-spacing:-.2px}
+.chip{position:absolute;transform:translate(-50%,-50%);font-size:34px;font-weight:700;padding:12px 26px;border-radius:14px;white-space:nowrap}
+.chip.good{background:rgba(134,184,255,.14);color:var(--good);border:2px solid rgba(134,184,255,.5)}
+.chip.evil{background:rgba(255,95,95,.14);color:var(--evil);border:2px solid rgba(255,95,95,.55)}
+.chip.note{background:#222a37;color:var(--ink);border:2px solid #3a4457}
+.stamp{position:absolute;transform:translate(-50%,-50%) rotate(-6deg);font-size:30px;font-weight:800;color:var(--ink);background:#0c0f15;
+  border:3px solid var(--ink);padding:6px 16px;border-radius:10px;white-space:nowrap;text-transform:uppercase;letter-spacing:1px}
+.ptitle{position:absolute;transform:translateX(-50%);text-align:center}
+.ptitle .a{font-size:34px;font-weight:800}
+.ptitle .b{font-size:22px;color:var(--muted);font-weight:500;margin-top:2px}
+.card .big{font-size:84px;font-weight:800;line-height:1.08;letter-spacing:-1.5px}
+.card .small{font-size:36px;color:var(--muted);margin-top:30px;font-weight:600}
+</style></head>
+<body><div id="stage"></div><div id="cap"></div>
+<script>
+const TL = __TIMELINE__;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const ease = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
+const fin = (t, t0, d = 0.35) => ease((t - t0) / d);
+const esc = s => s;
+
+// geometry for each layout/side
+function geom(layout, side) {
+  if (layout === 'intro') return { cx: 960, cy: 470, R: 290, D: 104, fs: 26 };
+  if (layout === 'ring') return { cx: 640, cy: 520, R: 282, D: 108, fs: 25 };
+  if (layout === 'split') return { cx: side === 'L' ? 480 : 1440, cy: 400, R: 162, D: 70, fs: 19 };
+}
+function seatPos(g, i, n) { const a = -Math.PI / 2 + 2 * Math.PI * i / n; return { x: g.cx + g.R * Math.cos(a), y: g.cy + g.R * Math.sin(a), a }; }
+
+// reduce the events of one segment up to time t into a state per side
+function reduce(seg, t) {
+  const S = {}; const side = k => (S[k] ||= { players: null, tok: {}, arrows: [], stamps: [], slots: {}, chips: {}, revealed: {}, unrevealT: null });
+  for (const e of TL.events) {
+    if (e.seg !== seg.id || e.t > t) continue;
+    const s = side(e.side || 'M'); const key = n => n.startsWith('#') ? n : n;
+    const names = n => Array.isArray(n) ? n : [n];
+    switch (e.kind) {
+      case 'ring': s.players = e.players; s.ringT = e.t; s.hideEvil = !!e.hide_evil; s.label = e.label; s.sublabel = e.sublabel;
+        e.players.forEach((p, i) => s.tok[p.name || '#' + i] = { tag: null, dead: null, hl: [] }); break;
+      case 'tag': s.tok[e.name].tag = { text: e.text, kind: e.kind, t: e.t }; break;
+      case 'dead': for (const n of names(e.name)) s.tok[n].dead = { t: e.t, how: e.how || 'night', quiet: !!e.quiet }; break;
+      case 'hl': for (const n of e.names) s.tok[n].hl.push({ t: e.t, dur: e.dur || 2 }); break;
+      case 'reveal': for (const i of e.idx) s.revealed[i] = e.t; s.unrevealT = null; break;
+      case 'unreveal': s.unrevealT = e.t; break;
+      case 'qmarks': s.qT = e.t; break;
+      case 'arrow': s.arrows.push(e); break;
+      case 'stamp': s.stamps.push(e); break;
+      case 'day': s.day = { text: e.text, t: e.t }; break;
+      case 'votes': s.votes = { ...e }; break;
+      case 'unvotes': if (s.votes) s.votes.off = e.t; break;
+      case 'meter': s.meter = { name: e.name, value: e.value, from: (s.meter && s.meter.name === e.name) ? curMeter(s.meter, e.t) : null, t: e.t, note: e.note }; break;
+      case 'bubble': { const old = s.slots[e.slot]; s.slots[e.slot] = { ...e, prev: old && !old.off ? old : null }; break; }
+      case 'unbubble': if (s.slots[e.slot]) s.slots[e.slot].off = e.t; break;
+      case 'clearbubbles': for (const k in s.slots) if (!s.slots[k].off) s.slots[k].off = e.t; break;
+      case 'chip': s.chips[e.id] = { ...e }; break;
+      case 'unchip': if (s.chips[e.id]) s.chips[e.id].off = e.t; break;
+      case 'outcome': s.outcome = { ...e }; break;
+      case 'card': s.card = { ...e }; break;
+    }
+  }
+  return S;
+}
+function curMeter(m, t) { if (m.from == null) return m.value; return m.from + (m.value - m.from) * ease((t - m.t) / 0.9); }
+const pct = v => v < 0.01 ? '<1%' : Math.round(v * 100) + '%';
+
+function tokensHTML(s, g, t, layout) {
+  let h = ''; const n = s.players.length; const ring = fin(t, s.ringT, 0.5);
+  s.players.forEach((p, i) => {
+    const k = p.name || '#' + i; const st = s.tok[k]; const { x, y, a } = seatPos(g, i, n);
+    let evilShown = p.evil && !s.hideEvil;
+    let evilAmt = evilShown ? 1 : 0;
+    if (s.hideEvil && p.evil && s.revealed[i] != null) evilAmt = fin(t, s.revealed[i], 0.5);
+    if (s.unrevealT != null && s.hideEvil) evilAmt *= 1 - fin(t, s.unrevealT, 0.4);
+    const appear = ease((t - s.ringT - i * 0.03) / 0.45);
+    let op = appear, sc = 0.85 + 0.15 * appear;
+    if (st.dead) { const d = fin(t, st.dead.t, 0.6); op *= 1 - 0.65 * d; sc *= 1 - 0.08 * d; }
+    let glow = 0; for (const hl of st.hl) { if (t >= hl.t && t < hl.t + hl.dur + 0.5) glow = Math.max(glow, fin(t, hl.t, 0.3) * (1 - fin(t, hl.t + hl.dur, 0.5)) * (0.75 + 0.25 * Math.sin((t - hl.t) * 5))); }
+    const cls = 'tok' + (evilAmt > 0.5 ? ' evil' : '') + (p.demon && evilAmt > 0.5 ? ' demon' : '');
+    const shadow = glow > 0 ? `box-shadow:0 0 0 ${6 * glow}px rgba(255,194,77,${0.85 * glow}),0 0 ${40 * glow}px rgba(255,194,77,${0.5 * glow});` : '';
+    let inner = '';
+    if (layout === 'intro') {
+      inner = `<svg width="${g.D * 0.55}" height="${g.D * 0.55}" viewBox="0 0 40 40"><circle cx="20" cy="13" r="8" fill="currentColor"/><path d="M4 38c0-9 7-15 16-15s16 6 16 15z" fill="currentColor"/></svg>`;
+      if (s.qT != null) { const q = fin(t, s.qT, 0.4) * (s.unrevealT != null ? 1 : 1); inner = `<div style="opacity:${1 - q}">${inner}</div><div class="x" style="opacity:${q};font-size:56px;font-weight:700">?</div>`; }
+      if (s.qT != null && s.revealed[i] != null && s.revealed[i] > s.qT) {}
+    } else inner = p.name;
+    const dash = st.dead ? 'border-style:dashed;' : '';
+    h += `<div class="${cls}" style="left:${x - g.D / 2}px;top:${y - g.D / 2}px;width:${g.D}px;height:${g.D}px;font-size:${g.fs}px;opacity:${op};transform:scale(${sc});${shadow}${dash}">${inner}</div>`;
+    // tag pill, outward
+    const pills = [];
+    if (st.tag) pills.push({ ...st.tag });
+    if (st.dead && !st.dead.quiet) { const dd = t - st.dead.t; if (dd < 2.8) pills.push({ text: st.dead.how === 'executed' ? 'executed' : 'killed at night', kind: 'death', t: st.dead.t, alpha: 1 - fin(t, st.dead.t + 2.3, 0.5) }); }
+    const pill = pills[pills.length - 1];
+    if (pill) {
+      const r = g.R + g.D / 2 + 10; const px = g.cx + r * Math.cos(a), py = g.cy + r * Math.sin(a);
+      const ox = -50 + 50 * Math.cos(a), oy = -50 + 50 * Math.sin(a);
+      const al = fin(t, pill.t, 0.3) * (pill.alpha ?? 1) * appear;
+      const fs = layout === 'split' ? 20 : 24;
+      h += `<div class="pill ${pill.kind}" style="left:${px}px;top:${py}px;transform:translate(${ox}%,${oy}%);opacity:${al};font-size:${fs}px">${pill.text}</div>`;
+    }
+  });
+  return h;
+}
+
+function arrowsSVG(s, g, t) {
+  let h = '';
+  const idx = n => s.players.findIndex((p, i) => (p.name || '#' + i) === n);
+  for (const e of s.arrows) {
+    if (t < e.t || t > e.t + e.dur + 0.5) continue;
+    const n = s.players.length; const A = seatPos(g, idx(e.from), n), B = seatPos(g, idx(e.to), n);
+    const dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    const pad = g.D / 2 + 8; const x1 = A.x + ux * pad, y1 = A.y + uy * pad, x2 = B.x - ux * (pad + 6), y2 = B.y - uy * (pad + 6);
+    const len = Math.hypot(x2 - x1, y2 - y1); const p = ease((t - e.t) / 0.55); const al = 1 - fin(t, e.t + e.dur, 0.5);
+    const col = { nominate: '#eef1f6', point: '#ffc24d', shoot: '#86b8ff', poison: '#b48cff' }[e.kind];
+    const dash = (e.kind === 'point' || e.kind === 'poison') ? '14 10' : 'none';
+    const w = g.D > 90 ? 6 : 5;
+    const ex = x1 + (x2 - x1) * p, ey = y1 + (y2 - y1) * p;
+    h += `<g opacity="${al}"><line x1="${x1}" y1="${y1}" x2="${ex}" y2="${ey}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${dash}"/>`;
+    if (p > 0.05) { const s2 = 20, bx = ex - ux * s2, by = ey - uy * s2, nx = -uy * s2 * 0.6, ny = ux * s2 * 0.6;
+      h += `<polygon points="${ex},${ey} ${bx + nx},${by + ny} ${bx - nx},${by - ny}" fill="${col}"/>`; }
+    h += `</g>`;
+  }
+  return h;
+}
+
+function bubbleHTML(b, t, compact) {
+  const team = b.team; const fs = compact ? 'style="font-size:31px"' : '';
+  return `<div class="bubble ${team}"><div><span class="who">${b.who}</span> <span class="role">· ${b.role} · ${team}</span></div>` +
+    `<div class="ctx">${b.ctx}</div><div class="q" ${fs}>“${b.text}”</div></div>`;
+}
+function slotsHTML(s, t, x, y, w, compact) {
+  let h = `<div class="abs" style="left:${x}px;top:${y}px;width:${w}px;display:flex;flex-direction:column;gap:26px">`;
+  for (const k of Object.keys(s.slots).sort()) {
+    const b = s.slots[k]; let inner = '';
+    const offA = b.off ? 1 - fin(t, b.off, 0.3) : 1;
+    if (offA <= 0.001 && b.off) continue;
+    const a = fin(t, b.t, 0.35) * offA, dy = 18 * (1 - fin(t, b.t, 0.35));
+    if (b.prev && t < b.t + 0.3) { const pa = 1 - fin(t, b.t, 0.25);
+      inner += `<div style="grid-area:1/1;opacity:${pa}">${bubbleHTML(b.prev, t, compact)}</div>`; }
+    inner += `<div style="grid-area:1/1;opacity:${a};transform:translateY(${dy}px)">${bubbleHTML(b, t, compact)}</div>`;
+    h += `<div style="display:grid">${inner}</div>`;
+  }
+  return h + '</div>';
+}
+function meterHTML(m, t, x, y, w) {
+  const v = curMeter(m, t); const a = fin(t, m.t, 0.4);
+  const shown = m.from == null ? 0 : 1;
+  return `<div class="abs meter" style="left:${x}px;top:${y}px;width:${w}px;opacity:${m.from == null ? a : 1}">
+    <div class="lab">Village's suspicion that <b>${m.name}</b> is the Demon</div>
+    <div class="row"><div class="bar"><div class="fill" style="width:${Math.max(v * 100, 0.8)}%"></div></div><div class="val">${pct(v)}</div></div>
+    ${m.note ? `<div class="note" style="opacity:${a}">${m.note}</div>` : ''}</div>`;
+}
+function centerHTML(s, g, t) {
+  let h = `<div class="center" style="left:${g.cx}px;top:${g.cy}px;width:${g.R * 1.3}px">`;
+  if (s.day) h += `<div class="day" style="opacity:${fin(t, s.day.t)}">${s.day.text}</div>`;
+  const v = s.votes;
+  if (v) { const a = fin(t, v.t) * (v.off ? 1 - fin(t, v.off, 0.3) : 1);
+    if (a > 0.001) { const k = Math.min(v.yes, Math.floor((t - v.t - 0.2) / 0.16) + 1); const n = clamp(k, 0, v.yes);
+      const col = n >= v.needed ? 'var(--amber)' : 'var(--ink)';
+      const small = g.D < 90;
+      h += `<div class="votes" style="opacity:${a};margin-top:${small ? 4 : 14}px"><div class="on" ${small ? 'style="font-size:20px"' : ''}>vote on ${v.on}</div><div class="n" style="color:${col};${small ? 'font-size:64px' : ''}">${n}</div><div class="l" ${small ? 'style="font-size:20px"' : ''}>votes · ${v.needed} needed</div></div>`; } }
+  if (s.outcome) { const o = s.outcome; const a = fin(t, o.t, 0.5); const [b, ...rest] = o.text.split(' · ');
+    const col = o.kind === 'evil' ? 'var(--evil)' : 'var(--good)'; const small = g.D < 90;
+    h += `<div class="outcome" style="opacity:${a};margin-top:10px"><div class="b" style="color:${col};${small ? 'font-size:30px;line-height:1.1' : ''}">${small ? o.text.replace(' · ', '<br>') : b}</div>${!small && rest.length ? `<div class="s">${rest.join(' · ')}</div>` : ''}</div>`; }
+  return h + '</div>';
+}
+function stampsHTML(s, g, t) {
+  let h = ''; const n = s.players.length;
+  for (const e of s.stamps) { if (t < e.t || t > e.t + e.dur + 0.4) continue;
+    const i = s.players.findIndex(p => p.name === e.on); const P = seatPos(g, i, n);
+    const r = g.R - g.D / 2 - 70; const x = g.cx + r * Math.cos(P.a), y = g.cy + r * Math.sin(P.a);
+    const a = fin(t, e.t, 0.2) * (1 - fin(t, e.t + e.dur, 0.4)); const sc = 1.25 - 0.25 * fin(t, e.t, 0.25);
+    h += `<div class="stamp" style="left:${x}px;top:${y}px;opacity:${a};transform:translate(-50%,-50%) rotate(-6deg) scale(${sc});font-size:${g.D < 90 ? 22 : 30}px">${e.text}</div>`; }
+  return h;
+}
+function chipsHTML(s, t) {
+  let h = ''; const pos = { left: [330, 470], right: [1590, 470], top: [960, 92], bottom: [960, 860] };
+  for (const c of Object.values(s.chips)) { const a = fin(t, c.t, 0.4) * (c.off ? 1 - fin(t, c.off, 0.3) : 1); if (a <= 0) continue;
+    const [x, y] = pos[c.pos]; h += `<div class="chip ${c.kind}" style="left:${x}px;top:${y}px;opacity:${a}">${c.text}</div>`; }
+  return h;
+}
+
+function render(t) {
+  const st = document.getElementById('stage'); let h = '';
+  const seg = TL.segments.find(s => t >= s.start && t < s.end) || TL.segments[TL.segments.length - 1];
+  const segA = Math.min(fin(t, seg.start, 0.4), seg.id === 'close' ? 1 : 1 - fin(t, seg.end - 0.4, 0.4));
+  const S = reduce(seg, t);
+  let body = '';
+  if (seg.layout === 'intro' || seg.layout === 'ring') {
+    const s = S.M; const g = geom(seg.layout);
+    if (s && s.players) {
+      body += `<svg class="abs" style="left:0;top:0" width="1920" height="1080">` + arrowsSVG(s, g, t) + `</svg>`;
+      body += tokensHTML(s, g, t, seg.layout) + centerHTML(s, g, t) + stampsHTML(s, g, t) + chipsHTML(s, t);
+      if (seg.layout === 'ring') { body += slotsHTML(s, t, 1110, 215, 750, false); if (s.meter) body += meterHTML(s.meter, t, 1110, 52, 750); }
+    }
+  } else if (seg.layout === 'split') {
+    body += `<div class="abs" style="left:959px;top:130px;width:2px;height:770px;background:#2a3140"></div>`;
+    for (const sd of ['L', 'R']) { const s = S[sd]; if (!s || !s.players) continue; const g = geom('split', sd);
+      const a = fin(t, s.ringT, 0.5);
+      body += `<div class="ptitle" style="left:${g.cx}px;top:118px;opacity:${a}"><div class="a">${s.label}</div><div class="b">${s.sublabel}</div></div>`;
+      body += `<svg class="abs" style="left:0;top:0" width="1920" height="1080">` + arrowsSVG(s, g, t) + `</svg>`;
+      body += tokensHTML(s, g, t, 'split') + centerHTML(s, g, t) + stampsHTML(s, g, t);
+      const x0 = sd === 'L' ? 70 : 1030;
+      if (s.meter) body += meterHTML(s.meter, t, x0, 632, 820);
+      body += slotsHTML(s, t, x0, 748, 820, true);
+    }
+  } else if (seg.layout === 'close') {
+    const s = S.M; if (s && s.card) { const a = fin(t, s.card.t, 0.6);
+      body += `<div class="center card" style="left:960px;top:420px;width:1600px;opacity:${a}"><div class="big">${s.card.big}</div><div class="small">${s.card.small}</div></div>`; }
+  }
+  // chapter title: big in the middle at the start, then the small header
+  if (seg.title) {
+    const t0 = seg.start, big = 1 - fin(t, t0 + 1.0, 0.35), small = fin(t, t0 + 1.05, 0.35);
+    const ringDim = seg.layout === 'split' ? 1 : 1;
+    if (big > 0.001) h += `<div class="center" style="left:960px;top:470px;opacity:${big * fin(t, t0, 0.3)};z-index:5;background:var(--bg);padding:40px 80px;border-radius:24px">
+      <div style="font-size:30px;color:var(--muted);font-weight:700;letter-spacing:4px">STORY ${seg.num}</div>
+      <div style="font-size:96px;font-weight:800;letter-spacing:-2px;margin-top:6px">${seg.title}</div>
+      <div style="font-size:32px;color:var(--muted);margin-top:14px;font-weight:500">${seg.sub}</div></div>`;
+    const hx = seg.layout === 'split' ? 960 : 60;
+    h += `<div class="abs hdr" style="left:${seg.layout === 'split' ? 0 : 60}px;top:${seg.layout === 'split' ? 34 : 44}px;${seg.layout === 'split' ? 'width:1920px;text-align:center;' : ''}opacity:${small}">
+      <span class="num">${seg.num}</span><span class="t">${seg.title}</span>${seg.layout === 'split' ? '' : `<div class="s">${seg.sub}</div>`}</div>`;
+    body = `<div style="opacity:${seg.layout === 'split' ? ease((t - t0 - 0.9) / 0.4) : ease((t - t0 - 0.9) / 0.4)}">${body}</div>`;
+  }
+  st.innerHTML = `<div style="opacity:${segA}">${body}${h}</div>`;
+  // captions
+  const cap = TL.captions.find(c => t >= c.start && t < c.end); const ce = document.getElementById('cap');
+  if (cap) { ce.style.display = 'block'; ce.textContent = cap.text; ce.style.opacity = Math.min(fin(t, cap.start, 0.1), 1 - fin(t, cap.end - 0.08, 0.08)); }
+  else ce.style.display = 'none';
+}
+window.render = render;
+</script></body></html>
