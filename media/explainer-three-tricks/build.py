@@ -87,7 +87,8 @@ def anchor(cid, at):
 
 events = []
 for cid, at, kind, data in S.EVENTS:
-    events.append({"t": round(anchor(cid, at), 3), "seg": clips[cid]["seg"], "kind": kind, **data})
+    data = dict(data); data["style"] = data.pop("kind", None)
+    events.append({"t": round(anchor(cid, at), 3), "seg": clips[cid]["seg"], **data, "kind": kind})
 events.sort(key=lambda e: e["t"])
 caps = [dict(cap, seg=c["seg"]) for c in clips.values() for cap in c.get("captions", [])]
 json.dump({"total": total, "segments": segs, "clips": list(clips.values()), "captions": caps, "events": events},

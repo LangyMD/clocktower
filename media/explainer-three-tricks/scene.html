@@ -43,8 +43,8 @@ html,body{width:1920px;height:1080px;background:var(--bg);overflow:hidden;font-f
 .votes .on{font-size:25px;color:var(--ink);font-weight:600;margin-bottom:6px}
 .outcome .b{font-size:46px;font-weight:800}
 .outcome .s{font-size:24px;font-weight:600;color:var(--muted);margin-top:4px}
-#cap{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);max-width:1640px;text-align:center;font-size:54px;font-weight:600;
-  line-height:1.22;background:rgba(5,7,11,.78);padding:12px 30px 15px;border-radius:14px;color:#fff;letter-spacing:-.2px}
+#cap{position:absolute;left:120px;right:120px;bottom:40px;text-align:center}
+#cap span{display:inline-block;max-width:1600px;font-size:54px;font-weight:600;line-height:1.22;background:rgba(5,7,11,.8);padding:12px 32px 15px;border-radius:14px;color:#fff;letter-spacing:-.2px}
 .chip{position:absolute;transform:translate(-50%,-50%);font-size:34px;font-weight:700;padding:12px 26px;border-radius:14px;white-space:nowrap}
 .chip.good{background:rgba(134,184,255,.14);color:var(--good);border:2px solid rgba(134,184,255,.5)}
 .chip.evil{background:rgba(255,95,95,.14);color:var(--evil);border:2px solid rgba(255,95,95,.55)}
@@ -68,8 +68,8 @@ const esc = s => s;
 // geometry for each layout/side
 function geom(layout, side) {
   if (layout === 'intro') return { cx: 960, cy: 470, R: 290, D: 104, fs: 26 };
-  if (layout === 'ring') return { cx: 640, cy: 520, R: 282, D: 108, fs: 25 };
-  if (layout === 'split') return { cx: side === 'L' ? 480 : 1440, cy: 400, R: 162, D: 70, fs: 19 };
+  if (layout === 'ring') return { cx: 640, cy: 532, R: 270, D: 106, fs: 25 };
+  if (layout === 'split') return { cx: side === 'L' ? 480 : 1440, cy: 398, R: 172, D: 74, fs: 20 };
 }
 function seatPos(g, i, n) { const a = -Math.PI / 2 + 2 * Math.PI * i / n; return { x: g.cx + g.R * Math.cos(a), y: g.cy + g.R * Math.sin(a), a }; }
 
@@ -83,8 +83,8 @@ function reduce(seg, t) {
     switch (e.kind) {
       case 'ring': s.players = e.players; s.ringT = e.t; s.hideEvil = !!e.hide_evil; s.label = e.label; s.sublabel = e.sublabel;
         e.players.forEach((p, i) => s.tok[p.name || '#' + i] = { tag: null, dead: null, hl: [] }); break;
-      case 'tag': s.tok[e.name].tag = { text: e.text, kind: e.kind, t: e.t }; break;
-      case 'dead': for (const n of names(e.name)) s.tok[n].dead = { t: e.t, how: e.how || 'night', quiet: !!e.quiet }; break;
+      case 'tag': s.tok[e.name].tag = { text: e.text, kind: e.style, t: e.t }; break;
+      case 'dead': for (const n of names(e.name)) s.tok[n].dead = { t: e.t, how: e.how || 'night', quiet: !!e.quiet, label: e.label }; break;
       case 'hl': for (const n of e.names) s.tok[n].hl.push({ t: e.t, dur: e.dur || 2 }); break;
       case 'reveal': for (const i of e.idx) s.revealed[i] = e.t; s.unrevealT = null; break;
       case 'unreveal': s.unrevealT = e.t; break;
@@ -134,7 +134,7 @@ function tokensHTML(s, g, t, layout) {
     // tag pill, outward
     const pills = [];
     if (st.tag) pills.push({ ...st.tag });
-    if (st.dead && !st.dead.quiet) { const dd = t - st.dead.t; if (dd < 2.8) pills.push({ text: st.dead.how === 'executed' ? 'executed' : 'killed at night', kind: 'death', t: st.dead.t, alpha: 1 - fin(t, st.dead.t + 2.3, 0.5) }); }
+    if (st.dead && !st.dead.quiet) { const dd = t - st.dead.t; if (dd < 2.8) pills.push({ text: st.dead.label || (st.dead.how === 'executed' ? 'executed' : 'killed at night'), kind: 'death', t: st.dead.t, alpha: 1 - fin(t, st.dead.t + 2.3, 0.5) }); }
     const pill = pills[pills.length - 1];
     if (pill) {
       const r = g.R + g.D / 2 + 10; const px = g.cx + r * Math.cos(a), py = g.cy + r * Math.sin(a);
@@ -156,13 +156,15 @@ function arrowsSVG(s, g, t) {
     const dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
     const pad = g.D / 2 + 8; const x1 = A.x + ux * pad, y1 = A.y + uy * pad, x2 = B.x - ux * (pad + 6), y2 = B.y - uy * (pad + 6);
     const len = Math.hypot(x2 - x1, y2 - y1); const p = ease((t - e.t) / 0.55); const al = 1 - fin(t, e.t + e.dur, 0.5);
-    const col = { nominate: '#eef1f6', point: '#ffc24d', shoot: '#86b8ff', poison: '#b48cff' }[e.kind];
-    const dash = (e.kind === 'point' || e.kind === 'poison') ? '14 10' : 'none';
+    const col = { nominate: '#eef1f6', point: '#ffc24d', shoot: '#86b8ff', poison: '#b48cff' }[e.style];
+    const dash = (e.style === 'point' || e.style === 'poison') ? '14 10' : 'none';
     const w = g.D > 90 ? 6 : 5;
     const ex = x1 + (x2 - x1) * p, ey = y1 + (y2 - y1) * p;
     h += `<g opacity="${al}"><line x1="${x1}" y1="${y1}" x2="${ex}" y2="${ey}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${dash}"/>`;
     if (p > 0.05) { const s2 = 20, bx = ex - ux * s2, by = ey - uy * s2, nx = -uy * s2 * 0.6, ny = ux * s2 * 0.6;
       h += `<polygon points="${ex},${ey} ${bx + nx},${by + ny} ${bx - nx},${by - ny}" fill="${col}"/>`; }
+    if (e.style === 'shoot' && p >= 1) { const r = g.D / 2 + 14 + 6 * Math.sin((t - e.t) * 8);
+      h += `<circle cx="${B.x}" cy="${B.y}" r="${r}" fill="none" stroke="${col}" stroke-width="5"/><line x1="${B.x - r - 14}" y1="${B.y}" x2="${B.x - r + 10}" y2="${B.y}" stroke="${col}" stroke-width="5"/><line x1="${B.x + r - 10}" y1="${B.y}" x2="${B.x + r + 14}" y2="${B.y}" stroke="${col}" stroke-width="5"/><line x1="${B.x}" y1="${B.y - r - 14}" x2="${B.x}" y2="${B.y - r + 10}" stroke="${col}" stroke-width="5"/><line x1="${B.x}" y1="${B.y + r - 10}" x2="${B.x}" y2="${B.y + r + 14}" stroke="${col}" stroke-width="5"/>`; }
     h += `</g>`;
   }
   return h;
@@ -170,6 +172,8 @@ function arrowsSVG(s, g, t) {
 
 function bubbleHTML(b, t, compact) {
   const team = b.team; const fs = compact ? 'style="font-size:31px"' : '';
+  if (compact) return `<div class="bubble ${team}" style="padding:16px 26px 18px"><div><span class="who" style="font-size:27px">${b.who}</span> <span class="role" style="font-size:24px">· ${b.role} · ${team}</span> <span class="ctx" style="font-size:21px">· ${b.ctx}</span></div>` +
+    `<div class="q" style="font-size:32px;margin-top:6px">“${b.text}”</div></div>`;
   return `<div class="bubble ${team}"><div><span class="who">${b.who}</span> <span class="role">· ${b.role} · ${team}</span></div>` +
     `<div class="ctx">${b.ctx}</div><div class="q" ${fs}>“${b.text}”</div></div>`;
 }
@@ -200,12 +204,12 @@ function centerHTML(s, g, t) {
   if (s.day) h += `<div class="day" style="opacity:${fin(t, s.day.t)}">${s.day.text}</div>`;
   const v = s.votes;
   if (v) { const a = fin(t, v.t) * (v.off ? 1 - fin(t, v.off, 0.3) : 1);
-    if (a > 0.001) { const k = Math.min(v.yes, Math.floor((t - v.t - 0.2) / 0.16) + 1); const n = clamp(k, 0, v.yes);
+    if (a > 0.001) { const k = Math.min(v.yes, Math.floor((t - v.t) / 0.15) + 1); const n = clamp(k, 0, v.yes);
       const col = n >= v.needed ? 'var(--amber)' : 'var(--ink)';
       const small = g.D < 90;
       h += `<div class="votes" style="opacity:${a};margin-top:${small ? 4 : 14}px"><div class="on" ${small ? 'style="font-size:20px"' : ''}>vote on ${v.on}</div><div class="n" style="color:${col};${small ? 'font-size:64px' : ''}">${n}</div><div class="l" ${small ? 'style="font-size:20px"' : ''}>votes · ${v.needed} needed</div></div>`; } }
-  if (s.outcome) { const o = s.outcome; const a = fin(t, o.t, 0.5); const [b, ...rest] = o.text.split(' · ');
-    const col = o.kind === 'evil' ? 'var(--evil)' : 'var(--good)'; const small = g.D < 90;
+  if (s.outcome && g.D >= 90) { const o = s.outcome; const a = fin(t, o.t, 0.5); const [b, ...rest] = o.text.split(' · ');
+    const col = o.style === 'evil' ? 'var(--evil)' : 'var(--good)'; const small = g.D < 90;
     h += `<div class="outcome" style="opacity:${a};margin-top:10px"><div class="b" style="color:${col};${small ? 'font-size:30px;line-height:1.1' : ''}">${small ? o.text.replace(' · ', '<br>') : b}</div>${!small && rest.length ? `<div class="s">${rest.join(' · ')}</div>` : ''}</div>`; }
   return h + '</div>';
 }
@@ -213,15 +217,15 @@ function stampsHTML(s, g, t) {
   let h = ''; const n = s.players.length;
   for (const e of s.stamps) { if (t < e.t || t > e.t + e.dur + 0.4) continue;
     const i = s.players.findIndex(p => p.name === e.on); const P = seatPos(g, i, n);
-    const r = g.R - g.D / 2 - 70; const x = g.cx + r * Math.cos(P.a), y = g.cy + r * Math.sin(P.a);
+    const x = g.cx, y = g.cy + (g.D < 90 ? 42 : 80);
     const a = fin(t, e.t, 0.2) * (1 - fin(t, e.t + e.dur, 0.4)); const sc = 1.25 - 0.25 * fin(t, e.t, 0.25);
-    h += `<div class="stamp" style="left:${x}px;top:${y}px;opacity:${a};transform:translate(-50%,-50%) rotate(-6deg) scale(${sc});font-size:${g.D < 90 ? 22 : 30}px">${e.text}</div>`; }
+    h += `<div class="stamp" style="left:${x}px;top:${y}px;opacity:${a};transform:translate(-50%,-50%) rotate(-6deg) scale(${sc});font-size:${g.D < 90 ? 19 : 30}px">${e.text}</div>`; }
   return h;
 }
 function chipsHTML(s, t) {
   let h = ''; const pos = { left: [330, 470], right: [1590, 470], top: [960, 92], bottom: [960, 860] };
   for (const c of Object.values(s.chips)) { const a = fin(t, c.t, 0.4) * (c.off ? 1 - fin(t, c.off, 0.3) : 1); if (a <= 0) continue;
-    const [x, y] = pos[c.pos]; h += `<div class="chip ${c.kind}" style="left:${x}px;top:${y}px;opacity:${a}">${c.text}</div>`; }
+    const [x, y] = pos[c.pos]; h += `<div class="chip ${c.style}" style="left:${x}px;top:${y}px;opacity:${a}">${c.text}</div>`; }
   return h;
 }
 
@@ -242,12 +246,16 @@ function render(t) {
     body += `<div class="abs" style="left:959px;top:130px;width:2px;height:770px;background:#2a3140"></div>`;
     for (const sd of ['L', 'R']) { const s = S[sd]; if (!s || !s.players) continue; const g = geom('split', sd);
       const a = fin(t, s.ringT, 0.5);
-      body += `<div class="ptitle" style="left:${g.cx}px;top:118px;opacity:${a}"><div class="a">${s.label}</div><div class="b">${s.sublabel}</div></div>`;
+      body += `<div class="ptitle" style="left:${g.cx}px;top:116px;opacity:${a};white-space:nowrap"><span class="a">${s.label}</span> <span class="b" style="margin-left:10px">${s.sublabel}</span></div>`;
       body += `<svg class="abs" style="left:0;top:0" width="1920" height="1080">` + arrowsSVG(s, g, t) + `</svg>`;
       body += tokensHTML(s, g, t, 'split') + centerHTML(s, g, t) + stampsHTML(s, g, t);
       const x0 = sd === 'L' ? 70 : 1030;
-      if (s.meter) body += meterHTML(s.meter, t, x0, 632, 820);
-      body += slotsHTML(s, t, x0, 748, 820, true);
+      if (s.meter) body += meterHTML(s.meter, t, x0, 616, 820);
+      body += slotsHTML(s, t, x0, 714, 820, true);
+      if (s.outcome) { const o = s.outcome, a = fin(t, o.t, 0.5), [b1, ...rest] = o.text.split(' · ');
+        const col = o.style === 'evil' ? 'var(--evil)' : 'var(--good)';
+        body += `<div class="abs" style="left:${x0}px;top:${724}px;width:820px;opacity:${a};border:3px solid ${col};border-radius:18px;padding:16px 26px;background:var(--panel)">
+          <div style="font-size:44px;font-weight:800;color:${col}">${b1}</div><div style="font-size:28px;color:var(--ink);font-weight:600;margin-top:4px">${rest.join(' · ')}</div></div>`; }
     }
   } else if (seg.layout === 'close') {
     const s = S.M; if (s && s.card) { const a = fin(t, s.card.t, 0.6);
@@ -269,7 +277,7 @@ function render(t) {
   st.innerHTML = `<div style="opacity:${segA}">${body}${h}</div>`;
   // captions
   const cap = TL.captions.find(c => t >= c.start && t < c.end); const ce = document.getElementById('cap');
-  if (cap) { ce.style.display = 'block'; ce.textContent = cap.text; ce.style.opacity = Math.min(fin(t, cap.start, 0.1), 1 - fin(t, cap.end - 0.08, 0.08)); }
+  if (cap) { ce.style.display = 'block'; ce.innerHTML = '<span>' + cap.text + '</span>'; ce.style.opacity = Math.min(fin(t, cap.start, 0.1), 1 - fin(t, cap.end - 0.08, 0.08)); }
   else ce.style.display = 'none';
 }
 window.render = render;
