@@ -165,7 +165,7 @@ def ratings_page(data, template=ROOT / 'docs/plans/f2-ratings.template.html', ou
 def lab_trends_page(data, trends, template=ROOT / 'docs/charts/lab-trends.template.html',
                     out=ROOT / 'docs/charts/lab-trends.html'):
     t = Path(template).read_text()
-    Path(out).write_text(t.replace('__RATINGS__', json.dumps(data)).replace('__TRENDS__', json.dumps(trends)))
+    Path(out).write_text(t.replace('__RATINGS__', json.dumps(data)).replace('__TRENDS__', json.dumps(trends)).replace('__GAMES__', str(data['games'])))
 
 
 def main(games_root=None, out=None, models=None, boot=500, page=True, trends=False, trends_out=None):

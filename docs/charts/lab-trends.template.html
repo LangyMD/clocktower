@@ -40,7 +40,7 @@ tr.hl td{font-weight:600}
 </style>
 <div class="page">
   <header>
-    <div class="eyebrow">Clocktower · 2026 models · 352 games</div>
+    <div class="eyebrow">Clocktower · 2026 models · __GAMES__ games</div>
     <h1>OpenAI's models got much better at catching the Demon. Both labs got better at lying.</h1>
     <p>Elo by release date for the 11 models released in 2026, rated separately as the good team (finding the Demon) and as the evil team (hiding it). Dashed lines are each lab's straight-line trend. Bars are 90% intervals. The average model is 1500; a 400-point gap is 10-to-1 odds.</p>
   </header>
@@ -90,7 +90,7 @@ function el(tag, attrs, parent){const e=document.createElementNS(NS,tag);for(con
     tb.appendChild(tr);
   }
   const tr=document.createElement('tr');
-  tr.innerHTML='<td colspan="4" style="color:var(--muted);font-size:12px;border-bottom:0">Gap is how much faster OpenAI improved; 90% ranges in grey. Detection is where the labs differ; on deception the gap could be chance (OpenAI faster in 82% of resamples).</td>';
+  tr.innerHTML=`<td colspan="4" style="color:var(--muted);font-size:12px;border-bottom:0;white-space:normal">Gap is how much faster OpenAI improved; 90% ranges in grey. Detection is where the labs differ; on deception the gap could be chance (OpenAI faster in ${Math.round(T["gap|v"].p_openai_faster*100)}% of resamples).</td>`;
   tb.appendChild(tr);
 })();
 
