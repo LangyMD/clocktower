@@ -5,20 +5,15 @@
 html,body{margin:0;background:var(--bg)}
 body{width:1200px;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
 .wrap{padding:44px 52px 34px}
-h1{font:700 34px/1.15 "Inter Display",Inter,sans-serif;margin:0 0 8px;letter-spacing:-.01em}
-.sub{font-size:17px;line-height:1.45;color:var(--ink2);margin:0 0 18px;max-width:1040px}
+h1{font:700 34px/1.15 "Inter Display",Inter,sans-serif;margin:0 0 16px;letter-spacing:-.01em}
 .legend{display:flex;gap:26px;font-size:15px;color:var(--ink2);margin-bottom:4px;align-items:center}
 .legend i{display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px}
-.legend b{display:inline-block;width:22px;border-top:2px dashed #9aa3af;margin-right:8px;vertical-align:4px}
 svg text{font-family:Inter,sans-serif}
-.foot{font-size:13px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between;gap:20px}
 </style>
 <div class="wrap">
-  <h1>AI models are getting much better at Blood on the Clocktower</h1>
-  <p class="sub">Elo rating of the 11 models released in 2026, by release date, from 386 games where one model plays the whole good team and another the whole evil team. Bars show 90% intervals. Ratings rose about 650 Elo per year; a 400-point gap means the stronger model wins about 91% of games.</p>
-  <div class="legend"><span><i style="background:var(--oai);border-radius:2px"></i>OpenAI</span><span><i style="background:var(--anth);border-radius:50%"></i>Anthropic</span><span><b></b>Trend, all models</span></div>
+  <h1>Blood on the Clocktower eval</h1>
+  <div class="legend"><span><i style="background:var(--oai);border-radius:2px"></i>OpenAI</span><span><i style="background:var(--anth);border-radius:50%"></i>Anthropic</span></div>
   <svg id="c"></svg>
-  <div class="foot"><span>Bradley–Terry fit adjusted for good's edge, Minions in play and table size; intervals from 500 bootstrap resamples of side-swapped pairs.</span><span>Clocktower eval · Oct 2026</span></div>
 </div>
 <script>
 const D=__DATA__;
@@ -28,7 +23,7 @@ const SIDE={'gpt-6-astra':'left','claude-fable-5-1':'left','claude-opus-5-5':'be
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const NS='http://www.w3.org/2000/svg',svg=document.getElementById('c');
 const el=(t,a,x)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;svg.appendChild(e);return e};
-const W=1096,H=640,L=58,R=92,T=16,B=40,lo=1000,hi=2000;
+const W=1096,H=640,L=70,R=92,T=16,B=40,lo=1000,hi=2000;
 const day=s=>Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10)),t0=Date.UTC(2026,0,15),t1=Date.UTC(2026,9,15);
 const x=s=>L+(day(s)-t0)/(t1-t0)*(W-L-R), y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
 svg.setAttribute('width',W);svg.setAttribute('height',H);
@@ -38,15 +33,11 @@ for(let m=1;m<=9;m++){const s=`2026-${String(m+1).padStart(2,'0')}-01`;
   el('line',{x1:x(s),x2:x(s),y1:H-B,y2:H-B+6,stroke:'#d6dae0'});
   el('text',{x:x(s),y:H-B+26,'text-anchor':'middle','font-size':14,fill:'#7b8494'},MON[m]+' 2026'.slice(0,0))}
 el('line',{x1:L,x2:W-R+40,y1:H-B,y2:H-B,stroke:'#d6dae0'});
-// least-squares trend over release date, all models
-const ms=D.models, yr=s=>(day(s)-Date.UTC(2026,0,1))/864e5/365, xs=ms.map(m=>yr(m.date)), vs=ms.map(m=>m.combined);
+el('text',{x:16,y:(T+H-B)/2,'text-anchor':'middle','font-size':15,'font-weight':600,fill:'#4b5563',transform:`rotate(-90 16 ${(T+H-B)/2})`},'Elo');
 const mx=xs.reduce((a,b)=>a+b)/xs.length, my=vs.reduce((a,b)=>a+b)/vs.length;
-const sl=xs.reduce((a,t,i)=>a+(t-mx)*(vs[i]-my),0)/xs.reduce((a,t)=>a+(t-mx)**2,0), f=s=>my+sl*(yr(s)-mx);
-el('line',{x1:x('2026-02-01'),y1:y(f('2026-02-01')),x2:x('2026-10-01'),y2:y(f('2026-10-01')),stroke:'#9aa3af','stroke-width':2,'stroke-dasharray':'7 6'});
-el('text',{x:x('2026-10-01')+8,y:y(f('2026-10-01'))+5,'font-size':14,'font-weight':600,fill:'#7b8494',stroke:'#fcfcfb','stroke-width':5,'paint-order':'stroke'},`+${D.trend_per_year.c[0]}/yr`);
-for(const m of ms){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',cx=x(m.date),cy=y(m.combined);
+for(const m of D.models){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',cx=x(m.date),cy=y(m.combined);
   el('line',{x1:cx,x2:cx,y1:y(m.c90[0]),y2:y(m.c90[1]),stroke:c,'stroke-width':3,'stroke-linecap':'round','stroke-opacity':.4})}
-for(const m of ms){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',cx=x(m.date),cy=y(m.combined),side=SIDE[m.id]||'right';
+for(const m of D.models){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',cx=x(m.date),cy=y(m.combined),side=SIDE[m.id]||'right';
   if(m.lab==='Anthropic')el('circle',{cx,cy,r:8,fill:c,stroke:'#fcfcfb','stroke-width':2.5});
   else el('rect',{x:cx-7.5,y:cy-7.5,width:15,height:15,rx:2,fill:c,stroke:'#fcfcfb','stroke-width':2.5});
   const [lx,ly,an]=side==='left'?[cx-14,cy+5,'end']:side==='below'?[cx,cy+30,'middle']:side==='above'?[cx,cy-18,'middle']:[cx+14,cy+5,'start'];
