@@ -18,7 +18,9 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
   keeps each game's `config.json` and `result.json` only (see `.gitignore`).
   `python -m clocktower fetch v16/f2-*` downloads logs into `games/`.
 - Plans: `plans/` (one JSON per experiment; `models-2026.json` and `timeline-models.json` are model lists).
-- Analysis scripts: `scripts/` (2026 ratings, allocation, resume helper; see the cleanup note in Part 2).
+- Analysis in the package: `clocktower/ratings.py` (2026 fit, bootstrap, lab trends, pages:
+  `python -m clocktower ratings [--lab-trends]`), `clocktower/allocate.py` (`python -m clocktower allocate`),
+  `clocktower/mixed.py` (`python -m clocktower mixed`). `scripts/` keeps only the one-off history rewrite.
 - Planning and results pages (published as Artifacts): `docs/plans/*.html`. Reader reports:
   `docs/analysis/<batch>/`. The full player prompt with example turns: `docs/player-prompt.md`.
 - Spend ledger: `games/ledger.jsonl` (all-time API spend, ~$21.3k through Oct 2 2026).
@@ -43,12 +45,14 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
 
 ## Running an experiment
 1. Write a plan: `python -m clocktower plan MODELS.json --within K --pairs P --seed S --out games/v17/NAME > plans/NAME.json`,
-   or by hand: matchups with `good`, `evil`, `pairs`, optional `seed`, `args` (extra run flags such as
-   `["--minions", "Spy,Baron"]`), `good_effort`, `evil_effort`, `seat_models`; a plan `budget` caps the
-   all-time ledger. Every experiment gets fresh seeds (blocks of 100 per matchup).
+   or by hand: matchups with `good`, `evil`, `pairs`, optional `seed`, `args` (extra run flags),
+   `good_effort`, `evil_effort`, `seat_models`; a plan `budget` caps the all-time ledger. Every experiment
+   gets fresh seeds (blocks of 100 per matchup). Top-ups: `python -m clocktower allocate ...` (the fixed rule).
+   Minions: `tournament` deals each pair's guaranteed Minion, balanced per model and across the plan; a
+   matchup overrides with `"minions": [...]` (allocate writes this) or `"args": ["--minions", "Spy,Baron"]`.
 2. New model? Add it to `llm.PRICES` and `llm.MODELS` (thinking style, memory, context window), run a
    two-turn smoke test and a memory check (does it see its earlier reasoning next turn?), and check
-   whether it accepts `thinking: disabled` (else add it to `llm.ALWAYS_THINKS`).
+   whether it accepts `thinking: disabled` (else set `'can_disable_thinking': False` in its `MODELS` entry).
 3. Launch in the background: `python -m clocktower tournament plans/NAME.json` (one process per
    matchup, every game at once; resumable: rerun the same command and finished games are kept).
 4. Keep a `run_in_background` Bash waiter running for the whole batch
@@ -57,13 +61,13 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
 5. Watch it yourself (the user wants an agent, not a script that kills batches):
    `clocktower.supervise.scan(['games/v17/NAME-'])`, `report`, `alarms` for spend, lost/capped turns and
    stopped games; read a few transcripts early; check CPU (`vmstat`) and memory (`free -m`).
-   - A stopped game (seat failed, budget, halted) keeps its checkpoint: `python scripts/resume_stopped.py PLAN`
-     relaunches each one alone. To halt one game: `touch <game>/STOP`. To rerun one game:
+   - A stopped game (seat failed, budget, halted) keeps its checkpoint: `tournament PLAN --resume-stopped`
+     relaunches each one alone (foreground, like `tournament`; `--dry-run` lists them). To halt one game: `touch <game>/STOP`. To rerun one game:
      `tournament PLAN --only MATCHUP/gNN` (or `gNN-swap`).
    - After a container restart, rerun the `tournament` commands; games resume from their last dusk.
    - Kill processes by exact PID. `pkill -f PATTERN` (and `pgrep` inside `$(...)`) matches your own
      shell's command line and kills it; write patterns like `'[c]locktower run'`.
-6. After: `python -m clocktower analyze games/v17/NAME-*/game-*` (or `scripts/ratings2026.py`); upload
+6. After: `python -m clocktower analyze games/v17/NAME-*/game-*` (or `python -m clocktower ratings` for the 2026 fit); upload
    logs with `hf upload dwarkesh/clocktower-games games/v17 v17 --repo-type dataset`; commit configs,
    results and the ledger; merge to main (fast-forward push). Republish the viewer if asked
    (`python -m clocktower site`, then the Artifact tool with `url: https://claude.ai/artifact/DpA1C6WTJATLvTqTi4XQiH`
@@ -106,10 +110,25 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-10-25: repo cleanup (the consolidation the user asked for)
+- Scripts moved into the package: `clocktower/ratings.py` (was ratings2026, lab_trends, build_ratings_page),
+  `clocktower/mixed.py` (mixed_pilot), `tournament --resume-stopped` (resume_stopped). Dropped fit.py (v16-only),
+  design.py/topup.py (one-offs, superseded by `clocktower/allocate.py`) and `greedy*.json`. The moved fit was
+  checked: on the 386 games it rewrites `docs/plans/f2-ratings.json` and `f2-ratings.html` byte for byte.
+  `docs/charts/lab-trends.*` still hold the 352-game fit; `ratings --lab-trends` refreshes them (detection gap
+  OpenAI − Anthropic then 819/yr [526, 1194]).
+- Balanced Minions built in: `tournament.assign_minions` deals each pair's Minion from the plan alone (least dealt
+  to its two models, then least in the plan, cycling); `--minions` / a matchup's `minions` list override. Every
+  existing v17 plan forces its Minions, so their commands are unchanged.
+- `llm.ALWAYS_THINKS` → `MODELS[...]['can_disable_thinking'] = False`.
+- Pruned `docs/plans/` (fidelity, final-plan, pairing-plan, timeline-matchups, timeline-pairings) and
+  `plans/x0-resume-test.json`. README refreshed (v17, per-game controls, new commands).
+- Still to do: add v16/v17 games to the spectator viewer; regenerate `plans/f1-timeline.json` (pre-v17).
+
 ## 2026-10-07: mixed-team pilot (b1), design decisions
 - **Pilot B** (`plans/b1-mixed-pilot.json`, 16 games, $118): half Opus 5.5 + half GPT-5.6 Sol (seats random; two
   matchups with opposite list order so each model gets the odd seat half the time) vs pure GPT-6.1 Sol, both sides.
-  Analysis `scripts/mixed_pilot.py` → `docs/analysis/b1-mixed-pilot.json`. Wins match the members' average rating
+  Analysis `clocktower/mixed.py` → `docs/analysis/b1-mixed-pilot.json`. Wins match the members' average rating
   (good 4/8 vs 4.2 expected; evil 1/8 vs 1.1), too few games to see a mixing penalty. In-group: Opus seats start
   conversations with Opus teammates 15 points above chance; Sol 5.6 leans 6 points toward Opus (seat/role pull), so
   Opus's own preference ≈ 9–15 points; Sol shows none. Same-model vote agreement 72% vs 63% cross (partly voting style).
@@ -123,7 +142,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   per matchup, one extra pair for a >2.5 SE style clash, then precision per dollar on models above ±T; cap 4 pairs per
   matchup, no opponent >25% of a model's games; Minions least dealt). Half-widths calibrated to the bootstrap.
 - **f4 floor batch** (`plans/f4-floor.json`, 16 games, $986): Opus 4.8's 7 missing opponents + Opus 4.7 v Astra (clash).
-  Opus 4.8 won 2 of 14 → 1203 [1077, 1288] (was 1194 [1051, 1306]). Refit over 368 games (`scripts/ratings2026.py`
+  Opus 4.8 won 2 of 14 → 1203 [1077, 1288] (was 1194 [1051, 1306]). Refit over 368 games (the ratings fit
   now includes f4): trend +650/yr. Worst half-width now Opus 4.7 ±109; reaching ±100 for all costs ~$575 more.
 - **f5 precision top-up** (`plans/f5-precision.json`, 18 games, $649): chosen by the rule for ±100. Refit over 386 games:
   GPT-6 Astra 1859 > GPT-6.1 Sol 1734 > Fable 5.1 1595 ≈ GPT-5.6 Sol 1591 > Opus 5.5 1549 ≈ Fable 5 1544 > GPT-5.5 1482
@@ -192,7 +211,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   GPT-6 Astra 1858 > GPT-6.1 Sol 1729 > Fable 5.1 1595 ≈ GPT-5.6 Sol 1593 > Fable 5 1561 > Opus 5.5 1538
   > GPT-5.5 1472 > Opus 4.6 1427 > GPT-5.4 1268 ≈ Opus 4.7 1265 > Opus 4.8 1194. Page:
   https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (data `docs/plans/f2-ratings.json`, built by
-  `scripts/ratings2026.py` + `scripts/build_ratings_page.py`). Evil wins ~32%.
+  `python -m clocktower ratings`). Evil wins ~32%.
 - **Not started:** the full timeline back to GPT-4o (21 models, `plans/f1-timeline.json`, page
   https://claude.ai/artifact/MAbeLPxmENkdfEQT8j75mt). That plan predates v17: regenerate it with balanced
   Minions and the 2026 results folded in (the 2026 games count; only pre-2026 models and cross-era pairs
@@ -202,7 +221,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 ### Pages and artifacts
 - Ratings (current): https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (by release date)
 - Gains by lab (detection/deception vs release date, per-lab trends): https://claude.ai/artifact/HiPbbNTToUydW6Sjes6asq
-  (`scripts/lab_trends.py` → `docs/charts/lab-trends.json`, filled into `lab-trends.template.html`). Per year: detection
+  (`python -m clocktower ratings --lab-trends` → `docs/charts/lab-trends.json` and `lab-trends.html`). Per year: detection
   OpenAI +1083 vs Anthropic +186 (gap 608–1272, clear); deception +764 vs +590 (gap could be chance).
 - Leaderboard chart (ranked, overall/detection/deception tabs): https://claude.ai/artifact/Sc8dfYHJMLHBQdQeLcWSMu
   plus a head-to-head expected-win-rate grid (`docs/charts/leaderboard.html`; PNGs `docs/charts/*.png`)
@@ -227,13 +246,13 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   832 calls in flight). Loading the CA bundle per OpenAI request was 60% of CPU: one shared TLS context
   now (`llm.TLS`). ~200 MB per process, so not one process per game. ~300 concurrent games is the ceiling.
 - **Retries by model:** Opus 4.6/4.7/4.8 accept `thinking: disabled`; Fable 5, Fable 5.1, Opus 5.5 and
-  Sonnet 5.5 reject it (they retry at low effort; `ALWAYS_THINKS`). Opus 4.8 overthinks late in games
+  Sonnet 5.5 reject it (they retry at low effort; `can_disable_thinking: False`). Opus 4.8 overthinks late in games
   (v16: 40% of its low-effort retries re-hit 8K; 76 lost turns) — the reason for v17.
 - **Latency sets wall-clock:** GPT-5.4's median turn is 42 s (others 5–15 s), so batches end ~6 h after
   launch, gated by its games; a full day of nominations can take an hour. Waves inside a beat are serial
   by design (later players react to earlier ones); everything else is parallel.
 - **Seeds and Minions:** plan seeds stepping by 100 (≡ 0 mod 4) made every f2 game a Poisoner game; the
-  Minion is now set per game (`--minions`), balanced across the batch.
+  Minion is now dealt per game by `tournament`, balanced across the batch.
 - The Anthropic "requests to retired models are failing" emails (Oct 1) were one probe request each to
   old models on Sept 30 from the "mac mini" key: harmless.
 
@@ -261,23 +280,14 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 ### How I think about the eval (statistics)
 - One pair per matchup can't rank neighbours; ~6 pairs separate 100 Elo. Far-apart matchups are ~90%
   predictable and carry little information: spend on near neighbours and cheap models (greedy
-  information-per-dollar, `scripts/design.py`/`topup.py`), capped per matchup (4–8 pairs) so one
+  information-per-dollar, now `clocktower/allocate.py`), capped per matchup (4–8 pairs) so one
   non-transitive pairing can't dominate.
 - Cost per game varies 30×: Fable 5 ~$54 of own seats per game, Opus 4.8 $42, GPT-6.1 Sol $2.
 - Bootstrap over side-swapped pairs (both games together); intervals from the analytic Fisher
   approximation run narrower than the bootstrap's.
 - Per-lab trends halve the data per line; pool for the headline.
 
-### Cleanup the user asked for (do when asked to resume work)
-- Replace `--minions` + per-plan lists with built-in balanced Minion assignment (e.g. the plan
-  generator assigns Minions per game, or the seed picks via a hash, not `seed % 4`).
-- Move `scripts/fit.py`, `design.py`, `topup.py`, `ratings2026.py`, `build_ratings_page.py`,
-  `resume_stopped.py` into the package (`clocktower/ratings.py`, `clocktower/allocate.py`, a
-  `tournament --resume-stopped` option); drop `greedy*.json` intermediates.
-- Model quirks into `MODELS` (e.g. a `can_disable_thinking` key instead of `ALWAYS_THINKS`).
-- Prune `docs/plans/` (several superseded planning pages) and old plans; keep `f2-ratings.*` and the
-  flagship page; refresh README for v17 and the per-game controls.
-- Add v16/v17 games to the spectator viewer.
+### Cleanup: see the 2026-10-25 block (only the spectator viewer item remains)
 
 ### Ideas for next experiments (rough priority)
 1. Timeline back to 2024 (regenerated f1) so the chart spans GPT-4o → GPT-6.1 Sol.

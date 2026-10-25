@@ -325,4 +325,4 @@ Result (Oct 2): 352 games (f2 minus Opus 4.8's 20 + f3 + f3b; 262 v17 games, ~$7
 releases gain ~645 Elo a year (90% CI 530 to 820); detection +634, deception +692, not separable. Top:
 GPT-6 Astra 1858, GPT-6.1 Sol 1729; Anthropic's best Fable 5.1 1595; lowest Opus 4.8 1194. Setup effects
 (Elo toward good vs Poisoner): Spy +67, Scarlet Woman -67, Baron +80; 12 players +68. Ratings page:
-https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (scripts/ratings2026.py, docs/plans/f2-ratings.json).
+https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (now `python -m clocktower ratings`, docs/plans/f2-ratings.json).

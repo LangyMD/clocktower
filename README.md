@@ -20,19 +20,37 @@ export ANTHROPIC_API_KEY=... OPENAI_API_KEY=... HF_TOKEN=...
 python -m unittest discover -s tests   # rules, Storyteller and engine tests (no API)
 python -m clocktower sim --games 200   # random players, no API
 
-python -m clocktower run --good-model claude-opus-5-5 --evil-model gpt-6.1-sol --games 2 --swap --seed 1 --out games/v13/demo
+python -m clocktower run --good-model claude-opus-5-5 --evil-model gpt-6.1-sol --games 2 --swap --seed 1 --out games/v17/demo
 python -m clocktower run --good-model claude-opus-5-5,gpt-6.1-sol ...      # a mixed team (seats split evenly)
 python -m clocktower run ... --seat-model good:claude-opus-5-5:1          # upgrade one good seat
 python -m clocktower run ... --seat-model Imp:gpt-6-astra                 # a different model plays the Imp
 
-python -m clocktower plan plans/timeline-models.json --within 10 --pairs 1 --seed 120000 --out games/v16/f1 > plans/f1.json
-python -m clocktower tournament plans/f1.json      # every matchup at once, resumable
-python -m clocktower analyze games/v16/f1-*/game-* # win rates, probes, detection and deception ratings
+python -m clocktower plan plans/timeline-models.json --within 10 --pairs 1 --seed 120000 --out games/v17/f1 > plans/f1.json
+python -m clocktower tournament plans/f1.json      # every matchup at once, resumable (see below)
+python -m clocktower analyze games/v17/f1-*/game-* # win rates, probes, detection and deception ratings
+python -m clocktower ratings --lab-trends          # the 2026 fit: docs/plans/f2-ratings.json and the pages
+python -m clocktower allocate plans/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f[3-5]*' \
+    --exclude 'v16/f2-*opus48*' --target 100 --seed 180000 --out games/v17/f6 --budget 25000 > plans/f6.json   # where extra games go
 python -m clocktower fetch v9/e1-*                 # download logs from the dataset
 python -m clocktower play                          # you and friends vs the AIs (see below)
 python -m clocktower watch                         # spectator app; `site` builds it as static files
 python -m clocktower replay games/X --view Casey --thinking
 ```
+
+### Controlling a running experiment
+
+- `tournament PLAN` runs one process per matchup, every game at once. Rerun the same command after a crash or
+  a machine restart: finished games are kept and unfinished ones continue from their last dusk (`checkpoint.pkl`).
+- One game: `touch <game>/STOP` halts it at its next turn (it keeps its last-dusk checkpoint);
+  `tournament PLAN --only MATCHUP/g03` (or `g03-swap`) reruns or resumes just that game. `--only MATCHUP` runs a whole matchup with its usual seeds.
+- `tournament PLAN --resume-stopped` relaunches, one process each, every game that stopped (a seat failed,
+  the budget ran out, or it was halted and its STOP file removed) and isn't already running.
+- Health: `clocktower.supervise.scan(['games/v17/NAME-'])`, then `report` and `alarms`: spend, lost and
+  capped turns, stopped games.
+- Minions: every game guarantees one Minion. `tournament` picks it per pair, balanced across the plan and
+  for each model; a matchup can force its own with `"args": ["--minions", "Spy,Baron"]` (one per pair) or
+  `"minions": [...]` (what `allocate` writes). A bare `run` picks by seed unless given `--minions`.
+- Spend: a plan's `budget` (or `run --budget`) caps the all-time ledger, read when each process starts.
 
 Each game directory holds `transcript.md` (omniscient replay with every seat's thinking), `events.jsonl`,
 `calls.jsonl` (every API call with tokens and cost), `probes.jsonl` (belief probes), `conversations/`,
@@ -70,8 +88,11 @@ loses an unfinished game if it restarts.
 | `prompts.py`, `schema.py` | The player system prompt and the fixed output schema |
 | `llm.py` | Claude and OpenAI conversations, per-model settings (`MODELS`), prices, context trimming, ledger |
 | `probe.py` | Belief probes (out-of-game forks of each seat's conversation) |
-| `analyze.py`, `report.py` | Ratings, win rates, voting and probe scores; batch reports |
-| `tournament.py` | Experiment plans and the parallel launcher |
+| `analyze.py`, `report.py` | Per-batch win rates, voting and probe scores, quick ratings; batch reports |
+| `ratings.py` | The 2026 Bradley–Terry fit (setup terms, pair bootstrap), per-lab trends, the ratings pages |
+| `allocate.py` | Where extra games go: a fixed floor / clash / precision-per-dollar rule |
+| `mixed.py` | Mixed-model team analysis (pilot b1) |
+| `tournament.py` | Experiment plans, balanced Minions, the parallel launcher, resuming stopped games |
 | `supervise.py` | Batch health numbers (lost turns, capped turns, refusals, spend) |
 | `store.py` | The Hugging Face log store |
 | `agents.py`, `web.py`, `table/` | Seats; the multiplayer table (lobby, API and page) for human play |

@@ -5,12 +5,17 @@ Prediction: team strength = mean of its seats' combined ratings (docs/plans/f2-r
 good-side edge and setup terms, as in the rating fit. In-group: among whispers from one mixed-team seat
 to others on the mixed team, the share going to the same model vs the share expected if recipients were
 picked without regard to model; vote agreement of same-model vs cross-model pairs on the mixed team.
-Intervals: bootstrap over side-swapped pairs."""
-import json, glob, sys, random, collections
-from clocktower.characters import MINIONS
+Intervals: bootstrap over side-swapped pairs.
 
-ROOT = sys.argv[1] if len(sys.argv) > 1 else 'games/v17/b1-'
-R = json.load(open('docs/plans/f2-ratings.json'))
+    python -m clocktower mixed [GAMES_PREFIX]   # default games/v17/b1-; results in docs/analysis/b1-mixed-pilot.json
+"""
+import json, glob, sys, random, collections
+from pathlib import Path
+from .characters import MINIONS
+
+REPO = Path(__file__).resolve().parent.parent
+ROOT = 'games/v17/b1-'
+R = json.loads((REPO / 'docs/plans/f2-ratings.json').read_text())
 RATING = {m['id']: m['combined'] for m in R['models']}
 H, SETUP = R['good_advantage'], R['setup_effects']
 SOLO = 'gpt-6.1-sol'
@@ -23,9 +28,9 @@ def p_good(good, evil, inplay, n):
     return 1 / (1 + 10 ** (-d / 400))
 
 
-def games():
+def games(root=ROOT):
     out = []
-    for d in sorted(glob.glob(ROOT + '*/game-*')):
+    for d in sorted(glob.glob(root + '*/game-*')):
         try:
             r = json.load(open(d + '/result.json'))
         except FileNotFoundError:
@@ -93,8 +98,9 @@ def summarise(gs):
     return res
 
 
-if __name__ == '__main__':
-    gs = games()
+def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    gs = games(argv[0] if argv else ROOT)
     res = summarise(gs)
     # bootstrap over side-swapped pairs: whisper excess and vote gap
     by = collections.defaultdict(list)
@@ -112,3 +118,8 @@ if __name__ == '__main__':
     q = lambda xs: [round(sorted(xs)[int(.05 * len(xs))], 3), round(sorted(xs)[int(.95 * len(xs))], 3)]
     res['whispers']['excess_share_90'] = q(W); res['votes']['gap_90'] = q(V)
     print(json.dumps(res, indent=1))
+    return res
+
+
+if __name__ == '__main__':
+    main()
