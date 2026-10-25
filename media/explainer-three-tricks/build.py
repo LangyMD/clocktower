@@ -52,7 +52,7 @@ clips, T = {}, 0.5
 segs = []
 for seg in S.SEGMENTS:
     sd = {k: v for k, v in seg.items() if k != "clips"}; sd["start"] = round(T, 3)
-    if seg.get("title"): T += 0.7                       # title card holds before the first line
+    if seg.get("title"): T += 1.1                       # title card holds before the first line
     for i, (cid, who, text) in enumerate(seg["clips"]):
         c = next(c for c in CL if c["id"] == cid)
         dur, tmap = process(c)
