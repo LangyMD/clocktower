@@ -38,7 +38,7 @@ Across the year, ratings rose about 650 Elo per year (90% interval 553 to 827). 
 
 ## What the best games look like
 
-[Lead story, told in full: candidates are "the promise to execute the Saint" (Opus 5.5 as evil) and "the Imp who killed himself" (GPT-6.1 Sol as evil). Then 4–6 short vignettes, each labelled with the skill it shows. From the best-games reader.]
+[Lead story told in full, then short vignettes, one per skill. All eight with checked quotes are in docs/analysis/blog/best-games.md: the Saint deal (Opus 5.5), the fake Undertaker and deliberate star-pass (Fable 5.1), the Imp who killed himself to "read" from the grave (Sol 6.1), the evil writers' room fixing a fake Fortune Teller's results (Sol 5.6), the Demon who sold his own Minion on day one (Astra), the Demon who agreed with everyone (Opus 4.8), and two detective games (Astra and Fable 5 as good).]
 
 Draft of one, to set the tone:
 
@@ -46,13 +46,17 @@ Draft of one, to set the tone:
 
 ## Why does OpenAI win?
 
-[From the lab readers. What we know so far:]
+The gap is almost all on the good side. As detectives, OpenAI's models improved about 1,070 Elo over the year and Anthropic's about 250. As deceivers the two labs are roughly level.
 
-The gap is almost all on the good side. As detectives, OpenAI's models improved about 1,080 Elo over the year; Anthropic's about 190. As deceivers the two labs are roughly even.
+The surprising part is when the gap opens. On day one, Claude towns and OpenAI towns are equally in the dark: comparing the newest three models from each lab, Claude's day-one executions actually hit an evil player slightly more often (44% vs 39%). From day two on, OpenAI towns hit evil 72% of the time and Claude towns 46%. An OpenAI town's top suspect is evil 52% of the time on day one, 70% on day two and 81% after that. A Claude town's goes 44%, 45%, 53%. OpenAI towns learn as the game goes on. Claude towns mostly don't.
 
-Earlier readers found that Astra doesn't win as good by having sharper hunches about who the Demon is. Its belief in the real Demon is no higher than Sol 6.1's. It wins on group decisions. The player its town suspects most really is evil 92% of the time, against 56% across all models, and its good players almost never vote to execute each other. It writes short messages: a claim, the alternative it can't rule out, and a concrete question. It also thinks less than any other model.
+Reading the transcripts shows why. OpenAI's good players treat every result as evidence with a source and a way it could be wrong. Claude's good players turn results into settled facts and build plans on top of them, and those facts are exactly what evil has been feeding them. In one deal played both ways, the same poisoned Slayer shot missed the real Demon. Opus 5.5's town said "Blair's cleared of Imp." Sol 6.1's town said "The missed shot doesn't confirm." Phrases like "doesn't prove" and "doesn't clear" make up 4–12% of every OpenAI model's public lines as good, and 1–2% of every Claude model's.
 
-[Anthropic failure pattern from the transcripts: e.g. all four Saint executions in the first round robin were Anthropic towns. Credulity? Over-sharing? Herding? Fill in.]
+The cost shows up in who gets executed. A good team that executes at most one of its own players almost always wins. Claude towns executed two or more good players in 61% of games, OpenAI towns in 31%. The victims are mostly players whose claims nobody can check, like the Soldier, Mayor or Ravenkeeper. Of the 20 games lost by executing the Saint, 18 had a Claude good team.
+
+Some explanations that don't hold up: Claude isn't more credulous toward evil players' claims on day one (if anything less so), it isn't wordier than GPT (Opus 5.5 is just as terse), and it doesn't think less (the new Claude models think more per turn). And this isn't a long-standing gap between the labs. Early in the year Opus 4.6–4.8 and GPT-5.4/5.5 were level. OpenAI's models from July on learned to accumulate evidence across days, and Claude's haven't yet.
+
+[One open thread: Claude models skip thinking on 74% of their votes as good (GPT-5.6 Sol: 5%), and unthinking votes follow the running tally more. A run that forces thinking on votes would test whether that matters.]
 
 ## Caveats
 

@@ -110,6 +110,25 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-10-25: blog prep, why OpenAI wins, branches merged
+- Merged the three unmerged worker branches into main; the old remote branches still exist (this session's git
+  proxy returns 403 on branch deletion; the user can delete them on GitHub).
+- Pages rebuilt on the final 386-game fit: leaderboard (Sc8dfYHJMLHBQdQeLcWSMu), ratings by date (BEapb2nuJGL1Tfrb96ke58),
+  lab trends (HiPbbNTToUydW6Sjes6asq; detection OpenAI +1071/yr vs Anthropic +252, gap 819 [526, 1194]; deception
+  gap 254 [−70, 613]). Simulated same-team experiment page: 198gjR4FtUBXjFPJomVG9t (not run; the user worries
+  cross-lab pairs of equal rating and date are rare: best are Fable 5.1 + GPT-5.6 Sol, or same-lab Opus 5.5 + Fable 5).
+- **Why OpenAI wins** (`docs/analysis/labs/metrics.md`, `transcripts.md`): equal on day 1 (new-gen executions hit
+  evil 44% Claude vs 39% OpenAI); from day 2 OpenAI 72% vs Claude 46%. OpenAI towns accumulate evidence (top suspect
+  evil 52→70→81% by day; Claude 44→45→53%); Claude towns treat results as settled ("cleared") and execute 2+ good
+  players in 61% of games (OpenAI 31%); 18/20 Saint losses were Claude-good. Not credulity, verbosity or thinking
+  effort; no harness asymmetry found. Early-2026 models were level. Open: Claude skips thinking on 74% of good vote
+  turns (Sol 5.6 5%) — a forced-thinking-on-votes run would test it.
+- Blog: draft `docs/blog/draft.md`; eight checked vignettes `docs/analysis/blog/best-games.md`. Datawrapper chart:
+  `docs/charts/datawrapper/` (CSV + `make_chart.py`, needs `DATAWRAPPER_API_TOKEN`, which the user added to the
+  environment after this session started; run it in a new session).
+- Logs download: `HF_HUB_DISABLE_XET=1`, `snapshot_download(allow_patterns=['v17/f3-*/*'], ignore_patterns=['*.pkl'])`
+  one batch at a time (~2 GB for 2026 games, hits HF 429s but retries through). b1 logs not downloaded.
+
 ## 2026-10-25: repo cleanup (the consolidation the user asked for)
 - Scripts moved into the package: `clocktower/ratings.py` (was ratings2026, lab_trends, build_ratings_page),
   `clocktower/mixed.py` (mixed_pilot), `tournament --resume-stopped` (resume_stopped). Dropped fit.py (v16-only),
