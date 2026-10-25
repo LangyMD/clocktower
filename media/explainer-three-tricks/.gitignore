@@ -1,0 +1,10 @@
+audio/
+tight/
+frames/
+test/
+mix.f32
+mix.wav
+scene_built.html
+timeline.json
+clips.json
+*.mp4
