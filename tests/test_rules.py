@@ -896,6 +896,43 @@ class CeilingTests(unittest.TestCase):
         self.assertEqual(f._thinking(low=True)['thinking']['type'], 'adaptive')
         self.assertEqual(f._thinking(low=True)['output_config']['effort'], 'low')
 
+    def test_a_model_that_rejects_thinking_off_is_marked_and_retried(self):
+        from clocktower import llm
+        import anthropic, tempfile
+        sent = []
+
+        class Stream:
+            def __init__(self, kw):
+                self.kw = kw
+
+            async def __aenter__(self):
+                sent.append(self.kw['thinking']['type'])
+                if self.kw['thinking']['type'] == 'disabled':
+                    e = anthropic.BadRequestError.__new__(anthropic.BadRequestError)
+                    Exception.__init__(e, 'thinking.type.disabled is not supported for this model')
+                    raise e
+                return self
+
+            async def __aexit__(self, *exc):
+                return False
+
+            async def get_final_message(self):
+                return 'ok'
+
+        class Client:
+            class messages:
+                stream = staticmethod(lambda **kw: Stream(kw))
+
+        model = 'claude-test-no-off'
+        c = llm.ClaudeConversation(Client(), 'rules', {}, label='x', ledger=llm.Ledger(tempfile.mktemp()),
+                                   semaphore=llm.NO_LIMIT, model=model)
+        try:
+            self.assertEqual(asyncio.run(c._stream([], low=True)), 'ok')
+            self.assertEqual(sent, ['disabled', 'adaptive'])
+            self.assertFalse(llm.spec(model)['can_disable_thinking'])
+        finally:
+            llm.MODELS.pop(model, None)
+
     def test_openai_waits_for_credit_instead_of_failing(self):
         from clocktower import llm
         import os, tempfile, io, urllib.error
