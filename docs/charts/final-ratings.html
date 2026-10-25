@@ -1,0 +1,42 @@
+<!doctype html><meta charset="utf-8"><title>Clocktower final ratings</title>
+<style>
+/* Static chart for the blog (rendered to PNG by final-ratings.js): ranked dots with 90% intervals. */
+:root{--bg:#fcfcfb;--ink:#141a22;--ink2:#4b5563;--muted:#7b8494;--grid:#eceef1;--rule:#d6dae0;--anth:#C2562E;--oai:#0A7FA0}
+html,body{margin:0;background:var(--bg)}
+body{width:1200px;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+.wrap{padding:44px 52px 34px}
+h1{font:700 34px/1.15 "Inter Display",Inter,sans-serif;margin:0 0 8px;letter-spacing:-.01em}
+.sub{font-size:17px;line-height:1.45;color:var(--ink2);margin:0 0 18px;max-width:1000px}
+.legend{display:flex;gap:26px;font-size:15px;color:var(--ink2);margin-bottom:6px;align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px}
+svg text{font-family:Inter,sans-serif}
+.foot{font-size:13px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+</style>
+<div class="wrap">
+  <h1>GPT-6 Astra leads at Blood on the Clocktower</h1>
+  <p class="sub">Elo rating of the 11 models released in 2026, from 386 games where one model plays the whole good team and another the whole evil team. Lines show 90% intervals. The average model is 1,500; a 400-point gap means the stronger model wins about 91% of games.</p>
+  <div class="legend"><span><i style="background:var(--oai);border-radius:2px"></i>OpenAI</span><span><i style="background:var(--anth);border-radius:50%"></i>Anthropic</span></div>
+  <svg id="c"></svg>
+  <div class="foot"><span>Bradley–Terry fit adjusted for good's edge, Minions in play and table size; intervals from 500 bootstrap resamples of side-swapped pairs.</span><span>Clocktower eval · Oct 2026</span></div>
+</div>
+<script>
+const D=__DATA__;
+const N={'claude-opus-4-6':'Opus 4.6','gpt-5.4':'GPT-5.4','claude-opus-4-7':'Opus 4.7','gpt-5.5':'GPT-5.5','claude-opus-4-8':'Opus 4.8','claude-fable-5':'Fable 5','gpt-5.6-sol':'GPT-5.6 Sol','claude-fable-5-1':'Fable 5.1','gpt-6-astra':'GPT-6 Astra','claude-opus-5-5':'Opus 5.5','gpt-6.1-sol':'GPT-6.1 Sol'};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const rows=[...D.models].sort((a,b)=>b.combined-a.combined);
+const NS='http://www.w3.org/2000/svg',svg=document.getElementById('c');
+const el=(t,a,x)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;svg.appendChild(e);return e};
+const W=1096,RH=44,T=22,B=40,L=176,R=74,H=T+B+RH*rows.length,lo=1000,hi=2000,x=v=>L+(v-lo)/(hi-lo)*(W-L-R);
+svg.setAttribute('width',W);svg.setAttribute('height',H);
+for(let v=lo;v<=hi;v+=100){el('line',{x1:x(v),x2:x(v),y1:T-10,y2:H-B+6,stroke:v===1500?'#aab1bc':'#eceef1','stroke-width':v===1500?1.5:1,'stroke-dasharray':v===1500?'4 4':''});
+  if(v%200===0)el('text',{x:x(v),y:H-B+28,'text-anchor':'middle','font-size':14,fill:'#7b8494'},v.toLocaleString('en-US'))}
+el('text',{x:x(1500)+6,y:T-0,'font-size':13,fill:'#7b8494'},'average');
+rows.forEach((m,i)=>{const y=T+RH*i+RH/2,c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',mon=MON[+m.date.slice(5,7)-1];
+  el('text',{x:L-18,y:y+1,'text-anchor':'end','font-size':17,'font-weight':600,fill:'#141a22'},N[m.id]);
+  el('text',{x:L-18,y:y+18,'text-anchor':'end','font-size':13,fill:'#7b8494'},mon+' 2026');
+  el('line',{x1:x(m.c90[0]),x2:x(m.c90[1]),y1:y+4,y2:y+4,stroke:c,'stroke-width':3,'stroke-linecap':'round','stroke-opacity':.45});
+  if(m.lab==='Anthropic')el('circle',{cx:x(m.combined),cy:y+4,r:8,fill:c,stroke:'#fcfcfb','stroke-width':2.5});
+  else el('rect',{x:x(m.combined)-7.5,y:y+4-7.5,width:15,height:15,rx:2,fill:c,stroke:'#fcfcfb','stroke-width':2.5});
+  el('text',{x:x(m.c90[1])+12,y:y+9,'font-size':16,'font-weight':600,fill:'#4b5563','font-variant-numeric':'tabular-nums'},m.combined.toLocaleString('en-US'));
+});
+</script>
