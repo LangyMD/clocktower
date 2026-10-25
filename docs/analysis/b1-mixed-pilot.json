@@ -1,0 +1,46 @@
+{
+ "games": 16,
+ "by_side": {
+  "good": {
+   "games": 8,
+   "mixed_won": 4,
+   "expected_wins": {
+    "mixed (average)": 4.17,
+    "all Opus 5.5": 3.87,
+    "all GPT-5.6 Sol": 4.46
+   }
+  },
+  "evil": {
+   "games": 8,
+   "mixed_won": 1,
+   "expected_wins": {
+    "mixed (average)": 1.07,
+    "all Opus 5.5": 0.93,
+    "all GPT-5.6 Sol": 1.22
+   }
+  }
+ },
+ "whispers": {
+  "to_teammates": 1629,
+  "same_model": 746,
+  "expected_same": 679.4,
+  "excess_share_90": [
+   0.02,
+   0.068
+  ]
+ },
+ "votes": {
+  "same": {
+   "pairs": 599,
+   "agree": 0.72
+  },
+  "cross": {
+   "pairs": 804,
+   "agree": 0.633
+  },
+  "gap_90": [
+   0.031,
+   0.128
+  ]
+ }
+}

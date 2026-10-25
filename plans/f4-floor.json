@@ -1,0 +1,113 @@
+{
+ "note": "Allocated by clocktower.allocate {'target': 1000.0, 'floor': 1, 'cap': 4, 'share': 0.25, 'z': 2.5}",
+ "out": "games/v17/f4",
+ "seed": 170000,
+ "players": "10-12",
+ "budget": 22600.0,
+ "matchups": [
+  {
+   "name": "opus46-v-opus48",
+   "good": "claude-opus-4-6",
+   "evil": "claude-opus-4-8",
+   "pairs": 1,
+   "seed": 170000,
+   "args": [
+    "--minions",
+    "Scarlet Woman"
+   ],
+   "why": "floor 1",
+   "est_cost": 122
+  },
+  {
+   "name": "opus47-v-astra",
+   "good": "claude-opus-4-7",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "seed": 170100,
+   "args": [
+    "--minions",
+    "Scarlet Woman"
+   ],
+   "why": "clash 1",
+   "est_cost": 54
+  },
+  {
+   "name": "opus48-v-fable5",
+   "good": "claude-opus-4-8",
+   "evil": "claude-fable-5",
+   "pairs": 1,
+   "seed": 170200,
+   "args": [
+    "--minions",
+    "Baron"
+   ],
+   "why": "floor 1",
+   "est_cost": 205
+  },
+  {
+   "name": "opus48-v-fable51",
+   "good": "claude-opus-4-8",
+   "evil": "claude-fable-5-1",
+   "pairs": 1,
+   "seed": 170300,
+   "args": [
+    "--minions",
+    "Poisoner"
+   ],
+   "why": "floor 1",
+   "est_cost": 115
+  },
+  {
+   "name": "opus48-v-opus55",
+   "good": "claude-opus-4-8",
+   "evil": "claude-opus-5-5",
+   "pairs": 1,
+   "seed": 170400,
+   "args": [
+    "--minions",
+    "Poisoner"
+   ],
+   "why": "floor 1",
+   "est_cost": 97
+  },
+  {
+   "name": "opus48-v-gpt56sol",
+   "good": "claude-opus-4-8",
+   "evil": "gpt-5.6-sol",
+   "pairs": 1,
+   "seed": 170500,
+   "args": [
+    "--minions",
+    "Poisoner"
+   ],
+   "why": "floor 1",
+   "est_cost": 95
+  },
+  {
+   "name": "opus48-v-astra",
+   "good": "claude-opus-4-8",
+   "evil": "gpt-6-astra",
+   "pairs": 1,
+   "seed": 170600,
+   "args": [
+    "--minions",
+    "Spy"
+   ],
+   "why": "floor 1",
+   "est_cost": 108
+  },
+  {
+   "name": "opus48-v-sol61",
+   "good": "claude-opus-4-8",
+   "evil": "gpt-6.1-sol",
+   "pairs": 1,
+   "seed": 170700,
+   "args": [
+    "--minions",
+    "Scarlet Woman"
+   ],
+   "why": "floor 1",
+   "est_cost": 90
+  }
+ ]
+}

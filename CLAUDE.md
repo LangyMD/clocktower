@@ -105,6 +105,33 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-10-07: mixed-team pilot (b1), design decisions
+- **Pilot B** (`plans/b1-mixed-pilot.json`, 16 games, $118): half Opus 5.5 + half GPT-5.6 Sol (seats random; two
+  matchups with opposite list order so each model gets the odd seat half the time) vs pure GPT-6.1 Sol, both sides.
+  Analysis `scripts/mixed_pilot.py` → `docs/analysis/b1-mixed-pilot.json`. Wins match the members' average rating
+  (good 4/8 vs 4.2 expected; evil 1/8 vs 1.1), too few games to see a mixing penalty. In-group: Opus seats start
+  conversations with Opus teammates 15 points above chance; Sol 5.6 leans 6 points toward Opus (seat/role pull), so
+  Opus's own preference ≈ 9–15 points; Sol shows none. Same-model vote agreement 72% vs 63% cross (partly voting style).
+- Opus 4.8's low rating: no bug (0 lost turns in v17); 1–15 vs GPT-5.5, only 3 opponents (its f2 round robin was
+  dropped). Rule agreed in principle: every model plays every other at least one pair before top-ups.
+- Learning-from-experience design (not built): shared notes on the good team leak alignment (a password), so
+  only (1) evil-only learners (evil already knows teams) or (2) a league of individual agents with private notes and
+  alignment dealt independently of agent are clean. Notes cap ~10K tokens rewritten each round; reflection budget large.
+- Rating scale: anchor 1500 to the mean of the 11 2026 models permanently (not the mean of whatever is in the fit).
+- **Allocation rule in code:** `python -m clocktower.allocate MODELS RATINGS GAMEGLOBS... --target T` (floor of one pair
+  per matchup, one extra pair for a >2.5 SE style clash, then precision per dollar on models above ±T; cap 4 pairs per
+  matchup, no opponent >25% of a model's games; Minions least dealt). Half-widths calibrated to the bootstrap.
+- **f4 floor batch** (`plans/f4-floor.json`, 16 games, $986): Opus 4.8's 7 missing opponents + Opus 4.7 v Astra (clash).
+  Opus 4.8 won 2 of 14 → 1203 [1077, 1288] (was 1194 [1051, 1306]). Refit over 368 games (`scripts/ratings2026.py`
+  now includes f4): trend +650/yr. Worst half-width now Opus 4.7 ±109; reaching ±100 for all costs ~$575 more.
+- **f5 precision top-up** (`plans/f5-precision.json`, 18 games, $649): chosen by the rule for ±100. Refit over 386 games:
+  GPT-6 Astra 1859 > GPT-6.1 Sol 1734 > Fable 5.1 1595 ≈ GPT-5.6 Sol 1591 > Opus 5.5 1549 ≈ Fable 5 1544 > GPT-5.5 1482
+  > Opus 4.6 1432 > GPT-5.4 1276 > Opus 4.7 1241 > Opus 4.8 1198; trend +651/yr [553, 827]; evil wins 33%. Every model
+  within ±100 except Astra ±102 (lopsided range: it rarely loses). Pages (ratings, leaderboard, lab trends) not yet
+  rebuilt with these numbers.
+- Parser gap: GPT-5.5 once sent several JSON objects in one reply four times running (seat failed; game relaunched).
+  Fix to consider: accept the first object.
+
 ## 2026-10-04: multiplayer human table
 - Replaced the one-seat `play` page with a lobby + table for several people on their own devices
   (stdlib HTTP, 1 s polling, per-browser tokens). Host link carries a key (`#host=`); friends use the LAN
@@ -149,6 +176,9 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 ### Pages and artifacts
 - Ratings (current): https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (by release date)
+- Gains by lab (detection/deception vs release date, per-lab trends): https://claude.ai/artifact/HiPbbNTToUydW6Sjes6asq
+  (`scripts/lab_trends.py` → `docs/charts/lab-trends.json`, filled into `lab-trends.template.html`). Per year: detection
+  OpenAI +1083 vs Anthropic +186 (gap 608–1272, clear); deception +764 vs +590 (gap could be chance).
 - Leaderboard chart (ranked, overall/detection/deception tabs): https://claude.ai/artifact/Sc8dfYHJMLHBQdQeLcWSMu
   plus a head-to-head expected-win-rate grid (`docs/charts/leaderboard.html`; PNGs `docs/charts/*.png`)
 - Flagship plan explainer: https://claude.ai/artifact/MAbeLPxmENkdfEQT8j75mt (pre-v17 numbers)
