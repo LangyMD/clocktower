@@ -4,14 +4,17 @@
 html,body{margin:0;background:#fcfcfb}
 body{width:1200px;font-family:Inter,system-ui,sans-serif;color:#141a22}
 .wrap{padding:44px 52px 30px}
-h1{font:700 34px/1.15 "Inter Display",Inter,sans-serif;margin:0 0 14px;letter-spacing:-.01em}
+h1{font:700 34px/1.15 "Inter Display",Inter,sans-serif;margin:0 0 6px;letter-spacing:-.01em}
+.sub{font-size:16px;color:#4b5563;margin:0 0 16px}
+.legend b{display:inline-block;width:24px;border-top:2.5px dashed currentColor;margin:0 8px 0 4px;vertical-align:4px}
 .legend{display:flex;gap:26px;font-size:16px;color:#4b5563;align-items:center}
 .legend i{display:inline-block;width:13px;height:13px;margin-right:8px;vertical-align:-1px}
 svg text{font-family:Inter,sans-serif}
 </style>
 <div class="wrap">
   <h1>Blood on the Clocktower eval</h1>
-  <div class="legend"><span><i style="background:#0A7FA0;border-radius:2px"></i>OpenAI</span><span><i style="background:#C2562E;border-radius:50%"></i>Anthropic</span></div>
+  <p class="sub">Trend lines are fit to each lab's models that were its best when released.</p>
+  <div class="legend"><span><i style="background:#0A7FA0;border-radius:2px"></i>OpenAI <b style="color:#0A7FA0"></b><span id="t-oai"></span></span><span><i style="background:#C2562E;border-radius:50%"></i>Anthropic <b style="color:#C2562E"></b><span id="t-anth"></span></span></div>
   <svg id="c"></svg>
 </div>
 <script>
@@ -30,9 +33,18 @@ for(let v=lo;v<=hi;v+=100){el('line',{x1:L,x2:W,y1:y(v),y2:y(v),stroke:v===lo?'#
 for(let m=1;m<=9;m++){const s=`2026-${String(m+1).padStart(2,'0')}-01`;
   el('text',{x:x(s),y:H-B+30,'text-anchor':'middle','font-size':15,fill:'#7b8494'},MON[m])}
 el('text',{x:12,y:(T+H-B)/2,'text-anchor':'middle','font-size':16,'font-weight':600,fill:'#4b5563',transform:`rotate(-90 12 ${(T+H-B)/2})`},'Elo');
+// frontier trends: least-squares fit over each lab's models that beat all its earlier ones at release
+const FRONT={OpenAI:['gpt-5.4','gpt-5.5','gpt-5.6-sol','gpt-6-astra'],Anthropic:['claude-opus-4-6','claude-fable-5','claude-fable-5-1']};
+const R2=Object.fromEntries(D.models.map(m=>[m.id,m])), yr=s=>(day(s)-Date.UTC(2026,0,1))/864e5/365;
+for(const [lab,ids] of Object.entries(FRONT)){const ms=ids.map(i=>R2[i]),ts=ms.map(m=>yr(m.date)),vs=ms.map(m=>m.combined);
+  const mt=ts.reduce((a,b)=>a+b)/ts.length,mv=vs.reduce((a,b)=>a+b)/vs.length;
+  const sl=ts.reduce((a,t,i)=>a+(t-mt)*(vs[i]-mv),0)/ts.reduce((a,t)=>a+(t-mt)**2,0),f=s=>mv+sl*(yr(s)-mt);
+  const a=ms[0].date,b=ms[ms.length-1].date,c=lab==='Anthropic'?'#C2562E':'#0A7FA0';
+  el('line',{x1:x(a),y1:y(f(a)),x2:x(b),y2:y(f(b)),stroke:c,'stroke-width':2.5,'stroke-dasharray':'8 6','stroke-opacity':.7});
+  document.getElementById(lab==='Anthropic'?'t-anth':'t-oai').textContent=`+${Math.round(sl).toLocaleString('en-US')} Elo/yr`}
 for(const m of D.models){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',cx=x(m.date),cy=y(m.combined);
   if(m.lab==='Anthropic')el('circle',{cx,cy,r:9,fill:c});
   else el('rect',{x:cx-8.5,y:cy-8.5,width:17,height:17,rx:2.5,fill:c});
-  el('text',{x:cx+16,y:cy+6,'font-size':17,'font-weight':600,fill:'#141a22'},N[m.id]);
+  el('text',{x:cx+16,y:cy+6,'font-size':17,'font-weight':600,fill:'#141a22',stroke:'#fcfcfb','stroke-width':7,'stroke-linejoin':'round','paint-order':'stroke'},N[m.id]);
 }
 </script>
