@@ -33,8 +33,6 @@ el('text',{x:12,y:(T+H-B)/2,'text-anchor':'middle','font-size':16,'font-weight':
 for(const m of D.models){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',cx=x(m.date),cy=y(m.combined);
   if(m.lab==='Anthropic')el('circle',{cx,cy,r:9,fill:c});
   else el('rect',{x:cx-8.5,y:cy-8.5,width:17,height:17,rx:2.5,fill:c});
-  const t=el('text',{x:cx+16,y:cy+6,'font-size':17,'font-weight':600,fill:'#141a22'},N[m.id]+'  ');
-  const n=document.createElementNS(NS,'tspan');n.setAttribute('fill','#7b8494');n.setAttribute('font-weight','500');
-  n.textContent=m.combined.toLocaleString('en-US');t.appendChild(n);
+  el('text',{x:cx+16,y:cy+6,'font-size':17,'font-weight':600,fill:'#141a22'},N[m.id]);
 }
 </script>
