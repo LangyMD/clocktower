@@ -118,5 +118,34 @@ class FitTests(unittest.TestCase):
             self.assertEqual((gs[1]['players'], gs[0]['players']), (11, 10))
 
 
+class MixedRatingTests(unittest.TestCase):
+    def test_mixed_team_is_a_twelfth_player_on_the_published_scale(self):
+        from clocktower import mixed
+        o, s5 = mixed.MEMBERS
+        strength = {o: -0.3, s5: 0.3, 'x': 0.8, 'y': -0.8, mixed.MIX: 1.0}  # mixing effect +1 logit = +174 Elo
+        games = synthetic(strength, n_pairs=600, seed=5)
+        out = mixed.rate(games, [o, s5, 'x', 'y'], boot=5)
+        r = out['ratings_all']
+        self.assertAlmostEqual(sum(r[n] for n in (o, s5, 'x', 'y')) / 4, 1500, delta=2)  # centred without MIX
+        eff = out['combined']['effect']
+        self.assertGreater(eff[0], 80); self.assertLess(eff[0], 280)
+        self.assertAlmostEqual(eff[0], out['combined']['mixed'][0] - out['combined']['members_mean'][0], delta=1)
+        rec = out['record_by_opponent']['x']
+        self.assertEqual(rec['good_games'], sum(g['good'] == mixed.MIX and g['evil'] == 'x' for g in games))
+
+    def test_either_list_order_maps_to_the_mixed_team(self):
+        from clocktower import mixed
+        with tempfile.TemporaryDirectory() as root:
+            chars = ['Imp', 'Spy', 'Baron'] + ['Chef'] * 7
+            for path, good, evil in (('v17/b2-mixA/game-01', 'claude-opus-5-5,gpt-5.6-sol', 'x'),
+                                     ('v17/b2-mixB/game-01-swap', 'x', 'gpt-5.6-sol,claude-opus-5-5')):
+                d = Path(root, path); d.mkdir(parents=True)
+                (d / 'config.json').write_text(json.dumps({'good_model': good, 'evil_model': evil, 'players': 10}))
+                (d / 'result.json').write_text(json.dumps({'winner': 'good'}))
+                (d / 'events.jsonl').write_text(json.dumps({'kind': 'setup', 'data': {'seats': [{'character': c} for c in chars]}}) + '\n')
+            gs = sorted(mixed.rating_games(root, ['v17/b2-*']), key=lambda g: g['good'])
+            self.assertEqual([(g['good'], g['evil']) for g in gs], [(mixed.MIX, 'x'), ('x', mixed.MIX)])
+
+
 if __name__ == '__main__':
     unittest.main()
