@@ -1,0 +1,15 @@
+{
+ "note": "b2 (Oct 28 2026): rate a mixed team (half Opus 5.5 + half GPT-5.6 Sol, seats split at random) on the 2026 scale, and measure the mixing effect (mixed rating minus the members' average). 58 side-swapped pairs vs GPT-6.1 Sol (28), Fable 5.1 (22) and GPT-6 Astra (8); each opponent's pairs split over two matchups with opposite list order, so each model gets the odd seat on odd-sized teams half the time. Minions balanced by tournament. Budget = ledger at launch ($23,068) + $1,800 + margin.",
+ "out": "games/v17/b2",
+ "seed": 180000,
+ "players": "10-12",
+ "budget": 24900,
+ "matchups": [
+  {"name": "mixA-v-sol61", "good": "claude-opus-5-5,gpt-5.6-sol", "evil": "gpt-6.1-sol", "pairs": 14, "seed": 180000},
+  {"name": "mixB-v-sol61", "good": "gpt-5.6-sol,claude-opus-5-5", "evil": "gpt-6.1-sol", "pairs": 14, "seed": 180100},
+  {"name": "mixA-v-fable51", "good": "claude-opus-5-5,gpt-5.6-sol", "evil": "claude-fable-5-1", "pairs": 11, "seed": 180200},
+  {"name": "mixB-v-fable51", "good": "gpt-5.6-sol,claude-opus-5-5", "evil": "claude-fable-5-1", "pairs": 11, "seed": 180300},
+  {"name": "mixA-v-astra", "good": "claude-opus-5-5,gpt-5.6-sol", "evil": "gpt-6-astra", "pairs": 4, "seed": 180400},
+  {"name": "mixB-v-astra", "good": "gpt-5.6-sol,claude-opus-5-5", "evil": "gpt-6-astra", "pairs": 4, "seed": 180500}
+ ]
+}
