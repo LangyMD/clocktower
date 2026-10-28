@@ -33,7 +33,9 @@ for(let m=1;m<=9;m++){const s=`2026-${String(m+1).padStart(2,'0')}-01`;
   el('text',{x:x(s),y:H-B+30,'text-anchor':'middle','font-size':15,fill:'#7b8494'},MON[m])}
 el('text',{x:12,y:(T+H-B)/2,'text-anchor':'middle','font-size':16,'font-weight':600,fill:'#4b5563',transform:`rotate(-90 12 ${(T+H-B)/2})`},'Elo');
 for(const m of D.models){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0';
-  el('line',{x1:x(m.date),x2:x(m.date),y1:y(m.c90[0]),y2:y(m.c90[1]),stroke:c,'stroke-width':3,'stroke-linecap':'round','stroke-opacity':.35})}
+  const bx=x(m.date),st={stroke:c,'stroke-width':3,'stroke-linecap':'round','stroke-opacity':.35};
+  el('line',{x1:bx,x2:bx,y1:y(m.c90[0]),y2:y(m.c90[1]),...st});
+  for(const v of m.c90)el('line',{x1:bx-7,x2:bx+7,y1:y(v),y2:y(v),...st})}
 for(const m of D.models){const c=m.lab==='Anthropic'?'#C2562E':'#0A7FA0',cx=x(m.date),cy=y(m.combined);
   if(m.lab==='Anthropic')el('circle',{cx,cy,r:9,fill:c});
   else el('rect',{x:cx-8.5,y:cy-8.5,width:17,height:17,rx:2.5,fill:c});
