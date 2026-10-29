@@ -1,17 +1,37 @@
-# One-click hosting for the multiplayer table (python -m clocktower play) on Render's free tier.
+# Render Blueprint for the public play server (docs/hosting.md). A persistent disk needs a paid instance
+# (Starter or above): on the free plan tables and games are lost at every restart and the instance sleeps.
 # Render asks for the values marked sync: false when you create the Blueprint.
 services:
   - type: web
-    name: clocktower
-    runtime: python
-    plan: free
+    name: clocktower-play
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
     branch: main
-    buildCommand: pip install -e .
-    startCommand: python -m clocktower play --port $PORT --budget 50
+    numInstances: 1              # games live in this process: never more than one instance
+    healthCheckPath: /healthz
+    disk:
+      name: clocktower-data
+      mountPath: /data
+      sizeGB: 5
+    domains:
+      - play.clocktowerbench.com
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.7
-      - key: ANTHROPIC_API_KEY     # leave blank to skip Claude models
+      - key: PLAY_DATA_DIR
+        value: /data
+      - key: PLAY_PUBLIC_URL
+        value: https://play.clocktowerbench.com
+      - key: PLAY_PROXY_HOPS
+        value: "1"
+      - key: PLAY_FREE_MODELS
+        value: gpt-6.1-sol
+      - key: PLAY_DAILY_BUDGET
+        value: "30"
+      - key: PLAY_GAME_BUDGET
+        value: "5"
+      - key: PLAY_MAX_GAMES
+        value: "20"
+      - key: OPENAI_API_KEY        # pays for the free GPT-6.1 Sol seats
         sync: false
-      - key: OPENAI_API_KEY        # leave blank to skip GPT models
+      - key: ANTHROPIC_API_KEY     # only needed if PLAY_FREE_MODELS lists a Claude model
         sync: false

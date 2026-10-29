@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22%23cda65e%22/%3E%3Cpath d=%22M16 16V8M16 16l5 3%22 stroke=%22%232a1d0e%22 stroke-width=%222.4%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="table.css">
+<link rel="stylesheet" href="/table.css">
 </head>
 <body>
 
@@ -33,6 +33,35 @@
       <p class="tagline">Trouble Brewing &middot; you and your friends against the machines</p>
     </header>
 
+    <section id="home" hidden>
+      <div class="card">
+        <h2>Play Blood on the Clocktower against AI</h2>
+        <p>Sit down at a table of 10 to 12 with friends and the AI models from
+          <a href="https://clocktowerbench.com">Clocktower Bench</a>. Humans and AIs get exactly the same moves: one
+          whisper per private-time turn, speeches in the town square, nominations and votes.</p>
+        <p class="fine" id="free-note"></p>
+        <button class="primary" id="new-table">Open a table</button>
+        <p class="err" id="new-err"></p>
+      </div>
+      <div class="card how">
+        <h2>How a game goes</h2>
+        <ol>
+          <li><b>Open a table</b> and send the invite link to friends (or play alone with AIs).</li>
+          <li><b>Pick an allegiance</b>: good, evil or either. Nobody, human or AI, learns your choice or your seat.</li>
+          <li><b>Each day</b>: six rounds of private whispers, three rounds in the town square, then nominations and votes.
+            Each night the Storyteller wakes characters with abilities.</li>
+          <li><b>Good wins</b> by executing the Demon; <b>evil wins</b> when only two players are left alive.</li>
+          <li>At the end the Grimoire opens: every character, every AI's model, and what the AIs believed about you.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="gone" class="card" hidden>
+      <h2>No such table</h2>
+      <p>This table doesn't exist or has closed (idle tables close after a while).</p>
+      <a class="primary as-link" href="/">Open a new table</a>
+    </section>
+
     <section id="join" class="card" hidden>
       <h2>Take your seat</h2>
       <label class="field"><span>Your name <em>(only the other humans see it)</em></span>
@@ -49,6 +78,10 @@
       <div class="card">
         <h2>The town gathers</h2>
         <ul id="people"></ul>
+        <div class="share" id="share">
+          <span class="fine">Invite friends with this link:</span>
+          <div class="share-row"><code id="share-url"></code><button class="ghost small" id="share-copy">Copy</button></div>
+        </div>
         <div class="field"><span>Your allegiance <em>(secret)</em></span><div class="allegiance" id="my-team"></div></div>
       </div>
 
@@ -67,9 +100,16 @@
         </div>
         <label class="field"><span>Turn timer <em>(a human turn passes when it runs out)</em></span><select id="timer"></select></label>
         <p class="fine" id="estimate"></p>
-        <div id="share" hidden>
-          <span class="fine">Send friends this link:</span>
-          <div class="share-row"><code id="share-url"></code><button class="ghost small" id="share-copy">Copy</button></div>
+        <div id="byo" hidden>
+          <details id="byo-box">
+            <summary>Use your own API key <em>(for Claude, Astra and the other models)</em></summary>
+            <p class="fine">Your key pays for this table's AI players. It stays in the server's memory for this table only:
+              it is never saved to disk or logs, never shown to anyone (you included), and is forgotten when the table
+              closes or the server restarts. Each game on your key stops at <span id="byo-cap"></span>.</p>
+            <div class="key-row"><select id="byo-provider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option></select>
+              <input id="byo-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..."><button class="ghost small" id="byo-save">Use key</button></div>
+            <p class="fine" id="byo-have"></p>
+          </details>
         </div>
         <button class="primary bell" id="start">Ring the bell</button>
         <p class="err" id="start-err"></p>
@@ -82,6 +122,26 @@
       <h2>A game is under way</h2>
       <p>You'll be dealt in when the host starts the next one.</p>
     </section>
+
+    <section id="paused" class="card" hidden>
+      <h2>The game is paused</h2>
+      <p id="paused-text"></p>
+      <div id="paused-host" hidden>
+        <div class="key-row"><select id="resume-provider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option></select>
+          <input id="resume-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..."><button class="ghost small" id="resume-key-save">Use key</button></div>
+        <button class="primary" id="resume-go">Resume the game</button>
+        <button class="ghost" id="paused-end">End it instead</button>
+      </div>
+      <p class="err" id="paused-err"></p>
+    </section>
+
+    <section id="mine" class="card" hidden>
+      <h2>Your seat link</h2>
+      <p class="fine">Open this on another phone or computer to continue as yourself. Keep it private: it is your seat.</p>
+      <div class="share-row"><code id="mine-url"></code><button class="ghost small" id="mine-copy">Copy</button></div>
+    </section>
+
+    <footer class="foot"><a href="https://clocktowerbench.com">clocktowerbench.com</a> &middot; <a href="/">new table</a></footer>
   </div>
 </main>
 
@@ -89,8 +149,7 @@
 <main id="table" hidden>
   <header class="bar">
     <button class="me-chip" id="me-chip" aria-label="Your character"><span class="mini-token" id="me-token"></span>
-      <span class="me-text"><b id="me-name"></b><small id="me-char"></small></span></button>
-    <div class="phase-mini" id="phase-mini"></div>
+      <span class="me-text"><b id="me-name"></b><small id="me-char"></small></span></button>    <div class="phase-mini" id="phase-mini"></div>
     <nav class="tools">
       <button class="icon" data-sheet="town" id="town-btn" aria-label="Town circle" title="Town circle"></button>
       <button class="icon" data-sheet="script" aria-label="Characters" title="Characters"></button>
@@ -107,6 +166,7 @@
     </section>
     <section id="chronicle">
       <div class="filters" id="filters"></div>
+      <div id="role-banner" hidden></div>
       <div id="feed" aria-live="polite"></div>
       <button id="jump" hidden>New below &darr;</button>
       <section id="dock"></section>
@@ -123,6 +183,6 @@
 
 <div id="reveal" hidden></div>
 
-<script src="table.js"></script>
+<script src="/table.js"></script>
 </body>
 </html>

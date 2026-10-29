@@ -1,0 +1,39 @@
+# Fly.io config for the public play server (docs/hosting.md). One machine: games run in its memory and
+# checkpoint to the volume, so never scale past one machine.
+app = "clocktower-play"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  PLAY_DATA_DIR = "/data"
+  PLAY_PUBLIC_URL = "https://play.clocktowerbench.com"
+  PLAY_PROXY_HOPS = "1"
+  PLAY_FREE_MODELS = "gpt-6.1-sol"
+  PLAY_DAILY_BUDGET = "30"
+  PLAY_GAME_BUDGET = "5"
+  PLAY_MAX_GAMES = "20"
+
+[[mounts]]
+  source = "clocktower_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"   # a stopped machine would drop games mid-turn
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "20s"
+    interval = "30s"
+    method = "GET"
+    path = "/healthz"
+    timeout = "5s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"

@@ -327,10 +327,10 @@ class OpenAIConversation(_Base):
     item, including encrypted reasoning, is appended to the input for the next turn."""
     URL = 'https://api.openai.com/v1/responses'
 
-    def __init__(self, system, schema, *, flex=False, **kw):
+    def __init__(self, system, schema, *, flex=False, api_key=None, **kw):
         super().__init__(system, schema, **kw)
         self.flex = flex
-        self.key = os.environ.get('OPENAI_API_KEY')
+        self.key = api_key or os.environ.get('OPENAI_API_KEY')  # api_key: a player's own key (web.py)
         if not self.key:
             raise RuntimeError('OPENAI_API_KEY is not set')
         self.messages = [{'role': 'developer', 'content': [self._block(system)]}]
@@ -538,7 +538,7 @@ def conversation(client, system, schema, *, model, **kw):
         kw.pop('flex', None)
         return OpenRouterConversation(system, schema, model=model, **kw)
     if model.startswith(OPENAI_PREFIXES):
-        kw.pop('ttl', None)
-        return OpenAIConversation(system, schema, model=model, **kw)
+        kw.pop('ttl', None)  # a client may carry the OpenAI key to use (web.py's bring-your-own-key tables)
+        return OpenAIConversation(system, schema, model=model, api_key=getattr(client, 'openai_api_key', None), **kw)
     kw.pop('flex', None)
     return ClaudeConversation(client, system, schema, model=model, **kw)

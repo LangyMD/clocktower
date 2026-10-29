@@ -397,14 +397,8 @@ def main(argv=None):
     elif args.command == 'run':
         asyncio.run(run_batch(args))
     elif args.command == 'play':
-        from .web import Table, serve
-        args.ledger = GAMES / 'play' / 'ledger.jsonl'  # human games keep their own small ledger (the eval's is 40+ MB)
-        args.cap = Ledger(args.ledger).spent + args.budget
-        server = serve(Table(args), args.host, args.port)
-        try:
-            server.serve_forever()
-        except KeyboardInterrupt:
-            pass
+        from .web import main as play  # spend and caps: PLAY_* environment variables (docs/hosting.md)
+        play(args)
     else:
         base = args.seed if args.seed is not None else random.randrange(2 ** 32)
         results = []

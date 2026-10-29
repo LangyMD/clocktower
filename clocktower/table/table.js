@@ -34,7 +34,10 @@ const TEAM_TEXT = {
   good: ['Good', 'Find the Demon'], evil: ['Evil', 'Deceive the town'], any: ['Either', 'Let fate decide'],
 };
 
-let token = store.get('ct.token');
+const TID = (location.pathname.match(/^\/t\/([\w-]+)/) || [])[1] || null;  // this table (none: the home page)
+const TOKEN_KEY = `ct.token.${TID}`;
+let token = TID ? store.get(TOKEN_KEY) : null;
+const setToken = (t) => { token = t; store.set(TOKEN_KEY, t); };
 let hostKey = null;
 let sound = store.get('ct.sound') !== 'off';
 let models = {};          // id -> display name (from the lobby)
@@ -42,10 +45,10 @@ let models = {};          // id -> display name (from the lobby)
 async function api(path, body) {
   const opts = body === undefined ? {} : { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } };
   opts.headers = { ...(opts.headers || {}), 'X-Token': token || '' };
-  const r = await fetch(path, opts);
+  const r = await fetch(path.startsWith('/') ? path : `/api/t/${TID}/${path}`, opts);
   const ct = r.headers.get('Content-Type') || '';
   const data = ct.includes('json') ? await r.json() : await r.text();
-  if (!r.ok) throw new Error((data && data.error) || `HTTP ${r.status}`);
+  if (!r.ok) { const e = new Error((data && data.error) || `HTTP ${r.status}`); e.status = r.status; throw e; }
   return data;
 }
 
@@ -69,35 +72,50 @@ function allegiance(box, current, onPick) {
 async function pollLobby() {
   clearTimeout(lobbyTimer);
   try {
-    const L = await api('/api/lobby');
+    const L = await api('lobby');
     lobbyState = L;
     L.models.forEach((m) => { models[m.id] = m.name; });
-    if (token && !L.me) { token = null; store.set('ct.token', null); }
+    if (token && !L.me) setToken(null);
     if (L.me && hostKey && !L.me.host) {
-      try { await api('/api/host', { key: hostKey }); } catch { /* not valid */ }
+      try { await api('host', { key: hostKey }); } catch { /* not valid */ }
       hostKey = null; history.replaceState(null, '', location.pathname);
       return pollLobby();
     }
-    if (L.status !== 'lobby' && L.me && L.me.seated) return enterTable();
+    if ((L.status === 'playing' || L.status === 'over') && L.me && L.me.seated) return enterTable();
     renderLobby(L);
-  } catch (e) { /* server restarting: keep trying */ }
+  } catch (e) {
+    if (e.status === 404) { show('lobby'); screen('gone'); return; }
+    /* server restarting: keep trying */
+  }
   lobbyTimer = setTimeout(pollLobby, 1500);
 }
 
+const SCREENS = ['home', 'gone', 'join', 'gather', 'busy', 'paused', 'mine'];
+function screen(...on) { SCREENS.forEach((id) => { $(id).hidden = !on.includes(id); }); }
+
 function renderLobby(L) {
   show('lobby');
-  const joined = !!L.me;
-  $('join').hidden = joined;
-  $('gather').hidden = !joined || (L.status === 'playing' && !L.me.in_game);
-  $('busy').hidden = !(joined && L.status === 'playing' && !L.me.in_game);
+  const joined = !!L.me, inGame = joined && L.me.in_game;
+  const busy = joined && (L.status === 'playing' || L.status === 'paused') && !inGame;
+  const paused = joined && L.status === 'paused' && inGame;
+  screen(...(!joined ? ['join'] : busy ? ['busy', 'mine'] : paused ? ['paused', 'mine'] : ['gather', 'mine']));
   if (!joined) {
     if (!$('join-team').childElementCount) allegiance($('join-team'), joinTeam, (t) => { joinTeam = t; });
     return;
   }
+  const link = L.links && L.links.friends;
+  $('share').hidden = !link;
+  if (link) $('share-url').textContent = link;
+  $('mine-url').textContent = `${link || location.origin + location.pathname}#me=${token}`;
+  if (paused) {
+    $('paused-text').textContent = L.error || 'The game is paused.';
+    $('paused-host').hidden = !L.me.host;
+    return;
+  }
   $('people').innerHTML = L.people.map((p) => `<li><span class="mini-token">${esc(p.name[0] || '?')}</span>
-    <span>${esc(p.name)}${p.you ? ' <em>(you)</em>' : ''}</span>${p.host ? '<small>host</small>' : ''}
-    ${L.me.host && !p.you && p.token ? `<button class="kick" data-t="${esc(p.token)}" title="Remove">&times;</button>` : ''}</li>`).join('');
-  $('people').querySelectorAll('.kick').forEach((b) => b.onclick = () => api('/api/kick', { target: b.dataset.t }).then(pollLobby));
+    <span>${esc(p.name)}${p.you ? ' <em>(you)</em>' : ''}</span><i class="online${p.online ? ' on' : ''}" title="${p.online ? 'here' : 'away'}"></i>${p.host ? '<small>host</small>' : ''}
+    ${L.me.host && !p.you ? `<button class="kick" data-t="${esc(p.id)}" title="Remove">&times;</button>` : ''}</li>`).join('');
+  $('people').querySelectorAll('.kick').forEach((b) => b.onclick = () => api('kick', { target: b.dataset.t }).then(pollLobby));
   const box = $('my-team');
   if (box.dataset.team !== L.me.team) {
     box.dataset.team = L.me.team;
@@ -113,10 +131,11 @@ function renderLobby(L) {
     <em>${humans} ${humans === 1 ? 'human' : 'humans'}, ${Math.max(0, n - humans)} AI players</em>`;
   for (const [id, key] of [['good-model', 'good_model'], ['evil-model', 'evil_model']]) {
     const sel = $(id);
-    if (sel.dataset.v !== c[key] || !sel.options.length) {
-      sel.innerHTML = L.models.map((m) => `<option value="${esc(m.id)}">${esc(m.name)}${m.elo ? ` · ${m.elo}` : ''}</option>`).join('');
+    const sig = c[key] + '|' + L.models.map((m) => +m.ready).join('') + L.keys.join();
+    if (sel.dataset.v !== sig || !sel.options.length) {
+      sel.innerHTML = L.models.map((m) => `<option value="${esc(m.id)}"${m.ready ? '' : ' disabled'}>${esc(m.name)}${m.elo ? ` · ${m.elo}` : ''}${m.id === 'random' ? '' : m.ready ? (m.free && !L.keys.includes(m.provider) ? ' · free' : ' · your key') : ' · needs your key'}</option>`).join('');
       if (!L.models.some((m) => m.id === c[key])) sel.insertAdjacentHTML('beforeend', `<option value="${esc(c[key])}">${esc(c[key])}</option>`);
-      sel.value = c[key]; sel.dataset.v = c[key];
+      sel.value = c[key]; sel.dataset.v = sig;
     }
   }
   const tm = $('timer');
@@ -127,10 +146,13 @@ function renderLobby(L) {
   const cost = (id) => (L.models.find((m) => m.id === id) || {}).seat_cost;
   const evilSeats = mn + 1, goodSeats = n - evilSeats, ai = Math.max(0, n - humans) / n;
   const cg = cost(c.good_model), ce = cost(c.evil_model);
-  $('estimate').innerHTML = cg == null || ce == null ? '' :
-    `Roughly <b>$${Math.max(0, (goodSeats * cg + evilSeats * ce) * ai).toFixed(2)}</b> of API calls per game, from past games. Ratings are the 2026 study's Elo.`;
-  $('share').hidden = !(L.me.host && L.links && L.links.friends);
-  if (L.links && L.links.friends) $('share-url').textContent = L.links.friends;
+  const est = cg == null || ce == null ? null : Math.max(0, (goodSeats * cg + evilSeats * ce) * ai);
+  $('estimate').innerHTML = est == null ? '' : (L.paid_by === 'house' ? `<b>Free</b>: the AI players are on Clocktower Bench (up to $${L.caps.game} a game). `
+    : L.paid_by === 'player' ? `On your key: roughly <b>$${est.toFixed(2)}</b> of API calls per game, from past games. ` : '')
+    + 'Ratings are the 2026 study\'s Elo.';
+  $('byo').hidden = !L.me.host;
+  $('byo-cap').textContent = `$${L.caps.byo_game}`;
+  $('byo-have').textContent = L.keys.length ? `Using your ${L.keys.map((k) => (k === 'openai' ? 'OpenAI' : 'Anthropic')).join(' and ')} key for this table.` : '';
   $('start').hidden = !L.me.host;
   $('start').disabled = !!L.problem;
   $('start-err').textContent = L.me.host ? (L.problem || L.error || '') : '';
@@ -145,25 +167,74 @@ function wireLobby() {
   $('join-go').onclick = async () => {
     $('join-err').textContent = '';
     try {
-      const r = await api('/api/join', { name: $('join-name').value, team: joinTeam, host: hostKey });
-      token = r.token; store.set('ct.token', token);
+      const r = await api('join', { name: $('join-name').value, team: joinTeam, host: hostKey });
+      setToken(r.token);
       if (hostKey) { hostKey = null; history.replaceState(null, '', location.pathname); }
       pollLobby();
     } catch (e) { $('join-err').textContent = e.message; }
   };
   $('join-name').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('join-go').click(); });
-  const set = (cfg) => api('/api/config', cfg).then(pollLobby).catch((e) => { $('start-err').textContent = e.message; });
-  $('size-minus').onclick = () => set({ players: Math.max(5, lobbyState.config.players - 1) });
-  $('size-plus').onclick = () => set({ players: Math.min(15, lobbyState.config.players + 1) });
+  const set = (cfg) => api('config', cfg).then(pollLobby).catch((e) => { $('start-err').textContent = e.message; });
+  const sizes = () => lobbyState.sizes || [10, 11, 12];
+  $('size-minus').onclick = () => set({ players: Math.max(sizes()[0], lobbyState.config.players - 1) });
+  $('size-plus').onclick = () => set({ players: Math.min(sizes()[sizes().length - 1], lobbyState.config.players + 1) });
   $('good-model').onchange = (e) => set({ good_model: e.target.value });
   $('evil-model').onchange = (e) => set({ evil_model: e.target.value });
   $('timer').onchange = (e) => set({ timer: +e.target.value });
-  $('share-copy').onclick = () => { navigator.clipboard?.writeText($('share-url').textContent); $('share-copy').textContent = 'Copied'; setTimeout(() => { $('share-copy').textContent = 'Copy'; }, 1500); };
-  $('claim-go').onclick = () => api('/api/host', {}).then(pollLobby).catch(() => {});
+  copyButton('share-copy', 'share-url');
+  copyButton('mine-copy', 'mine-url');
+  $('claim-go').onclick = () => api('host', {}).then(pollLobby).catch(() => {});
   $('start').onclick = async () => {
     unlockAudio();
-    try { await api('/api/start', {}); pollLobby(); } catch (e) { $('start-err').textContent = e.message; }
+    try { await api('start', {}); pollLobby(); } catch (e) { $('start-err').textContent = e.message; }
   };
+  const saveKey = async (prov, input, err) => {
+    const key = $(input).value.trim();
+    $(err).textContent = '';
+    try { await api('key', { provider: $(prov).value, key }); $(input).value = ''; pollLobby(); } catch (e) { $(err).textContent = e.message; }
+  };
+  $('byo-save').onclick = () => saveKey('byo-provider', 'byo-key', 'start-err');
+  $('resume-key-save').onclick = () => saveKey('resume-provider', 'resume-key', 'paused-err');
+  $('resume-go').onclick = async () => {
+    try { await api('resume', {}); pollLobby(); } catch (e) { $('paused-err').textContent = e.message; }
+  };
+  $('paused-end').onclick = async () => {
+    if (!confirm('End the game for everyone?')) return;
+    try { await api('end', {}); pollLobby(); } catch (e) { $('paused-err').textContent = e.message; }
+  };
+}
+
+function copyButton(btn, from) {
+  $(btn).onclick = async () => {
+    const text = $(from).textContent;
+    try { await navigator.clipboard.writeText(text); } catch {
+      const r = document.createRange(); r.selectNodeContents($(from));
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      try { document.execCommand('copy'); } catch { /* selected for the user at least */ }
+    }
+    $(btn).textContent = 'Copied'; setTimeout(() => { $(btn).textContent = 'Copy'; }, 1500);
+  };
+}
+
+// ================================================================== the home page
+async function home() {
+  show('lobby'); screen('home');
+  $('new-table').onclick = async () => {
+    $('new-err').textContent = '';
+    try {
+      const r = await api('/api/new', {});
+      location.href = `/t/${encodeURIComponent(r.table)}#host=${encodeURIComponent(r.host_key)}`;
+    } catch (e) { $('new-err').textContent = e.message; }
+  };
+  try {
+    const I = await api('/api/info');
+    const f = I.free;
+    $('free-note').innerHTML = (f.models.length
+      ? (f.open ? `Free games use <b>${f.models.map(esc).join(', ')}</b> for the AI players, paid by Clocktower Bench ($${f.left_today.toFixed(0)} of today's $${f.daily_cap} left). `
+        : 'Today\'s free AI budget is used up (it resets at midnight UTC). ') : '')
+      + 'Practice bots are always free, and a host can bring an Anthropic or OpenAI key to play any model.'
+      + (I.games >= I.max_games ? ' <b>Every game slot is busy right now.</b>' : '');
+  } catch { /* the note is optional */ }
 }
 
 // ================================================================== the table
@@ -188,10 +259,11 @@ function enterTable() {
 async function pollState() {
   clearTimeout(tableTimer);
   let S;
+  const asked = T.since || 0;
   try {
-    S = await api('/api/state?since=' + (T.since || 0));
+    S = await api('state?since=' + asked);
   } catch (e) {
-    if (/Unknown player/.test(e.message)) { token = null; store.set('ct.token', null); return pollLobby(); }
+    if (/Unknown player/.test(e.message) || e.status === 404) { if (e.status !== 404) setToken(null); return pollLobby(); }
     tableTimer = setTimeout(pollState, 2000);
     return;
   }
@@ -199,7 +271,12 @@ async function pollState() {
     if (S.status === 'playing') { tableTimer = setTimeout(pollState, 1000); return; }
     return pollLobby();
   }
-  if (S.game !== T.game) resetTable(S.game);
+  if (S.game !== T.game || (T.run != null && S.run !== T.run)) {  // a new game, or the server restarted and
+    resetTable(S.game);                                            // the game replays from its last dusk
+    T.run = S.run;
+    if (asked) { tableTimer = setTimeout(pollState, 0); return; }  // fetch it all again from the start
+  }
+  T.run = S.run;
   T.since = S.next;
   T.players = S.players; T.me = S.me; T.over = S.over; T.reveal = S.reveal; T.spent = S.spent; T.host = S.host;
   const feed = $('feed'), stick = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 160;
@@ -215,7 +292,7 @@ async function pollState() {
   else tickDock();
   if (S.pending && T.sent !== S.pending.turn && T.alertedTurn !== S.pending.turn) { T.alertedTurn = S.pending.turn; alertTurn(); }
   if (!S.pending || T.sent === S.pending.turn) document.title = 'Clocktower';
-  renderBar(); renderTown();
+  renderBar(); renderTown(); renderBanner();
   if (S.over && S.reveal && !T.revealShown) { T.revealShown = true; renderReveal(); }
   tableTimer = setTimeout(pollState, S.over ? 3000 : 900);
 }
@@ -348,12 +425,27 @@ function renderBar() {
   $('me-token').textContent = me.seat[0];
   $('me-token').className = 'mini-token ' + (me.evil ? 'evil' : 'good') + (me.alive ? '' : ' dead');
   $('me-name').textContent = me.seat;
-  $('me-char').textContent = me.character + (me.alive ? '' : ' · dead');
+  $('me-char').textContent = me.character + (me.evil ? ' · evil' : ' · good') + (me.alive ? '' : ' · dead');
   $('me-char').className = me.evil ? 'evil' : 'good';
   const [ph, sub] = phaseText();
   const short = innerWidth < 900 ? sub.replace(/private time (\d+) of (\d+)/, 'whisper $1/$2').replace(/town square (\d+) of (\d+)/, 'square $1/$2').replace('the town sleeps', '') : sub;
   $('phase-mini').innerHTML = `<b>${esc(ph)}</b>${short ? ' · ' + esc(short) : ''}`;
   document.body.classList.toggle('night', T.stage === 'night');
+}
+
+function renderBanner() {
+  const me = T.me, b = $('role-banner');
+  if (!me || T.over || store.get(`ct.seen.${T.game}`)) { b.hidden = true; return; }
+  if (!b.hidden && b.dataset.k === me.character) return;
+  b.dataset.k = me.character;
+  const team = me.evil ? 'evil' : 'good';
+  b.className = team;
+  b.innerHTML = `<span class="token ${team}"><span class="role">${esc(me.character)}</span></span>
+    <div><b>You are ${esc(me.seat)}, the ${esc(me.character)}</b> <span class="team">${team} team</span>
+    <p>${esc(me.ability)}</p><p class="fine">${me.evil ? 'Evil wins when only two players are left alive. Keep your team hidden.' : 'Good wins by executing the Demon. Find it.'}
+    Tap your name at the top any time to see this again.</p></div><button class="ghost small" id="banner-ok">Got it</button>`;
+  b.hidden = false;
+  $('banner-ok').onclick = () => { store.set(`ct.seen.${T.game}`, '1'); b.hidden = true; };
 }
 
 // ---------------------------------------------------------------- the chronicle
@@ -640,7 +732,7 @@ async function submit(pass, vote) {
   document.title = 'Clocktower';
   renderDock(); renderTown();
   try {
-    await api('/api/act', { turn: p.turn, action: a });
+    await api('act', { turn: p.turn, action: a });
   } catch (e) {
     if (T.pending && T.pending.turn === p.turn) { T.sent = null; f.err = e.message; renderDock(); }
   }
@@ -695,11 +787,11 @@ async function openSheet(kind) {
     const eg = $('end-game');
     if (eg) eg.onclick = async () => {
       if (!confirm('End the game for everyone?')) return;
-      try { await api('/api/end', {}); closeSheet(); } catch (e) { alert(e.message); }
+      try { await api('end', {}); closeSheet(); } catch (e) { alert(e.message); }
     };
   } else if (kind === 'script') {
     $('sheet-title').textContent = 'Trouble Brewing';
-    rules = rules || await api('/api/rules');
+    rules = rules || await api('rules');
     const n = T.players.length || 10, [tf, os, mn] = SETUPS[n] || SETUPS[10];
     const group = (k, title) => `<h4>${title}</h4>` + rules.characters.filter((c) => c.kind === k).map((c) => `<div class="char ${c.kind}${me && c.name === me.character ? ' mine' : ''}">
       <span class="mini-token ${c.kind === 'Minion' || c.kind === 'Demon' ? 'evil' : 'good'}">${esc(c.name[0])}</span><div><b>${esc(c.name)}</b><span>${esc(c.ability)}</span></div></div>`).join('');
@@ -707,11 +799,12 @@ async function openSheet(kind) {
       + group('Townsfolk', 'Townsfolk · good') + group('Outsider', 'Outsiders · good') + group('Minion', 'Minions · evil') + group('Demon', 'Demon · evil');
   } else if (kind === 'rules') {
     $('sheet-title').textContent = 'How this table works';
-    rules = rules || await api('/api/rules');
+    rules = rules || await api('rules');
     const parts = rules.text.split(/\n(?=[A-Z][A-Z ]+\n)/);
     const keep = parts.filter((s) => !/^(CHARACTERS|YOUR RESPONSE)\n/.test(s));
     body.innerHTML = `<div class="rules"><p class="note">This is, word for word, what every AI player at this table was told (its system prompt), minus the characters (see the book) and the reply format. You have the same moves: one whisper per private-time turn, speech in the town square, nominations, votes and night choices, under the same word limits. Like the AIs, you can't see who is waiting on whom.</p>`
-      + keep.map((s) => { const [hd, ...rest] = s.split('\n'); return /^[A-Z ]+$/.test(hd) ? `<h4>${esc(hd.toLowerCase())}</h4><p>${esc(rest.join('\n'))}</p>` : `<p>${esc(s)}</p>`; }).join('') + '</div>';
+      + keep.map((s) => { const [hd, ...rest] = s.split('\n'); return /^[A-Z ]+$/.test(hd) ? `<h4>${esc(hd.toLowerCase())}</h4><p>${esc(rest.join('\n'))}</p>` : `<p>${esc(s)}</p>`; }).join('')
+      + '<p class="fine">How the AI models rank, and their games against each other: <a href="https://clocktowerbench.com" target="_blank" rel="noopener">clocktowerbench.com</a>.</p></div>';
   } else if (kind === 'notes') {
     $('sheet-title').textContent = 'Your notes';
     const key = `ct.notes.${T.game}.${me.seat}`;
@@ -734,25 +827,48 @@ function renderReveal() {
       const thought = s.shown ? `<small>thought they were the ${esc(s.shown)}</small>` : '';
       const model = (models[(s.model || '').split('@')[0]] || s.model || '').replace(/ \(.*\)$/, '');
       const by = s.player ? `<small class="human">${esc(s.player)}</small>` : `<small>${esc(model)}</small>`;
+      const rd = R.reads && R.reads[s.name] && R.reads[s.name].evil != null ? `<small class="read">AIs: ${Math.round(R.reads[s.name].evil * 100)}% evil</small>` : '';
       return `<div class="rv-seat${s.evil ? ' evil' : ''}${s.alive ? '' : ' dead'}${s.name === me.seat ? ' you' : ''}" style="animation-delay:${i * 60}ms">
-        <span class="token ${s.evil ? 'evil' : 'good'}"><span class="role">${esc(s.character)}</span></span><b>${esc(s.name)}${s.name === me.seat ? ' (you)' : ''}</b>${was}${thought}${by}</div>`;
+        <span class="token ${s.evil ? 'evil' : 'good'}"><span class="role">${esc(s.character)}</span></span><b>${esc(s.name)}${s.name === me.seat ? ' (you)' : ''}</b>${was}${thought}${by}${rd}</div>`;
     }).join('')}</div>
     <p class="fine">Demon bluffs: ${(R.bluffs || []).map(esc).join(', ')}${R.red_herring ? ` · Fortune Teller's red herring: ${esc(R.red_herring)}` : ''}</p>
+    ${readsHTML(R)}
     <div class="rv-actions"><button class="primary" id="rv-read">Read every AI's reasoning</button><button class="ghost" id="rv-close">Back to the table</button>
-    <button class="ghost" id="rv-lobby">Back to the lobby</button></div></div>`;
+    <button class="ghost" id="rv-lobby">Back to the lobby</button></div>
+    <p class="fine"><a href="https://clocktowerbench.com" target="_blank" rel="noopener">How the models rank: clocktowerbench.com</a></p></div>`;
   box.hidden = false;
-  $('rv-read').onclick = () => window.open('/api/transcript?token=' + encodeURIComponent(token), '_blank');
+  $('rv-read').onclick = () => window.open(`/api/t/${TID}/transcript?token=${encodeURIComponent(token)}`, '_blank', 'noopener');
   $('rv-close').onclick = () => { box.hidden = true; };
   $('rv-lobby').onclick = async () => {
-    try { await api('/api/reset', {}); } catch { /* not the host: just go back */ }
+    try { await api('reset', {}); } catch { /* not the host: just go back */ }
     box.hidden = true; clearTimeout(tableTimer); T.game = null; pollLobby();
   };
+}
+
+function readsHTML(R) {
+  const reads = R.reads || {}, me = T.me && T.me.seat;
+  const mine = reads[me];
+  if (!Object.keys(reads).length) return '';
+  const pct = (x) => (x == null ? '?' : `${Math.round(x * 100)}%`);
+  let h = '<div class="reads"><h3>What the AIs believed</h3><p class="fine">From each good AI player\'s last private survey (asked outside the game; nobody saw it).</p>';
+  if (mine) {
+    h += `<table><tr><th>AI player</th><th>You evil</th><th>You the Demon</th><th>Their guess at your character</th></tr>${mine.by.map((b) => {
+      const s = R.seats.find((x) => x.name === b.seat) || {};
+      const model = (models[(s.model || '').split('@')[0]] || s.model || '').replace(/ \(.*\)$/, '');
+      return `<tr><td>${esc(b.seat)} <small>${esc(model)}</small></td><td>${pct(b.evil)}</td><td>${pct(b.demon)}</td><td>${esc(b.character || '')}</td></tr>`;
+    }).join('')}</table>`;
+  }
+  const others = Object.entries(reads).filter(([k]) => k !== me);
+  if (others.length) h += `<p class="fine">${others.map(([k, v]) => `${esc(k)}: ${pct(v.evil)} evil on average`).join(' · ')}</p>`;
+  return h + '</div>';
 }
 
 // ---------------------------------------------------------------- boot
 function boot() {
   const m = location.hash.match(/host=([\w-]+)/);
   if (m) hostKey = m[1];
+  const mine = location.hash.match(/me=([\w-]+)/);
+  if (mine && TID) { setToken(mine[1]); history.replaceState(null, '', location.pathname); }
   wireLobby();
   $('town-btn').innerHTML = ICON.town;
   document.querySelector('[data-sheet="script"]').innerHTML = ICON.book;
@@ -772,6 +888,7 @@ function boot() {
   window.addEventListener('resize', () => { if (!$('table').hidden) renderTown(); setDockHeight(); });
   resetTable(null);
   renderFilters();
+  if (!TID) return home();
   pollLobby();
 }
 boot();
