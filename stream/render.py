@@ -77,7 +77,7 @@ def draw_words(d, x, y, lines, font, lh, k=None, on=C["ink"], off=C["dim"]):
 
 # ---------------------------------------------------------------- backgrounds
 @lru_cache(None)
-def background(nq):
+def background(nq, plain=False):
     """nq in 0..8: 0 = day (warm candle glow), 8 = night (cold, starry)."""
     k = nq / 8
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
@@ -94,11 +94,12 @@ def background(nq):
         rnd = random.Random(7); st = Image.new("RGBA", (W, H), (0, 0, 0, 0)); sd = ImageDraw.Draw(st)
         for _ in range(140):
             x, y = rnd.uniform(0, W), rnd.uniform(0, H * 0.9)
-            if math.hypot(x - CX, y - CY) < R + 120 or x > PX - 40 or y < 150: continue
+            if (not plain and (math.hypot(x - CX, y - CY) < R + 120 or x > PX - 40)) or y < 150: continue
             a = int(rnd.uniform(40, 150) * k); s = rnd.choice([1, 1, 1.5, 2])
             sd.ellipse([x - s, y - s, x + s, y + s], fill=(220, 228, 255, a))
         im.paste(st, (0, 0), st)
     d = ImageDraw.Draw(im, "RGBA")
+    if plain: return im
     big = Image.new("RGBA", ((2 * R + 40) * 2, (2 * R + 40) * 2), (0, 0, 0, 0)); bd = ImageDraw.Draw(big)
     c = R + 20
     bd.ellipse([(c - R) * 2, (c - R) * 2, (c + R) * 2, (c + R) * 2], outline=(60, 70, 90, 120), width=4)
@@ -348,14 +349,15 @@ def legend_card():
 @lru_cache(8)
 def outcome_card(team, text, reason, evil_list):
     pad = 34; f = F(28, "Medium"); lines = wrap(reason, f, PW - 2 * pad)
-    h = 170 + 40 * len(lines) + 100
+    h = 170 + 40 * len(lines) + 40 + 34 * len(wrap("Evil team: " + evil_list, F(25, "SemiBold"), PW - 2 * pad)) + 30
     im = Image.new("RGBA", (PW, h), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     col = C["evil"] if team == "evil" else C["good"]
     d.rounded_rectangle([0, 0, PW - 1, h - 1], 20, fill=C["panel"] + (245,), outline=col, width=4)
     d.text((pad, 26), "GAME OVER", font=F(20, "Bold"), fill=C["muted"])
     d.text((pad, 58), text, font=F(64, "ExtraBold", True), fill=col)
     y = draw_words(d, pad, 150, lines, f, 40, on=C["ink"])
-    d.text((pad, y + 20), "Evil team: " + evil_list, font=F(25, "SemiBold"), fill=C["evil"])
+    ef = F(25, "SemiBold")
+    draw_words(d, pad, y + 20, wrap("Evil team: " + evil_list, ef, PW - 2 * pad), ef, 34, on=C["evil"])
     return im
 
 
@@ -488,8 +490,7 @@ def promo_card(board, games, variant, next_title, next_sub):
     """Between-games card: what this is, the leaderboard, the URL, and what's next."""
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(im, "RGBA")
     g = Image.new("RGBA", (W, H), (0, 0, 0, 0)); gd = ImageDraw.Draw(g)
-    gd.ellipse([180, 640, 520, 980], fill=(255, 170, 70, 55)); g = g.filter(ImageFilter.GaussianBlur(80)); im.alpha_composite(g)
-    tower(d, 350, 1080, 0.95, (30, 36, 50, 255))
+    gd.ellipse([60, 560, 700, 1080], fill=(255, 170, 70, 40)); g = g.filter(ImageFilter.GaussianBlur(80)); im.alpha_composite(g)
     x = 120
     d.text((x, 110), "CLOCKTOWER BENCH", font=F(30, "Bold"), fill=C["amber"])
     tf = F(64, "ExtraBold", True); y = 160
@@ -519,9 +520,9 @@ def promo_card(board, games, variant, next_title, next_sub):
     d.ellipse([lx, yy + 6, lx + 14, yy + 20], fill=(214, 160, 120)); d.text((lx + 22, yy), "Anthropic", font=F(20, "Medium"), fill=C["muted"])
     d.ellipse([lx + 150, yy + 6, lx + 164, yy + 20], fill=(120, 190, 170)); d.text((lx + 172, yy), "OpenAI", font=F(20, "Medium"), fill=C["muted"])
     # up next
-    d.text((x, 840), "UP NEXT", font=F(24, "Bold"), fill=C["muted"])
-    d.text((x, 872), next_title, font=F(44, "ExtraBold", True), fill=C["ink"])
-    d.text((x, 930), next_sub, font=F(26, "Medium"), fill=C["muted"])
+    d.text((x, 700), "UP NEXT", font=F(24, "Bold"), fill=C["muted"])
+    d.text((x, 732), next_title, font=F(48, "ExtraBold", True), fill=C["ink"])
+    d.text((x, 796), next_sub, font=F(26, "Medium"), fill=C["muted"])
     return im
 
 
@@ -631,7 +632,8 @@ class Frame:
         nq = 8 if st.phase[1] else 0
         if st.phase[1] != st.phase[3]:
             k = fin(t, st.phase[2], 1.2); nq = round(8 * (k if st.phase[1] else 1 - k))
-        L.append((("bg", nq), lambda: background(nq), 0, 0, 1.0))
+        card = tl.get("kind") == "card"
+        L.append((("bg", nq, card), lambda: background(nq, card), 0, 0, 1.0))
         if tl.get("kind") == "card":
             if st.promo:
                 e, t0 = st.promo
@@ -675,7 +677,7 @@ class Frame:
             L.append((("ctr",) + ck, lambda ck=ck: center(*ck), CX - 220, CY - 190, ring_a))
             # panel
             if st.outcome:
-                oe = st.outcome[0]; ev = ", ".join(f"{s['name']} ({st.role.get(s['name'], (s['role'],))[0]})" for s in st.seats if s["evil"])
+                oe = st.outcome[0]; ev = "  ·  ".join(f"{s['name']}: {st.role.get(s['name'], (s['role'],))[0]}" for s in st.seats if s["evil"])
                 key = ("outcome", oe["text"])
                 L.append((key, lambda: outcome_card(oe["team"], oe["text"], oe["reason"], ev), PX, PY, q(fin(t, st.outcome[1], 0.5))))
             elif st.panel:

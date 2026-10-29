@@ -67,7 +67,7 @@ def process(who, text):
 
 def chunks(text, limit=62):
     """Caption chunks: sentences, long ones split at commas; short neighbours merged."""
-    parts = [p.strip() for p in re.findall(r"[^.!?:;]+[.!?:;]?", text) if p.strip()]
+    parts = [p.strip() for p in re.findall(r".+?(?:[.!?:;](?=\s|$)|$)", text) if p.strip()]
     out = []
     for p in parts:
         while len(p) > limit + 20:

@@ -116,6 +116,7 @@ class Builder:
         self.g = Game(rel)
         self.steps = []
         self.used = set()        # seqs already quoted
+        self.shown_texts = set()
         self.hl = highlights.get(self.g.rel)
         self.pins, self.pin_text = set(), {}
         for sub in (self.hl or {}).get("pins", []):
@@ -133,6 +134,7 @@ class Builder:
         self.steps.append({"clip": {"who": "N", "text": text, "show": caption or text}, "hold": hold, "ev": list(ev), "ev_end": list(ev_end)})
 
     def quote(self, who, shown, ev=(), ev_end=(), hold=0.45):
+        self.shown_texts.add(shown[:60])
         self.steps.append({"clip": {"who": who, "text": tts_text(shown), "show": shown}, "hold": hold, "ev": list(ev), "ev_end": list(ev_end)})
 
     def pause(self, secs, ev=()):
@@ -403,6 +405,8 @@ class Builder:
                     self.say(f"{p}, really the {self.role(p)}, claims to be the {c}.", ev=ev + [cl], hold=0.15)
                 elif g.char[p] == "Drunk":
                     self.say(f"{p} claims {c}, not knowing they are the Drunk.", ev=ev + [cl], hold=0.15)
+                elif self.dead_word(p, e):
+                    self.say(f"{p}, the dead {c}, speaks from the grave.", ev=ev + [cl], hold=0.15)
                 else:
                     self.say(f"{p}, the real {c}, goes public.", ev=ev + [cl], hold=0.15)
             else:
@@ -495,6 +499,7 @@ class Builder:
     def pinned(self, e):
         g = self.g; d = e["data"]; p = d.get("speaker") or d.get("from") or d.get("player")
         ex = excerpt(d["text"], 34, prefer=self.pin_re(e)); side = "evil" if g.evil[p] else "good"
+        if ex[:60] in self.shown_texts: return
         if e["kind"] == "thinking":
             self.say(f"{p}'s private thoughts.", ev=[{"k": "hl", "names": [p]}], hold=0.15)
             self.quote(p, ex, ev=[{"k": "panel", "type": "think", "who": p, "role": self.rolec(p, e), "side": side, "text": ex}])

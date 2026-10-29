@@ -46,6 +46,16 @@ PINS = {
     "v17/f3-opus55-v-sol61/game-02": ["keeping it quiet so I might actually get a night result", "Considering self-kill tonight",
                                       "Better: I'll report Harper as Imp", "I changed my intended pick after Blair was executed",
                                       "There's also the starpass possibility"],
+    "v17/f3b-astra-v-opus55/game-01-swap": ["I'm expendable", "I'll test Alex and push his execution after it fails",
+                                            "Don't treat your old FT NO as proof against a transfer",
+                                            "Harper died for pointing at you"],
+    "v17/f3b-astra-v-opus55/game-02": ["Kit, what's your Empath number?", "who told you my exact role?",
+                                       "I accidentally let slip", "I never asked Harper about neighbours"],
+    "v16/f2-fable5-v-gpt56sol/game-01": ["I promised Jules I'd check Kit + Alex", "in that same whisper I spelled out the whole logic",
+                                         "the alibi was dictated to the machine in advance", "the machine never bled"],
+    "v17/f3-fable5-v-gpt56sol/game-01": ["Locking N3 as Indigo + Casey = YES", "Don't use Casey", "sacrifice Ellis cleanly"],
+    "v16/f2-opus46-v-opus48/game-01": ["Drew's false read already helps us", "any outcome except ME being executed",
+                                       "Alex, Drew, and Jules are right, and I was wrong to drift"],
 }
 
 

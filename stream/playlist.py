@@ -50,7 +50,10 @@ def score(rel):
     f["saint"] = 4 if "saint" in reason else 0
     f["mayor"] = 3 if "mayor" in reason or ("three" in reason and g.winner == "good") else 0
     sus = g.suspicion()
-    dem = [(d, p, m.get(g.demon_at(10 ** 9 if p != "dawn" else 0))) for d, p, m in sus]
+    def at(d, p):
+        k = "dawn" if p == "dawn" else "nominations_open"
+        return next((e["seq"] for e in g.events if e["day"] == d and e["kind"] == k), 10 ** 9)
+    dem = [(d, p, m.get(g.demon_at(at(d, p)))) for d, p, m in sus]
     peak = max((v for _, _, v in dem if v is not None), default=0)
     lastv = next((v for _, _, v in reversed(dem) if v is not None), 0)
     f["escape"] = 3 if g.winner == "evil" and peak >= 0.5 else 0
@@ -58,7 +61,6 @@ def score(rel):
     slay = [e for e in g.events if e["kind"] == "slayer" and e["data"]["died"] and e["day"] <= 2]
     f["short"] = -5 if g.days <= 2 else 0
     f["slayer_dud"] = -4 if slay else 0
-    f["mixed"] = 0
     return {"rel": rel, "score": round(sum(f.values()), 2), "f": f, "evil": g.team_models(True), "good": g.team_models(False),
             "winner": g.winner, "days": g.days}
 
