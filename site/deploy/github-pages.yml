@@ -1,0 +1,37 @@
+# Build clocktowerbench.com and publish it to GitHub Pages. Copy to .github/workflows/site.yml to use.
+# Needs the repository secret HF_TOKEN while the dataset dwarkesh/clocktower-games is private.
+name: site
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['site/**', 'clocktower/export.py', 'docs/plans/f2-ratings.json']
+permissions: { contents: read, pages: write, id-token: write }
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -e . huggingface_hub
+      - name: Download game logs (events, probes, configs, results only)
+        env: { HF_TOKEN: '${{ secrets.HF_TOKEN }}', HF_HUB_DISABLE_XET: '1' }
+        run: |
+          python - <<'EOF'
+          from huggingface_hub import snapshot_download
+          pats = [f'{b}/game-*/{f}' for b in ('v16/f2-*', 'v17/f3*', 'v17/f4-*', 'v17/f5-*', 'v17/b1-*', 'v17/b2-*')
+                  for f in ('events.jsonl', 'probes.jsonl', 'config.json', 'result.json')]
+          snapshot_download('dwarkesh/clocktower-games', repo_type='dataset', local_dir='games', allow_patterns=pats)
+          EOF
+      - run: python -m clocktower.export --games games
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site/dist }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: '${{ steps.d.outputs.page_url }}' }
+    steps:
+      - id: d
+        uses: actions/deploy-pages@v4

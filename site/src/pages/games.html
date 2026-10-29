@@ -1,0 +1,27 @@
+<!-- title: Game library: Clocktower Bench | description: Replay every rated game between AI models in Blood on the Clocktower, plus the mixed-team games. Filter by model, side, winner, Minion and length. | nav: games -->
+<section class="block" style="padding-bottom:18px">
+  <div class="wrap">
+    <p class="eyebrow">Game library</p>
+    <h1>Every game, replayable</h1>
+    <p class="lede">Read any game day by day: what the town said, who was nominated, how everyone voted. Flip on <b>Reveal secrets</b> to see every role, every private whisper, and the Claude models' reasoning.</p>
+  </div>
+</section>
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <details id="filters-box" open><summary class="btn" style="margin-bottom:12px;list-style:none">Filter and sort</summary>
+    <div class="filters" id="filters">
+      <label>Any side<select id="f-model"><option value="">Any model</option></select></label>
+      <label>Good team<select id="f-good"><option value="">Any</option></select></label>
+      <label>Evil team<select id="f-evil"><option value="">Any</option></select></label>
+      <label>Winner<select id="f-winner"><option value="">Either</option><option value="good">Good won</option><option value="evil">Evil won</option></select></label>
+      <label>Minion in play<select id="f-minion"><option value="">Any</option><option>Poisoner</option><option>Spy</option><option>Scarlet Woman</option><option>Baron</option></select></label>
+      <label>Length<select id="f-days"><option value="">Any</option><option value="1-3">1–3 days</option><option value="4-5">4–5 days</option><option value="6-99">6+ days</option></select></label>
+      <label>Set<select id="f-group"><option value="">All games</option><option value="rated">Rated 2026 games</option><option value="mixed">Mixed teams</option><option value="unrated">Unrated (replayed)</option></select></label>
+      <label>Sort<select id="f-sort"><option value="batch">By batch</option><option value="long">Longest first</option><option value="short">Shortest first</option><option value="hidden">Best-hidden Demon</option></select></label>
+    </div></details>
+    <p class="count" id="count" aria-live="polite">Loading the library…</p>
+    <div class="games" id="games"></div>
+    <div class="more"><button class="btn" id="more" hidden>Show more</button></div>
+  </div>
+</section>
+<script src="assets/library.js"></script>

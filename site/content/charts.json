@@ -1,0 +1,9 @@
+{
+ "demon_belief": {
+  "note": "Good players' average chance on the real Demon, by day, before votes. Newest three models from each lab playing good (docs/charts/demon-belief.html).",
+  "series": [
+   {"lab": "OpenAI", "models": "GPT-5.6 Sol, GPT-6 Astra, GPT-6.1 Sol", "by_day": [0.15, 0.30, 0.38, 0.46]},
+   {"lab": "Anthropic", "models": "Fable 5, Fable 5.1, Opus 5.5", "by_day": [0.14, 0.17, 0.21, 0.26]}
+  ]
+ }
+}
