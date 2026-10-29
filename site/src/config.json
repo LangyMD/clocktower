@@ -1,0 +1,12 @@
+{
+  "domain": "clocktowerbench.com",
+  "youtubeVideoId": "",
+  "youtubeChannelId": "",
+  "playUrl": "",
+  "postUrl": "",
+  "githubUrl": "",
+  "datasetUrl": "https://huggingface.co/datasets/dwarkesh/clocktower-games",
+  "explainerVideo": "media/explainer-three-tricks.mp4",
+  "explainerFallback": "https://huggingface.co/datasets/dwarkesh/clocktower-games/resolve/main/media/explainer-three-tricks.mp4",
+  "gameDataBase": "data/games/"
+}

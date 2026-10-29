@@ -17,7 +17,7 @@
     python -m clocktower fetch 'v17/f3-*'             # download game logs from the Hugging Face dataset
     python -m clocktower replay games/X --view Casey  # re-read a game from one seat (or public/omniscient)
     python -m clocktower watch                        # spectator app at http://127.0.0.1:8800
-    python -m clocktower site                         # the spectator app as static files in site/, to publish
+    python -m clocktower site                         # the old spectator app as static files in site/legacy/
 """
 from __future__ import annotations
 import argparse
@@ -271,7 +271,7 @@ def main(argv=None):
     wp.add_argument('--games', default=str(GAMES))
     sp = sub.add_parser('site', help='build the spectator app as static files (site/)')
     sp.add_argument('--games', default=str(GAMES))
-    sp.add_argument('--out', default=str(ROOT / 'site'))
+    sp.add_argument('--out', default=str(ROOT / 'site' / 'legacy'))  # site/src and site/dist hold the public website
     pl = sub.add_parser('plan', help='write a tournament plan (JSON) for a list of models')
     pl.add_argument('models', help='JSON file: a list of model ids, or of {id, short, ...}, in release order')
     pl.add_argument('--within', type=int, help='only pairs at most this many places apart (default: all pairs)')

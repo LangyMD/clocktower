@@ -1,0 +1,44 @@
+<!-- title: Play: Clocktower Bench | description: Sit at the table with your friends and AI players. Secret roles, private whispers, the town square and the vote, on your phone. | nav: play -->
+<section class="hero" style="padding-bottom:20px">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Play</p>
+      <h1>Take a seat at the table</h1>
+      <p class="lede">You and your friends join a game from your own phones, alongside AI players. Nobody knows who is human and who is a model, or who is on which side. The only way to talk is the way the AIs talk: private whispers and the town square.</p>
+      <div class="btns">
+        <a class="btn primary" data-config-href="playUrl" href="#">Open the table</a>
+        <a class="btn" href="about.html">Learn the rules first</a>
+      </div>
+    </div>
+    <svg class="tower" viewBox="0 0 320 300" aria-hidden="true" fill="none" stroke="currentColor">
+      <circle cx="160" cy="150" r="112" stroke-width="1" opacity=".45" stroke-dasharray="2 6"/>
+      <g stroke-width="1.5">
+        <circle cx="160" cy="38" r="15"/><circle cx="257" cy="94" r="15"/><circle cx="257" cy="206" r="15"/><circle cx="160" cy="262" r="15"/><circle cx="63" cy="206" r="15"/><circle cx="63" cy="94" r="15"/>
+      </g>
+      <circle cx="257" cy="94" r="15" fill="currentColor" opacity=".25" stroke="none"/><circle cx="63" cy="206" r="15" fill="currentColor" opacity=".25" stroke="none"/>
+      <path d="M160 128 a22 22 0 1 0 0.1 0z" stroke-width="1.4"/><path d="M160 136 v14 l9 6" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M78 98 Q160 70 242 98" stroke-width="1" opacity=".7" stroke-dasharray="4 4"/>
+    </svg>
+  </div>
+</section>
+
+<section class="block" style="padding-top:10px">
+  <div class="wrap">
+    <div class="steps">
+      <div><h3>Gather your table</h3><p>The host opens the table and shares a link. Everyone joins from their own device, picks a name, and privately says whether they'd rather be good, evil, or either. The host picks how many seats (5 to 15) and which AI models fill the rest.</p></div>
+      <div><h3>Secret roles</h3><p>Each person gets exactly what an AI seat gets: the same role card, the same night clues, the same prompts and the same word limits. Your allegiance is secret from everyone, including the host. Humans and AIs look the same at the table.</p></div>
+      <div><h3>Talk only in the game</h3><p>Six rounds of private whispers a day (one conversation at a time), three rounds in the town square, then nominations and votes. When the game ends, the Grimoire is revealed: who played each seat, and every AI's reasoning.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap narrow">
+    <h2>What it costs</h2>
+    <p>The hosted table gives everyone a <b>free daily allowance</b> of games with a fast, inexpensive model in the AI seats, with a daily cap across the site so it stays free. Want the strongest models? <b>Bring your own API key</b> (Anthropic or OpenAI), used only for your own table's AI seats. The table's lobby shows the current allowance and how keys are handled.</p>
+    <p>Practice bots that play at random are always free, and are a good way to learn the rhythm of a day.</p>
+    <div class="note"><b>Tips for your first game.</b> Whisper early and to different people; a claim you heard privately is evidence later. Write down who told you what. On the last days, count: with three alive and no execution, a Mayor wins; with two alive, evil wins. Dead players still talk and get one ghost vote, so use it well.</div>
+    <h2 style="margin-top:1.4em">Host it yourself</h2>
+    <p>The table is part of the open-source harness: <code>python -m clocktower play</code> opens it on your machine (friends on the same Wi-Fi join directly; anyone else through a tunnel). API keys stay on the host's machine. See <a href="run.html">Run your own</a>.</p>
+  </div>
+</section>

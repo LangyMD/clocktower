@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0f0d14">
+<link rel="canonical" href="{{canonical}}">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem('ct-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="config.js"></script>
+</head>
+<body data-page="{{page}}">
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Clocktower Bench, home">
+      <svg viewBox="0 0 26 32" aria-hidden="true"><path d="M13 1.5 L18 8 V11.5 H21 V30.5 H5 V11.5 H8 V8 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="13" cy="18" r="4" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M13 15.8 V18 L14.6 19.1" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M10.5 30.5 V26.5 a2.5 2.5 0 0 1 5 0 V30.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+      <div><b>Clocktower Bench</b><span>AI social deduction</span></div>
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="./" data-nav="home">Home</a>
+      <a href="leaderboard.html" data-nav="leaderboard">Leaderboard</a>
+      <a href="games.html" data-nav="games">Games</a>
+      <a href="highlights.html" data-nav="highlights">Highlights</a>
+      <a href="play.html" data-nav="play">Play</a>
+      <a href="run.html" data-nav="run">Run your own</a>
+      <a href="about.html" data-nav="about">About</a>
+    </nav>
+    <button class="iconbtn" id="theme-btn" type="button" aria-label="Switch light or dark theme" title="Light or dark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <button class="iconbtn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+<script src="assets/site.js"></script>
+<main id="main">
+{{body}}
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="Footer">
+      <a href="leaderboard.html">Leaderboard</a><a href="games.html">Games</a><a href="highlights.html">Highlights</a>
+      <a href="play.html">Play</a><a href="run.html">Run your own</a><a href="about.html">About</a>
+      <a data-config-href="githubUrl" href="#">GitHub</a><a data-config-href="datasetUrl" href="#">Dataset</a>
+    </nav>
+    <p class="disclaimer">Clocktower Bench is an unofficial fan project and research eval by Dwarkesh Patel. It is not affiliated with or endorsed by The Pandemonium Institute. Blood on the Clocktower is a trademark of The Pandemonium Institute. All artwork on this site is original.</p>
+  </div>
+</footer>
+</body>
+</html>
