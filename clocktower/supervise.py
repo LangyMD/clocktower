@@ -18,7 +18,7 @@ import os
 import signal
 import subprocess
 import time
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 

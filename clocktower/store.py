@@ -1,8 +1,8 @@
-"""Game logs live in a private Hugging Face dataset, not in git: `python -m clocktower fetch v9/e1-*`.
+"""Game logs live in a Hugging Face dataset (dwarkesh/clocktower-games), not in git: `python -m clocktower fetch v9/e1-*`.
 
-GitHub keeps the code and each game's config.json and result.json (enough to recompute win rates and
-ratings); the dataset keeps everything (transcripts, events, calls, probes, conversations). Upload a
-finished batch with the hf CLI (needs HF_TOKEN):
+GitHub keeps the code and each game's config.json and result.json (enough to recompute win rates;
+ratings also need events.jsonl); the dataset keeps everything (transcripts, events, calls, probes, conversations). Upload a
+finished batch with the hf CLI (needs HF_TOKEN with write access):
 
     hf upload dwarkesh/clocktower-games games/v9/e1-NAME v9/e1-NAME --repo-type dataset
 """

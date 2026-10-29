@@ -479,7 +479,6 @@ class ScriptedStorytellerTests(unittest.TestCase):
 class WholeGameTests(unittest.TestCase):
     def test_random_games_finish(self):
         for seed in range(40):
-            log = []
             rng = random.Random(seed)
             g = Game({n: RandomSeat(n, random.Random(rng.random()), NAMES) for n in NAMES},
                      ScriptedStoryteller(random.Random(seed)), seed=seed)

@@ -1,6 +1,7 @@
-"""Command line: run AI games, play as a human, simulate, or summarise.
+"""Command line: run AI games, play as a human, simulate, or summarise (`python -m clocktower --help`).
 
-    python -m clocktower run                          # nine Claude players, scripted Storyteller
+    python -m clocktower run                          # one game, Claude Opus 5.5 in every seat, scripted Storyteller
+    python -m clocktower run --model random           # random practice bots, no API calls
     python -m clocktower run --days 1                 # stop after the first day (smoke test)
     python -m clocktower run --games 6 --parallel 3   # a batch, three games at a time
     python -m clocktower play                         # you and friends vs the AIs, in the browser
@@ -11,7 +12,9 @@
     python -m clocktower tournament P.json --resume-stopped  # relaunch a plan's stopped games
     python -m clocktower ratings [--lab-trends]       # the 2026 Bradley-Terry fit and its pages
     python -m clocktower allocate ...                 # where extra games go (clocktower/allocate.py)
-    python -m clocktower mixed games/v17/b1-          # mixed-team pilot analysis
+    python -m clocktower mixed games/v17/b1-          # mixed-team analysis
+    python -m clocktower memory-check MODEL           # does a new model see its earlier reasoning? (llm.MODELS)
+    python -m clocktower fetch 'v17/f3-*'             # download game logs from the Hugging Face dataset
     python -m clocktower replay games/X --view Casey  # re-read a game from one seat (or public/omniscient)
     python -m clocktower watch                        # spectator app at http://127.0.0.1:8800
     python -m clocktower site                         # the spectator app as static files in site/, to publish
@@ -249,23 +252,24 @@ def parse_only(spec):
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
-    if argv and argv[0] in ('allocate', 'mixed'):  # commands with their own argument parsers
+    if argv and argv[0] in ('allocate', 'mixed', 'memory-check'):  # commands with their own argument parsers
         from importlib import import_module
-        return import_module(f'.{argv[0]}', __package__).main(argv[1:])
-    ap = argparse.ArgumentParser(prog='clocktower')
-    sub = ap.add_subparsers(dest='command', required=True)
-    rp = sub.add_parser('report')
+        return import_module(f'.{argv[0].replace("-", "_")}', __package__).main(argv[1:])
+    ap = argparse.ArgumentParser(prog='clocktower', description='Blood on the Clocktower (Trouble Brewing) played by '
+                                 'language models: run games and experiments, rate models, watch or play.')
+    sub = ap.add_subparsers(dest='command', required=True, metavar='COMMAND')
+    rp = sub.add_parser('report', help='summarise finished games (win rates, days, cost)')
     rp.add_argument('paths', nargs='+')
-    an = sub.add_parser('analyze')
+    an = sub.add_parser('analyze', help='win rates, voting and belief-probe scores by model pairing')
     an.add_argument('paths', nargs='+')
     sv = sub.add_parser('supervise', help='watch running batches; pause them on errors, lost turns or overspend')
     sv.add_argument('roots', nargs='+', help='batch directory prefixes, e.g. games/v8/t2')
     sv.add_argument('--max-spend', type=float, help='pause if these games cost more than this (USD)')
     sv.add_argument('--review-after', type=float, help='exit (without pausing) after this many minutes')
-    wp = sub.add_parser('watch')
+    wp = sub.add_parser('watch', help='spectator app for the games under games/ (http://127.0.0.1:8800)')
     wp.add_argument('--port', type=int, default=8800)
     wp.add_argument('--games', default=str(GAMES))
-    sp = sub.add_parser('site')
+    sp = sub.add_parser('site', help='build the spectator app as static files (site/)')
     sp.add_argument('--games', default=str(GAMES))
     sp.add_argument('--out', default=str(ROOT / 'site'))
     pl = sub.add_parser('plan', help='write a tournament plan (JSON) for a list of models')
@@ -289,16 +293,20 @@ def main(argv=None):
     ra.add_argument('--no-page', dest='page', action='store_false', help="don't rebuild the HTML pages")
     ra.add_argument('--lab-trends', action='store_true', help='also per-lab gains (docs/charts/lab-trends.json)')
     for name, text in (('allocate', 'where extra games go, by a fixed rule (see clocktower/allocate.py)'),
-                       ('mixed', 'mixed-team pilot analysis (clocktower/mixed.py)')):
+                       ('mixed', 'mixed-team analysis (clocktower/mixed.py)'),
+                       ('memory-check', 'does a model see its own earlier reasoning next turn? (for llm.MODELS)')):
         sub.add_parser(name, help=text)  # dispatched above, before parsing
     fp = sub.add_parser('fetch', help='download game logs from the Hugging Face dataset (e.g. v9/e1-*)')
     fp.add_argument('patterns', nargs='+')
-    rv = sub.add_parser('replay')
+    rv = sub.add_parser('replay', help='re-read a game from one seat, the public view or omniscient')
     rv.add_argument('path')
     rv.add_argument('--view', default='omniscient', help='a player name, public, or omniscient')
     rv.add_argument('--thinking', action='store_true', help='include thinking (omniscient or that player)')
+    helps = {'run': 'play one game or a batch with AI seats (the eval)',
+             'play': 'host a table in the browser: you and friends vs AI seats',
+             'sim': 'random players, no API calls (an engine check)'}
     for name in ('run', 'play', 'sim'):
-        p = sub.add_parser(name)
+        p = sub.add_parser(name, help=helps[name])
         p.add_argument('--seed', type=int)
         p.add_argument('--private-beats', type=int, default=6, help='whisper-only beats each day')
         p.add_argument('--minions', help='comma-separated guaranteed Minion for game 1, 2, ... (tournament passes a balanced choice; '

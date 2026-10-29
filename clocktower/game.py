@@ -20,7 +20,7 @@ from pathlib import Path
 
 from .agents import Request, ScriptedStoryteller
 from .characters import FIRST_NIGHT, GOOD, MINIONS, OTHER_NIGHTS, TOWNSFOLK, card
-from .llm import BudgetExceeded, Reply, SeatFailed
+from .llm import BudgetExceeded, SeatFailed
 
 
 class Halted(RuntimeError):

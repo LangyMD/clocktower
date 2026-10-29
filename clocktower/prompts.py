@@ -102,8 +102,6 @@ DAWN_QUIET = [
 ]
 
 
-PLAYER_SYSTEM = player_system(9)
-
 
 def dawn_narration(r, deaths):
     """A line of dawn narration for the scripted Storyteller (it never hints at characters or causes)."""

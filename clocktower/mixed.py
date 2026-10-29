@@ -172,6 +172,9 @@ def rate(gs, ids, boot=500, seed=0):
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
+    if '-h' in argv or '--help' in argv:
+        print(__doc__)
+        return None
     if '--rate' in argv:
         boot = int(argv[argv.index('--boot') + 1]) if '--boot' in argv else 500
         out = argv[argv.index('--out') + 1] if '--out' in argv else None

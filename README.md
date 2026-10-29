@@ -1,100 +1,190 @@
 # Clocktower
 
-An eval in which language models play Blood on the Clocktower (Trouble Brewing) against each other,
-with a scripted Storyteller. One model plays the good team and another the evil team, so every game
-pits one model's detection (finding the Demon) against another's deception (hiding it) over a whole
-game of claims, whispers, bluffs and votes. It measures whether a model can hold coherent state and
-a consistent story for hours of play.
+An eval in which language models play [Blood on the Clocktower](https://bloodontheclocktower.com/) (the Trouble
+Brewing script) against each other, with a scripted Storyteller. One model plays every good seat and another every
+evil seat, so each game pits one model's **detection** (finding the Demon) against another's **deception** (hiding
+it) across a whole game of claims, private whispers, bluffs and votes: 10–12 players, several hours of play, one
+continuous conversation per seat. A single Bradley–Terry fit turns the results into one rating per model.
 
-- **The rules of the eval:** [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (v17). Why each rule is what it
-  is: [`docs/protocol-history.md`](docs/protocol-history.md).
-- **Experiments so far and planned:** [`CLAUDE.md`](CLAUDE.md) (also the handbook for agent sessions).
-- **Game logs:** the private Hugging Face dataset `dwarkesh/clocktower-games` (every transcript, event,
-  call and conversation). Git keeps each game's `config.json` and `result.json`.
+![Ratings of the 11 models released in 2026, by release date, with 90% intervals](docs/charts/clocktower-final-ratings.png)
 
-## Running
+Website: [clocktowerbench.com](https://clocktowerbench.com) · Play against the models in your browser:
+[clocktower-ogul.onrender.com](https://clocktower-ogul.onrender.com) · Rules of the eval:
+[`docs/PROTOCOL.md`](docs/PROTOCOL.md) (v17, frozen)
+
+> Unofficial fan project, not affiliated with or endorsed by The Pandemonium Institute. Blood on the Clocktower
+> is a trademark of The Pandemonium Institute; character names are used here for research. Buy the game!
+
+## Results
+
+386 games between the 11 models released in 2026 (protocol v16/v17; Elo scale, the 11 models average 1500;
+90% intervals from a bootstrap over side-swapped pairs):
+
+| Model | Lab | Released | Rating | 90% interval | Detection (good) | Deception (evil) |
+|---|---|---|---|---|---|---|
+| GPT-6 Astra | OpenAI | Sep 2026 | **1859** | 1779–1983 | 1940 | 1806 |
+| GPT-6.1 Sol | OpenAI | Sep 2026 | **1734** | 1684–1815 | 1793 | 1688 |
+| Claude Fable 5.1 | Anthropic | Sep 2026 | **1595** | 1537–1668 | 1582 | 1588 |
+| GPT-5.6 Sol | OpenAI | Jul 2026 | **1591** | 1543–1647 | 1666 | 1519 |
+| Claude Opus 5.5 | Anthropic | Sep 2026 | **1549** | 1489–1612 | 1500 | 1585 |
+| Claude Fable 5 | Anthropic | Jun 2026 | **1544** | 1454–1643 | 1438 | 1643 |
+| GPT-5.5 | OpenAI | Apr 2026 | **1482** | 1408–1551 | 1380 | 1560 |
+| Claude Opus 4.6 | Anthropic | Feb 2026 | **1432** | 1340–1517 | 1489 | 1338 |
+| GPT-5.4 | OpenAI | Mar 2026 | **1276** | 1193–1335 | 1309 | 1228 |
+| Claude Opus 4.7 | Anthropic | Apr 2026 | **1241** | 1126–1323 | 1266 | 1224 |
+| Claude Opus 4.8 | Anthropic | May 2026 | **1198** | 1076–1275 | 1136 | 1320 |
+
+- Models released in 2026 gain about **650 Elo a year** (90% CI 553–827); detection and deception rise together.
+- Evil wins 33% of games. Setup matters: a Spy or Baron game helps good (+65, +70), a Scarlet Woman game helps
+  evil (−66), relative to a Poisoner game.
+- **Why OpenAI's newer models win:** both labs' towns are level on day 1; from day 2 OpenAI towns keep updating while
+  Claude towns treat early results as settled and execute more good players.
+- **Mixed teams** (half Opus 5.5, half GPT-5.6 Sol) play a little below their members' average, and clearly worse
+  as evil: evil cover lasts only as long as its weakest seat.
+
+Data: [`docs/plans/f2-ratings.json`](docs/plans/f2-ratings.json). Reports: [`docs/findings/`](docs/findings/README.md).
+Every experiment and its cost: [`experiments/`](experiments/README.md). How the rules got here, version by version:
+[`docs/protocol-history.md`](docs/protocol-history.md).
+
+## Quick start (5 minutes)
 
 ```sh
-pip install -e .                       # Python 3.11+
-export ANTHROPIC_API_KEY=... OPENAI_API_KEY=... HF_TOKEN=...
-python -m unittest discover -s tests   # rules, Storyteller and engine tests (no API)
-python -m clocktower sim --games 200   # random players, no API
+git clone https://github.com/dwarkeshsp/clocktower && cd clocktower
+python -m venv .venv && . .venv/bin/activate    # Python 3.11+
+pip install -e '.[dev]'
+python -m unittest discover -s tests            # rules, Storyteller and engine tests; no API calls
 
-python -m clocktower run --good-model claude-opus-5-5 --evil-model gpt-6.1-sol --games 2 --swap --seed 1 --out games/v17/demo
-python -m clocktower run --good-model claude-opus-5-5,gpt-6.1-sol ...      # a mixed team (seats split evenly)
-python -m clocktower run ... --seat-model good:claude-opus-5-5:1          # upgrade one good seat
-python -m clocktower run ... --seat-model Imp:gpt-6-astra                 # a different model plays the Imp
+# A free game: every seat is a random practice bot (no API key needed)
+python -m clocktower run --model random --seed 1 --out games/demo/random
+python -m clocktower replay games/demo/random   # read it, with every seat's information
 
-python -m clocktower plan experiments/timeline-models.json --within 10 --pairs 1 --seed 120000 --out games/v17/f1 > experiments/f1.json
-python -m clocktower tournament experiments/f1.json      # every matchup at once, resumable (see below)
-python -m clocktower analyze games/v17/f1-*/game-* # win rates, probes, detection and deception ratings
-python -m clocktower ratings --lab-trends          # the 2026 fit: docs/plans/f2-ratings.json and the pages
-python -m clocktower allocate experiments/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f[3-5]*' \
-    --exclude 'v16/f2-*opus48*' --target 100 --seed 180000 --out games/v17/f6 --budget 25000 > experiments/f6.json   # where extra games go
-python -m clocktower fetch v9/e1-*                 # download logs from the dataset
-python -m clocktower play                          # you and friends vs the AIs (see below)
-python -m clocktower watch                         # spectator app; `site` builds it as static files
-python -m clocktower replay games/X --view Casey --thinking
+# A real game with cheap models (about $2-5): GPT-6.1 Sol plays good, Claude Opus 5.5 plays evil
+export ANTHROPIC_API_KEY=... OPENAI_API_KEY=...
+python -m clocktower run --good-model gpt-6.1-sol --evil-model claude-opus-5-5 --seed 1 --out games/demo/first
+python -m clocktower watch                       # spectator app at http://127.0.0.1:8800 (follows live games)
 ```
 
-### Controlling a running experiment
+A game directory holds `transcript.md` (an omniscient replay with every seat's thinking), `events.jsonl` (every
+event, with who could see it), `calls.jsonl` (every API call with tokens and cost), `probes.jsonl` (belief probes),
+`conversations/` (each seat's full API conversation), `config.json` and `result.json`. `replay DIR --view Casey`
+shows the game as one seat saw it (`--thinking` adds its reasoning). Spend is appended to `games/ledger.jsonl`, and
+`--budget` (default $1,000) caps it.
 
-- `tournament PLAN` runs one process per matchup, every game at once. Rerun the same command after a crash or
-  a machine restart: finished games are kept and unfinished ones continue from their last dusk (`checkpoint.pkl`).
-- One game: `touch <game>/STOP` halts it at its next turn (it keeps its last-dusk checkpoint);
-  `tournament PLAN --only MATCHUP/g03` (or `g03-swap`) reruns or resumes just that game. `--only MATCHUP` runs a whole matchup with its usual seeds.
-- `tournament PLAN --resume-stopped` relaunches, one process each, every game that stopped (a seat failed,
-  the budget ran out, or it was halted and its STOP file removed) and isn't already running.
-- Health: `clocktower.supervise.scan(['games/v17/NAME-'])`, then `report` and `alarms`: spend, lost and
-  capped turns, stopped games.
-- Minions: every game guarantees one Minion. `tournament` picks it per pair, balanced across the plan and
-  for each model; a matchup can force its own with `"args": ["--minions", "Spy,Baron"]` (one per pair) or
-  `"minions": [...]` (what `allocate` writes). A bare `run` picks by seed unless given `--minions`.
-- Spend: a plan's `budget` (or `run --budget`) caps the all-time ledger, read when each process starts.
+Keys: `ANTHROPIC_API_KEY` for Claude models, `OPENAI_API_KEY` for OpenAI models, `OPENROUTER_API_KEY` only for
+models no longer served by their lab (Opus 4.1, Sonnet 4), `HF_TOKEN` for the log dataset while it is private.
+`ANTHROPIC_WORKSPACE_ID` is optional (sent as the `anthropic-workspace-id` header if your organisation needs it).
 
-Each game directory holds `transcript.md` (omniscient replay with every seat's thinking), `events.jsonl`,
-`calls.jsonl` (every API call with tokens and cost), `probes.jsonl` (belief probes), `conversations/`,
-`config.json` and `result.json`. Spend is logged to `games/ledger.jsonl`, capped by `--budget`.
+## Running a matchup or a tournament
+
+```sh
+# One matchup: 2 seeds, each played twice with the sides swapped (so deal luck cancels), 10-12 players by seed
+python -m clocktower run --good-model claude-opus-5-5 --evil-model gpt-6.1-sol --games 2 --swap --seed 1 --out games/v17/demo
+python -m clocktower run --good-model claude-opus-5-5,gpt-6.1-sol ...   # a mixed team (seats split evenly)
+python -m clocktower run ... --seat-model good:claude-opus-5-5:1       # upgrade one good seat
+python -m clocktower run ... --seat-model Imp:gpt-6-astra              # a different model plays the Imp
+
+# A tournament: write a plan from a model list, then run every game at once
+python -m clocktower plan experiments/models-2026.json --within 3 --pairs 1 --seed 200000 --out games/v17/mine > experiments/mine.json
+python -m clocktower tournament experiments/mine.json --dry-run    # see the commands first
+python -m clocktower tournament experiments/mine.json              # resumable: rerun after a crash
+python -m clocktower analyze games/v17/mine-*/game-*                # win rates, probe scores, quick ratings
+```
+
+A plan is JSON: a list of matchups, each with `good`, `evil`, `pairs` and optionally `seed`, `args` (extra `run`
+flags), `good_effort`/`evil_effort`, `seat_models` or `minions`; a top-level `budget` caps all-time spend
+(`games/ledger.jsonl`). Every game has its own seed; a side-swapped pair shares one. `tournament` deals each pair's
+guaranteed Minion so the batch is balanced across Minions and models.
+
+Controlling a running batch:
+
+- `tournament PLAN` runs one process per matchup. Rerun the same command after a crash: finished games are kept and
+  unfinished ones continue from their last dusk (`checkpoint.pkl`).
+- `touch <game>/STOP` halts one game at its next turn; `tournament PLAN --only MATCHUP/g03` (or `g03-swap`) reruns or
+  resumes one game; `tournament PLAN --resume-stopped` relaunches every game that stopped (a seat failed, the budget
+  ran out, or it was halted).
+- Health: `python -m clocktower supervise games/v17/mine` or, from Python,
+  `clocktower.supervise.scan(['games/v17/mine-'])` then `report`/`alarms` (spend, lost and capped turns, stopped games).
+- `python -m clocktower sim --games 200` plays random bots with no API calls (a fast check of the engine).
+
+## How ratings are computed
+
+```sh
+python -m clocktower fetch 'v16/f2-*' 'v17/f3*' 'v17/f4-*' 'v17/f5-*'   # the 2026 games' logs (~2 GB)
+python -m clocktower ratings --no-page      # refit: rewrites docs/plans/f2-ratings.json (reproduces it exactly)
+python -m clocktower ratings --lab-trends   # also per-lab trends and the HTML pages
+```
+
+One Bradley–Terry model over every game: P(good wins) = logistic(r_good − r_evil + h + setup), where h is the
+good side's advantage and the setup terms are the Minions in play (vs a Poisoner game) and the table size. Each
+model gets one combined rating, plus a detection rating (as good) and a deception rating (as evil) from a split fit.
+Ratings are on the Elo scale, centred so the models in `experiments/models-2026.json` average 1500; 90% intervals
+come from 500 bootstrap resamples of side-swapped pairs (both games of a pair together). Code:
+[`clocktower/ratings.py`](clocktower/ratings.py). Where to spend extra games is decided by a rule fixed in advance
+(uncertainty per dollar, never which way results lean): `python -m clocktower allocate` ([`clocktower/allocate.py`](clocktower/allocate.py)).
+
+## Adding a model
+
+1. Add its price to `PRICES` in [`clocktower/llm.py`](clocktower/llm.py) (USD per million tokens; cache read/write
+   prices if they differ from the defaults).
+2. Add a `MODELS` entry if it differs from the default (adaptive thinking with an effort level for Claude; reasoning
+   carried across turns for OpenAI): `thinking: 'budget'` for older Claude models, `memory: 'replies'` if it cannot
+   see its earlier reasoning, `window` (context size, so long games are trimmed instead of failing), `max_output`,
+   and `can_disable_thinking: False` if it rejects `thinking: disabled` (its ceiling retries then run at low effort).
+3. Smoke test: `python -m clocktower run --model NEW --days 1 --players 10 --out games/smoke/NEW` and read the
+   transcript.
+4. Memory check: does it see its own earlier reasoning next turn? Ask it to think of a secret number on turn 1
+   (replying only "ok") and to reveal it on turn 2; run with the reasoning carried back and with it stripped
+   (`docs/findings/why-openai-wins/scripts/memory_check.py` is a template). Record the answer as `memory`.
+5. Add it to a model list in `experiments/` and plan games against rated models. Open a pull request with the
+   `llm.py` change and the smoke-test result.
+
+## The data
+
+Every game's full logs (transcripts, events, every API call, probes, conversations) are in the Hugging Face dataset
+[`dwarkesh/clocktower-games`](https://huggingface.co/datasets/dwarkesh/clocktower-games) (v1–v17, about 1,100
+finished games, plus `media/` for videos). `python -m clocktower fetch v17/b2-*` downloads matching game folders into
+`games/`. Git keeps only each game's `config.json` and `result.json`. If downloads fail with size errors, set
+`HF_HUB_DISABLE_XET=1`; fetch one batch at a time to avoid rate limits.
 
 ## Playing with friends
 
-`python -m clocktower play` opens a table at port 8765 and prints two links: one for you (the host) and one
-for friends. Everyone joins from their own phone or laptop, picks a name and an allegiance (good, evil or
-either; secret from everyone), and the host picks the table size (5-15), the models for the good and evil
-AI seats (`random` = free practice bots) and an optional turn timer, then rings the bell. Each person's seat
-gets exactly what a model in that seat gets: the same events, the same prompts, the same moves (one whisper
-per private-time turn, speech, nominations, votes, night choices, Slayer shots) and word limits. The rules
-panel shows the AI system prompt word for word. After the game the Grimoire is revealed, along with
-who played each seat and a link to the full transcript with every AI's reasoning. Logs go to `games/play/`
-(not in git); `--budget` caps this session's spend (default $100).
+`python -m clocktower play` opens a table on port 8765 for several people on their own devices, plus AI seats
+(`random` bots are free). Each person's seat gets exactly what a model's seat gets: the same events, prompts, moves
+and word limits. Friends on the same network open the printed address; for others, use a tunnel such as
+`cloudflared tunnel --url http://localhost:8765`. `render.yaml` deploys the table to Render (see `docs/hosting.md`).
 
-Friends on the same Wi-Fi open the printed address directly. For friends elsewhere, put a tunnel in front of
-it, e.g. `cloudflared tunnel --url http://localhost:8765` (free, no account) or Tailscale, and share that URL.
-API keys stay on the host's machine.
+## Repository map
 
-No computer to host from? `render.yaml` deploys the table to Render's free tier: in Render, New → Blueprint →
-this repo, then enter the API keys. Everyone opens the app's URL; the first to join hosts, and anyone can
-tap "Make me the host". The lobby offers
-only models whose key the server has (`random` practice bots always). A free instance sleeps when unused and
-loses an unfinished game if it restarts.
-
-## Code
-
-| File | What it does |
+| Path | What it holds |
 |---|---|
-| `characters.py` | Trouble Brewing characters, setups by table size, night order |
-| `state.py` | Grimoire, registration, deaths and victory; the Storyteller's choices and `POLICY` |
-| `game.py` | Setup, nights, beats, nominations, votes; one typography for all speech |
-| `prompts.py`, `schema.py` | The player system prompt and the fixed output schema |
-| `llm.py` | Claude and OpenAI conversations, per-model settings (`MODELS`), prices, context trimming, ledger |
-| `probe.py` | Belief probes (out-of-game forks of each seat's conversation) |
-| `analyze.py`, `report.py` | Per-batch win rates, voting and probe scores, quick ratings; batch reports |
-| `ratings.py` | The 2026 Bradley–Terry fit (setup terms, pair bootstrap), per-lab trends, the ratings pages |
-| `allocate.py` | Where extra games go: a fixed floor / clash / precision-per-dollar rule |
-| `mixed.py` | Mixed-model team analysis (pilot b1) |
-| `tournament.py` | Experiment plans, balanced Minions, the parallel launcher, resuming stopped games |
-| `supervise.py` | Batch health numbers (lost turns, capped turns, refusals, spend) |
-| `store.py` | The Hugging Face log store |
-| `agents.py`, `web.py`, `table/` | Seats; the multiplayer table (lobby, API and page) for human play |
-| `watch.py`, `viewer/`, `site.py`, `render.py` | Spectator app |
-| `cli.py` | Every command |
+| `clocktower/characters.py` | Trouble Brewing characters, setups by table size, night order |
+| `clocktower/state.py` | Grimoire, registration, deaths and victory; the Storyteller's choices and `POLICY` |
+| `clocktower/game.py` | Setup, nights, beats, nominations, votes; one typography for all speech |
+| `clocktower/prompts.py`, `schema.py` | The player system prompt and the fixed output schema ([full prompt](docs/player-prompt.md)) |
+| `clocktower/llm.py` | Claude and OpenAI conversations, per-model settings (`MODELS`), prices, context trimming, ledger |
+| `clocktower/agents.py`, `probe.py` | Seats (model, random bot); belief probes (out-of-game forks of a seat's conversation) |
+| `clocktower/tournament.py`, `supervise.py` | Plans, balanced Minions, the parallel launcher; batch health |
+| `clocktower/analyze.py`, `report.py` | Win rates, voting and probe scores; batch reports and replays |
+| `clocktower/ratings.py`, `allocate.py`, `mixed.py` | The rating fit and pages; where extra games go; mixed-team analysis |
+| `clocktower/store.py` | Downloading logs from the Hugging Face dataset |
+| `clocktower/web.py`, `table/` | The multiplayer table for human play |
+| `clocktower/watch.py`, `viewer/`, `site.py`, `render.py` | Spectator app (live or as static files) |
+| `clocktower/cli.py` | Every command (`python -m clocktower --help`) |
+| `tests/` | Unit tests: rules, Storyteller, engine, tools, the table (no API calls) |
+| `experiments/` | Every experiment plan, with a table of dates, games and cost |
+| `games/` | Each game's `config.json` and `result.json` (logs are in the dataset) |
+| `docs/PROTOCOL.md`, `protocol-history.md` | The rules (v17) and why each is what it is |
+| `docs/findings/` | Analysis reports, with an index |
+| `docs/plans/`, `docs/charts/` | Rating data and pages; charts |
+| `docs/experiments.md` | Open questions to explore next |
+| `media/` | Pipelines for videos made from game logs |
+
+## Contributing
+
+Pull requests are welcome: new models, new experiments, analyses of the logs, engine fixes. Read
+[`CONTRIBUTING.md`](CONTRIBUTING.md) first (the protocol is frozen per batch, so rule changes go through a versioned
+proposal), and see [`docs/experiments.md`](docs/experiments.md) for questions we would like answered.
+
+## License
+
+[MIT](LICENSE). Blood on the Clocktower and its characters belong to The Pandemonium Institute.

@@ -14,7 +14,7 @@ analytic (Fisher) ones for the combined rating, scaled per model to match the bo
     python -m clocktower allocate experiments/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f3*' \\
         --exclude 'v16/f2-*opus48*' --target 100 --seed 170000 --out games/v17/f4 --budget 23000 > experiments/f4.json
 """
-import argparse, fnmatch, glob, itertools, json, math, os, sys, collections
+import argparse, fnmatch, glob, itertools, json, math, sys, collections
 import numpy as np
 from .characters import MINIONS
 
