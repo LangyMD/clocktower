@@ -1,0 +1,15 @@
+# Paths left out of the public snapshot (scripts/publish_snapshot.sh), one per line, relative to the repo root.
+# A path excludes that file or everything under that directory. Untracked files (game logs, games/play/, .venv)
+# are never included: the snapshot is built from the committed tree.
+
+# The handbook and settings for Claude sessions working in this repo (dated internal notes)
+CLAUDE.md
+.claude
+
+# Drafts and private accounting
+docs/blog
+games/ledger.jsonl
+
+# This publishing tooling itself
+PUBLISH_EXCLUDE
+scripts/publish_snapshot.sh
