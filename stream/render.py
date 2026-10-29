@@ -157,6 +157,7 @@ def labels(role, evil, claim, lie, deadlabel, align):
     w, h = 250, 52
     im = Image.new("RGBA", (w, h), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     x, an = {"below": (w / 2, "m"), "right": (0, "l"), "left": (w, "r")}[align]
+    if role.startswith("Drunk ("): role = "Drunk"            # the claim line shows what they think they are
     l2 = deadlabel or (f"claims {claim}" if claim else "")
     y1 = 14 if (l2 or align == "below") else 26
     d.text((x, y1), role, font=F(18, "SemiBold"), fill=C["evil"] if evil else C["good"], anchor=an + "m")
