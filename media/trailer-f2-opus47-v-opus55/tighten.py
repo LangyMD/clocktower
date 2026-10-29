@@ -1,5 +1,5 @@
 import numpy as np, subprocess, glob, os, sys, json
-FF="/usr/local/lib/python3.11/dist-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2"
+FF=os.environ.get("FFMPEG", "ffmpeg")  # e.g. the imageio_ffmpeg binary
 SR=44100
 MAXGAP=float(sys.argv[1]) if len(sys.argv)>1 else 0.25
 THR=float(sys.argv[2]) if len(sys.argv)>2 else -42

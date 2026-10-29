@@ -1,6 +1,6 @@
 import json, base64, os, sys, urllib.request, subprocess
 D = os.path.dirname(os.path.abspath(__file__))
-FF = "/usr/local/lib/python3.11/dist-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2"
+FF = os.environ.get("FFMPEG", "ffmpeg")  # e.g. the imageio_ffmpeg binary
 V = {"NARR": "JBFqnCBsd6RMkjVDRZzb",   # George
      "JULES": "N2lVS1w4EtoT3dr4eOWO",  # Callum
      "BLAIR": "pFZP5JQG7iQjIQuC4Bku",  # Lily

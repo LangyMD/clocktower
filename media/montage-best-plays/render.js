@@ -1,5 +1,5 @@
 // node render.js stills t1 t2 ...   |   node render.js frames [workers]
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 const fs = require('fs');
 const D = __dirname;
 (async () => {
