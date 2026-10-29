@@ -38,7 +38,7 @@ Across the year, ratings rose about 650 Elo per year (90% interval 553 to 827). 
 
 ## What the best games look like
 
-[Lead story told in full, then short vignettes, one per skill. All eight with checked quotes are in docs/analysis/blog/best-games.md: the Saint deal (Opus 5.5), the fake Undertaker and deliberate star-pass (Fable 5.1), the Imp who killed himself to "read" from the grave (Sol 6.1), the evil writers' room fixing a fake Fortune Teller's results (Sol 5.6), the Demon who sold his own Minion on day one (Astra), the Demon who agreed with everyone (Opus 4.8), and two detective games (Astra and Fable 5 as good).]
+[Lead story told in full, then short vignettes, one per skill. All eight with checked quotes are in docs/findings/best-games.md: the Saint deal (Opus 5.5), the fake Undertaker and deliberate star-pass (Fable 5.1), the Imp who killed himself to "read" from the grave (Sol 6.1), the evil writers' room fixing a fake Fortune Teller's results (Sol 5.6), the Demon who sold his own Minion on day one (Astra), the Demon who agreed with everyone (Opus 4.8), and two detective games (Astra and Fable 5 as good).]
 
 Draft of one, to set the tone:
 

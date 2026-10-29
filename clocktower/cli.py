@@ -283,7 +283,7 @@ def main(argv=None):
                     help='relaunch, one process each, every game that stopped (seat failed, budget, halted) and is not running')
     ra = sub.add_parser('ratings', help='the 2026 Bradley-Terry fit (docs/plans/f2-ratings.json) and its pages')
     ra.add_argument('--games', default=str(GAMES), help='folder holding v16/ and v17/ game logs (events.jsonl needed)')
-    ra.add_argument('--models', default=str(ROOT / 'plans/models-2026.json'))
+    ra.add_argument('--models', default=str(ROOT / 'experiments/models-2026.json'))
     ra.add_argument('--out', default=str(ROOT / 'docs/plans/f2-ratings.json'))
     ra.add_argument('--boot', type=int, default=500, help='bootstrap resamples (over side-swapped pairs)')
     ra.add_argument('--no-page', dest='page', action='store_false', help="don't rebuild the HTML pages")

@@ -3,7 +3,7 @@
 P(good wins) = logistic(r[good] - r[evil] + h + setup), setup = which Minions were in play (vs a Poisoner
 game) and the table size (vs 10 players). One combined rating per model, plus a detection (good) /
 deception (evil) split; 90% intervals from a bootstrap over side-swapped pairs (both games of a pair
-resampled together). Ratings are centred on 1500 = the mean of the models in `plans/models-2026.json`.
+resampled together). Ratings are centred on 1500 = the mean of the models in `experiments/models-2026.json`.
 
     python -m clocktower ratings                    # fit -> docs/plans/f2-ratings.json and f2-ratings.html
     python -m clocktower ratings --lab-trends       # also per-lab gains -> docs/charts/lab-trends.json and .html
@@ -170,7 +170,7 @@ def lab_trends_page(data, trends, template=ROOT / 'docs/charts/lab-trends.templa
 
 def main(games_root=None, out=None, models=None, boot=500, page=True, trends=False, trends_out=None):
     games = load(games_root or ROOT / 'games')
-    ms = json.loads(Path(models or ROOT / 'plans/models-2026.json').read_text())
+    ms = json.loads(Path(models or ROOT / 'experiments/models-2026.json').read_text())
     data = ratings(games, ms, boot)
     out = Path(out or ROOT / 'docs/plans/f2-ratings.json')
     out.write_text(json.dumps(data, indent=1))

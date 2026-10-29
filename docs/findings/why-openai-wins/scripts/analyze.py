@@ -1,5 +1,5 @@
 """Lab comparison: per-game metrics, opponent-adjusted, bootstrap over side-swapped pairs.
-python docs/analysis/labs/scripts/analyze.py GAMES.json [OUT.json]"""
+python docs/findings/why-openai-wins/scripts/analyze.py GAMES.json [OUT.json]"""
 import json, sys, collections, statistics as st
 import numpy as np
 

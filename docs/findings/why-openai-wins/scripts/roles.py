@@ -1,5 +1,5 @@
 """Which good characters get executed, and what the town's wrong top suspect is, by good lab and generation.
-python docs/analysis/labs/scripts/roles.py GAMES.json"""
+python docs/findings/why-openai-wins/scripts/roles.py GAMES.json"""
 import json, sys, collections
 R = json.load(open(sys.argv[1]))
 NEW = {'claude-fable-5', 'claude-fable-5-1', 'claude-opus-5-5', 'gpt-5.6-sol', 'gpt-6-astra', 'gpt-6.1-sol'}

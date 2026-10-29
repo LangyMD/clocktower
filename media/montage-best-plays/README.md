@@ -1,7 +1,7 @@
 # Montage: the best plays (Oct 2026)
 
 ~5.5 min video: intro, five games (three cunning/clever plays, then GPT-6 Astra hunting and hiding), outro.
-Game picks come from `docs/analysis/astra/cunning-evil.md` and `good-strategy.md`; every quote is verbatim from the game logs.
+Game picks come from `docs/findings/why-astra-wins/cunning-evil.md` and `good-strategy.md`; every quote is verbatim from the game logs.
 
 Pipeline (each step re-runnable; TTS is cached per clip):
 1. `scenes/<id>.json` — one segment each (schema: `SCHEMA.md`); `order.json` sets the order.

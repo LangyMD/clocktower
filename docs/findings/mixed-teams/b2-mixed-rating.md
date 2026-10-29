@@ -6,11 +6,11 @@ rated **1522** [1446, 1595], against **1570** for the average of its two members
 **−158** [−330, −14] when playing evil: the one split whose interval excludes zero. Mixed evil teams won 4 of 66 games.
 
 ## Design
-- 58 side-swapped pairs (116 games, `plans/b2-mixed-rating.json`, ~$1.75k): the mixed team vs GPT-6.1 Sol (28 pairs),
+- 58 side-swapped pairs (116 games, `experiments/b2-mixed-rating.json`, ~$1.75k): the mixed team vs GPT-6.1 Sol (28 pairs),
   Fable 5.1 (22) and GPT-6 Astra (8); two matchups per opponent with opposite list order so each model
   gets the odd seat on odd tables half the time. Plus the 16 b1 pilot games (mixed vs Sol 6.1).
 - Fit: the 386-game 2026 fit plus these 132 games, with the mixed team as a 12th player (`python -m clocktower.mixed
-  --rate`; output `docs/analysis/b2-mixed-rating.json`). Scale centred on the 11 models. Intervals: 500 bootstrap
+  --rate`; output `docs/findings/mixed-teams/b2-mixed-rating.json`). Scale centred on the 11 models. Intervals: 500 bootstrap
   resamples of side-swapped pairs, with the members' uncertainty included jointly. The published 11-model ratings are
   unchanged; in this joint fit they shift by a few points (e.g. Astra 1828).
 - A container restart stopped 8 games mid-batch; they resumed from their dusk checkpoints and finished.
@@ -24,7 +24,7 @@ rated **1522** [1446, 1595], against **1570** for the average of its two members
 
 Record by opponent (wins as good / as evil): GPT-6.1 Sol 18/36, 1/36 · Fable 5.1 13/22, 3/22 · Astra 5/8, 0/8.
 
-## In-group behaviour (b1 + b2, 132 games; `docs/analysis/b2-mixed-behaviour.json`)
+## In-group behaviour (b1 + b2, 132 games; `docs/findings/mixed-teams/b2-mixed-behaviour.json`)
 - Whispers to teammates go to a same-model teammate 2 points more often than chance [1, 3]. With more data the
   pilot's Opus preference is gone (Opus +1 [−1, +3]); Sol 5.6 leans to Sol (+3 [+2, +5]).
 - Same-model pairs vote alike 69% of the time vs 64% for cross-model pairs (gap [+2, +8]); partly shared voting style.

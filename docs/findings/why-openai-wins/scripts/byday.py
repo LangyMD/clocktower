@@ -1,5 +1,5 @@
 """Town top suspect evil, and Brier, by day; good win by number of good players executed. By good lab x generation.
-python docs/analysis/labs/scripts/byday.py GAMES.json"""
+python docs/findings/why-openai-wins/scripts/byday.py GAMES.json"""
 import json, sys, collections
 R = json.load(open(sys.argv[1]))
 NEW = {'claude-fable-5', 'claude-fable-5-1', 'claude-opus-5-5', 'gpt-5.6-sol', 'gpt-6-astra', 'gpt-6.1-sol'}

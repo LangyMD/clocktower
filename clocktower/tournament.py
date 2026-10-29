@@ -11,9 +11,9 @@ choice): a matchup's `args` may force them (`["--minions", "Spy,Baron"]`, one pe
 them (`"minions": [...]`, as `clocktower.allocate` writes), and otherwise each pair gets the Minion its two
 models have been dealt least so far in the plan, then the least dealt in the whole plan, cycling.
 
-    python -m clocktower plan plans/models.json --within 10 --pairs 1 --seed 80000 --out games/v17/f1 > plans/f1.json
-    python -m clocktower tournament plans/f1.json
-    python -m clocktower tournament plans/f1.json --resume-stopped   # relaunch stopped games, one process each
+    python -m clocktower plan experiments/models.json --within 10 --pairs 1 --seed 80000 --out games/v17/f1 > experiments/f1.json
+    python -m clocktower tournament experiments/f1.json
+    python -m clocktower tournament experiments/f1.json --resume-stopped   # relaunch stopped games, one process each
 """
 from __future__ import annotations
 import collections

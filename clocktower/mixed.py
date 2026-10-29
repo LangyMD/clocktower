@@ -9,12 +9,12 @@ Intervals: bootstrap over side-swapped pairs.
 
 Rating (`--rate`): the mixed team (either list order) enters the 2026 Bradley-Terry fit (`clocktower.ratings.fit`)
 as a 12th player, over the 2026 games plus every mixed game; ratings re-centred so the 11 models of
-plans/models-2026.json average 1500 (the published scale). Mixing effect = mixed rating - mean of its two
+experiments/models-2026.json average 1500 (the published scale). Mixing effect = mixed rating - mean of its two
 members' ratings, from the same fit, so its bootstrap (over side-swapped pairs) carries the members' uncertainty.
 The published 11-model numbers (docs/plans/f2-ratings.json) are not touched.
 
-    python -m clocktower mixed [GAMES_PREFIX]   # default games/v17/b1-; results in docs/analysis/b1-mixed-pilot.json
-    python -m clocktower mixed games/v17/b2- --rate [--boot 500] [--out docs/analysis/b2-mixed-rating.json]
+    python -m clocktower mixed [GAMES_PREFIX]   # default games/v17/b1-; results in docs/findings/mixed-teams/b1-mixed-pilot.json
+    python -m clocktower mixed games/v17/b2- --rate [--boot 500] [--out docs/findings/mixed-teams/b2-mixed-rating.json]
 """
 import json, glob, sys, random, collections
 import numpy as np
@@ -175,7 +175,7 @@ def main(argv=None):
     if '--rate' in argv:
         boot = int(argv[argv.index('--boot') + 1]) if '--boot' in argv else 500
         out = argv[argv.index('--out') + 1] if '--out' in argv else None
-        ids = [m['id'] for m in json.loads((REPO / 'plans/models-2026.json').read_text())]
+        ids = [m['id'] for m in json.loads((REPO / 'experiments/models-2026.json').read_text())]
         res = rate(rating_games(), ids, boot)
         text = json.dumps(res, indent=1); print(text)
         if out:

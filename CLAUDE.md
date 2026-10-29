@@ -22,7 +22,7 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
   `python -m clocktower ratings [--lab-trends]`), `clocktower/allocate.py` (`python -m clocktower allocate`),
   `clocktower/mixed.py` (`python -m clocktower mixed`). `scripts/` keeps only the one-off history rewrite.
 - Planning and results pages (published as Artifacts): `docs/plans/*.html`. Reader reports:
-  `docs/analysis/<batch>/`. The full player prompt with example turns: `docs/player-prompt.md`.
+  `docs/findings/`. The full player prompt with example turns: `docs/player-prompt.md`.
 - Spend ledger: `games/ledger.jsonl` (all-time API spend, ~$21.3k through Oct 2 2026).
 - Human play: `python -m clocktower play` (lobby + table in `clocktower/web.py` and `clocktower/table/`;
   multi-device, secret allegiances, `random` practice bots; logs in `games/play/`, git-ignored).
@@ -45,7 +45,7 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
   o1-preview, GPT-4.5.
 
 ## Running an experiment
-1. Write a plan: `python -m clocktower plan MODELS.json --within K --pairs P --seed S --out games/v17/NAME > plans/NAME.json`,
+1. Write a plan: `python -m clocktower plan MODELS.json --within K --pairs P --seed S --out games/v17/NAME > experiments/NAME.json`,
    or by hand: matchups with `good`, `evil`, `pairs`, optional `seed`, `args` (extra run flags),
    `good_effort`, `evil_effort`, `seat_models`; a plan `budget` caps the all-time ledger. Every experiment
    gets fresh seeds (blocks of 100 per matchup). Top-ups: `python -m clocktower allocate ...` (the fixed rule).
@@ -54,7 +54,7 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
 2. New model? Add it to `llm.PRICES` and `llm.MODELS` (thinking style, memory, context window), run a
    two-turn smoke test and a memory check (does it see its earlier reasoning next turn?), and check
    whether it accepts `thinking: disabled` (else set `'can_disable_thinking': False` in its `MODELS` entry).
-3. Launch in the background: `python -m clocktower tournament plans/NAME.json` (one process per
+3. Launch in the background: `python -m clocktower tournament experiments/NAME.json` (one process per
    matchup, every game at once; resumable: rerun the same command and finished games are kept).
 4. Keep a `run_in_background` Bash waiter running for the whole batch
    (`while pgrep -f '[c]locktower run'; do sleep 60; done`, max 2 h, re-arm it): **an idle session's
@@ -112,9 +112,9 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 # Part 2 — dated session notes
 
 ## 2026-10-29: mixed-team rating (b2)
-- 116 games (`plans/b2-mixed-rating.json`, ~$1.75k): half Opus 5.5 + half GPT-5.6 Sol vs Sol 6.1 / Fable 5.1 / Astra,
+- 116 games (`experiments/b2-mixed-rating.json`, ~$1.75k): half Opus 5.5 + half GPT-5.6 Sol vs Sol 6.1 / Fable 5.1 / Astra,
   fit as a 12th player (`python -m clocktower.mixed --rate`). Mixed 1522 vs members' average 1570: effect −48
-  [−133, +29] overall, −34 good, **−158 [−330, −14] evil** (4/66 evil wins). Report `docs/analysis/b2-mixed-rating.md`.
+  [−133, +29] overall, −34 good, **−158 [−330, −14] evil** (4/66 evil wins). Report `docs/findings/mixed-teams/b2-mixed-rating.md`.
 - A container restart killed 8 games and the batch subagent; rerunning `tournament` resumed them from checkpoints.
 - Blog figures this session: `docs/charts/clocktower-final-ratings.png` (Elo by release date, 90% bars),
   `clocktower-detection-deception.png` (two panels), `clocktower-demon-belief.png` (village P(Demon) on the real
@@ -130,13 +130,13 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   lab trends (HiPbbNTToUydW6Sjes6asq; detection OpenAI +1071/yr vs Anthropic +252, gap 819 [526, 1194]; deception
   gap 254 [−70, 613]). Simulated same-team experiment page: 198gjR4FtUBXjFPJomVG9t (not run; the user worries
   cross-lab pairs of equal rating and date are rare: best are Fable 5.1 + GPT-5.6 Sol, or same-lab Opus 5.5 + Fable 5).
-- **Why OpenAI wins** (`docs/analysis/labs/metrics.md`, `transcripts.md`): equal on day 1 (new-gen executions hit
+- **Why OpenAI wins** (`docs/findings/why-openai-wins/metrics.md`, `transcripts.md`): equal on day 1 (new-gen executions hit
   evil 44% Claude vs 39% OpenAI); from day 2 OpenAI 72% vs Claude 46%. OpenAI towns accumulate evidence (top suspect
   evil 52→70→81% by day; Claude 44→45→53%); Claude towns treat results as settled ("cleared") and execute 2+ good
   players in 61% of games (OpenAI 31%); 18/20 Saint losses were Claude-good. Not credulity, verbosity or thinking
   effort; no harness asymmetry found. Early-2026 models were level. Open: Claude skips thinking on 74% of good vote
   turns (Sol 5.6 5%) — a forced-thinking-on-votes run would test it.
-- Blog: draft `docs/blog/draft.md`; eight checked vignettes `docs/analysis/blog/best-games.md`. Datawrapper chart:
+- Blog: draft `docs/blog/draft.md`; eight checked vignettes `docs/findings/best-games.md`. Datawrapper chart:
   `docs/charts/datawrapper/` (CSV + `make_chart.py`, needs `DATAWRAPPER_API_TOKEN`, which the user added to the
   environment after this session started; run it in a new session).
 - Logs download: `HF_HUB_DISABLE_XET=1`, `snapshot_download(allow_patterns=['v17/f3-*/*'], ignore_patterns=['*.pkl'])`
@@ -155,12 +155,12 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 - `llm.ALWAYS_THINKS` → `MODELS[...]['can_disable_thinking'] = False`.
 - Pruned `docs/plans/` (fidelity, final-plan, pairing-plan, timeline-matchups, timeline-pairings) and
   `plans/x0-resume-test.json`. README refreshed (v17, per-game controls, new commands).
-- Still to do: add v16/v17 games to the spectator viewer; regenerate `plans/f1-timeline.json` (pre-v17).
+- Still to do: add v16/v17 games to the spectator viewer; regenerate the timeline plan (the pre-v17 `plans/f1-timeline.json` was deleted Oct 29; rebuild from `experiments/timeline-models.json`).
 
 ## 2026-10-07: mixed-team pilot (b1), design decisions
-- **Pilot B** (`plans/b1-mixed-pilot.json`, 16 games, $118): half Opus 5.5 + half GPT-5.6 Sol (seats random; two
+- **Pilot B** (`experiments/b1-mixed-pilot.json`, 16 games, $118): half Opus 5.5 + half GPT-5.6 Sol (seats random; two
   matchups with opposite list order so each model gets the odd seat half the time) vs pure GPT-6.1 Sol, both sides.
-  Analysis `clocktower/mixed.py` → `docs/analysis/b1-mixed-pilot.json`. Wins match the members' average rating
+  Analysis `clocktower/mixed.py` → `docs/findings/mixed-teams/b1-mixed-pilot.json`. Wins match the members' average rating
   (good 4/8 vs 4.2 expected; evil 1/8 vs 1.1), too few games to see a mixing penalty. In-group: Opus seats start
   conversations with Opus teammates 15 points above chance; Sol 5.6 leans 6 points toward Opus (seat/role pull), so
   Opus's own preference ≈ 9–15 points; Sol shows none. Same-model vote agreement 72% vs 63% cross (partly voting style).
@@ -173,10 +173,10 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 - **Allocation rule in code:** `python -m clocktower.allocate MODELS RATINGS GAMEGLOBS... --target T` (floor of one pair
   per matchup, one extra pair for a >2.5 SE style clash, then precision per dollar on models above ±T; cap 4 pairs per
   matchup, no opponent >25% of a model's games; Minions least dealt). Half-widths calibrated to the bootstrap.
-- **f4 floor batch** (`plans/f4-floor.json`, 16 games, $986): Opus 4.8's 7 missing opponents + Opus 4.7 v Astra (clash).
+- **f4 floor batch** (`experiments/f4-floor.json`, 16 games, $986): Opus 4.8's 7 missing opponents + Opus 4.7 v Astra (clash).
   Opus 4.8 won 2 of 14 → 1203 [1077, 1288] (was 1194 [1051, 1306]). Refit over 368 games (the ratings fit
   now includes f4): trend +650/yr. Worst half-width now Opus 4.7 ±109; reaching ±100 for all costs ~$575 more.
-- **f5 precision top-up** (`plans/f5-precision.json`, 18 games, $649): chosen by the rule for ±100. Refit over 386 games:
+- **f5 precision top-up** (`experiments/f5-precision.json`, 18 games, $649): chosen by the rule for ±100. Refit over 386 games:
   GPT-6 Astra 1859 > GPT-6.1 Sol 1734 > Fable 5.1 1595 ≈ GPT-5.6 Sol 1591 > Opus 5.5 1549 ≈ Fable 5 1544 > GPT-5.5 1482
   > Opus 4.6 1432 > GPT-5.4 1276 > Opus 4.7 1241 > Opus 4.8 1198; trend +651/yr [553, 827]; evil wins 33%. Every model
   within ±100 except Astra ±102 (lopsided range: it rarely loses). Ratings and leaderboard pages rebuilt with these numbers (Oct 25);
@@ -187,7 +187,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 ## 2026-10-05: why Astra wins + best-games readers
 - Six parallel readers over all 372 2026 games (logs fetched with `HF_HUB_DISABLE_XET=1` and
   `snapshot_download(..., ignore_patterns=['*.pkl'])`: Xet downloads of checkpoint.pkl fail size checks here,
-  and fetching everything at once hits HF 429s). Reports and summary: `docs/analysis/astra/README.md`.
+  and fetching everything at once hits HF 429s). Reports and summary: `docs/findings/why-astra-wins/README.md`.
 - Astra 26/26 good, 62% evil. Good edge = group decisions (top suspect evil 92%, executions 76–78% hit evil),
   not sharper Demon beliefs (≈ Sol 6.1). Evil edge = quiet, following Demon (day-2 suspicion at chance),
   lies consistent with real info, planned succession, endgame conversion 83%. It thinks the least of any model.
@@ -196,14 +196,14 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   Ravenkeeper con, Fable 5.1 poisoned vision, Opus 5.5 deliberate Mayor tie, Astra catching a Spy, Astra's Saint
   trap) + Astra stats. Subagents wrote one scene JSON per game (quotes checked). Rendering ~3 fps (55 min).
 
-## 2026-10-07: style fingerprinting, good-side lying, probes (report: `docs/analysis/f2/style-lies-probes.md`)
+## 2026-10-07: style fingerprinting, good-side lying, probes (report: `docs/findings/round-robin-2026/style-lies-probes.md`)
 - No player ever inferred teams from "writes like me" or model identity (4 readers, 372 games). The signal
   exists, though: 16 punctuation/length features of day-1 text separate teams with AUC 0.81, and a blind
   2-cluster split is 69% evil, versus 38% evil for day-1 executions. Same-model good players echo each
   other, and their teammates misread it as an evil bloc. This is a validity risk if models learn to
   fingerprint.
 - Good seats rarely lie: 2.7% hard role lies and 4.6% fake info. Opus 4.7 lies most (17%), GPT-5.5 and
-  Astra least. Ravenkeeper bluffs most (18%, as bait). Data is in `docs/analysis/f2/good-lies.json`, from a
+  Astra least. Ravenkeeper bluffs most (18%, as bait). Data is in `docs/findings/round-robin-2026/good-lies.json`, from a
   Sonnet 5.5 pass (~$53, not in the ledger).
 - Probes: good P(true Imp) correlates 0.87 with good win rate and 0.89 with detection Elo across models.
   Day 1 is near chance for everyone.
@@ -244,7 +244,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   > GPT-5.5 1472 > Opus 4.6 1427 > GPT-5.4 1268 ≈ Opus 4.7 1265 > Opus 4.8 1194. Page:
   https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (data `docs/plans/f2-ratings.json`, built by
   `python -m clocktower ratings`). Evil wins ~32%.
-- **Not started:** the full timeline back to GPT-4o (21 models, `plans/f1-timeline.json`, page
+- **Not started:** the full timeline back to GPT-4o (21 models, `experiments/timeline-models.json`; the old plan is in the repo history; page
   https://claude.ai/artifact/MAbeLPxmENkdfEQT8j75mt). That plan predates v17: regenerate it with balanced
   Minions and the 2026 results folded in (the 2026 games count; only pre-2026 models and cross-era pairs
   need new games). Biggest costs there: o1 (~$7/seat-game) and Opus 4.1 (~$7).
@@ -307,7 +307,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   its executions hit evil). Sol and Astra open with "trade three-for-threes".
 - Best games for a video: `f2-opus47-v-opus55/game-01` (Scarlet Woman's deal → Saint executed),
   `f2-astra-v-sol61` pair, `f2-opus46-v-opus48/game-01`, `f2-gpt55-v-astra/game-01`,
-  `f2-fable5-v-gpt56sol/game-01` (see `docs/analysis/f2/interesting.md`).
+  `f2-fable5-v-gpt56sol/game-01` (see `docs/findings/round-robin-2026/interesting.md`).
 
 ### How I think about the eval (statistics)
 - One pair per matchup can't rank neighbours; ~6 pairs separate 100 Elo. Far-apart matchups are ~90%

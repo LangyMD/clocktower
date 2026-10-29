@@ -25,12 +25,12 @@ python -m clocktower run --good-model claude-opus-5-5,gpt-6.1-sol ...      # a m
 python -m clocktower run ... --seat-model good:claude-opus-5-5:1          # upgrade one good seat
 python -m clocktower run ... --seat-model Imp:gpt-6-astra                 # a different model plays the Imp
 
-python -m clocktower plan plans/timeline-models.json --within 10 --pairs 1 --seed 120000 --out games/v17/f1 > plans/f1.json
-python -m clocktower tournament plans/f1.json      # every matchup at once, resumable (see below)
+python -m clocktower plan experiments/timeline-models.json --within 10 --pairs 1 --seed 120000 --out games/v17/f1 > experiments/f1.json
+python -m clocktower tournament experiments/f1.json      # every matchup at once, resumable (see below)
 python -m clocktower analyze games/v17/f1-*/game-* # win rates, probes, detection and deception ratings
 python -m clocktower ratings --lab-trends          # the 2026 fit: docs/plans/f2-ratings.json and the pages
-python -m clocktower allocate plans/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f[3-5]*' \
-    --exclude 'v16/f2-*opus48*' --target 100 --seed 180000 --out games/v17/f6 --budget 25000 > plans/f6.json   # where extra games go
+python -m clocktower allocate experiments/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f[3-5]*' \
+    --exclude 'v16/f2-*opus48*' --target 100 --seed 180000 --out games/v17/f6 --budget 25000 > experiments/f6.json   # where extra games go
 python -m clocktower fetch v9/e1-*                 # download logs from the dataset
 python -m clocktower play                          # you and friends vs the AIs (see below)
 python -m clocktower watch                         # spectator app; `site` builds it as static files

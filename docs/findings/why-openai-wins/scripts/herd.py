@@ -1,5 +1,5 @@
 """Good voters on good nominees: yes rate by lab generation x whether earlier votes were mostly yes x thinking on the vote turn.
-python docs/analysis/labs/scripts/herd.py GAMES.json"""
+python docs/findings/why-openai-wins/scripts/herd.py GAMES.json"""
 import json, sys, collections
 R = json.load(open(sys.argv[1]))
 NEW = {'claude-fable-5', 'claude-fable-5-1', 'claude-opus-5-5', 'gpt-5.6-sol', 'gpt-6-astra', 'gpt-6.1-sol'}

@@ -1,7 +1,7 @@
 """Does each model's next request still contain its previous turn's output (thinking included)?
 For consecutive committed turns of a seat after a turn with >=300 thinking tokens: growth of the billed context
 minus the previous turn's output tokens. Negative = the earlier output (its thinking) was dropped from context.
-python docs/analysis/labs/scripts/memory_check.py"""
+python docs/findings/why-openai-wins/scripts/memory_check.py"""
 import json, glob, collections, statistics as st
 res = collections.defaultdict(list)
 for d in sorted(glob.glob('games/v17/f3-*/game-*')):

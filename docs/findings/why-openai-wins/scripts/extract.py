@@ -1,5 +1,5 @@
 """Extract per-game facts for the lab comparison (no API calls).
-Run from the repo root: python docs/analysis/labs/scripts/extract.py OUT.json
+Run from the repo root: python docs/findings/why-openai-wins/scripts/extract.py OUT.json
 Games: v16 f2 (minus Opus 4.8's v16 games, as scripts/ratings2026.py) + v17 f3, f3b, f4, f5."""
 import json, glob, os, re, sys, collections
 

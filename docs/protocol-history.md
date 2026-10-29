@@ -263,7 +263,7 @@ Calls record the effort each attempt used. The GPT-5 family's 400K window is reg
 oversized game is trimmed, not failed.
 
 ## v14 (Oct 2): one conversation at a time
-v13 with private time restructured, at the user's suggestion: 4 private beats (was 3) and one whisper
+v13 with private time restructured, at the maintainer's suggestion: 4 private beats (was 3) and one whisper
 per turn (was up to 2), still to one or two players. In a real game a player is in one private
 conversation at a time; two whispers a turn let a player run two secret conversations at once and
 blast a claim to four people per turn (in e1, 85–100% of good seats whispered their role on day 1,
@@ -272,7 +272,7 @@ makes whom you talk to a visible choice. Cost: private time was ~34% of spend wi
 one whisper is roughly +10% cost and wall-clock. A 6-beat variant (`--private-beats 6`) is tested
 alongside. The w1 experiment (50 games) checks whether it tilts balance toward either side.
 
-w1 (Oct 1, 50 games, seeds 90000+, `games/v14/w1-*`; reader reports in docs/analysis/w1/): evil won 12/38
+w1 (Oct 1, 50 games, seeds 90000+, `games/v14/w1-*`; reader reports in docs/findings/protocol-design/w1/): evil won 12/38
 at 4 private beats (32%) and 5/12 at 6 (42%), against 19/58 (33%) under the old 3x2 rule for the same
 model pairings: no detectable shift (adjusted odds ratios 1.06 and 1.38, wide intervals). The "hive mind"
 comes from public day-1 claims, not whispers: good players named their role to ~2 people in private
@@ -284,7 +284,7 @@ both). The harness read found model tells (GPT-5.1 non-breaking hyphens, o3 bull
 killed games in progress, which led to checkpoints at every dusk and Hugging Face snapshots.
 
 ## v15 (Oct 2): a public whisper log, 6 beats
-v14 with three changes, all the user's. (1) After each private beat everyone, the dead too, sees who
+v14 with three changes, all the maintainer's. (1) After each private beat everyone, the dead too, sees who
 whispered to whom (not the words), as at a real table where you see who steps aside together. The w1
 realism read found "swarms" (many players whispering the same popular player) and evil briefing both
 Minions in beat 1 unseen; at a real table both would be visible. Expected to cost evil something. (2)
@@ -300,14 +300,14 @@ against about a third without the log (w1). Evil did not adapt to the public log
 their first whisper to a teammate, and 43–46% of evil's day-1 whispers went to teammates (about 20% by
 chance). 6 and 8 beats did not differ. c3h (10 games on arm A's seeds) added one neutral line to the
 prompt ("The whisper log is evidence ... players who huddle early and often get read as a team"): evil's
-first whisper still went to a teammate 83% of the time, and evil won 1 of 9. The user dropped the log.
+first whisper still went to a teammate 83% of the time, and evil won 1 of 9. The maintainer dropped the log.
 
 ## v16 (Oct 2): private whispers again, 6 beats
 v15 without the public whisper log (and without the c3h hint): whispers are invisible again, as in v14.
 Kept from v15: 6 private beats, the prompt's statement of the number of beats ("choose carefully whom to
 spend them on") and the whispers left on each private turn, and the harness fixes.
 
-f2 (Oct 1, 109 of 110 games, `games/v16/f2-*`, readers in docs/analysis/f2/): the 11 models released in 2026,
+f2 (Oct 1, 109 of 110 games, `games/v16/f2-*`, readers in docs/findings/round-robin-2026/): the 11 models released in 2026,
 full round robin, one side-swapped pair each, $4.4k. Engine sound; two clear tiers (Fable 5 onward
 +360 Elo); 25% duds, mostly older-model blunders and deal luck. Two defects: (1) the low-effort retry
 did not bound adaptive-thinking Claude models: Opus 4.8 re-hit the 8K ceiling on 40% of retries and
@@ -324,5 +324,5 @@ per matchup, mostly near neighbours), with guaranteed Minions chosen to balance 
 Result (Oct 2): 352 games (f2 minus Opus 4.8's 20 + f3 + f3b; 262 v17 games, ~$7.2k). Evil wins 32%. The 2026
 releases gain ~645 Elo a year (90% CI 530 to 820); detection +634, deception +692, not separable. Top:
 GPT-6 Astra 1858, GPT-6.1 Sol 1729; Anthropic's best Fable 5.1 1595; lowest Opus 4.8 1194. Setup effects
-(Elo toward good vs Poisoner): Spy +67, Scarlet Woman -67, Baron +80; 12 players +68. Ratings page:
-https://claude.ai/artifact/BEapb2nuJGL1Tfrb96ke58 (now `python -m clocktower ratings`, docs/plans/f2-ratings.json).
+(Elo toward good vs Poisoner): Spy +67, Scarlet Woman -67, Baron +80; 12 players +68. Ratings: `python -m clocktower ratings`
+(docs/plans/f2-ratings.json; the current fit, 386 games with f4 and f5, is in the README).

@@ -11,8 +11,8 @@ Each new pair's guaranteed Minion is the one its two models have been dealt leas
 `minions`, which `tournament` uses). Half-widths are the
 analytic (Fisher) ones for the combined rating, scaled per model to match the bootstrap in the ratings file.
 
-    python -m clocktower allocate plans/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f3*' \\
-        --exclude 'v16/f2-*opus48*' --target 100 --seed 170000 --out games/v17/f4 --budget 23000 > plans/f4.json
+    python -m clocktower allocate experiments/models-2026.json docs/plans/f2-ratings.json 'games/v16/f2-*' 'games/v17/f3*' \\
+        --exclude 'v16/f2-*opus48*' --target 100 --seed 170000 --out games/v17/f4 --budget 23000 > experiments/f4.json
 """
 import argparse, fnmatch, glob, itertools, json, math, os, sys, collections
 import numpy as np
