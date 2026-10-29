@@ -2,14 +2,29 @@
 name = "clocktower"
 version = "0.1.0"
 description = "Blood on the Clocktower (Trouble Brewing) played by language models, with human seats"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Dwarkesh Patel" }]
 requires-python = ">=3.11"
-dependencies = ["anthropic>=1.8", "huggingface_hub>=0.30"]
+dependencies = [
+    "anthropic>=1.8",         # Claude conversations (OpenAI and OpenRouter use the standard library)
+    "huggingface_hub>=0.30",  # fetching game logs
+    "numpy>=1.26",            # ratings, allocation, mixed-team analysis
+]
+
+[project.optional-dependencies]
+dev = ["pyflakes>=3.2"]
+
+[project.urls]
+Homepage = "https://clocktowerbench.com"
+Dataset = "https://huggingface.co/datasets/dwarkesh/clocktower-games"
 
 [project.scripts]
 clocktower = "clocktower.cli:main"
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]

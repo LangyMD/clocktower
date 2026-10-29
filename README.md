@@ -132,11 +132,12 @@ come from 500 bootstrap resamples of side-swapped pairs (both games of a pair to
    and `can_disable_thinking: False` if it rejects `thinking: disabled` (its ceiling retries then run at low effort).
 3. Smoke test: `python -m clocktower run --model NEW --days 1 --players 10 --out games/smoke/NEW` and read the
    transcript.
-4. Memory check: does it see its own earlier reasoning next turn? Ask it to think of a secret number on turn 1
-   (replying only "ok") and to reveal it on turn 2; run with the reasoning carried back and with it stripped
-   (`docs/findings/why-openai-wins/scripts/memory_check.py` is a template). Record the answer as `memory`.
+4. Memory check: `python -m clocktower memory-check NEW --trials 3` asks it to think of a number on one turn and
+   reveal it on the next, with its reasoning carried back and with it stripped. Revealed when carried and "NO
+   ACCESS" when stripped means `memory: 'reasoning'`; "NO ACCESS" both times means `'replies'` (the prompt then
+   tells it so). A few cents.
 5. Add it to a model list in `experiments/` and plan games against rated models. Open a pull request with the
-   `llm.py` change and the smoke-test result.
+   `llm.py` change and the smoke-test and memory-check output.
 
 ## The data
 
@@ -166,6 +167,7 @@ and word limits. Friends on the same network open the printed address; for other
 | `clocktower/tournament.py`, `supervise.py` | Plans, balanced Minions, the parallel launcher; batch health |
 | `clocktower/analyze.py`, `report.py` | Win rates, voting and probe scores; batch reports and replays |
 | `clocktower/ratings.py`, `allocate.py`, `mixed.py` | The rating fit and pages; where extra games go; mixed-team analysis |
+| `clocktower/memory_check.py` | The reasoning-memory check for a new model |
 | `clocktower/store.py` | Downloading logs from the Hugging Face dataset |
 | `clocktower/web.py`, `table/` | The multiplayer table for human play |
 | `clocktower/watch.py`, `viewer/`, `site.py`, `render.py` | Spectator app (live or as static files) |
