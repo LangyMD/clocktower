@@ -168,6 +168,45 @@ select { appearance: none; background-image: linear-gradient(45deg, transparent 
 .claim { display: flex; justify-content: center; margin-top: 4px; }
 #settings.readonly .round, #settings.readonly select { pointer-events: none; opacity: .65; }
 @media (max-width: 420px) { .grid2 { grid-template-columns: 1fr; gap: 0; } }
+a { color: var(--gold); text-underline-offset: 3px; }
+.card p { margin: 0 0 12px; }
+a.primary.as-link { text-align: center; text-decoration: none; }
+.how ol { margin: 0; padding-left: 20px; color: var(--ink-2); }
+.how li { margin: 0 0 8px; }
+.how li b { color: var(--parchment-hi); font-weight: 600; }
+.foot { text-align: center; margin-top: 18px; color: var(--muted); font-size: 14.5px; }
+.foot a { color: var(--gold-soft); }
+#people li .online { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+#people li .online.on { background: #79c27a; box-shadow: 0 0 6px rgba(121,194,122,.6); }
+.share { margin: 12px 0 4px; }
+#byo { margin: 4px 0 12px; }
+#byo summary { cursor: pointer; color: var(--gold-soft); font-size: 15px; }
+#byo summary em { font-size: 14px; }
+#byo .fine { margin: 8px 0; }
+.key-row { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+.key-row select { width: auto; flex: none; }
+.key-row input { flex: 1; min-width: 0; }
+#paused .primary { margin: 10px 0; }
+#mine code { font-size: 12.5px; }
+@media (max-width: 420px) { .key-row { flex-wrap: wrap; } .key-row select { width: 100%; } }
+
+/* ---------- who you are (shown once per game) ---------- */
+#role-banner { display: flex; gap: 12px; align-items: flex-start; margin: 10px 14px 0; padding: 12px 14px; border-radius: 12px;
+  border: 1px solid #5a4626; background: linear-gradient(180deg, #241d14, #17130e); flex: none; }
+#role-banner.evil { border-color: #6a2a20; background: linear-gradient(180deg, #2c1411, #160c0a); }
+#role-banner .token { width: 58px; height: 58px; box-shadow: 0 0 0 2px #2a2118, 0 0 0 3px var(--good); }
+#role-banner.evil .token { box-shadow: 0 0 0 2px #2a2118, 0 0 0 3px var(--evil); }
+#role-banner .token .role { font-size: 9.5px; padding: 0 5px; }
+#role-banner > div { flex: 1; min-width: 0; }
+#role-banner b { font-family: var(--display); font-size: 14px; letter-spacing: .05em; color: var(--parchment-hi); }
+#role-banner .team { font-family: var(--display); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; padding: 1px 8px;
+  border-radius: 99px; border: 1px solid var(--good); color: #b9cff0; white-space: nowrap; }
+#role-banner.evil .team { border-color: var(--evil); color: #ffb3a6; }
+#role-banner p { margin: 4px 0 0; font-size: 15px; color: var(--ink-2); }
+#role-banner .fine { font-size: 13.5px; }
+@media (max-width: 899px) { #role-banner { margin: 8px 10px 0; padding: 10px; } #role-banner .token { width: 46px; height: 46px; } #role-banner .fine { display: none; } }
+#role-banner .token .role { overflow: hidden; }
+
 
 /* ---------- tokens ---------- */
 .mini-token, .token {
@@ -405,6 +444,16 @@ select { appearance: none; background-image: linear-gradient(45deg, transparent 
 .rv-seat.you b { color: var(--gold); }
 .rv-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .rv-actions .primary { width: auto; }
+.rv-seat small.read { color: #e0c9a0; font-size: 12.5px; }
+.reads { max-width: 620px; margin: 0 auto 26px; text-align: left; }
+.reads h3 { font-size: 14px; color: var(--gold); letter-spacing: .18em; text-transform: uppercase; text-align: center; margin-bottom: 4px; }
+.reads .fine { text-align: center; }
+.reads table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 8px 0; }
+.reads th { font-family: var(--display); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 500; text-align: left; padding: 4px 6px; }
+.reads td { padding: 6px; border-top: 1px solid var(--line-soft); color: var(--ink-2); }
+.reads td small { color: var(--muted); display: block; font-size: 12.5px; }
+.rv .fine a { color: var(--gold-soft); }
+
 
 /* ---------- phones ---------- */
 @media (max-width: 899px) {
