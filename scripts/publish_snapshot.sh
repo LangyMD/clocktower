@@ -36,7 +36,7 @@ git archive --format=tar "$ref" -- . "${excludes[@]}" | tar -x -C "$target"
 # 2. Scan for secrets and private details. Any hit stops the publish.
 patterns=(
   'sk-ant-[A-Za-z0-9_-]{10,}'            # Anthropic keys
-  'sk-(proj-)?[A-Za-z0-9_-]{20,}'        # OpenAI / OpenRouter keys
+  '(^|[^A-Za-z0-9])sk-(proj-|or-)?[A-Za-z0-9_-]{20,}'   # OpenAI / OpenRouter keys
   'hf_[A-Za-z0-9]{20,}'                  # Hugging Face tokens
   'gh[pousr]_[A-Za-z0-9]{20,}'           # GitHub tokens
   'AKIA[0-9A-Z]{16}'                     # AWS access keys
