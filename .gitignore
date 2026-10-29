@@ -11,3 +11,7 @@ games/logs/
 !games/v*/**/result.json
 !games/v*/**/*.txt
 games/play/
+# Your own spend ledger and quick-start games (the maintainer tracks games/ledger.jsonl explicitly)
+games/ledger.jsonl
+games/demo/
+games/smoke/

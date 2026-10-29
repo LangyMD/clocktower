@@ -17,12 +17,15 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
   videos and `backup/` for a git bundle of the repo's history before logs were removed from it). Git
   keeps each game's `config.json` and `result.json` only (see `.gitignore`).
   `python -m clocktower fetch v16/f2-*` downloads logs into `games/`.
-- Plans: `plans/` (one JSON per experiment; `models-2026.json` and `timeline-models.json` are model lists).
+- Plans: `experiments/` (one JSON per experiment, a README table of every batch with date, games, protocol,
+  purpose and cost; `models-2026.json` and `timeline-models.json` are model lists). Add a row for each new batch.
 - Analysis in the package: `clocktower/ratings.py` (2026 fit, bootstrap, lab trends, pages:
   `python -m clocktower ratings [--lab-trends]`), `clocktower/allocate.py` (`python -m clocktower allocate`),
-  `clocktower/mixed.py` (`python -m clocktower mixed`). `scripts/` keeps only the one-off history rewrite.
-- Planning and results pages (published as Artifacts): `docs/plans/*.html`. Reader reports:
-  `docs/findings/`. The full player prompt with example turns: `docs/player-prompt.md`.
+  `clocktower/mixed.py` (`python -m clocktower mixed`), `clocktower/memory_check.py` (`memory-check MODEL`).
+  `scripts/` holds only `publish_snapshot.sh` (see "Public release").
+- Ratings data and pages: `docs/plans/f2-ratings.*` (the site reads the JSON; keep the path). Reports:
+  `docs/findings/` with an index `README.md` (add a row per report); calibration readers under
+  `docs/findings/protocol-design/`. Open questions: `docs/experiments.md`. Player prompt: `docs/player-prompt.md`.
 - Spend ledger: `games/ledger.jsonl` (all-time API spend, ~$21.3k through Oct 2 2026).
 - Human play: `python -m clocktower play` (lobby + table in `clocktower/web.py` and `clocktower/table/`;
   multi-device, secret allegiances, `random` practice bots; logs in `games/play/`, git-ignored).
@@ -52,7 +55,7 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
    Minions: `tournament` deals each pair's guaranteed Minion, balanced per model and across the plan; a
    matchup overrides with `"minions": [...]` (allocate writes this) or `"args": ["--minions", "Spy,Baron"]`.
 2. New model? Add it to `llm.PRICES` and `llm.MODELS` (thinking style, memory, context window), run a
-   two-turn smoke test and a memory check (does it see its earlier reasoning next turn?), and check
+   two-turn smoke test and `python -m clocktower memory-check MODEL` (does it see its earlier reasoning?), and check
    whether it accepts `thinking: disabled` (else set `'can_disable_thinking': False` in its `MODELS` entry).
 3. Launch in the background: `python -m clocktower tournament experiments/NAME.json` (one process per
    matchup, every game at once; resumable: rerun the same command and finished games are kept).
@@ -76,6 +79,15 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
 7. While a batch runs the stop hook complains about the changing ledger and results: commit them as they
    land (`git add -A games/v16 games/v17`), or hide the ledger with `git update-index --skip-worktree
    games/ledger.jsonl` and undo that when the batch ends.
+
+## Public release
+- This private repo stays the working repo; the public GitHub repo is a single-commit snapshot of it:
+  `SNAPSHOT_TEST=1 SNAPSHOT_AUTHOR="Dwarkesh Patel <...>" scripts/publish_snapshot.sh /tmp/out` (committed tree only,
+  minus `PUBLISH_EXCLUDE`: this file, `.claude/`, `docs/blog/`, the ledger; it scans for keys, workspace ids and
+  local paths and refuses on a hit). Keep secrets, local paths and personal notes out of every other file.
+- Public docs: README (results, quick start, adding a model), CONTRIBUTING (protocol frozen per batch; rule changes
+  need a calibration batch and a version bump), LICENSE (MIT), `.github/` (CI runs pyflakes and unit tests, no keys).
+  Fan-project disclaimer (not affiliated with The Pandemonium Institute) stays in README and LICENSE.
 
 ## Design decisions the user made (don't undo without asking)
 - Memory is the model's own carried-over conversation; no notebook, no state re-sent.
@@ -110,6 +122,21 @@ realism and design before scaling up; ask before any rule change or spending pas
 plainly. When the user asks for readers, spin up several subagents on separate questions in parallel.
 
 # Part 2 — dated session notes
+
+## 2026-10-29: public-release cleanup (worktree branch, not yet merged or pushed)
+- Secrets audit: no keys or tokens in the tree; the Anthropic workspace id was hard-coded in `cli.py` and two
+  analysis scripts (removed; now `ANTHROPIC_WORKSPACE_ID` only, see Keys), plus local `/home/user`, scratchpad and
+  `/opt/node22` / imageio-ffmpeg paths in scripts (made relative / `FFMPEG` / `require('playwright')`).
+- Moves: `plans/` → `experiments/` (dropped the never-run pre-v17 `f1-timeline.json`); `docs/analysis/` →
+  `docs/findings/` (why-astra-wins, why-openai-wins, round-robin-2026, mixed-teams, best-games.md,
+  protocol-design/{e1,w1,c2,c3,private-time}). Deleted `docs/plans/{flagship-run,detection-deception,
+  same-team-mock}.html` and `scripts/strip-game-logs.sh` (the history rewrite is done).
+- Code: numpy added to dependencies (was missing); `--help` text for every command; `memory-check` command
+  (tested on gpt-6.1-sol and opus-4-6, $0.03, not in the ledger); `tests/test_cli.py` (random-bot game, swapped
+  batch, sim); unused imports and `prompts.PLAYER_SYSTEM` removed. 91 tests pass on 3.11 and 3.13;
+  `ratings --no-page` still reproduces `docs/plans/f2-ratings.json` byte for byte.
+- Open for the user: the public repo's name/owner (README clone URL assumes `dwarkeshsp/clocktower`), whether to
+  link the Render play URL publicly, making the HF dataset public, and the snapshot's commit author.
 
 ## 2026-10-29: mixed-team rating (b2)
 - 116 games (`experiments/b2-mixed-rating.json`, ~$1.75k): half Opus 5.5 + half GPT-5.6 Sol vs Sol 6.1 / Fable 5.1 / Astra,
@@ -155,7 +182,7 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 - `llm.ALWAYS_THINKS` → `MODELS[...]['can_disable_thinking'] = False`.
 - Pruned `docs/plans/` (fidelity, final-plan, pairing-plan, timeline-matchups, timeline-pairings) and
   `plans/x0-resume-test.json`. README refreshed (v17, per-game controls, new commands).
-- Still to do: add v16/v17 games to the spectator viewer; regenerate the timeline plan (the pre-v17 `plans/f1-timeline.json` was deleted Oct 29; rebuild from `experiments/timeline-models.json`).
+- Still to do: add v16/v17 games to the spectator viewer; build a new timeline plan from `experiments/timeline-models.json`.
 
 ## 2026-10-07: mixed-team pilot (b1), design decisions
 - **Pilot B** (`experiments/b1-mixed-pilot.json`, 16 games, $118): half Opus 5.5 + half GPT-5.6 Sol (seats random; two
@@ -319,7 +346,6 @@ plainly. When the user asks for readers, spin up several subagents on separate q
   approximation run narrower than the bootstrap's.
 - Per-lab trends halve the data per line; pool for the headline.
 
-### Cleanup: see the 2026-10-25 block (only the spectator viewer item remains)
 
 ### Ideas for next experiments (rough priority)
 1. Timeline back to 2024 (regenerated f1) so the chart spans GPT-4o → GPT-6.1 Sol.
