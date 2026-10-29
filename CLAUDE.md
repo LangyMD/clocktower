@@ -110,6 +110,18 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-10-29: mixed-team rating (b2)
+- 116 games (`plans/b2-mixed-rating.json`, ~$1.75k): half Opus 5.5 + half GPT-5.6 Sol vs Sol 6.1 / Fable 5.1 / Astra,
+  fit as a 12th player (`python -m clocktower.mixed --rate`). Mixed 1522 vs members' average 1570: effect −48
+  [−133, +29] overall, −34 good, **−158 [−330, −14] evil** (4/66 evil wins). Report `docs/analysis/b2-mixed-rating.md`.
+- A container restart killed 8 games and the batch subagent; rerunning `tournament` resumed them from checkpoints.
+- Blog figures this session: `docs/charts/clocktower-final-ratings.png` (Elo by release date, 90% bars),
+  `clocktower-detection-deception.png` (two panels), `clocktower-demon-belief.png` (village P(Demon) on the real
+  Demon by day: OpenAI new-gen 15→30→38→46% vs Anthropic 14→17→21→26%). Explainer video
+  `media/explainer-three-tricks/` (HF `media/explainer-three-tricks.mp4`).
+- Prior-art check for the user: first API spend Sep 25 2026, first commit Sep 27 (in the HF backup bundle), GitHub repo
+  created Sep 27; the LessWrong "Bench on the Clocktower" post is Sep 30.
+
 ## 2026-10-25: blog prep, why OpenAI wins, branches merged
 - Merged the three unmerged worker branches into main; the old remote branches still exist (this session's git
   proxy returns 403 on branch deletion; the user can delete them on GitHub).

@@ -1,0 +1,151 @@
+{
+ "games": 518,
+ "mixed_games": 132,
+ "boot": 500,
+ "ratings_all": {
+  "gpt-6-astra": 1828,
+  "gpt-6.1-sol": 1745,
+  "claude-fable-5-1": 1617,
+  "gpt-5.6-sol": 1594,
+  "claude-fable-5": 1553,
+  "claude-opus-5-5": 1546,
+  "claude-opus-5-5+gpt-5.6-sol": 1522,
+  "gpt-5.5": 1481,
+  "claude-opus-4-6": 1433,
+  "gpt-5.4": 1273,
+  "claude-opus-4-7": 1239,
+  "claude-opus-4-8": 1191
+ },
+ "combined": {
+  "mixed": [
+   1522,
+   [
+    1446,
+    1595
+   ]
+  ],
+  "members_mean": [
+   1570,
+   [
+    1530,
+    1609
+   ]
+  ],
+  "effect": [
+   -48,
+   [
+    -133,
+    29
+   ]
+  ],
+  "claude-opus-5-5": [
+   1546,
+   [
+    1484,
+    1605
+   ]
+  ],
+  "gpt-5.6-sol": [
+   1594,
+   [
+    1547,
+    1643
+   ]
+  ]
+ },
+ "detection": {
+  "mixed": [
+   1542,
+   [
+    1446,
+    1635
+   ]
+  ],
+  "members_mean": [
+   1576,
+   [
+    1523,
+    1642
+   ]
+  ],
+  "effect": [
+   -34,
+   [
+    -149,
+    66
+   ]
+  ],
+  "claude-opus-5-5": [
+   1491,
+   [
+    1395,
+    1579
+   ]
+  ],
+  "gpt-5.6-sol": [
+   1661,
+   [
+    1580,
+    1774
+   ]
+  ]
+ },
+ "deception": {
+  "mixed": [
+   1395,
+   [
+    1234,
+    1532
+   ]
+  ],
+  "members_mean": [
+   1553,
+   [
+    1492,
+    1622
+   ]
+  ],
+  "effect": [
+   -158,
+   [
+    -330,
+    -14
+   ]
+  ],
+  "claude-opus-5-5": [
+   1587,
+   [
+    1488,
+    1688
+   ]
+  ],
+  "gpt-5.6-sol": [
+   1519,
+   [
+    1429,
+    1611
+   ]
+  ]
+ },
+ "p_effect_negative": 0.852,
+ "record_by_opponent": {
+  "gpt-6.1-sol": {
+   "good_games": 36,
+   "good_wins": 18,
+   "evil_games": 36,
+   "evil_wins": 1
+  },
+  "claude-fable-5-1": {
+   "good_games": 22,
+   "good_wins": 13,
+   "evil_games": 22,
+   "evil_wins": 3
+  },
+  "gpt-6-astra": {
+   "good_games": 8,
+   "good_wins": 5,
+   "evil_games": 8,
+   "evil_wins": 0
+  }
+ }
+}
