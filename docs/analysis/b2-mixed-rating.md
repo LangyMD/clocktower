@@ -6,8 +6,8 @@ rated **1522** [1446, 1595], against **1570** for the average of its two members
 **−158** [−330, −14] when playing evil: the one split whose interval excludes zero. Mixed evil teams won 4 of 66 games.
 
 ## Design
-- 58 side-swapped pairs (116 games, `plans/b2-mixed-rating.json`, ~$1.75k): the mixed team vs GPT-6.1 Sol (18 pairs ×2
-  orders), Fable 5.1 (11×2) and GPT-6 Astra (4×2); two matchups per opponent with opposite list order so each model
+- 58 side-swapped pairs (116 games, `plans/b2-mixed-rating.json`, ~$1.75k): the mixed team vs GPT-6.1 Sol (28 pairs),
+  Fable 5.1 (22) and GPT-6 Astra (8); two matchups per opponent with opposite list order so each model
   gets the odd seat on odd tables half the time. Plus the 16 b1 pilot games (mixed vs Sol 6.1).
 - Fit: the 386-game 2026 fit plus these 132 games, with the mixed team as a 12th player (`python -m clocktower.mixed
   --rate`; output `docs/analysis/b2-mixed-rating.json`). Scale centred on the 11 models. Intervals: 500 bootstrap
