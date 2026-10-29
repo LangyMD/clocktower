@@ -40,7 +40,6 @@ ROOT = Path(__file__).resolve().parent.parent
 GAMES = ROOT / 'games'
 PROTOCOL = 'v17'  # frozen (docs/PROTOCOL.md); a change that affects play bumps it and adds to docs/protocol-history.md
 RUNS = GAMES / PROTOCOL  # new games go here by default
-DEFAULT_WORKSPACE = 'wrkspc_01PGEHMDFBurkms3UW2GryQb'
 
 
 @dataclass
@@ -52,7 +51,8 @@ class Shared:
 
 
 def shared(args):
-    os.environ.setdefault('ANTHROPIC_WORKSPACE_ID', args.workspace)
+    if args.workspace:
+        os.environ.setdefault('ANTHROPIC_WORKSPACE_ID', args.workspace)
     return Shared(make_client(), Ledger(GAMES / 'ledger.jsonl', cap=args.budget), limiter(args.concurrency))
 
 
@@ -333,7 +333,9 @@ def main(argv=None):
                            help='OpenAI Flex tier (half price, but throttled under load: calls can take minutes)')
             p.add_argument('--no-probes', dest='probes', action='store_false',
                            help='skip the out-of-game belief probes (probes.jsonl)')
-            p.add_argument('--workspace', default=os.environ.get('ANTHROPIC_WORKSPACE_ID', DEFAULT_WORKSPACE))
+            p.add_argument('--workspace', default=os.environ.get('ANTHROPIC_WORKSPACE_ID', ''),
+                           help='Anthropic workspace id sent with every request (default: $ANTHROPIC_WORKSPACE_ID; '
+                                'only needed if your organisation requires one)')
         if name == 'run':
             p.add_argument('--parallel', type=int, default=0, help='games at once in a batch (0 = all)')
             p.add_argument('--only', help='run just these game numbers of the batch, e.g. 13,14,16-20')

@@ -1,6 +1,5 @@
 import json,sys,os,asyncio
-sys.path.insert(0,'/home/user/clocktower')
-os.environ.setdefault('ANTHROPIC_WORKSPACE_ID','wrkspc_01PGEHMDFBurkms3UW2GryQb')
+sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','..','..'))  # the repo root
 from clocktower.llm import make_client
 SYS="""You audit one GOOD player's statements in a game of Blood on the Clocktower (Trouble Brewing). You are told the player's true character (and, if they are the Drunk, the Townsfolk they were told they are, which they believe). Below are everything the player said publicly, whispered (with recipients), nominated/defended, and the private info the Storyteller gave them.
 

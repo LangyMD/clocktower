@@ -31,8 +31,9 @@ headed with its date; treat them as context, not rules. Sessions add to and prun
 
 ## Keys and access (all in the environment)
 - `ANTHROPIC_API_KEY` (the web environment withholds that name, so it is `MY_ANTHROPIC_API_KEY`;
-  `make_client` reads either). Every request sends `anthropic-workspace-id` (`ANTHROPIC_WORKSPACE_ID`,
-  default in `cli.py`); without it the API returns 400.
+  `make_client` reads either). Every request must send `anthropic-workspace-id` or this account's API
+  returns 400: `export ANTHROPIC_WORKSPACE_ID=wrkspc_01PGEHMDFBurkms3UW2GryQb` (or `--workspace`). The id
+  is no longer hard-coded in `cli.py` (removed for the public release, Oct 29), so set it in the environment.
 - `OPENAI_API_KEY` (standard tier; `--flex` is throttled). GPT-5 needs a verified OpenAI organization.
 - `OPENROUTER_API_KEY`: only for models no longer on Anthropic's API (Opus 4.1, Sonnet 4, via Bedrock):
   `openrouter:anthropic/claude-opus-4.1`, `openrouter:anthropic/claude-sonnet-4`.

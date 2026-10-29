@@ -45,7 +45,7 @@ for g in games:
             rank=sorted(town,key=lambda k:-town[k]).index(imp)+1
             d1=(town[imp],rank)
     gamerows.append(dict(g=g,gm=gm,em=em,goodwin=goodwin,d1=d1))
-json.dump(gamerows,open('/tmp/claude-0/-home-user-clocktower/7817f4d6-85c9-55a5-82bf-1499d1cbbecd/scratchpad/probegames.json','w'))
+json.dump(gamerows,open('probegames.json','w'))
 print('AS GOOD (detection), nominations probes, all days pooled')
 print(f"{'model':18s} {'P(Imp)':>7s} {'base':>5s} {'Imp=top':>7s} {'evilAUC':>7s} | d1 P(Imp) d2 d3 | goodWin  detElo")
 rows=[]
