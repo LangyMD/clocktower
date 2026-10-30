@@ -1,0 +1,25 @@
+# Fly.io machine for the streamer (no HTTP service: it only pushes RTMP out).
+#   cd stream/streamer && fly launch --no-deploy --copy-config --name clocktower-stream
+#   fly volumes create data --size 20 --region iad
+#   fly secrets set YOUTUBE_STREAM_KEY=xxxx-xxxx-xxxx-xxxx HF_TOKEN=hf_xxx
+#   fly deploy
+app = "clocktower-stream"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  MEDIA_DIR = "/data/stream"
+  REFRESH_HOURS = "24"
+
+[mounts]
+  source = "data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+[[restart]]
+  policy = "always"
