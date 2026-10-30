@@ -123,7 +123,26 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
-## 2026-10-29: public-release cleanup (worktree branch, not yet merged or pushed)
+## 2026-10-30: clocktowerbench.com — site, play server, stream (all merged to main, nothing deployed yet)
+- **Site** `site/` (static; build `python -m clocktower.export --games games --media <explainer mp4>` → `site/dist/`,
+  67 MB, 538 games gz; `--pages-only` for page edits). Pages: home, leaderboard (reads `docs/plans/f2-ratings.json`),
+  game library + replay viewer (reveal-secrets toggle, per-seat view, daily Demon-suspicion table), highlights, play,
+  run-your-own, about (fan-project disclaimer, no official art). Config: `site/src/config.json` (YouTube id, play URL,
+  post URL, GitHub URL); deploy notes `site/README.md` (Cloudflare/GitHub Pages; CNAME clocktowerbench.com).
+- **Play server** `clocktower/web.py` + `clocktower/table/`: many tables `/t/<id>`, SQLite persistence (resume from dusk),
+  free tier GPT-6.1 Sol only ($5/game, $30/day hard cap via reservation), BYO Anthropic/OpenAI key in memory only,
+  rate limits, CSP. Deploy: `Dockerfile`, `fly.toml`, `render.yaml`, `docs/hosting.md`. Target play.clocktowerbench.com.
+  Lesson: tests made 33 real Sol calls (~$0.22) because OPENAI_API_KEY was set; tests now strip keys.
+- **Stream** `stream/`: Pillow renderer (~120 fps) turns a game into a 10–17 min narrated episode (ElevenLabs);
+  12 curated highlights rendered (171 min) + cards + playlist on HF `media/stream/`; `stream/streamer/` loops them
+  to YouTube RTMP (`YOUTUBE_STREAM_KEY`), Dockerfile + fly.toml. Next: `python3 -m stream.playlist build --episodes 30`.
+- **Waiting on the user:** public repo name (README assumes dwarkeshsp/clocktower), Cloudflare + Fly/Render accounts or
+  tokens, YouTube stream key, OpenAI key for the free tier, DNS for clocktowerbench.com, `ANTHROPIC_WORKSPACE_ID` in
+  the environment (no longer hard-coded). The user OK'd making the HF dataset public: flip it at launch.
+- Publish: `scripts/publish_snapshot.sh` builds a one-commit public snapshot excluding `PUBLISH_EXCLUDE` (CLAUDE.md,
+  .claude/, docs/blog/, the ledger).
+
+## 2026-10-29: public-release cleanup (merged to main Oct 30)
 - Secrets audit: no keys or tokens in the tree; the Anthropic workspace id was hard-coded in `cli.py` and two
   analysis scripts (removed; now `ANTHROPIC_WORKSPACE_ID` only, see Keys), plus local `/home/user`, scratchpad and
   `/opt/node22` / imageio-ffmpeg paths in scripts (made relative / `FFMPEG` / `require('playwright')`).
