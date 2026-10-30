@@ -39,6 +39,14 @@ python3 -m stream.playlist upload                               # MP4s + playlis
 Logs are read from `games/` (or `$CLOCKTOWER_GAMES`, or the main checkout). Outputs (`out/`) and the TTS cache
 (`cache/`) are git-ignored. TTS spend: about 10k characters per new episode, 400 per card.
 
+## State (Oct 30 2026)
+The 12 curated highlights (`highlights.py`, 10-17 min each, 171 min in all) and 12 cards are rendered and uploaded
+to HF `media/stream/` with `playlist.txt` (card, episode, card, episode, ...). Next: `python3 -m stream.playlist
+build --episodes 30` adds the top-ranked other games (207 finished games score >= 8), then `upload`. Known gaps:
+claim detection only catches "I'm (the) X", so some public claims never show on the ring; OpenAI models' private
+reasoning is encrypted, so GPT episodes show their whispers but no thought cards; episodes average ~1.7 Mbps
+(static frames), under YouTube's recommended 4.5 Mbps for 1080p, which may draw a Studio warning but streams fine.
+
 ## Streaming (the always-on host)
 `streamer/stream.py` downloads `media/stream/` from the HF dataset, then runs
 
