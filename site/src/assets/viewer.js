@@ -17,6 +17,7 @@
   const days = G.days_;
   const lastDay = days.length ? days[days.length - 1].d : 1;
   if (S.day > lastDay) S.day = lastDay;
+  if (!days.length) S.day = 0;
 
   // Who is what on a given day: becomes-events up to and including that day's night.
   const changes = [];
@@ -33,11 +34,11 @@
 
   /* ---------- header ---------- */
   document.title = `${teamName(G.good)} (good) vs ${teamName(G.evil)} (evil): Clocktower Bench`;
-  $('#g-title').innerHTML = `<span style="color:var(--good-ink)">${esc(teamName(G.good))}</span><span class="vs"> vs </span><span style="color:var(--evil-ink)">${esc(teamName(G.evil))}</span>`;
+  const team = (t, side) => `<div class="team ${G.winner === side ? 'won' : 'lost'}"><span class="plate ${side}">${side}</span>${CT.token(R, t, 'xl ' + side)}<span class="nm">${esc(teamName(t))}</span><span class="crown">${G.winner === side ? 'Wins' : '&nbsp;'}</span></div>`;
+  $('#g-title').innerHTML = `<h1 class="sr-only" style="position:absolute;left:-9999px">${esc(teamName(G.good))} (good) vs ${esc(teamName(G.evil))} (evil)</h1><div class="vscard">${team(G.good, 'good')}<span class="vs outlined" aria-hidden="true">vs</span>${team(G.evil, 'evil')}</div>`;
   const row = index.find((g) => g.id === G.id) || {};
   $('#g-meta').innerHTML = [
-    `<span class="chip good">Good: ${esc(teamName(G.good))}</span>`, `<span class="chip evil">Evil: ${esc(teamName(G.evil))}</span>`,
-    `<span class="chip gold">${G.winner === 'good' ? 'Good' : 'Evil'} wins on day ${G.days}</span>`,
+    `<span class="chip ${G.winner}">${G.winner === 'good' ? 'Good' : 'Evil'} wins on day ${G.days}</span>`,
     `<span class="chip">${G.players} players</span>`, ...G.minions.map((m) => `<span class="chip">${esc(m)}</span>`),
     G.group === 'mixed' ? '<span class="chip">Mixed-team game</span>' : G.group === 'unrated' ? '<span class="chip" title="Opus 4.8\'s first games hit a retry bug and were replayed under v17">Not rated</span>' : '',
   ].join('');
@@ -193,12 +194,17 @@
   }
 
   function renderSetup() {
-    let html = `<div class="section"><h2>${ICON.square}The table</h2><p class="sans" style="color:var(--ink-2)">${G.players} players sit in a circle. ${G.seats.filter((s) => !s.e).length} are good and ${G.seats.filter((s) => s.e).length} are evil: one Demon (the Imp) and ${G.seats.filter((s) => s.e).length - 1} Minions. One model, ${esc(teamName(G.good))}, plays every good seat; ${esc(teamName(G.evil))} plays every evil seat.</p>`;
+    let html = `<div class="section"><h2>${ICON.square}The table</h2><p style="color:var(--text-2)">${G.players} players sit in a circle. ${G.seats.filter((s) => !s.e).length} are good and ${G.seats.filter((s) => s.e).length} are evil: one Demon (the Imp) and ${G.seats.filter((s) => s.e).length - 1} Minions. One model, ${esc(teamName(G.good))}, plays every good seat; ${esc(teamName(G.evil))} plays every evil seat.</p>`;
     if (!S.secrets) html += `<div class="collapsed">Roles are hidden, just as the players see it. <button type="button" data-reveal>Reveal secrets</button> to see the Grimoire: every character, the Demon's bluffs and what each player was told.</div>`;
     else {
       html += `<div class="setup-list">${G.seats.map((s) => `<div><b>${esc(s.n)}</b>: <span style="color:var(--${s.e ? 'evil' : 'good'}-ink)">${esc(s.c)}</span>${s.s ? ` (thinks they are the ${esc(s.s)})` : ''}${s.f ? ` → later the ${esc(s.f)}` : ''}${s.n === G.rh ? ' · the Fortune Teller\'s red herring' : ''}${modelOf(s.n) ? ` <span class="small muted">${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</div>`).join('')}</div>
         <p class="sans small" style="margin-top:10px">Demon bluffs (three good characters not in play, shown to the Demon): <b>${G.bluffs.map(esc).join(', ')}</b></p>`;
-      html += `<h3 style="margin-top:22px">What each player was told</h3>` + G.seats.filter((s) => !S.follow || s.n === S.follow).map((s) => `<div class="sans small"><b>${esc(s.n)}</b></div><div class="intro">${esc((G.intros || {})[s.n] || '')}</div>`).join('');
+      if (Object.keys(G.intros || {}).length) html += `<h3 style="margin-top:22px">What each player was told</h3>` + G.seats.filter((s) => !S.follow || s.n === S.follow).map((s) => `<div class="sans small"><b>${esc(s.n)}</b></div><div class="intro-text">${esc((G.intros || {})[s.n] || '')}</div>`).join('');
+    }
+    if (!days.length) {
+      html += `</div><div class="note"><b>Transcript not in this build.</b> This preview was built from the games' results only, so it has the Grimoire and the outcome but not the day-by-day log. The full build, made from the game logs, adds every night, whisper, speech, nomination and vote here.</div>
+        <div class="gameover"><p class="eyebrow">Game over, day ${G.days}</p><h3 style="color:var(--${G.winner}-ink)">${G.winner === 'good' ? 'Good' : 'Evil'} wins</h3><p class="muted" style="margin:0">${esc(G.reason)}</p></div>`;
+      return html;
     }
     html += `</div><div class="pager"><span></span><button class="btn primary" data-go="1">Night 1 →</button></div>`;
     return html;

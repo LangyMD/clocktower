@@ -15,7 +15,8 @@ site/
 ```
 
 Pages: Home (`index.html`), Leaderboard, Games (library), Game (replay viewer, `game.html?g=<id>`), Highlights,
-Play, Run your own, About.
+Play, Run your own, About. The header links Leaderboard, Games, Play and About; Highlights is a tab of Games and
+Run your own sits under About (all are in the footer).
 
 ## Build
 
@@ -47,8 +48,9 @@ marked "not rated" (one is a highlight), and the mixed-team batches b1 and b2.
 | Key | What | Unset |
 |---|---|---|
 | `domain` | `clocktowerbench.com`; written to `dist/CNAME` and canonical links | no CNAME |
-| `youtubeVideoId` | a YouTube video id (a live event or a video) for the home page player | "stream coming soon" card |
-| `youtubeChannelId` | a channel id (`UC…`); embeds the channel's current live stream | (used if no video id) |
+| `youtubeVideoId` | the video essay's YouTube id; embedded on the home page | the animatic still, "coming soon" |
+| `videoUrl` | a link to the video essay (defaults to the YouTube watch page when only the id is set) | button shows "(soon)" |
+| `youtubeChannelId` | unused since the redesign (the home page has no live-stream slot) | |
 | `playUrl` | the hosted play table | Play button shows "(soon)" |
 | `postUrl` | the blog post | button shows "(soon)" |
 | `githubUrl` | the public repository | GitHub buttons show "(soon)"; footer link hidden |
@@ -83,7 +85,9 @@ domain `clocktowerbench.com`; at the registrar add `A` records to 185.199.108.15
 
 ## Notes
 
-- Fonts: Cormorant Garamond (display), Source Serif 4 (reading), Inter (interface), from Google Fonts. All
-  illustration is original inline SVG; no official Blood on the Clocktower artwork, logos or icons.
-- Dark ("night") theme by default, light ("parchment") theme from the system setting or the moon button.
+- Look: the video essay's animatic. Night palette, parchment "script sheets" for data, BotC-style wooden tokens
+  carrying each lab's logo, role-card panels with gold corners, vs cards for games. One dark theme.
+- Fonts: Pirata One (titles only), Jersey 10 (interface, labels, numbers), EB Garamond (reading; the play table's
+  text face), from Google Fonts. Backdrops in `src/assets/img/` are the animatic's own pixel-art plates. No
+  official Blood on the Clocktower artwork, logos or icons.
 - OpenAI models' reasoning is encrypted by their API; the viewer shows only the short summaries the logs hold.

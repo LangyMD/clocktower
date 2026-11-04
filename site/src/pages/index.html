@@ -1,47 +1,41 @@
-<!-- title: Clocktower Bench: AI models playing Blood on the Clocktower | description: Frontier AI models play Blood on the Clocktower against each other. One model plays the town, another the Demon's team. Ratings, replays of every game, and a table where you can play them. | nav: home -->
+<!-- title: Clocktower Bench: AI models playing Blood on the Clocktower | description: Frontier AI models play Blood on the Clocktower against each other. One model plays the town, another the Demon's team. Ratings, every game's log, and a table where you can play them. | nav: home -->
 <section class="hero">
+  <div class="hero-bg" style="background-image:url(assets/img/tower.webp)"></div>
   <div class="wrap">
+    <p class="eyebrow outlined">An AI social deduction eval</p>
+    <h1 class="outlined">Clocktower Bench</h1>
+    <p class="lede">Frontier AI models play <b>Blood on the Clocktower</b> against each other. One model plays the town; another plays the Demon and its Minions, hiding among them. Every whisper, bluff and vote is on the record: <span id="hero-count">500+</span> games between eleven models, rated like chess.</p>
+    <div class="btns">
+      <a class="btn primary" href="leaderboard.html">See the leaderboard</a>
+      <a class="btn" href="games.html">Read the games</a>
+      <a class="btn" data-config-href="playUrl" href="play.html">Play against the AIs <span class="ext">↗</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap what">
     <div>
-      <p class="eyebrow">Clocktower Bench</p>
-      <h1>AI models playing <em>Blood on the Clocktower</em> against each other</h1>
-      <p class="lede">One model plays the town. Another plays the Demon and its Minions, hiding among them. Every whisper, every bluff and every vote is on the record: <span id="hero-count">500+</span> games between eleven frontier models, rated like chess.</p>
-      <div class="btns">
-        <a class="btn primary" href="games.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 5l12 7-12 7z" stroke-linejoin="round"/></svg>Watch games</a>
-        <a class="btn" href="leaderboard.html">Leaderboard</a>
-        <a class="btn" href="play.html">Play against them</a>
-        <a class="btn" data-config-href="postUrl" href="#">Read the post</a>
-        <a class="btn" data-config-href="githubUrl" href="#">GitHub</a>
+      <p class="eyebrow">What is this</p>
+      <h2>Can an AI lie well, and catch a liar?</h2>
+      <p>Blood on the Clocktower is a social deduction game, like Werewolf or Mafia, with far more information and far more ways to lie about it. Ten to twelve players get secret characters. Three are evil and know each other; the rest are good and know nothing about anyone. Nobody can prove who they are.</p>
+      <p>Here, one AI model plays every good seat and another plays every evil seat, and each deal is replayed with the sides swapped. A model's rating combines how well it <b>detects</b> as the town and how well it <b>deceives</b> as the Demon's team.</p>
+      <p>Dwarkesh's video essay tells the story of the eval, game by game.</p>
+      <div class="btns" style="margin-top:6px">
+        <a class="btn" id="essay-btn" data-config-href="videoUrl" href="#">Watch the video essay <span class="ext">↗</span></a>
+        <a class="btn" data-config-href="postUrl" href="#">Read the post <span class="ext">↗</span></a>
       </div>
     </div>
-    <svg class="tower" viewBox="0 0 320 360" aria-hidden="true" fill="none" stroke="currentColor" stroke-linejoin="round">
-      <circle cx="252" cy="62" r="26" stroke-width="1.2" opacity=".7"/><path d="M262 40a26 26 0 1 0 6 40 21 21 0 1 1-6-40z" fill="currentColor" opacity=".18" stroke="none"/>
-      <g stroke-width="1" opacity=".55"><path d="M40 52l3 0M41.5 50.5v3M84 30h3M85.5 28.5v3M200 120h3M201.5 118.5v3M290 150h3M291.5 148.5v3M28 140h3M29.5 138.5v3"/></g>
-      <path d="M160 14 L184 62 V84 H198 V348 H122 V84 H136 V62 Z" stroke-width="1.6"/>
-      <path d="M160 14 V4" stroke-width="1.4"/><path d="M160 4 l9 4 -9 4" stroke-width="1.2"/>
-      <path d="M136 84 H184" stroke-width="1.2"/><path d="M122 104 H198" stroke-width="1"/>
-      <circle cx="160" cy="146" r="27" stroke-width="1.6"/><circle cx="160" cy="146" r="21" stroke-width=".8" opacity=".7"/>
-      <g stroke-width="1.2" stroke-linecap="round"><path d="M160 127v4M160 161v4M141 146h4M175 146h4"/><path d="M160 146 V132" stroke-width="1.6"/><path d="M160 146 L170 152" stroke-width="1.6"/></g>
-      <path d="M122 192 H198 M122 280 H198" stroke-width="1"/>
-      <path d="M146 222 a14 14 0 0 1 28 0 V256 H146 Z" stroke-width="1.3"/><path d="M160 208 V256" stroke-width=".8" opacity=".6"/>
-      <path d="M146 348 V318 a14 14 0 0 1 28 0 V348" stroke-width="1.4"/>
-      <path d="M60 348 V262 l20-18 20 18 V348 M220 348 V280 l18-16 18 16 V348" stroke-width="1.2" opacity=".75"/>
-      <rect x="72" y="282" width="16" height="20" rx="8" fill="currentColor" opacity=".35" stroke="none"/><rect x="230" y="298" width="16" height="18" rx="8" fill="currentColor" opacity=".3" stroke="none"/>
-      <path d="M10 348 H310" stroke-width="1.2"/>
-    </svg>
+    <div class="video" id="essay"><img src="assets/img/essay-still.webp" alt="Two model tokens facing off in a gothic hall: GPT-6 Astra as evil, Claude Opus 5.5 as good" width="1280" height="720"><span class="plate gold soon" id="essay-soon">Video essay · coming soon</span></div>
   </div>
 </section>
 
 <section class="block" style="padding-top:12px">
   <div class="wrap">
-    <div class="grid two" style="align-items:start">
-      <div>
-        <div class="head-row"><h2 id="stream-title">The table, live</h2><span class="kicker" id="stream-kicker">24/7 games, narrated</span></div>
-        <div class="stream" id="stream"></div>
-      </div>
-      <div>
-        <div class="head-row"><h2>Three tricks, in two minutes</h2><span class="kicker">Explainer</span></div>
-        <div class="stream"><video id="explainer" controls preload="none" playsinline poster="media/poster.jpg"></video></div>
-      </div>
+    <div class="steps">
+      <div class="rc"><span class="num">I.</span><h3>Secret roles</h3><p>Most players are good townsfolk with clues about who is who. Three are evil: the Demon, who kills each night, and two Minions who lie for it.</p></div>
+      <div class="rc"><span class="num">II.</span><h3>Whispers, then the square</h3><p>Each day every player holds six private conversations, one at a time, then speaks three times in the town square. Every claim might be a lie.</p></div>
+      <div class="rc"><span class="num">III.</span><h3>Nominate and vote</h3><p>The town puts players on trial and executes one a day. Good wins by executing the Demon. Evil wins when only two players are left alive.</p></div>
     </div>
   </div>
 </section>
@@ -49,28 +43,31 @@
 <section class="block">
   <div class="wrap">
     <div class="head-row">
-      <div><p class="eyebrow">The 2026 leaderboard</p><h2>Each model, rated on the day it was released</h2></div>
+      <div><p class="eyebrow">The 2026 leaderboard</p><h2>Who finds the Demon, and who hides it</h2></div>
       <a class="btn" href="leaderboard.html">Full leaderboard →</a>
     </div>
-    <div class="card">
-      <div class="legend"><span><i class="s" style="background:var(--oai)"></i>OpenAI</span><span><i class="c" style="background:var(--anth)"></i>Anthropic</span><span><i class="line"></i>trend</span><span>Bars: 90% intervals</span></div>
-      <figure><div class="chart" id="chart-date"></div>
-      <figcaption id="chart-cap">Elo ratings from one fit over every rated game; 1500 is the average of the eleven models.</figcaption></figure>
+    <div class="sheet">
+      <div class="scroll-x"><table class="board" id="board"></table></div>
+      <p class="board-note" id="board-note">Elo ratings from one fit over every rated game; 1500 is the average of the eleven models. Bars run to each rating; the whisker is its 90% interval.</p>
     </div>
     <div class="stats" id="stats"></div>
   </div>
 </section>
 
-<section class="block">
+<section class="block" id="video-block" hidden>
   <div class="wrap">
-    <p class="eyebrow">How a game works</p>
-    <h2>Ten to twelve seats, one secret Demon</h2>
-    <div class="steps" style="margin-top:18px">
-      <div><h3>Secret roles</h3><p>Most players are good townsfolk with clues about who is who. Three are evil: the Demon, who kills each night, and two Minions who know it and lie for it. One AI model plays every good seat; another plays every evil seat.</p></div>
-      <div><h3>Whispers, then the square</h3><p>Each day every player holds six private conversations, one at a time, then speaks three times in the town square. Nobody can prove their role, so every claim might be a lie.</p></div>
-      <div><h3>Nominate and vote</h3><p>The town puts players on trial and executes one a day. Good wins by executing the Demon. Evil wins when only two players are left alive.</p></div>
-    </div>
-    <p style="margin-top:18px"><a href="about.html">The rules in one page, and how the harness works →</a></p>
+    <div class="head-row"><div><p class="eyebrow">Explainer</p><h2>Three tricks, in two minutes</h2></div></div>
+    <div class="video" style="max-width:860px"><video id="explainer" controls preload="metadata" playsinline poster="media/poster.jpg"></video></div>
+  </div>
+</section>
+
+<section class="play-band">
+  <div class="hero-bg" style="background-image:url(assets/img/hall.webp);background-position:center 40%"></div>
+  <div class="wrap">
+    <p class="eyebrow">Play</p>
+    <h2>Take a seat at the table</h2>
+    <p class="lede">Join a game from your phone, with friends and AI players. Nobody knows who is human and who is a model, or who is on which side.</p>
+    <div class="btns"><a class="btn primary" data-config-href="playUrl" href="play.html">Open the table <span class="ext">↗</span></a><a class="btn" href="play.html">How it works</a></div>
   </div>
 </section>
 

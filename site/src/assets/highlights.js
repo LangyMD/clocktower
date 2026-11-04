@@ -4,12 +4,12 @@
   const link = (h) => `game.html?g=${encodeURIComponent(h.id)}${h.seq ? `&e=${h.seq}${h.think ? '&think=1' : ''}` : ''}`;
   $('#hl').innerHTML = hl.map((h, i) => {
     const hero = h.side === 'evil' ? h.evil : h.good, foe = h.side === 'evil' ? h.good : h.evil;
-    return `<article class="hl-card ${h.side}" id="h${i + 1}">
+    return `<article class="hl-card sheet ${h.side}" id="h${i + 1}">
       <div class="hl-num">${String(i + 1).padStart(2, '0')} · ${esc(h.skill)}</div>
       <h3>${esc(h.title)}</h3>
       <p class="tagline">${esc(h.tagline)}</p>
       <div class="meta" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
-        <span class="chip ${h.side}">${h.side === 'evil' ? 'Evil' : 'Good'}: ${esc(CT.name(R, hero))}</span>
+        <span class="chip ${h.side}">${CT.token(R, hero, 'xs')}${h.side === 'evil' ? 'Evil' : 'Good'}: ${esc(CT.name(R, hero))}</span>
         <span class="chip">vs ${esc(CT.name(R, foe))}</span>
         <span class="chip gold">${h.winner === 'good' ? 'Good' : 'Evil'} wins, day ${h.days}</span>
       </div>

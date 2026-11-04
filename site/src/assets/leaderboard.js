@@ -4,21 +4,8 @@
   const ms = R.models.slice().sort((a, b) => b.combined - a.combined);
   $('#lb-lede').textContent = `Eleven models released in 2026, ${R.games} rated games. Every model plays both sides: its rating combines how well it hunts the Demon as the town and how well it hides as the Demon's team.`;
 
-  // Ranked table with interval bars on a shared scale.
-  const lo = Math.min(...ms.map((m) => m.c90[0])) - 20, hi = Math.max(...ms.map((m) => m.c90[1])) + 20;
-  const pos = (v) => ((v - lo) / (hi - lo) * 100).toFixed(2) + '%';
-  $('#table').innerHTML = `<thead><tr><th class="num">#</th><th>Model</th><th class="num">Rating</th><th class="hide-sm" style="min-width:150px">90% interval</th>
-    <th class="num">Detection</th><th class="num">Deception</th><th class="num hide-sm">As good</th><th class="num hide-sm">As evil</th><th class="hide-sm">Released</th></tr></thead><tbody>` +
-    ms.map((m, i) => {
-      const lab = CT.lab(R, m.id), c = lab === 'Anthropic' ? 'var(--anth)' : 'var(--oai)';
-      return `<tr><td class="num rank">${i + 1}</td>
-      <td style="white-space:nowrap">${CT.labMark(R, m.id)}<a href="games.html?model=${encodeURIComponent(m.id)}" style="color:var(--ink);text-decoration:none;font-weight:600">${esc(CT.name(R, m.id))}</a><div class="small muted" style="padding-left:18px">${lab}</div></td>
-      <td class="num" style="font-weight:700;font-size:1.05rem">${m.combined}</td>
-      <td class="hide-sm"><div class="ci" title="${m.c90[0]}–${m.c90[1]}"><span class="bar" style="left:${pos(m.c90[0])};right:calc(100% - ${pos(m.c90[1])});background:${c}"></span><span class="dot" style="left:${pos(m.combined)};background:${c};border-radius:${lab === 'Anthropic' ? '50%' : '2px'}"></span></div></td>
-      <td class="num">${m.detection}</td><td class="num">${m.deception}</td>
-      <td class="num hide-sm">${m.good_wins}/${m.good_games}</td><td class="num hide-sm">${m.evil_wins}/${m.evil_games}</td>
-      <td class="hide-sm small muted">${CT.fmtDate(m.date)}</td></tr>`;
-    }).join('') + '</tbody>';
+  // Ranked table: the script sheet (CT.board in site.js).
+  CT.board($('#table'), R);
 
   // Rating by date, with a metric switch.
   const host = $('#chart-date');
@@ -44,10 +31,12 @@
 
   CT.chartBelief($('#chart-belief'), charts.demon_belief);
   if (charts.evil_tilt) {
+    $('#card-tilt').hidden = false;
     CT.chartTilt($('#chart-tilt'), charts.evil_tilt);
     $('#tilt-cap').textContent = `In ${Math.round(charts.evil_tilt.p_good_gains * 100)}% of bootstrap resamples the good side gains with skill: catching a liar gets easier faster than lying does.`;
   }
   if (charts.mixed) {
+    $('#card-mixed').hidden = false;
     const drawMixed = (k) => {
       const fresh = $('#chart-mixed').cloneNode(false); $('#chart-mixed').replaceWith(fresh);
       CT.chartMixed(fresh, charts.mixed, R, k);
@@ -61,5 +50,5 @@
   }
   const se = R.setup_effects;
   $('#setup').innerHTML = '<tbody>' + [['Good-side advantage', R.good_advantage], ['Spy in play', se['Spy']], ['Baron in play', se['Baron']], ['Scarlet Woman in play', se['Scarlet Woman']], ['11 players', se['11 players']], ['12 players', se['12 players']], ['Evil wins overall', Math.round(R.evil_win_rate * 100) + '%']]
-    .map(([k, v]) => `<tr><td>${k}</td><td class="num" style="font-weight:600">${typeof v === 'number' && v > 0 ? '+' + v : v}</td></tr>`).join('') + '</tbody>';
+    .map(([k, v]) => `<tr><td>${k}</td><td class="num">${typeof v === 'number' && v > 0 ? '+' + v : v}</td></tr>`).join('') + '</tbody>';
 })();

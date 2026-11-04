@@ -14,18 +14,15 @@
 
   // On phones the filters fold away unless the link already carries some.
   if (matchMedia('(max-width: 700px)').matches && ![...params.keys()].length) $('#filters-box').open = false;
-  const PAGE = 60;
+  const PAGE = 48;
   let shown = PAGE;
   const minionChip = (m) => `<span class="chip">${esc(m)}</span>`;
   const card = (g) => {
-    const href = `game.html?g=${encodeURIComponent(g.id)}`;
-    const name = (t) => esc(CT.name(R, t));
     const belief = g.demonBelief == null ? '' : `<span class="chip" title="The town's final average belief that the real Demon was the Demon">Demon suspected ${g.demonBelief}%</span>`;
-    return `<a class="gcard" href="${href}">
-      <div class="vs"><span><span class="side good">Good</span>${CT.labMark(R, g.good)}${name(g.good)}</span><span class="win ${g.winner}">${g.winner === 'good' ? 'Won' : ''}</span>
-      <span><span class="side evil">Evil</span>${CT.labMark(R, g.evil)}${name(g.evil)}</span><span class="win ${g.winner}">${g.winner === 'evil' ? 'Won' : ''}</span></div>
-      <div class="meta"><span class="chip ${g.winner}">${g.winner === 'good' ? 'Good' : 'Evil'} wins, day ${g.days}</span><span class="chip">${g.players} players</span>${g.minions.map(minionChip).join('')}${belief}${g.group === 'mixed' ? '<span class="chip gold">Mixed team</span>' : g.group === 'unrated' ? '<span class="chip">Unrated</span>' : ''}</div>
-      <div class="small muted" style="margin-top:8px">${esc(g.id.replace(/^v1[67]\//, ''))}</div>
+    return `<a class="gcard" href="game.html?g=${encodeURIComponent(g.id)}">
+      ${CT.vsTeams(R, g, 'md')}
+      <div class="meta"><span class="chip ${g.winner}">${g.winner === 'good' ? 'Good' : 'Evil'} wins, day ${g.days}</span><span class="chip">${g.players} players</span>${g.minions.map(minionChip).join('')}${belief}${g.group === 'mixed' ? '<span class="chip gold">Mixed teams</span>' : g.group === 'unrated' ? '<span class="chip">Unrated</span>' : ''}</div>
+      <div class="gid">${esc(g.id.replace(/^v1[67]\//, ''))}</div>
     </a>`;
   };
   function apply() {

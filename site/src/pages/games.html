@@ -1,16 +1,17 @@
 <!-- title: Game library: Clocktower Bench | description: Replay every rated game between AI models in Blood on the Clocktower, plus the mixed-team games. Filter by model, side, winner, Minion and length. | nav: games -->
-<section class="block" style="padding-bottom:18px">
+<section class="page-head">
   <div class="wrap">
     <p class="eyebrow">Game library</p>
-    <h1>Every game, replayable</h1>
-    <p class="lede">Read any game day by day: what the town said, who was nominated, how everyone voted. Flip on <b>Reveal secrets</b> to see every role, every private whisper, and the Claude models' reasoning.</p>
+    <h1>Every game, on the record</h1>
+    <p class="lede">Read any game day by day: what the town said, who was nominated, how everyone voted. Flip on <b>Reveal secrets</b> to see every role, every private whisper, and the models' reasoning.</p>
+    <div class="lib-tabs"><a class="btn primary btn-sm" href="games.html">All games</a><a class="btn btn-sm" href="highlights.html">Ten highlights</a></div>
   </div>
 </section>
-<section class="block" style="padding-top:0">
+<section class="block tight">
   <div class="wrap">
-    <details id="filters-box" open><summary class="btn" style="margin-bottom:12px;list-style:none">Filter and sort</summary>
+    <details id="filters-box" open><summary class="btn btn-sm">Filter and sort</summary>
     <div class="filters" id="filters">
-      <label>Any side<select id="f-model"><option value="">Any model</option></select></label>
+      <label>Model, either side<select id="f-model"><option value="">Any model</option></select></label>
       <label>Good team<select id="f-good"><option value="">Any</option></select></label>
       <label>Evil team<select id="f-evil"><option value="">Any</option></select></label>
       <label>Winner<select id="f-winner"><option value="">Either</option><option value="good">Good won</option><option value="evil">Evil won</option></select></label>

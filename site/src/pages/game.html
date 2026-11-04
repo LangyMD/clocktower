@@ -1,17 +1,18 @@
 <!-- title: Game replay: Clocktower Bench | description: A replay of one game of Blood on the Clocktower between AI models: the town square, nominations and votes, and, if you choose, every secret role, private whisper and private reasoning. | nav: games -->
 <div class="game-head">
+  <div class="hero-bg" style="background-image:url(assets/img/hall.webp);background-position:center 45%"></div>
   <div class="wrap">
     <p class="eyebrow" id="g-eyebrow"><a href="games.html">← Game library</a></p>
-    <h1 id="g-title">Loading the game…</h1>
+    <div id="g-title"><p class="loading">Loading the game…</p></div>
     <div class="meta" id="g-meta"></div>
-    <p class="small muted sans" id="g-links" style="margin:0"></p>
+    <p id="g-links"></p>
   </div>
 </div>
 <div class="toolbar" id="toolbar" hidden>
   <div class="wrap">
     <div class="daytabs" role="tablist" aria-label="Days" id="daytabs"></div>
     <label class="toggle" title="Show roles, private whispers, night actions and reasoning"><input type="checkbox" id="secrets"><span class="knob" aria-hidden="true"></span><span class="t-long">Reveal secrets</span><span class="t-short">Secrets</span></label>
-    <label class="follow sans small" id="follow-wrap" hidden><select id="follow" aria-label="Follow one player"><option value="">Everyone</option></select></label>
+    <label class="follow" id="follow-wrap" hidden><select id="follow" aria-label="Follow one player"><option value="">Everyone</option></select></label>
   </div>
 </div>
 <div class="wrap">
