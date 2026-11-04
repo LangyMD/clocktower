@@ -123,6 +123,20 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-11-04: gui-redesign branch (site + play table restyle; local, not merged or deployed)
+- Branch `gui-redesign`: the site and the play table restyled to match the video essay, then simplified at the
+  user's request ("much more minimal and straightforward… hard to find things"). Read `HANDOFF.md` at the repo root.
+- User rules from this pass: findability beats ornament; every destination in the top nav (Leaderboard · Games ·
+  Highlights · Play · About; Run your own lives in About); flat dark surfaces, gold the one accent, team colours only
+  for teams; Pirata One only for the wordmark and titles; **a game without its transcript is never browsable**
+  (the exporter already skips games without `events.jsonl`; the front end lists and links only `data/index.json`).
+- Fonts are self-hosted (site `site/src/assets/fonts`, table `clocktower/table/fonts`, OFL); the play server's CSP is
+  now `style-src 'self'; font-src 'self'` (no Google Fonts, no 'unsafe-inline'), so table markup must not use inline
+  `style=` attributes (set styles through `element.style`). `tests/test_web.py` checks this.
+- Testing the table without spend: keyless server + scripted people + Playwright seats; scripts and screenshots live
+  outside the repo (Aaron's scratch `site_redesign/tools_v2`, `shots_v2`). The server's 40 reads/s per-IP limit trips
+  if several local drivers poll at once.
+
 ## 2026-10-30: clocktowerbench.com — site, play server, stream (all merged to main, nothing deployed yet)
 - **Site** `site/` (static; build `python -m clocktower.export --games games --media <explainer mp4>` → `site/dist/`,
   67 MB, 538 games gz; `--pages-only` for page edits). Pages: home, leaderboard (reads `docs/plans/f2-ratings.json`),

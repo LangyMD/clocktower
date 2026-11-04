@@ -947,7 +947,7 @@ function renderReveal() {
       const by = s.player ? `<small class="human">${esc(s.player)}</small>` : `<small class="model">${esc((s.model || '').startsWith('random') ? 'Practice bot' : model)}</small>`;
       const rd = R.reads && R.reads[s.name] && R.reads[s.name].evil != null ? `<small class="read">AIs: ${Math.round(R.reads[s.name].evil * 100)}% evil</small>` : '';
       return `<div class="rv-seat${s.evil ? ' evil' : ' good'}${s.alive ? '' : ' dead'}${s.name === me.seat ? ' you' : ''}">
-        <span class="token ${s.evil ? 'evil' : 'good'}"><span class="initial">${esc(s.character[0])}</span>${s.alive ? '' : '<span class="shroud"></span>'}</span><b>${esc(s.name)}${s.name === me.seat ? ' <em>you</em>' : ''}</b><small class="char ${s.evil ? 'evil' : 'good'}">${esc(s.character)}${s.alive ? '' : ' · dead'}</small>${was}${thought}${by}${rd}</div>`;
+        <span class="token ${s.evil ? 'evil' : 'good'}"><span class="initial">${esc(s.character[0])}</span>${s.alive ? '' : '<span class="shroud"></span>'}</span><b>${esc(s.name)}${s.name === me.seat ? ' <em>you</em>' : ''}</b><small class="rv-char ${s.evil ? 'evil' : 'good'}">${esc(s.character)}${s.alive ? '' : ' · dead'}</small>${was}${thought}${by}${rd}</div>`;
     }).join('')}</div>
     <p class="fine">Demon bluffs: ${(R.bluffs || []).map(esc).join(', ')}${R.red_herring ? ` · Fortune Teller's red herring: ${esc(R.red_herring)}` : ''}</p>
     ${readsHTML(R)}

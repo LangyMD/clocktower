@@ -504,5 +504,5 @@ details summary em { font: italic 400 14px var(--serif); color: var(--faint); }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 .rcard .eyebrow { font: 600 12px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 0 0 4px; }
-.rv-seat small.char { font: 600 13.5px/1.25 var(--sans); }
-.rv-seat small.char.good { color: var(--good); } .rv-seat small.char.evil { color: var(--evil); }
+.rv-seat small.rv-char { font: 600 13.5px/1.25 var(--sans); }
+.rv-seat small.rv-char.good { color: var(--good); } .rv-seat small.rv-char.evil { color: var(--evil); }
