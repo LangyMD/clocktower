@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import random
+import re
 import tempfile
 import threading
 import time
@@ -488,6 +489,24 @@ class HTTPTest(unittest.TestCase):
         self.assertEqual(self.call('/../web.py')[0], 404)
         js = self.call('/table.js')[2].decode()
         self.assertIn('const esc', js)
+
+    def test_self_hosted_assets_and_strict_csp(self):
+        """The page loads nothing from other hosts and allows no inline styles; its fonts come from table/fonts."""
+        _, h, page = self.call('/')
+        csp = h['Content-Security-Policy']
+        self.assertNotIn('unsafe-inline', csp)
+        self.assertNotIn('http', csp)  # no external host (fonts used to come from Google)
+        self.assertIn("font-src 'self'", csp)
+        self.assertNotIn(b'googleapis', page)
+        self.assertNotIn(b' style="', page + self.call('/table.js')[2])  # inline styles would be blocked by the CSP
+        for name, ctype in [('/fonts/inter.woff2', 'font/woff2'), ('/fonts/eb-garamond.woff2', 'font/woff2'), ('/fonts/pirata-one.woff', 'font/woff')]:
+            code, h, body = self.call(name)
+            self.assertEqual((code, h['Content-Type']), (200, ctype), name)
+            self.assertGreater(len(body), 1000)
+        css = self.call('/table.css')[2].decode()
+        for url in re.findall(r'url\((/[^)]+)\)', css):  # every file the stylesheet asks for is served
+            self.assertEqual(self.call(url)[0], 200, url)
+        self.assertEqual(self.call('/fonts/OFL.txt')[0], 404)  # only the listed types are served
 
     def test_post_rate_limit(self):
         old, self.hub.posts = self.hub.posts, web.Bucket(1, 5)
