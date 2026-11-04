@@ -217,9 +217,9 @@
       html += `<tr><th class="row" scope="row">${CT.esc(CT.name(R, a.id))}</th>`;
       rows.forEach((b, j) => {
         if (a === b) { html += '<td class="self">·</td>'; return; }
-        const p = CT.winProb(R, a, b, mode), k = Math.min(Math.abs(p - 0.5) * 2, 1), pct = Math.round(18 + k * 70);
+        const p = CT.winProb(R, a, b, mode), k = Math.min(Math.abs(p - 0.5) * 2, 1), pct = Math.round(14 + k * 38);  // at most 52%: light text stays above 4.5:1
         const bg = `color-mix(in oklab, ${p >= 0.5 ? win : lose} ${pct}%, ${CT.css('--surface')})`;
-        html += `<td data-i="${i}" data-j="${j}" style="background:${bg};color:${pct > 52 ? '#0f0d13' : 'var(--text)'}">${Math.round(p * 100)}</td>`;
+        html += `<td data-i="${i}" data-j="${j}" style="background:${bg};color:var(--text)">${Math.round(p * 100)}</td>`;
       });
       html += '</tr>';
     });

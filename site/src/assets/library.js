@@ -80,6 +80,7 @@
     $('#clear').hidden = !filtered;
     const good = list.filter((g) => g.winner === 'good').length;
     if (!games.length) {
+      $('.fbar').hidden = true;
       $('#count').textContent = '';
       $('#glist').innerHTML = '<div class="empty"><b>No games here yet.</b>Games appear once their logs are in this build.</div>';
       $('#pager').innerHTML = ''; return;

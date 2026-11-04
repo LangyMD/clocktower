@@ -254,7 +254,8 @@
   }
   function render(scrollTop) {
     $$('#daytabs button').forEach((b) => b.setAttribute('aria-selected', +b.dataset.d === S.day));
-    const active = $(`#daytabs button[data-d="${S.day}"]`); if (active) active.scrollIntoView({ block: 'nearest', inline: 'center' });
+    const active = $(`#daytabs button[data-d="${S.day}"]`), strip = $('#daytabs');  // centre the day without scrollIntoView (it moves the keyboard's starting point)
+    if (active) strip.scrollLeft = active.offsetLeft - strip.offsetLeft - (strip.clientWidth - active.offsetWidth) / 2;
     $('#secrets').checked = S.secrets;
     $('#follow').value = S.follow;
     const box = $('#day'); box.className = '';
