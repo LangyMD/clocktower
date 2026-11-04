@@ -47,7 +47,8 @@ from .render import render, visible
 
 PAGE = Path(__file__).with_name('table')
 TYPES = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
-         '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml'}
+         '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml',
+         '.woff': 'font/woff', '.woff2': 'font/woff2', '.webp': 'image/webp'}  # self-hosted fonts and the lobby plate
 HOME = 'https://clocktowerbench.com'
 
 # What the lobby offers, strongest first: the 2026 rating (docs/plans/f2-ratings.json) and the fitted
@@ -1067,9 +1068,9 @@ class Hub:
 
 
 # ---- HTTP ---------------------------------------------------------------------------------------------
-CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-       "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; "
-       "base-uri 'none'; form-action 'self'")
+# Fonts and images are served from table/ itself, so nothing loads from another host; no inline styles either.
+CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; "
+       "connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
 API = re.compile(r'^/api/t/([A-Za-z0-9_\-]{6,32})/([a-z]+)$')
 
 

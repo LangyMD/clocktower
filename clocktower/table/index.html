@@ -3,49 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d0b0a">
+<meta name="theme-color" content="#0e0a14">
 <title>Clocktower</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22%23cda65e%22/%3E%3Cpath d=%22M16 16V8M16 16l5 3%22 stroke=%22%232a1d0e%22 stroke-width=%222.4%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Ccircle cx=%2220%22 cy=%2220%22 r=%2219.5%22 fill=%22%2308060a%22/%3E%3Ccircle cx=%2220%22 cy=%2220%22 r=%2217.5%22 fill=%22%233a2418%22/%3E%3Ccircle cx=%2220%22 cy=%2220%22 r=%2212.5%22 fill=%22%23e4d2aa%22 stroke=%22%2308060a%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M20 20v-6.5M20 20l4.5 2.8%22 stroke=%22%23241a14%22 stroke-width=%222%22/%3E%3C/svg%3E">
+<link rel="preload" href="/fonts/jersey-10.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/eb-garamond.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/table.css">
 </head>
 <body>
 
 <!-- ============================================================ lobby -->
 <main id="lobby" hidden>
-  <div class="sky" aria-hidden="true"></div>
+  <div class="backdrop" aria-hidden="true"></div>
   <div class="lobby-inner">
     <header class="hero">
-      <svg class="emblem" viewBox="0 0 120 150" aria-hidden="true">
-        <defs><mask id="crescent"><rect width="120" height="150" fill="#fff"/><circle cx="99" cy="22" r="14" fill="#000"/></mask></defs>
-        <circle class="moon" cx="90" cy="28" r="16" mask="url(#crescent)"/>
-        <path class="stone" d="M60 3 L73 38 H47 Z"/>
-        <path class="stone" d="M40 38 H80 V45 H40 Z"/>
-        <path class="stone" d="M45 45 H75 V149 H45 Z"/>
-        <circle class="face" cx="60" cy="68" r="11"/>
-        <path class="tick" d="M60 58.5v2.5M60 75v2.5M50.5 68h2.5M67 68h2.5"/>
-        <path class="hands" d="M60 68 V61 M60 68 L65 71"/>
-        <path class="win" d="M55 104 v-6 a5 5 0 0 1 10 0 v6 z"/>
-        <path class="win dim" d="M55 128 v-6 a5 5 0 0 1 10 0 v6 z"/>
-      </svg>
+      <p class="eyebrow">Trouble Brewing</p>
       <h1>Clocktower</h1>
-      <p class="tagline">Trouble Brewing &middot; you and your friends against the machines</p>
+      <p class="tagline">You and your friends against the machines</p>
     </header>
 
     <section id="home" hidden>
       <div class="card">
-        <h2>Play Blood on the Clocktower against AI</h2>
+        <h2>Play Blood on the Clocktower against&nbsp;AI</h2>
         <p>Sit down at a table of 10 to 12 with friends and the AI models from
           <a href="https://clocktowerbench.com">Clocktower Bench</a>. Humans and AIs get exactly the same moves: one
           whisper per private-time turn, speeches in the town square, nominations and votes.</p>
         <p class="fine" id="free-note"></p>
         <button class="primary" id="new-table">Open a table</button>
-        <p class="err" id="new-err"></p>
+        <p class="err" id="new-err" role="alert"></p>
       </div>
       <div class="card how">
         <h2>How a game goes</h2>
-        <ol>
+        <ol class="steps">
           <li><b>Open a table</b> and send the invite link to friends (or play alone with AIs).</li>
           <li><b>Pick an allegiance</b>: good, evil or either. Nobody, human or AI, learns your choice or your seat.</li>
           <li><b>Each day</b>: six rounds of private whispers, three rounds in the town square, then nominations and votes.
@@ -64,25 +53,25 @@
 
     <section id="join" class="card" hidden>
       <h2>Take your seat</h2>
-      <label class="field"><span>Your name <em>(only the other humans see it)</em></span>
+      <label class="field"><span class="label">Your name <em>only the other humans see it</em></span>
         <input id="join-name" maxlength="24" autocomplete="nickname" placeholder="e.g. Dwarkesh"></label>
-      <div class="field"><span>Your allegiance</span>
+      <div class="field" role="group" aria-labelledby="join-team-label"><span class="label" id="join-team-label">Your allegiance</span>
         <div class="allegiance" id="join-team"></div></div>
       <p class="fine">Your choice is secret: no one else at the table, human or AI, learns it, or which seat you
         are dealt. Your character is dealt at random from the team you pick.</p>
       <button class="primary" id="join-go">Enter the town</button>
-      <p class="err" id="join-err"></p>
+      <p class="err" id="join-err" role="alert"></p>
     </section>
 
     <section id="gather" hidden>
       <div class="card">
         <h2>The town gathers</h2>
-        <ul id="people"></ul>
+        <ul id="people" class="people"></ul>
         <div class="share" id="share">
-          <span class="fine">Invite friends with this link:</span>
+          <span class="label">Invite friends with this link</span>
           <div class="share-row"><code id="share-url"></code><button class="ghost small" id="share-copy">Copy</button></div>
         </div>
-        <div class="field"><span>Your allegiance <em>(secret)</em></span><div class="allegiance" id="my-team"></div></div>
+        <div class="field" role="group" aria-labelledby="my-team-label"><span class="label" id="my-team-label">Your allegiance <em>secret</em></span><div class="allegiance" id="my-team"></div></div>
       </div>
 
       <div class="card" id="settings">
@@ -92,27 +81,27 @@
           <div class="size-n"><b id="size-n">10</b><span>players</span></div>
           <button class="round" id="size-plus" aria-label="More players">+</button>
         </div>
-        <div class="composition" id="composition"></div>
+        <div class="composition" id="composition" aria-hidden="true"></div>
         <p class="comp-text" id="comp-text"></p>
         <div class="grid2">
-          <label class="field"><span><i class="dot good"></i>Good AI players</span><select id="good-model"></select></label>
-          <label class="field"><span><i class="dot evil"></i>Evil AI players</span><select id="evil-model"></select></label>
+          <label class="field"><span class="label"><i class="dot good"></i>Good AI players</span><select id="good-model"></select></label>
+          <label class="field"><span class="label"><i class="dot evil"></i>Evil AI players</span><select id="evil-model"></select></label>
         </div>
-        <label class="field"><span>Turn timer <em>(a human turn passes when it runs out)</em></span><select id="timer"></select></label>
+        <label class="field"><span class="label">Turn timer <em>a human turn passes when it runs out</em></span><select id="timer"></select></label>
         <p class="fine" id="estimate"></p>
         <div id="byo" hidden>
           <details id="byo-box">
-            <summary>Use your own API key <em>(for Claude, Astra and the other models)</em></summary>
+            <summary>Use your own API key <em>for Claude, Astra and the other models</em></summary>
             <p class="fine">Your key pays for this table's AI players. It stays in the server's memory for this table only:
               it is never saved to disk or logs, never shown to anyone (you included), and is forgotten when the table
               closes or the server restarts. Each game on your key stops at <span id="byo-cap"></span>.</p>
-            <div class="key-row"><select id="byo-provider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option></select>
-              <input id="byo-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..."><button class="ghost small" id="byo-save">Use key</button></div>
+            <div class="key-row"><select id="byo-provider" aria-label="Provider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option></select>
+              <input id="byo-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..." aria-label="API key"><button class="ghost small" id="byo-save">Use key</button></div>
             <p class="fine" id="byo-have"></p>
           </details>
         </div>
         <button class="primary bell" id="start">Ring the bell</button>
-        <p class="err" id="start-err"></p>
+        <p class="err" id="start-err" role="alert"></p>
         <p class="fine center" id="host-note"></p>
         <div class="claim" id="claim" hidden><button class="ghost" id="claim-go">Make me the host</button></div>
       </div>
@@ -127,21 +116,22 @@
       <h2>The game is paused</h2>
       <p id="paused-text"></p>
       <div id="paused-host" hidden>
-        <div class="key-row"><select id="resume-provider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option></select>
-          <input id="resume-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..."><button class="ghost small" id="resume-key-save">Use key</button></div>
+        <div class="key-row"><select id="resume-provider" aria-label="Provider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option></select>
+          <input id="resume-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..." aria-label="API key"><button class="ghost small" id="resume-key-save">Use key</button></div>
         <button class="primary" id="resume-go">Resume the game</button>
         <button class="ghost" id="paused-end">End it instead</button>
       </div>
-      <p class="err" id="paused-err"></p>
+      <p class="err" id="paused-err" role="alert"></p>
     </section>
 
-    <section id="mine" class="card" hidden>
+    <section id="mine" class="card quiet" hidden>
       <h2>Your seat link</h2>
       <p class="fine">Open this on another phone or computer to continue as yourself. Keep it private: it is your seat.</p>
       <div class="share-row"><code id="mine-url"></code><button class="ghost small" id="mine-copy">Copy</button></div>
     </section>
 
-    <footer class="foot"><a href="https://clocktowerbench.com">clocktowerbench.com</a> &middot; <a href="/">new table</a></footer>
+    <footer class="foot"><a href="https://clocktowerbench.com">clocktowerbench.com</a> <span aria-hidden="true">&middot;</span> <a href="/">new table</a>
+      <p>An unofficial fan project, not affiliated with The Pandemonium Institute. All artwork is original.</p></footer>
   </div>
 </main>
 
@@ -149,8 +139,8 @@
 <main id="table" hidden>
   <header class="bar">
     <button class="me-chip" id="me-chip" aria-label="Your character"><span class="mini-token" id="me-token"></span>
-      <span class="me-text"><b id="me-name"></b><small id="me-char"></small></span></button>    <div class="phase-mini" id="phase-mini"></div>
-    <nav class="tools">
+      <span class="me-text"><b id="me-name"></b><small id="me-char"></small></span></button>
+    <nav class="tools" aria-label="Table tools">
       <button class="icon" data-sheet="town" id="town-btn" aria-label="Town circle" title="Town circle"></button>
       <button class="icon" data-sheet="script" aria-label="Characters" title="Characters"></button>
       <button class="icon" data-sheet="rules" aria-label="Rules" title="Rules"></button>
@@ -158,30 +148,32 @@
       <button class="icon" id="sound-btn" aria-label="Sound" title="Turn chime"></button>
     </nav>
   </header>
+  <div class="phase" id="phase"></div>
   <div class="strip" id="strip"></div>
 
   <div class="stage">
-    <section id="town">
+    <section id="town" aria-label="The town">
       <div class="circle" id="circle"></div>
     </section>
-    <section id="chronicle">
-      <div class="filters" id="filters"></div>
+    <section id="chronicle" aria-label="The chronicle">
+      <div class="filters" id="filters" aria-label="Show"></div>
       <div id="role-banner" hidden></div>
       <div id="feed" aria-live="polite"></div>
       <button id="jump" hidden>New below &darr;</button>
-      <section id="dock"></section>
+      <section id="dock" aria-label="Your move"></section>
     </section>
   </div>
+  <p class="sr-only" id="announce" aria-live="assertive"></p>
 </main>
 
 <!-- ============================================================ sheets -->
 <div id="scrim" hidden></div>
-<aside id="sheet" hidden>
+<aside id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
   <header><h3 id="sheet-title"></h3><button class="icon close" id="sheet-close" aria-label="Close">&times;</button></header>
   <div id="sheet-body"></div>
 </aside>
 
-<div id="reveal" hidden></div>
+<div id="reveal" hidden role="dialog" aria-modal="true" aria-label="The Grimoire"></div>
 
 <script src="/table.js"></script>
 </body>
