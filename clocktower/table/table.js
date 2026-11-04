@@ -308,6 +308,7 @@ async function pollState() {
     else if (S.events.length) $('jump').hidden = false;
   }
   if ((S.pending && S.pending.turn) !== prevTurn) { T.form = null; renderDock(); }
+  else if (!S.pending && waitSig() !== T.waitSig) renderDock();   // idle: keep the waiting line in step with the phase
   else tickDock();
   if (S.pending && T.sent !== S.pending.turn && T.alertedTurn !== S.pending.turn) { T.alertedTurn = S.pending.turn; alertTurn(); }
   if (!S.pending || T.sent === S.pending.turn) document.title = 'Clocktower';
@@ -354,10 +355,10 @@ function phaseInfo() {
   const m = h.match(/private time (\d+)/), q = h.match(/town square (\d+)/), day = T.day || (h.match(/\d+/) || [0])[0];
   if (T.over || T.stage === 'over') return { key: 'over', title: 'Game over', sub: T.reveal && T.reveal.winner ? `${T.reveal.winner === 'good' ? 'Good' : 'Evil'} wins` : '', pos: -1, icon: ICON.bell };
   if (T.stage === 'night') return { key: 'night', title: h || 'Night', sub: 'The town sleeps', pos: 0, icon: ICON.moon };
-  if (m) return { key: 'private', title: `Day ${day}`, sub: `Whispers · ${m[1]} of 6`, pos: +m[1], icon: ICON.quill };
-  if (q) return { key: 'public', title: `Day ${day}`, sub: `Town square · ${q[1]} of 3`, pos: 6 + +q[1], icon: ICON.bell };
+  if (m) return { key: 'private', title: `Day ${day}`, sub: `Whispers ${m[1]} of 6`, pos: +m[1], icon: ICON.quill };
+  if (q) return { key: 'public', title: `Day ${day}`, sub: `Town square ${q[1]} of 3`, pos: 6 + +q[1], icon: ICON.bell };
   if (T.stage === 'nominations') {
-    const sub = T.nominee ? `Vote on ${T.nominee}` : T.block ? `${T.block.name} on the block · ${T.block.votes}` : 'Nominations';
+    const sub = T.nominee ? `On trial: ${T.nominee}` : T.block ? `${T.block.name} on the block · ${T.block.votes}` : 'Nominations';
     return { key: T.nominee ? 'vote' : 'noms', title: `Day ${day}`, sub, pos: 10, icon: T.nominee ? ICON.hand : ICON.arrow };
   }
   if (T.stage === 'dawn') return { key: 'dawn', title: `Day ${day}`, sub: 'Dawn', pos: 0.5, icon: ICON.sun };
@@ -395,11 +396,11 @@ function seatEl(p) {
   el.className = 'seat' + (isMe ? ' me' : '') + (p.alive ? '' : ' dead');
   el.dataset.name = p.name;
   let face = `<span class="initial">${esc(p.name[0])}</span>`, ring = '', label = p.name;
-  if (isMe) { face = `<span class="initial">${esc(p.name[0])}</span><span class="role">${esc(me.character)}</span>`; ring = me.evil ? ' evil' : ' good'; label += `, you, the ${me.character}`; }
+  if (isMe) { ring = me.evil ? ' evil' : ' good'; label += `, you, the ${me.character}`; }
   else if (known) { face = `<span class="initial">${esc(p.name[0])}</span><span class="role">${known}</span>`; ring = ' evil'; label += `, your ${known}`; }
   let badges = '';
   if (T.nominee && T.yes.has(p.name)) { badges += `<span class="badge hand" title="Hand raised">${ICON.hand}</span>`; label += ', hand raised'; }
-  if (!p.alive && p.ghost) badges += '<span class="badge ghost" title="Ghost vote unused"></span>';
+  if (!p.alive && p.ghost) badges += '<span class="badge gv" title="Ghost vote unused"></span>';
   if (T.wh[p.name]) badges += `<span class="badge wh" title="Whispers with you today">${T.wh[p.name]}</span>`;
   if (T.block && T.block.name === p.name) { badges += `<span class="badge blk" title="On the block">${T.block.votes}</span>`; label += `, on the block with ${T.block.votes}`; }
   if (!p.alive) label += ', dead';
@@ -410,7 +411,7 @@ function seatEl(p) {
   if (T.who === p.name) { el.classList.add('filtered'); el.setAttribute('aria-pressed', 'true'); }
   const f = T.pending && T.sent !== T.pending.turn ? T.form : null;
   if (f && (f.picks.includes(p.name) || f.shot === p.name)) el.classList.add('picked', ...(f.mode === 'whisper' ? [] : ['target']));
-  if (f && f.pickable && !f.pickable.includes(p.name)) el.classList.add('dim');
+  if (f && f.pickable && !f.pickable.includes(p.name) && !isMe) el.classList.add('dim');
   el.onclick = () => seatClicked(p.name);
   return el;
 }
@@ -494,7 +495,7 @@ function renderBanner() {
   b.dataset.k = me.character;
   const team = me.evil ? 'evil' : 'good';
   b.className = 'rcard ' + team;
-  b.innerHTML = `<span class="token big ${team}"><span class="role">${esc(me.character)}</span></span>
+  b.innerHTML = `<span class="token big ${team}"><span class="initial">${esc(me.character[0])}</span></span>
     <div class="rc-body"><p class="eyebrow">You are ${esc(me.seat)}</p><h3>The ${esc(me.character)}</h3><span class="plate ${team}">${team} team</span>
     <p>${esc(me.ability)}</p><p class="fine">${me.evil ? 'Evil wins when only two players are left alive. Keep your team hidden.' : 'Good wins by executing the Demon. Find it.'}
     Tap your name at the top any time to see this again.</p></div><button class="ghost small" id="banner-ok">Got it</button>`;
@@ -554,7 +555,7 @@ function addEvent(ev, quiet) {
       const big = /^(Night|Day) \d+$/.test(d.text), night = /^Night/.test(d.text);
       const kind = night ? 'night' : /private/.test(d.text) ? 'private' : /town square/.test(d.text) ? 'public' : 'day';
       const icon = { night: ICON.moon, private: ICON.quill, public: ICON.bell, day: ICON.sun }[kind];
-      const label = d.text.replace(/^Day \d+ · /, '').replace(/^private time (\d+)$/, 'Whispers · $1 of 6').replace(/^town square (\d+)$/, 'Town square · $1 of 3');
+      const label = d.text.replace(/^Day \d+ · /, '').replace(/^private time (\d+)$/, 'Whispers $1 of 6').replace(/^town square (\d+)$/, 'Town square $1 of 3');
       el.className += ` divider ${kind}${big ? ' big' : ''}`;
       el.innerHTML = `<span class="rule"></span>${icon}<span class="lbl">${esc(label)}</span><span class="rule"></span>`;
       break;
@@ -562,7 +563,7 @@ function addEvent(ev, quiet) {
     case 'intro': {
       cat = 'st';
       const m = T.me || {};
-      el.innerHTML = `<div class="rcard intro ${m.evil ? 'evil' : 'good'}"><span class="token ${m.evil ? 'evil' : 'good'}"><span class="role">${esc(m.character || '')}</span></span>
+      el.innerHTML = `<div class="rcard intro ${m.evil ? 'evil' : 'good'}"><span class="token ${m.evil ? 'evil' : 'good'}"><span class="initial">${esc((m.character || '?')[0])}</span></span>
         <div class="rc-body"><div class="h">${ICON.eye} The Storyteller shows you your character</div><p>${esc(d.text)}</p></div></div>`;
       break;
     }
@@ -613,7 +614,7 @@ function addEvent(ev, quiet) {
       }
       const b = T.ballot;
       b.dataset.who += ' ' + d.voter;
-      b.querySelector('.votes').insertAdjacentHTML('beforeend', `<span class="v${d.yes ? ' yes' : ''}${d.ghost ? ' ghost' : ''}" title="${esc(d.voter)}: ${d.yes ? 'yes' : 'no'}${d.ghost ? ' (ghost vote)' : ''}">${d.yes ? ICON.hand : ''}${esc(d.voter === me ? 'you' : d.voter)}</span>`);
+      b.querySelector('.votes').insertAdjacentHTML('beforeend', `<span class="v${d.yes ? ' yes' : ''}${d.ghost ? ' gv' : ''}" title="${esc(d.voter)}: ${d.yes ? 'yes' : 'no'}${d.ghost ? ' (ghost vote)' : ''}">${d.yes ? ICON.hand : ''}${esc(d.voter === me ? 'you' : d.voter)}</span>`);
       if (d.yes) { const n = b.querySelector('.h .n'); n.textContent = +n.textContent + 1; }
       if (d.text) b.querySelector('.remarks').insertAdjacentHTML('beforeend', `<div><b>${esc(d.voter)}</b> ${esc(d.text)}</div>`);
       b.hidden = !matches(b);
@@ -711,9 +712,12 @@ function waitingText() {
 
 function announce(text) { const a = $('announce'); if (a) { a.textContent = ''; setTimeout(() => { a.textContent = text; }, 30); } }
 
+const waitSig = () => [T.stage, T.nominee, T.over, T.me && T.me.alive].join('|');
+
 function renderDock() {
   const dock = $('dock'), p = T.pending;
   dock.className = '';
+  T.waitSig = waitSig();
   if (T.over) {
     dock.className = 'over';
     dock.innerHTML = `<div class="wait">${ICON.bell}<span>The game is over.</span><button class="primary small" id="see-reveal">Open the Grimoire</button></div>`;
@@ -883,7 +887,7 @@ async function openSheet(kind) {
     const names = T.players.map((p) => p.name), i = names.indexOf(me.seat), n = names.length;
     const known = Object.entries(me.known);
     const team = me.evil ? 'evil' : 'good';
-    body.innerHTML = `<div class="rcard ${team}"><span class="token big ${team}"><span class="role">${esc(me.character)}</span></span>
+    body.innerHTML = `<div class="rcard ${team}"><span class="token big ${team}"><span class="initial">${esc(me.character[0])}</span></span>
       <div class="rc-body"><p class="eyebrow">${esc(me.seat)} · ${esc(me.kind)}</p><h3>The ${esc(me.character)}</h3><span class="plate ${team}">${team} team</span><p>${esc(me.ability)}</p></div></div>
       <p class="fine">You are on the <b>${team}</b> team${me.alive ? '' : ', and dead: you still talk and whisper, and have one ghost vote'}.</p>
       <h4>Your neighbours</h4><div class="kv"><span>${esc(names[(i - 1 + n) % n])}</span><span>${esc(names[(i + 1) % n])}</span></div>
@@ -940,10 +944,10 @@ function renderReveal() {
       const was = s.started && s.started !== s.character ? `<small>was the ${esc(s.started)}</small>` : '';
       const thought = s.shown ? `<small>thought they were the ${esc(s.shown)}</small>` : '';
       const model = (models[(s.model || '').split('@')[0]] || s.model || '').replace(/ \(.*\)$/, '');
-      const by = s.player ? `<small class="human">${esc(s.player)}</small>` : `<small class="model">${esc(model === 'random' ? 'Practice bot' : model)}</small>`;
+      const by = s.player ? `<small class="human">${esc(s.player)}</small>` : `<small class="model">${esc((s.model || '').startsWith('random') ? 'Practice bot' : model)}</small>`;
       const rd = R.reads && R.reads[s.name] && R.reads[s.name].evil != null ? `<small class="read">AIs: ${Math.round(R.reads[s.name].evil * 100)}% evil</small>` : '';
       return `<div class="rv-seat${s.evil ? ' evil' : ' good'}${s.alive ? '' : ' dead'}${s.name === me.seat ? ' you' : ''}">
-        <span class="token ${s.evil ? 'evil' : 'good'}"><span class="role">${esc(s.character)}</span>${s.alive ? '' : '<span class="shroud"></span>'}</span><b>${esc(s.name)}${s.name === me.seat ? ' <em>you</em>' : ''}</b>${was}${thought}${by}${rd}</div>`;
+        <span class="token ${s.evil ? 'evil' : 'good'}"><span class="initial">${esc(s.character[0])}</span>${s.alive ? '' : '<span class="shroud"></span>'}</span><b>${esc(s.name)}${s.name === me.seat ? ' <em>you</em>' : ''}</b><small class="char ${s.evil ? 'evil' : 'good'}">${esc(s.character)}${s.alive ? '' : ' · dead'}</small>${was}${thought}${by}${rd}</div>`;
     }).join('')}</div>
     <p class="fine">Demon bluffs: ${(R.bluffs || []).map(esc).join(', ')}${R.red_herring ? ` · Fortune Teller's red herring: ${esc(R.red_herring)}` : ''}</p>
     ${readsHTML(R)}

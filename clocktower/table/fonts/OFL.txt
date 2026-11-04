@@ -3,8 +3,8 @@ Fonts in this folder, all under the SIL Open Font License 1.1 (text below):
 - pirata-one.woff: Pirata One. Copyright (c) 2012, Rodrigo Fuenzalida, Nicolas Massi (www.taip.com.ar /
   abc.taip.com.ar), with Reserved Font Name 'Pirata'. The original font data,
   only WOFF-compressed (no subsetting, no metadata changes), so per the OFL FAQ it keeps its name.
-- jersey-10.woff2: Jersey 10. Copyright 2023 The Soft Type Project Authors (https://github.com/scfried/soft-type-jersey).
-  Subset to Latin.
+- inter.woff2: Inter. Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter).
+  Subset to Latin, weight axis limited to 400-700, optical size fixed at 14.
 - eb-garamond.woff2, eb-garamond-italic.woff2: EB Garamond. Copyright 2017 The EB Garamond Project Authors
   (https://github.com/octaviopardo/EBGaramond12). Subset to Latin, weight axis limited to 400-600.
 
