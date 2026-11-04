@@ -1,47 +1,8 @@
-<!-- title: Run your own: Clocktower Bench | description: Clone the harness, add your API keys, run a match between two models and rate it. Every game log is a public dataset. | nav: about -->
+<!-- title: Run your own: Clocktower Bench | description: Run your own games: this section now lives on the About page. | nav: about -->
 <section class="page-head">
   <div class="wrap narrow">
-    <p class="eyebrow">Run your own</p>
-    <h1>Run a match in five minutes</h1>
-    <p class="lede">The harness is open source and every game we played is in a public dataset: transcripts, private whispers, reasoning, belief probes and the cost of every API call.</p>
-    <div class="btns"><a class="btn primary" data-config-href="githubUrl" href="#">GitHub repository</a><a class="btn" data-config-href="datasetUrl" href="#">Game dataset on Hugging Face</a></div>
+    <h1>Run your own</h1>
+    <p class="lede">This now lives on the About page: <a href="about.html#run-your-own">Run your own →</a></p>
   </div>
 </section>
-<section class="block tight">
-  <div class="wrap narrow prose">
-    <h2 style="margin-top:0">Quick start</h2>
-    <pre><code>git clone <span id="repo-url">https://github.com/…/clocktower</span> && cd clocktower
-pip install -e .                       # Python 3.11+
-export ANTHROPIC_API_KEY=... OPENAI_API_KEY=...
-python -m unittest discover -s tests   # rules and engine tests, no API calls
-python -m clocktower sim --games 200   # random players, no API: check the Storyteller</code></pre>
-    <h3>Play one side-swapped pair</h3>
-    <pre><code>python -m clocktower run --good-model claude-opus-5-5 --evil-model gpt-6.1-sol \
-    --games 1 --swap --seed 1 --out games/v17/demo
-python -m clocktower replay games/v17/demo/game-01 --thinking     # read it</code></pre>
-    <p>Each game writes <code>transcript.md</code> (an omniscient replay with every seat's reasoning), <code>events.jsonl</code>, <code>probes.jsonl</code> (belief probes), <code>calls.jsonl</code> (every API call with tokens and cost), <code>config.json</code> and <code>result.json</code>. A game costs from about $2 to $50 depending on the models.</p>
-    <h3>Run a tournament and rate it</h3>
-    <pre><code>python -m clocktower plan plans/models-2026.json --within 10 --pairs 1 \
-    --seed 120000 --out games/v17/mine > plans/mine.json
-python -m clocktower tournament plans/mine.json      # every game at once; rerun to resume
-python -m clocktower analyze games/v17/mine-*/game-* # win rates, probes, quick ratings
-python -m clocktower ratings                         # the Bradley–Terry fit with bootstrap intervals</code></pre>
-    <h3>Use the existing games</h3>
-    <pre><code>python -m clocktower fetch v17/f3-*      # download logs from the dataset
-python -m clocktower.export --games games  # rebuild this website from them</code></pre>
-    <p>Mixed teams (<code>--good-model A,B</code>), one upgraded seat (<code>--seat-model good:MODEL:1</code>) and a different model for the Imp (<code>--seat-model Imp:MODEL</code>) are all built in. The full protocol is in <code>docs/PROTOCOL.md</code>; why each rule is what it is, in <code>docs/protocol-history.md</code>.</p>
-
-    <h2>Questions worth exploring</h2>
-    <ul>
-      <li><b>Learning over time.</b> Do models get better across games? In context (notes carried between games) or by fine-tuning on their own logs. Careful: shared notes on the good team leak who is good, so evil-only learners or a league of individual agents are the clean designs.</li>
-      <li><b>Harder scripts.</b> Trouble Brewing is the beginner script. Characters like the Lunatic (who believes they are the Demon) or scripts with more misinformation would test whether models can reason about information that is wrong on purpose.</li>
-      <li><b>One smart player.</b> How much does a single strong model lift a team of weaker ones, as good and as evil? Which evil role carries the team?</li>
-      <li><b>Mixed teams, systematically.</b> We found half-and-half evil teams play worse than either model alone. Is that coordination cost, or style mismatch? Does it shrink with stronger models?</li>
-      <li><b>Teammate recognition.</b> Writing style alone separates the teams in our logs, though no model ever used it. Do models learn to fingerprint their teammates, and does uniform typography stop it?</li>
-      <li><b>Humans vs AIs.</b> Seat humans at the table (it's built in) for a human baseline, and to see whether people can tell which players are models.</li>
-      <li><b>Thinking on votes.</b> Claude models skip thinking on most votes as good, and unthinking votes follow the running tally more. Forcing a thought before each vote is a cheap ablation.</li>
-      <li><b>Memory.</b> Models that carry their own reasoning across turns vs replies only: how big is the handicap?</li>
-    </ul>
-  </div>
-</section>
-<script>(function(){var u=(window.CT_CONFIG||{}).githubUrl;if(u){document.getElementById('repo-url').textContent=u.replace(/\/$/,'')+'.git';}})();</script>
+<script>location.replace('about.html#run-your-own');</script>

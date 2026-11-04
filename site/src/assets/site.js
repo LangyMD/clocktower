@@ -7,19 +7,9 @@
   CT.$ = $; CT.$$ = $$;
   CT.esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  /* ---------- header: current page, menu, theme, config links ---------- */
+  /* ---------- header: mark the current page; config links ---------- */
   const page = document.body.dataset.page;
   $$('.nav a').forEach((a) => { if (a.dataset.nav === page) a.setAttribute('aria-current', 'page'); });
-  const menu = $('#menu-btn'), nav = $('#nav');
-  if (menu) menu.addEventListener('click', () => { const o = nav.classList.toggle('open'); menu.setAttribute('aria-expanded', o); });
-  const themeBtn = $('#theme-btn');
-  if (themeBtn) themeBtn.addEventListener('click', () => {
-    const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    const next = cur === 'light' ? 'dark' : 'light';
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem('ct-theme', next); } catch (e) { /* private mode */ }
-    window.dispatchEvent(new Event('ct-theme'));
-  });
   // Links whose target lives in config.js: hidden-ish when unset, so a placeholder never 404s.
   const wireLinks = () => $$('[data-config-href]').forEach((a) => {
     const url = C[a.dataset.configHref];
@@ -60,7 +50,8 @@
   };
   CT.labMark = (R, id) => CT.token(R, id, 'xs');
   CT.css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  CT.labColor = (lab) => CT.css(lab === 'Anthropic' ? '--anth' : lab === 'OpenAI' ? '--oai' : '--mixed');
+  CT.labColor = (lab) => CT.css(lab === 'Anthropic' ? '--anth-lt' : lab === 'OpenAI' ? '--oai-lt' : '--mixed-lt');   // lines and bars on the page
+  CT.labInk = (lab) => CT.css(lab === 'Anthropic' ? '--anth' : lab === 'OpenAI' ? '--oai' : '--mixed');            // the mark on a token's face
   const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   CT.fmtDate = (s) => `${MON[+s.slice(5, 7) - 1]} ${+s.slice(8, 10)}, ${s.slice(0, 4)}`;
   CT.pct = (p) => Math.round(p * 100) + '%';
@@ -112,7 +103,7 @@
     el('circle', { cx, cy, r, fill: CT.css('--wood') }, null, g);
     el('circle', { cx, cy, r: r * .7, fill: CT.css('--parch-hi'), stroke: ink, 'stroke-width': .8 }, null, g);
     const s = r * .95;
-    el('use', { href: `#lab-${lab}`, x: cx - s / 2, y: cy - s / 2, width: s, height: s, style: `color:${CT.labColor(lab)}` }, null, g);
+    el('use', { href: `#lab-${lab}`, x: cx - s / 2, y: cy - s / 2, width: s, height: s, style: `color:${CT.labInk(lab)}` }, null, g);
     return g;
   }
   /** Greedy label placement: right, left, above, below; skip a label that fits nowhere (the tooltip has it). */
@@ -220,15 +211,15 @@
   };
   CT.h2h = (host, R, mode = 'both') => {
     const rows = R.models.slice().sort((a, b) => b.combined - a.combined);
-    const win = CT.css('--oai'), lose = CT.css('--evil');
+    const win = CT.css('--oai-lt'), lose = CT.css('--evil');
     let html = '<table class="h2h"><tr><th></th>' + rows.map((m) => `<th class="col" scope="col"><span>${CT.esc(CT.name(R, m.id))}</span></th>`).join('') + '</tr>';
     rows.forEach((a, i) => {
       html += `<tr><th class="row" scope="row">${CT.esc(CT.name(R, a.id))}</th>`;
       rows.forEach((b, j) => {
         if (a === b) { html += '<td class="self">·</td>'; return; }
         const p = CT.winProb(R, a, b, mode), k = Math.min(Math.abs(p - 0.5) * 2, 1), pct = Math.round(18 + k * 70);
-        const bg = `color-mix(in oklab, ${p >= 0.5 ? win : lose} ${pct}%, ${CT.css('--parch-hi')})`;
-        html += `<td data-i="${i}" data-j="${j}" style="background:${bg};color:${pct > 52 ? '#fff' : 'var(--p-ink)'}">${Math.round(p * 100)}</td>`;
+        const bg = `color-mix(in oklab, ${p >= 0.5 ? win : lose} ${pct}%, ${CT.css('--surface')})`;
+        html += `<td data-i="${i}" data-j="${j}" style="background:${bg};color:${pct > 52 ? '#0f0d13' : 'var(--text)'}">${Math.round(p * 100)}</td>`;
       });
       html += '</tr>';
     });
@@ -279,7 +270,7 @@
     el('polygon', { points: Cv.map((p) => `${x(p[0])},${y(p[3])}`).concat(Cv.slice().reverse().map((p) => `${x(p[0])},${y(p[2])}`)).join(' '), fill: c, opacity: .16 });
     el('polyline', { points: Cv.map((p) => `${x(p[0])},${y(p[1])}`).join(' '), fill: 'none', stroke: c, 'stroke-width': 2.2 });
     for (const p of D.points) {
-      el('circle', { cx: x(p.x), cy: y(p.p), r: 5.5, fill: CT.css('--p-ink'), stroke: CT.css('--parch'), 'stroke-width': 2 });
+      el('circle', { cx: x(p.x), cy: y(p.p), r: 5.5, fill: CT.css('--text'), stroke: CT.css('--bg'), 'stroke-width': 2 });
       const h = el('circle', { cx: x(p.x), cy: y(p.p), r: 15, fill: 'transparent' });
       CT.hover(h, () => `Teams averaging ~${Math.round(p.x)} Elo, within 200 of each other<br>Evil won <b>${p.e} of ${p.n}</b> (${Math.round(p.p * 100)}%)`);
       if (!small) el('text', { x: x(p.x), y: y(p.p) - 11, 'text-anchor': 'middle', class: 'lbl' }, `${Math.round(p.p * 100)}%`);

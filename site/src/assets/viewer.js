@@ -17,7 +17,6 @@
   const days = G.days_;
   const lastDay = days.length ? days[days.length - 1].d : 1;
   if (S.day > lastDay) S.day = lastDay;
-  if (!days.length) S.day = 0;
 
   // Who is what on a given day: becomes-events up to and including that day's night.
   const changes = [];
@@ -32,22 +31,17 @@
     return set;
   };
 
-  /* ---------- header ---------- */
+  /* ---------- header: one line, good vs evil and the result ---------- */
   document.title = `${teamName(G.good)} (good) vs ${teamName(G.evil)} (evil): Clocktower Bench`;
-  const team = (t, side) => `<div class="team ${G.winner === side ? 'won' : 'lost'}"><span class="plate ${side}">${side}</span>${CT.token(R, t, 'xl ' + side)}<span class="nm">${esc(teamName(t))}</span><span class="crown">${G.winner === side ? 'Wins' : '&nbsp;'}</span></div>`;
-  $('#g-title').innerHTML = `<h1 class="sr-only" style="position:absolute;left:-9999px">${esc(teamName(G.good))} (good) vs ${esc(teamName(G.evil))} (evil)</h1><div class="vscard">${team(G.good, 'good')}<span class="vs outlined" aria-hidden="true">vs</span>${team(G.evil, 'evil')}</div>`;
-  const row = index.find((g) => g.id === G.id) || {};
-  $('#g-meta').innerHTML = [
-    `<span class="chip ${G.winner}">${G.winner === 'good' ? 'Good' : 'Evil'} wins on day ${G.days}</span>`,
-    `<span class="chip">${G.players} players</span>`, ...G.minions.map((m) => `<span class="chip">${esc(m)}</span>`),
-    G.group === 'mixed' ? '<span class="chip">Mixed-team game</span>' : G.group === 'unrated' ? '<span class="chip" title="Opus 4.8\'s first games hit a retry bug and were replayed under v17">Not rated</span>' : '',
-  ].join('');
+  const team = (t, side) => `<span class="team"><span class="who ${side}">${side}</span>${CT.token(R, t, 'md')}<span>${esc(teamName(t))}</span></span>`;
+  $('#g-title').innerHTML = `<h1 class="sr-only">${esc(teamName(G.good))} (good) vs ${esc(teamName(G.evil))} (evil)</h1><p class="matchup">${team(G.good, 'good')}<span class="vs">vs</span>${team(G.evil, 'evil')}<span class="result ${G.winner}">${G.winner === 'good' ? 'Good' : 'Evil'} wins on day ${G.days}</span></p>`;
   const twin = index.find((g) => g.id === G.twin);
-  $('#g-links').innerHTML = [
-    twin ? `<a href="game.html?g=${encodeURIComponent(twin.id)}">Twin game →</a> same deal, sides swapped: ${esc(teamName(twin.good))} as good, ${esc(teamName(twin.evil))} as evil; ${twin.winner} won.` : '',
-    `<span class="muted"> · ${esc(G.id)} · seed ${G.seed}</span>`,
-  ].join('');
-  $('#g-eyebrow').innerHTML = `<a href="games.html">← Game library</a>`;
+  $('#g-meta').innerHTML = [
+    `${G.players} players`, G.minions.length ? `Minions: ${G.minions.map(esc).join(', ')}` : '',
+    G.group === 'mixed' ? 'Mixed-team game' : G.group === 'unrated' ? '<span title="Opus 4.8\'s first games hit a retry bug and were replayed under v17">Not rated</span>' : '',
+    twin ? `<a href="game.html?g=${encodeURIComponent(twin.id)}">Twin game</a> (sides swapped: ${twin.winner} won)` : '',
+    `<span class="muted">${esc(G.id)} · seed ${G.seed}</span>`,
+  ].filter(Boolean).join(' · ');
 
   /* ---------- controls ---------- */
   $('#toolbar').hidden = false;
@@ -58,7 +52,7 @@
   sec.addEventListener('change', () => { S.secrets = sec.checked; if (!S.secrets) S.follow = ''; render(false); });
   const fol = $('#follow');
   fol.insertAdjacentHTML('beforeend', G.seats.map((s) => `<option value="${esc(s.n)}">See as ${esc(s.n)}</option>`).join(''));
-  fol.addEventListener('change', () => { S.follow = fol.value; render(false); });
+  fol.addEventListener('change', () => { S.follow = fol.value; if (S.follow) S.secrets = true; render(false); });
 
   /* ---------- text helpers ---------- */
   const md = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -94,7 +88,7 @@
       case 'say': return `<div class="msg" id="${id}"><div class="who">${who(it.p, day, dead)}</div><div class="txt">${esc(it.x)}</div>${reasoning(it.p, it.t)}</div>`;
       case 'w': {
         const evilChat = S.secrets && seat[it.p] && seat[it.p].e && it.to.every((t) => seat[t] && seat[t].e);
-        return `<div class="msg whisper${evilChat ? ' evilchat' : ''}" id="${id}"><div class="who">${who(it.p, day, dead)}<span class="to">→ ${it.to.map((t) => esc(t)).join(' & ')}</span>${evilChat ? '<span class="small" style="color:var(--evil-ink)">evil team</span>' : ''}</div><div class="txt">${esc(it.x)}</div>${reasoning(it.p, it.t)}</div>`;
+        return `<div class="msg whisper${evilChat ? ' evilchat' : ''}" id="${id}"><div class="who">${who(it.p, day, dead)}<span class="to">→ ${it.to.map((t) => esc(t)).join(' & ')}</span>${evilChat ? '<span class="small evil">evil team</span>' : ''}</div><div class="txt">${esc(it.x)}</div>${reasoning(it.p, it.t)}</div>`;
       }
       case 'th': return `<div class="think-only" id="${id}">${esc(it.p)} ${it.why === 'nominate' ? 'chose not to nominate' : it.why === 'vote' ? 'thought before voting' : 'passed this turn'}.${reasoning(it.p, it.x)}</div>`;
       case 'nc': return `<div class="msg secret" id="${id}"><b>${esc(it.p)}</b> (${esc(it.r)}) chose ${it.n.length ? it.n.map(esc).join(' and ') : 'nobody'}.${reasoning(it.p, it.t)}</div>`;
@@ -106,7 +100,7 @@
       case 'vg': return `<div class="verdict exec" id="${id}">${esc(it.p)} nominated the Virgin and is executed on the spot. The day ends.</div>`;
       case 'ex': return `<div class="verdict exec" id="${id}">${esc(it.p)} is executed.${it.died ? '' : ' (They were already dead.)'}${S.secrets && seat[it.p] ? ` They were the <b>${esc(roleOn(it.p, day + 1))}</b>.` : ''}</div>`;
       case 'noex': return `<div class="verdict" id="${id}">Nobody is executed today.</div>`;
-      case 'end': return `<div class="gameover" id="${id}"><p class="eyebrow">Game over</p><h3 style="color:var(--${it.w}-ink)">${it.w === 'good' ? 'Good' : 'Evil'} wins</h3><p class="muted sans" style="margin:0">${esc(it.x)}</p></div>`;
+      case 'end': return `<div class="gameover" id="${id}"><p class="eyebrow">Game over</p><h3 class="${it.w}">${it.w === 'good' ? 'Good' : 'Evil'} wins</h3><p class="muted sans" style="margin:0">${esc(it.x)}</p></div>`;
       case 'dawn': return '';
       default: return '';
     }
@@ -189,37 +183,33 @@
       html += `<div class="section"><h2>${ICON.noms}Nominations<span class="kicker">${n} nomination${n === 1 ? '' : 's'}</span></h2>${nominations(noms.it, d, dead) || '<p class="muted">Nobody nominated.</p>'}</div>`;
     }
     // Pager
-    html += `<div class="pager">${d > 0 ? `<button class="btn" data-go="${d - 1}">← ${d === 1 ? 'Setup' : 'Day ' + (d - 1)}</button>` : '<span></span>'}${d < lastDay ? `<button class="btn primary" data-go="${d + 1}">Day ${d + 1} →</button>` : '<a class="btn" href="games.html">Back to the library</a>'}</div>`;
+    html += `<div class="daypager">${d > 0 ? `<button class="btn" data-go="${d - 1}">← ${d === 1 ? 'Setup' : 'Day ' + (d - 1)}</button>` : '<span></span>'}${d < lastDay ? `<button class="btn primary" data-go="${d + 1}">Day ${d + 1} →</button>` : '<a class="btn" href="games.html">Back to the library</a>'}</div>`;
     return html;
   }
 
   function renderSetup() {
-    let html = `<div class="section"><h2>${ICON.square}The table</h2><p style="color:var(--text-2)">${G.players} players sit in a circle. ${G.seats.filter((s) => !s.e).length} are good and ${G.seats.filter((s) => s.e).length} are evil: one Demon (the Imp) and ${G.seats.filter((s) => s.e).length - 1} Minions. One model, ${esc(teamName(G.good))}, plays every good seat; ${esc(teamName(G.evil))} plays every evil seat.</p>`;
+    let html = `<div class="section"><h2>${ICON.square}The table</h2><p class="lede" style="font-size:1.08rem">${G.players} players sit in a circle. ${G.seats.filter((s) => !s.e).length} are good and ${G.seats.filter((s) => s.e).length} are evil: one Demon (the Imp) and ${G.seats.filter((s) => s.e).length - 1} Minions. One model, ${esc(teamName(G.good))}, plays every good seat; ${esc(teamName(G.evil))} plays every evil seat.</p>`;
     if (!S.secrets) html += `<div class="collapsed">Roles are hidden, just as the players see it. <button type="button" data-reveal>Reveal secrets</button> to see the Grimoire: every character, the Demon's bluffs and what each player was told.</div>`;
     else {
-      html += `<div class="setup-list">${G.seats.map((s) => `<div><b>${esc(s.n)}</b>: <span style="color:var(--${s.e ? 'evil' : 'good'}-ink)">${esc(s.c)}</span>${s.s ? ` (thinks they are the ${esc(s.s)})` : ''}${s.f ? ` → later the ${esc(s.f)}` : ''}${s.n === G.rh ? ' · the Fortune Teller\'s red herring' : ''}${modelOf(s.n) ? ` <span class="small muted">${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</div>`).join('')}</div>
+      html += `<div class="setup-list">${G.seats.map((s) => `<div><b>${esc(s.n)}</b>: <span class="${s.e ? 'evil' : 'good'}">${esc(s.c)}</span>${s.s ? ` (thinks they are the ${esc(s.s)})` : ''}${s.f ? ` → later the ${esc(s.f)}` : ''}${s.n === G.rh ? ' · the Fortune Teller\'s red herring' : ''}${modelOf(s.n) ? ` <span class="small muted">${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</div>`).join('')}</div>
         <p class="sans small" style="margin-top:10px">Demon bluffs (three good characters not in play, shown to the Demon): <b>${G.bluffs.map(esc).join(', ')}</b></p>`;
       if (Object.keys(G.intros || {}).length) html += `<h3 style="margin-top:22px">What each player was told</h3>` + G.seats.filter((s) => !S.follow || s.n === S.follow).map((s) => `<div class="sans small"><b>${esc(s.n)}</b></div><div class="intro-text">${esc((G.intros || {})[s.n] || '')}</div>`).join('');
     }
-    if (!days.length) {
-      html += `</div><div class="note"><b>Transcript not in this build.</b> This preview was built from the games' results only, so it has the Grimoire and the outcome but not the day-by-day log. The full build, made from the game logs, adds every night, whisper, speech, nomination and vote here.</div>
-        <div class="gameover"><p class="eyebrow">Game over, day ${G.days}</p><h3 style="color:var(--${G.winner}-ink)">${G.winner === 'good' ? 'Good' : 'Evil'} wins</h3><p class="muted" style="margin:0">${esc(G.reason)}</p></div>`;
-      return html;
-    }
-    html += `</div><div class="pager"><span></span><button class="btn primary" data-go="1">Night 1 →</button></div>`;
+    html += `</div><div class="daypager"><span></span><button class="btn primary" data-go="1">Night 1 →</button></div>`;
     return html;
   }
 
   /* ---------- aside: seats and the village's suspicion ---------- */
   function renderAside(d) {
     const dead = d ? deadAtDawn(d) : new Set();
-    const demon = d ? demonOn(d) : demonOn(1);
-    const seats = G.seats.map((s) => {
+    const multi = G.models.length > 2;
+    const rows = G.seats.map((s) => {
       const c = d ? roleOn(s.n, d) : s.c;
-      const cls = ['seat', S.secrets ? (s.e ? 'evil' : 'good') : '', dead.has(s.n) ? 'dead' : '', S.follow === s.n ? 'on' : ''].join(' ');
-      const sub = S.secrets ? `${esc(c)}${G.models.length > 2 && modelOf(s.n) ? ' · ' + esc(CT.name(R, modelOf(s.n))) : ''}` : '&nbsp;';
-      return `<button type="button" class="${cls}" data-seat="${esc(s.n)}" title="${S.secrets ? 'See the game as ' + esc(s.n) : esc(s.n)}"><span class="nm"><span class="dot"></span>${esc(s.n)}</span><span class="ch">${sub}</span></button>`;
+      const cls = [dead.has(s.n) ? 'dead' : '', S.follow === s.n ? 'on' : ''].join(' ');
+      const role = S.secrets ? `<span class="pc ${s.e ? 'evil' : 'good'}">${esc(c)}${multi && modelOf(s.n) ? ` <span class="muted">· ${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</span>` : '<span class="pc"></span>';
+      return `<tr class="${cls}"><td><button type="button" data-seat="${esc(s.n)}" aria-pressed="${S.follow === s.n}" title="See the game as ${esc(s.n)}"><span class="pn">${esc(s.n)}</span>${role}<span class="ps">${dead.has(s.n) ? 'dead' : ''}</span></button></td></tr>`;
     }).join('');
+    const seats = `<table class="players"><tbody>${rows}</tbody></table><p class="small muted" style="margin:8px 0 0">Tap a player to see the game as they saw it${S.secrets ? '' : ' (reveals secrets)'}.</p>`;
     let belief = '';
     if (G.belief && G.belief.length) {
       const cols = G.belief;
@@ -233,18 +223,19 @@
         const bg = `color-mix(in oklab, ${isDemon ? evil : accent} ${Math.round(8 + v * 0.8)}%, transparent)`;
         return `<td class="num" data-b="${b.d}" data-n="${esc(n)}" style="background:${bg};${b.d === cur.d ? 'outline:1px solid var(--line-2);' : ''}${isDemon ? 'font-weight:700;' : ''}">${v}</td>`;
       };
-      belief = `<details class="panel" id="p-belief"${S.beliefOpen ? ' open' : ''}><summary style="cursor:pointer;list-style:none"><h3 style="display:inline">Who does the town suspect?</h3>${S.beliefOpen ? '' : ` <span class="small muted sans">top on day ${cur.d}: ${esc(sorted[0])} ${cur.v[sorted[0]]}%</span>`}</summary>
+      belief = `<details class="panel" id="p-belief"${S.beliefOpen ? ' open' : ''}><summary><h3>Who does the town suspect?</h3>${S.beliefOpen ? '' : ` <span class="small muted sans">top on day ${cur.d}: ${esc(sorted[0])} ${cur.v[sorted[0]]}%</span>`}</summary>
         <p class="small muted sans" style="margin:0 0 10px">Before each day's votes, every good player privately estimates the chance that each player is the Demon (out of game; nobody sees the answers). Average of the living good players, in %.${S.secrets ? ' <span style="color:var(--evil-ink)">Red: the real Demon that day.</span>' : ''}</p>
         <div class="scroll-x"><table class="data" style="font-size:.78rem"><thead><tr><th></th>${cols.map((b) => `<th class="num" style="${b.d === cur.d ? 'color:var(--accent-2)' : ''}">D${b.d}</th>`).join('')}</tr></thead>
         <tbody>${sorted.map((n) => `<tr><td style="white-space:nowrap;padding:5px 6px${dead.has(n) ? ';color:var(--faint)' : ''}">${esc(n)}</td>${cols.map((b) => cell(b, n)).join('')}</tr>`).join('')}</tbody></table></div>
         <p class="small muted sans" style="margin:8px 0 0">Sorted by Day ${cur.d}. Tap a number for who believed it most.</p></details>`;
     }
-    $('#aside').innerHTML = `<details class="panel" id="p-seats"${S.seatsOpen ? ' open' : ''}><summary style="cursor:pointer;list-style:none"><h3 style="display:inline">Seats</h3> <span class="small muted sans">${S.secrets ? 'tap to see the game as one player' : 'roles hidden'}</span></summary><div class="seats" style="margin-top:10px">${seats}</div></details>${belief}`;
+    $('#aside').innerHTML = `<details class="panel" id="p-seats"${S.seatsOpen ? ' open' : ''}><summary><h3>Players</h3><span class="small muted">${G.players}${S.secrets ? '' : ' · roles hidden'}${d ? ` · as of day ${d}` : ''}</span></summary>${seats}</details>${belief}`;
     $('#p-seats').addEventListener('toggle', (e) => { S.seatsOpen = e.target.open; });
     if ($('#p-belief')) $('#p-belief').addEventListener('toggle', (e) => { S.beliefOpen = e.target.open; });
     $$('#aside [data-seat]').forEach((b) => b.addEventListener('click', () => {
-      if (!S.secrets) return;
-      S.follow = S.follow === b.dataset.seat ? '' : b.dataset.seat; render(false);
+      S.follow = S.follow === b.dataset.seat ? '' : b.dataset.seat;
+      if (S.follow) S.secrets = true;
+      render(false);
     }));
     $$('#aside td[data-b]').forEach((td) => CT.hover(td, () => {
       const b = G.belief.find((x) => x.d === +td.dataset.b), n = td.dataset.n;
@@ -265,7 +256,7 @@
     $$('#daytabs button').forEach((b) => b.setAttribute('aria-selected', +b.dataset.d === S.day));
     const active = $(`#daytabs button[data-d="${S.day}"]`); if (active) active.scrollIntoView({ block: 'nearest', inline: 'center' });
     $('#secrets').checked = S.secrets;
-    $('#follow-wrap').hidden = !S.secrets; $('#follow').value = S.follow;
+    $('#follow').value = S.follow;
     const box = $('#day'); box.className = '';
     box.innerHTML = S.day === 0 ? renderSetup() : renderDay(S.day);
     renderAside(S.day);

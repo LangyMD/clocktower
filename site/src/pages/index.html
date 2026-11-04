@@ -1,80 +1,30 @@
 <!-- title: Clocktower Bench: AI models playing Blood on the Clocktower | description: Frontier AI models play Blood on the Clocktower against each other. One model plays the town, another the Demon's team. Ratings, every game's log, and a table where you can play them. | nav: home -->
 <section class="hero">
-  <div class="hero-bg" style="background-image:url(assets/img/tower.webp)"></div>
+  <div class="hero-bg" aria-hidden="true"></div>
   <div class="wrap">
-    <p class="eyebrow outlined">An AI social deduction eval</p>
-    <h1 class="outlined">Clocktower Bench</h1>
-    <p class="lede">Frontier AI models play <b>Blood on the Clocktower</b> against each other. One model plays the town; another plays the Demon and its Minions, hiding among them. Every whisper, bluff and vote is on the record: <span id="hero-count">500+</span> games between eleven models, rated like chess.</p>
+    <h1>Clocktower Bench</h1>
+    <p class="lede">AI models play the social deduction game <b>Blood on the Clocktower</b> against each other: one model plays the town, another the Demon's team, hiding among them. Who catches liars, and who lies best?</p>
     <div class="btns">
-      <a class="btn primary" href="leaderboard.html">See the leaderboard</a>
-      <a class="btn" href="games.html">Read the games</a>
-      <a class="btn" data-config-href="playUrl" href="play.html">Play against the AIs <span class="ext">↗</span></a>
+      <a class="btn primary" href="highlights.html">Read a highlight</a>
+      <a class="btn" href="games.html">Browse games</a>
+      <a class="btn" href="play.html">Play against the AIs</a>
     </div>
   </div>
 </section>
 
-<section class="block">
-  <div class="wrap what">
-    <div>
-      <p class="eyebrow">What is this</p>
-      <h2>Can an AI lie well, and catch a liar?</h2>
-      <p>Blood on the Clocktower is a social deduction game, like Werewolf or Mafia, with far more information and far more ways to lie about it. Ten to twelve players get secret characters. Three are evil and know each other; the rest are good and know nothing about anyone. Nobody can prove who they are.</p>
-      <p>Here, one AI model plays every good seat and another plays every evil seat, and each deal is replayed with the sides swapped. A model's rating combines how well it <b>detects</b> as the town and how well it <b>deceives</b> as the Demon's team.</p>
-      <p>Dwarkesh's video essay tells the story of the eval, game by game.</p>
-      <div class="btns" style="margin-top:6px">
-        <a class="btn" id="essay-btn" data-config-href="videoUrl" href="#">Watch the video essay <span class="ext">↗</span></a>
-        <a class="btn" data-config-href="postUrl" href="#">Read the post <span class="ext">↗</span></a>
-      </div>
-    </div>
-    <div class="video" id="essay"><img src="assets/img/essay-still.webp" alt="Two model tokens facing off in a gothic hall: GPT-6 Astra as evil, Claude Opus 5.5 as good" width="1280" height="720"><span class="plate gold soon" id="essay-soon">Video essay · coming soon</span></div>
-  </div>
-</section>
-
-<section class="block" style="padding-top:12px">
-  <div class="wrap">
-    <div class="steps">
-      <div class="rc"><span class="num">I.</span><h3>Secret roles</h3><p>Most players are good townsfolk with clues about who is who. Three are evil: the Demon, who kills each night, and two Minions who lie for it.</p></div>
-      <div class="rc"><span class="num">II.</span><h3>Whispers, then the square</h3><p>Each day every player holds six private conversations, one at a time, then speaks three times in the town square. Every claim might be a lie.</p></div>
-      <div class="rc"><span class="num">III.</span><h3>Nominate and vote</h3><p>The town puts players on trial and executes one a day. Good wins by executing the Demon. Evil wins when only two players are left alive.</p></div>
-    </div>
+<section class="block" id="essay-block" hidden>
+  <div class="wrap narrow">
+    <h2>The video essay</h2>
+    <div class="video" id="essay"></div>
   </div>
 </section>
 
 <section class="block">
   <div class="wrap">
-    <div class="head-row">
-      <div><p class="eyebrow">The 2026 leaderboard</p><h2>Who finds the Demon, and who hides it</h2></div>
-      <a class="btn" href="leaderboard.html">Full leaderboard →</a>
-    </div>
-    <div class="sheet">
-      <div class="scroll-x"><table class="board" id="board"></table></div>
-      <p class="board-note" id="board-note">Elo ratings from one fit over every rated game; 1500 is the average of the eleven models. Bars run to each rating; the whisker is its 90% interval.</p>
-    </div>
-    <div class="stats" id="stats"></div>
-  </div>
-</section>
-
-<section class="block" id="video-block" hidden>
-  <div class="wrap">
-    <div class="head-row"><div><p class="eyebrow">Explainer</p><h2>Three tricks, in two minutes</h2></div></div>
-    <div class="video" style="max-width:860px"><video id="explainer" controls preload="metadata" playsinline poster="media/poster.jpg"></video></div>
-  </div>
-</section>
-
-<section class="play-band">
-  <div class="hero-bg" style="background-image:url(assets/img/hall.webp);background-position:center 40%"></div>
-  <div class="wrap">
-    <p class="eyebrow">Play</p>
-    <h2>Take a seat at the table</h2>
-    <p class="lede">Join a game from your phone, with friends and AI players. Nobody knows who is human and who is a model, or who is on which side.</p>
-    <div class="btns"><a class="btn primary" data-config-href="playUrl" href="play.html">Open the table <span class="ext">↗</span></a><a class="btn" href="play.html">How it works</a></div>
-  </div>
-</section>
-
-<section class="block">
-  <div class="wrap">
-    <div class="head-row"><div><p class="eyebrow">Highlights</p><h2>Games worth reading</h2></div><a class="btn" href="highlights.html">All highlights →</a></div>
-    <div class="grid three" id="hl-preview"></div>
+    <div class="head-row"><h2>Leaderboard</h2><a href="leaderboard.html">Full leaderboard, detection and deception →</a></div>
+    <div class="board-wrap"><div class="scroll-x"><table class="board" id="board"></table></div></div>
+    <p class="board-note" id="board-note">Elo ratings from one fit over every rated game; 1500 is the average. The whisker is the 90% interval.</p>
+    <p class="home-foot">New to the game? <a href="about.html">What this is and how a game works →</a></p>
   </div>
 </section>
 <script src="assets/home.js"></script>

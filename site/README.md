@@ -15,8 +15,8 @@ site/
 ```
 
 Pages: Home (`index.html`), Leaderboard, Games (library), Game (replay viewer, `game.html?g=<id>`), Highlights,
-Play, Run your own, About. The header links Leaderboard, Games, Play and About; Highlights is a tab of Games and
-Run your own sits under About (all are in the footer).
+Play, About. The header links every one of them (Leaderboard · Games · Highlights · Play · About). "Run your own" and
+the dataset are sections of About (`about.html#run-your-own`, `#data`); `run.html` now forwards there.
 
 ## Build
 
@@ -48,7 +48,7 @@ marked "not rated" (one is a highlight), and the mixed-team batches b1 and b2.
 | Key | What | Unset |
 |---|---|---|
 | `domain` | `clocktowerbench.com`; written to `dist/CNAME` and canonical links | no CNAME |
-| `youtubeVideoId` | the video essay's YouTube id; embedded on the home page | the animatic still, "coming soon" |
+| `youtubeVideoId` | the video essay's YouTube id; embedded on the home page | no video section |
 | `videoUrl` | a link to the video essay (defaults to the YouTube watch page when only the id is set) | button shows "(soon)" |
 | `youtubeChannelId` | unused since the redesign (the home page has no live-stream slot) | |
 | `playUrl` | the hosted play table | Play button shows "(soon)" |
@@ -85,9 +85,13 @@ domain `clocktowerbench.com`; at the registrar add `A` records to 185.199.108.15
 
 ## Notes
 
-- Look: the video essay's animatic. Night palette, parchment "script sheets" for data, BotC-style wooden tokens
-  carrying each lab's logo, role-card panels with gold corners, vs cards for games. One dark theme.
-- Fonts: Pirata One (titles only), Jersey 10 (interface, labels, numbers), EB Garamond (reading; the play table's
-  text face), from Google Fonts. Backdrops in `src/assets/img/` are the animatic's own pixel-art plates. No
-  official Blood on the Clocktower artwork, logos or icons.
+- Look: minimal. Flat dark surfaces, one lighter surface for cards and tables, thin rules; gold is the one accent
+  (links, the active state), good blue and evil red appear only where they mean a team. The BotC-style wooden model
+  tokens carry each lab's logo. One painted plate (`src/assets/img/tower.webp`, from the video essay's animatic),
+  in the home hero. No official Blood on the Clocktower artwork, logos or icons.
+- Fonts, self-hosted in `src/assets/fonts/` (SIL OFL, `OFL.txt`; no font host is contacted): Pirata One for the
+  wordmark and page titles, Inter for interface, tables and controls, EB Garamond for reading.
+- Only games exported with their transcript (`events.jsonl`) are listed or linked anywhere: the library, twin-game
+  links and highlights all check `data/index.json`. A build without the logs has an empty library (the leaderboard
+  still works: it reads `docs/plans/f2-ratings.json`).
 - OpenAI models' reasoning is encrypted by their API; the viewer shows only the short summaries the logs hold.

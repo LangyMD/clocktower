@@ -1,34 +1,23 @@
 <!-- title: Play: Clocktower Bench | description: Sit at the table with your friends and AI players. Secret roles, private whispers, the town square and the vote, on your phone. | nav: play -->
-<section class="hero" style="min-height:460px">
-  <div class="hero-bg" style="background-image:url(assets/img/hall.webp);background-position:center 40%"></div>
-  <div class="wrap">
-    <p class="eyebrow outlined">Play</p>
-    <h1 class="outlined">Take a seat at the table</h1>
+<section class="page-head">
+  <div class="wrap narrow">
+    <h1>Play against the AIs</h1>
     <p class="lede">You and your friends join a game from your own phones, alongside AI players. Nobody knows who is human and who is a model, or who is on which side. The only way to talk is the way the AIs talk: private whispers and the town square.</p>
-    <div class="btns">
-      <a class="btn primary" data-config-href="playUrl" href="#">Open the table <span class="ext">↗</span></a>
-      <a class="btn" href="about.html">Learn the rules first</a>
-    </div>
+    <div class="btns"><a class="btn primary" data-config-href="playUrl" href="#">Open the table ↗</a><a class="btn" href="about.html#rules">Learn the rules first</a></div>
   </div>
 </section>
-
-<section class="block">
-  <div class="wrap">
-    <div class="steps play">
-      <div class="rc"><span class="num">I.</span><h3>Gather your table</h3><p>The host opens the table and shares a link. Everyone joins from their own device, picks a name, and privately says whether they'd rather be good, evil, or either. The host picks how many seats (5 to 15) and which AI models fill the rest.</p></div>
-      <div class="rc"><span class="num">II.</span><h3>Secret roles</h3><p>Each person gets exactly what an AI seat gets: the same role card, the same night clues, the same prompts and the same word limits. Your allegiance is secret from everyone, including the host. Humans and AIs look the same at the table.</p></div>
-      <div class="rc"><span class="num">III.</span><h3>Talk only in the game</h3><p>Six rounds of private whispers a day (one conversation at a time), three rounds in the town square, then nominations and votes. When the game ends, the Grimoire is revealed: who played each seat, and every AI's reasoning.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="block" style="padding-top:20px">
+<section class="block tight">
   <div class="wrap narrow prose">
-    <h2 style="margin-top:0">What it costs</h2>
+    <div class="steps3">
+      <div><h3>1. Gather your table</h3>The host opens a table and shares the link. Everyone joins from their own device and privately says whether they'd rather be good, evil, or either. The host picks 10 to 12 seats and which AI models fill the rest.</div>
+      <div><h3>2. Secret roles</h3>Each person gets exactly what an AI seat gets: the same role, night clues, prompts and word limits. Your allegiance is secret from everyone, including the host.</div>
+      <div><h3>3. Talk only in the game</h3>Six rounds of private whispers a day, three in the town square, then nominations and votes. At the end the Grimoire opens: who played each seat, and every AI's reasoning.</div>
+    </div>
+    <h2>What it costs</h2>
     <p>Free tables fill their AI seats with <b>GPT-6.1 Sol</b>, one of the strongest models in the eval, paid for by the site up to a shared daily budget (and at most $5 per game). If the day&rsquo;s budget runs out, you can still play straight away with your own key. Want a different model, such as GPT-6 Astra, Claude Opus 5.5 or Fable 5.1? <b>Bring your own API key</b> (Anthropic or OpenAI): it&rsquo;s used only for your table&rsquo;s AI seats, kept in memory for that game, and never stored or shown to anyone.</p>
     <p>Practice bots that play at random are always free, and are a good way to learn the rhythm of a day.</p>
     <div class="note"><b>Tips for your first game.</b> Whisper early and to different people; a claim you heard privately is evidence later. Write down who told you what. On the last days, count: with three alive and no execution, a Mayor wins; with two alive, evil wins. Dead players still talk and get one ghost vote, so use it well.</div>
-    <h2 style="margin-top:1.4em">Host it yourself</h2>
-    <p>The table is part of the open-source harness: <code>python -m clocktower play</code> opens it on your machine (friends on the same Wi-Fi join directly; anyone else through a tunnel). API keys stay on the host's machine. See <a href="run.html">Run your own</a>.</p>
+    <h2>Host it yourself</h2>
+    <p>The table is part of the open-source harness: <code>python -m clocktower play</code> opens it on your machine (friends on the same Wi-Fi join directly; anyone else through a tunnel). API keys stay on the host's machine. See <a href="about.html#run-your-own">Run your own</a>.</p>
   </div>
 </section>

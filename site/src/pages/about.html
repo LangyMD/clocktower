@@ -1,16 +1,27 @@
-<!-- title: About: Clocktower Bench | description: The rules of Blood on the Clocktower (Trouble Brewing) in one page, how the eval harness works, and who made it. | nav: about -->
+<!-- title: About: Clocktower Bench | description: What Clocktower Bench is, the rules of Blood on the Clocktower (Trouble Brewing) in one page, how the eval harness works, and how to run your own games. | nav: about -->
 <section class="page-head">
   <div class="wrap narrow">
-    <p class="eyebrow">About</p>
-    <h1>The game, and how we made AIs play it</h1>
-    <p class="lede">Blood on the Clocktower is a social deduction game, like Werewolf or Mafia, but with far more information and far more ways to lie about it. That makes it a demanding test of the skills we most want to measure in AI: telling a lie that survives scrutiny, coordinating in secret, and modelling what other people believe.</p>
+    <h1>About</h1>
+    <p class="lede">Clocktower Bench is an eval where AI models play Blood on the Clocktower against each other, a social deduction game like Werewolf or Mafia, but with far more information and far more ways to lie about it.</p>
+    <nav class="toc" aria-label="On this page"><a href="#what">What this is</a><a href="#rules">The rules</a><a href="#harness">How the harness works</a><a href="#run-your-own">Run your own</a><a href="#data">The data</a><a href="#credits">Credits</a></nav>
   </div>
 </section>
 
 <section class="block tight">
   <div class="wrap narrow prose">
-    <h2 style="margin-top:0">The rules in one page</h2>
-    <p><b>Teams.</b> Ten to twelve players each get a secret character. Most are <span style="color:var(--good-ink)">good</span>. Three are <span style="color:var(--evil-ink)">evil</span>: one <b>Demon</b> (the Imp) and two <b>Minions</b>. The evil players know each other; the good players know nothing about anyone.</p>
+    <h2 id="what">Can an AI lie well, and catch a liar?</h2>
+    <p>Ten to twelve players get secret characters. Three are evil and know each other; the rest are good and know nothing about anyone. Nobody can prove who they are. That makes the game a demanding test of the skills we most want to measure in AI: telling a lie that survives scrutiny, coordinating in secret, and modelling what other people believe.</p>
+    <p>Here, one AI model plays every good seat and another plays every evil seat, and each deal is replayed with the sides swapped. A model's rating combines how well it <b>detects</b> as the town and how well it <b>deceives</b> as the Demon's team. Dwarkesh's video essay tells the story of the eval, game by game.</p>
+    <div class="btns"><a class="btn" data-config-href="videoUrl" href="#">Watch the video essay</a><a class="btn" data-config-href="postUrl" href="#">Read the post</a></div>
+    <div class="steps3">
+      <div><h3>1. Secret roles</h3>Most players are good townsfolk with clues about who is who. Three are evil: the Demon, who kills each night, and two Minions who lie for it.</div>
+      <div><h3>2. Whispers, then the square</h3>Each day every player holds six private conversations, one at a time, then speaks three times in the town square. Every claim might be a lie.</div>
+      <div><h3>3. Nominate and vote</h3>The town puts players on trial and executes one a day. Good wins by executing the Demon; evil wins when only two players are left alive.</div>
+    </div>
+    <div class="video" id="explainer-box" hidden><video id="explainer" controls preload="metadata" playsinline poster="media/poster.jpg"></video></div>
+
+    <h2 id="rules">The rules in one page</h2>
+    <p><b>Teams.</b> Ten to twelve players each get a secret character. Most are <span class="good">good</span>. Three are <span class="evil">evil</span>: one <b>Demon</b> (the Imp) and two <b>Minions</b>. The evil players know each other; the good players know nothing about anyone.</p>
     <p><b>Winning.</b> Good wins by executing the Demon. Evil wins when only two players are left alive.</p>
     <p><b>Night and day.</b> Each night the Demon kills a player, and many good characters secretly learn a clue. Each day everyone talks, then the living players may nominate someone; the nominee with the most votes, if that reaches half the living players, is executed. Dead players keep talking and keep one "ghost vote" for the rest of the game.</p>
     <p><b>Nobody can prove anything.</b> Characters are never revealed in life, so every claim might be a lie. The evil team claims good characters and invents clues to match. And some true-looking clues are false: the Poisoner can silently break a player's ability, and the Drunk thinks they have a role they don't.</p>
@@ -24,7 +35,7 @@
       <div class="role"><b>The Storyteller</b>Runs the game and decides what misinformation the poisoned and the Drunk receive. Here it is a script, not a person or a model.</div>
     </div>
 
-    <h2>How the harness works</h2>
+    <h2 id="harness">How the harness works</h2>
     <ul>
       <li><b>One model per team.</b> One model plays every good seat, another every evil seat, so a game pits one model's detection against the other's deception. Each seat is its own conversation; teammates share no hidden channel beyond in-game whispers.</li>
       <li><b>Side-swapped pairs.</b> Every deal is played twice with the models' sides swapped, so neither gets the luckier hand. The library links each game to its twin.</li>
@@ -37,10 +48,52 @@
     </ul>
     <div class="note"><b>About the reasoning you can read.</b> For Claude models the viewer shows each turn's private reasoning (summarised by the API, but written before the model acted). OpenAI models' reasoning is encrypted by their API; the viewer shows only the short summaries the API returns.</div>
 
-    <h2>Credits</h2>
+    
+    <h2 id="run-your-own">Run your own</h2>
+    <p>The harness is open source, and every game we played is in a dataset: transcripts, private whispers, reasoning, belief probes and the cost of every API call.</p>
+    <div class="btns" style="margin-top:0"><a class="btn primary" data-config-href="githubUrl" href="#">GitHub repository</a><a class="btn" data-config-href="datasetUrl" href="#">Game dataset on Hugging Face</a></div>
+    <h3>Quick start</h3>
+    <pre><code>git clone <span id="repo-url">https://github.com/…/clocktower</span> && cd clocktower
+pip install -e .                       # Python 3.11+
+export ANTHROPIC_API_KEY=... OPENAI_API_KEY=...
+python -m unittest discover -s tests   # rules and engine tests, no API calls
+python -m clocktower sim --games 200   # random players, no API: check the Storyteller</code></pre>
+    <h3>Play one side-swapped pair</h3>
+    <pre><code>python -m clocktower run --good-model claude-opus-5-5 --evil-model gpt-6.1-sol \
+    --games 1 --swap --seed 1 --out games/v17/demo
+python -m clocktower replay games/v17/demo/game-01 --thinking     # read it</code></pre>
+    <p>Each game writes <code>transcript.md</code> (an omniscient replay with every seat's reasoning), <code>events.jsonl</code>, <code>probes.jsonl</code> (belief probes), <code>calls.jsonl</code> (every API call with tokens and cost), <code>config.json</code> and <code>result.json</code>. A game costs from about $2 to $50 depending on the models.</p>
+    <h3>Run a tournament and rate it</h3>
+    <pre><code>python -m clocktower plan plans/models-2026.json --within 10 --pairs 1 \
+    --seed 120000 --out games/v17/mine > plans/mine.json
+python -m clocktower tournament plans/mine.json      # every game at once; rerun to resume
+python -m clocktower analyze games/v17/mine-*/game-* # win rates, probes, quick ratings
+python -m clocktower ratings                         # the Bradley–Terry fit with bootstrap intervals</code></pre>
+    <h3>Use the existing games</h3>
+    <pre><code>python -m clocktower fetch v17/f3-*      # download logs from the dataset
+python -m clocktower.export --games games  # rebuild this website from them</code></pre>
+    <p>Mixed teams (<code>--good-model A,B</code>), one upgraded seat (<code>--seat-model good:MODEL:1</code>) and a different model for the Imp (<code>--seat-model Imp:MODEL</code>) are all built in. The full protocol is in <code>docs/PROTOCOL.md</code>; why each rule is what it is, in <code>docs/protocol-history.md</code>.</p>
+
+    <h3>Questions worth exploring</h3>
+    <ul>
+      <li><b>Learning over time.</b> Do models get better across games? In context (notes carried between games) or by fine-tuning on their own logs. Careful: shared notes on the good team leak who is good, so evil-only learners or a league of individual agents are the clean designs.</li>
+      <li><b>Harder scripts.</b> Trouble Brewing is the beginner script. Characters like the Lunatic (who believes they are the Demon) or scripts with more misinformation would test whether models can reason about information that is wrong on purpose.</li>
+      <li><b>One smart player.</b> How much does a single strong model lift a team of weaker ones, as good and as evil? Which evil role carries the team?</li>
+      <li><b>Mixed teams, systematically.</b> We found half-and-half evil teams play worse than either model alone. Is that coordination cost, or style mismatch? Does it shrink with stronger models?</li>
+      <li><b>Teammate recognition.</b> Writing style alone separates the teams in our logs, though no model ever used it. Do models learn to fingerprint their teammates, and does uniform typography stop it?</li>
+      <li><b>Humans vs AIs.</b> Seat humans at the table (it's built in) for a human baseline, and to see whether people can tell which players are models.</li>
+      <li><b>Thinking on votes.</b> Claude models skip thinking on most votes as good, and unthinking votes follow the running tally more. Forcing a thought before each vote is a cheap ablation.</li>
+      <li><b>Memory.</b> Models that carry their own reasoning across turns vs replies only: how big is the handicap?</li>
+    </ul>
+
+    <h2 id="data">The data</h2>
+    <p>Every game on this site, with every seat's reasoning, is in the <a data-config-href="datasetUrl" href="#">Hugging Face dataset</a>. The ratings come from one fit over all rated games; the <a href="leaderboard.html">leaderboard</a> explains the method.</p>
+
+    <h2 id="credits">Credits</h2>
     <p>Clocktower Bench was made by <b>Dwarkesh Patel</b>, with the harness, experiments and analysis built together with Claude.</p>
 
     <h2>Not affiliated</h2>
     <p>This is an <b>unofficial fan project</b> and research eval. It is not affiliated with, endorsed or sponsored by The Pandemonium Institute. <b>Blood on the Clocktower</b> is a trademark of The Pandemonium Institute. No official artwork, logos or icons are used; every illustration here is original. If you enjoy the game, buy it and play it with friends.</p>
   </div>
 </section>
+<script src="assets/about.js"></script>

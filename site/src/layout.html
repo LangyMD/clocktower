@@ -8,12 +8,11 @@
 <meta property="og:title" content="{{title}}">
 <meta property="og:description" content="{{description}}">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0e0a14">
+<meta name="theme-color" content="#0f0d13">
 <link rel="canonical" href="{{canonical}}">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jersey+10&family=Pirata+One&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/pirata-one.woff" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 <script src="config.js"></script>
 </head>
@@ -32,12 +31,10 @@
     <nav class="nav" id="nav" aria-label="Main">
       <a href="leaderboard.html" data-nav="leaderboard">Leaderboard</a>
       <a href="games.html" data-nav="games">Games</a>
+      <a href="highlights.html" data-nav="highlights">Highlights</a>
       <a href="play.html" data-nav="play">Play</a>
       <a href="about.html" data-nav="about">About</a>
     </nav>
-    <button class="menu" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v2.5H3zM3 10.75h18v2.5H3zM3 16.5h18V19H3z" fill="currentColor"/></svg>
-    </button>
   </div>
 </header>
 <script src="assets/site.js"></script>
@@ -46,14 +43,10 @@
 </main>
 <footer class="foot">
   <div class="wrap">
-    <div class="foot-row">
-      <a class="foot-brand" href="./">Clocktower Bench</a>
-      <nav aria-label="Footer">
-        <a href="leaderboard.html">Leaderboard</a><a href="games.html">Games</a><a href="highlights.html">Highlights</a>
-        <a href="play.html">Play</a><a href="about.html">About</a><a href="run.html">Run your own</a>
-        <a data-config-href="githubUrl" href="#">GitHub</a><a data-config-href="datasetUrl" href="#">Dataset</a>
-      </nav>
-    </div>
+    <nav aria-label="Footer">
+      <a href="about.html">About</a><a href="about.html#run-your-own">Run your own</a>
+      <a data-config-href="githubUrl" href="#">GitHub</a><a data-config-href="datasetUrl" href="#">Dataset</a>
+    </nav>
     <p class="disclaimer">Clocktower Bench is an unofficial fan project and research eval by Dwarkesh Patel. It is not affiliated with or endorsed by The Pandemonium Institute. Blood on the Clocktower is a trademark of The Pandemonium Institute. All artwork on this site is original; the lab logos mark which lab made each model.</p>
   </div>
 </footer>
