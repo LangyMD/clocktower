@@ -13,3 +13,6 @@ games/ledger.jsonl
 # This publishing tooling itself
 PUBLISH_EXCLUDE
 scripts/publish_snapshot.sh
+
+# Matt's deploy script (his hosts)
+scripts/deploy-matt.sh
