@@ -16,6 +16,7 @@ from __future__ import annotations
 import asyncio
 import http.client
 import json
+import math
 import os
 import random
 import time
@@ -197,6 +198,8 @@ class _Base:
         self.system, self.schema = system, schema
         self.label, self.ledger, self.semaphore, self.on_call = label, ledger, semaphore, on_call
         self.model, self.effort = model, effort
+        if getattr(ledger, 'hard_budget', False) and model != 'gpt-6.1-sol':
+            raise BudgetExceeded('House budget reservations currently support only GPT-6.1 Sol.')
         self.max_tokens = min(max_tokens, spec(model)['max_output'] or max_tokens)  # a model's own hard limit
         self.messages = []
         self.last_input = 0   # input tokens of the last call
@@ -366,12 +369,56 @@ class OpenAIConversation(_Base):
                     raise ConnectionError(f"stream error: {json.dumps(event)[:500]}")
         raise ConnectionError('stream ended without a final response')
 
+    def _reserved_post(self, body):
+        """Count exact input (including reasoning/schema), then reserve a conservative standard-tier
+        cost for EACH network attempt. Unknown outcomes retain their reservation, even after a crash.
+        Prices: developers.openai.com/api/docs/models/gpt-6.1-sol (checked 2026-11-05)."""
+        if not getattr(self.ledger, 'hard_budget', False):
+            return self._post(body)
+        if self.model != 'gpt-6.1-sol' or body.get('tools'):
+            raise BudgetExceeded('No verified cost bound for this house request.')
+        # A probe and the live conversation can share input items; freeze exactly what was counted.
+        body = json.loads(json.dumps({**body, 'service_tier': 'default'}))
+        count_body = {k: body[k] for k in ('model', 'input', 'text', 'reasoning') if k in body}
+        req = urllib.request.Request(self.URL + '/input_tokens', data=json.dumps(count_body).encode(), method='POST',
+                                     headers={'Authorization': f'Bearer {self.key}', 'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=30, context=TLS) as resp:
+            count = json.load(resp).get('input_tokens')
+        output = body['max_output_tokens']
+        if type(count) is not int or not 0 <= count <= 922_000 or type(output) is not int or not 1 <= output <= 128_000:
+            raise BudgetExceeded('Cannot establish a safe API request cost.')
+        # No cache savings assumed: all input may be a 30-minute cache write ($2.50/M).
+        # Long-context surcharge applies to all input/cache tokens and all output; include 1% headroom.
+        upper = (count * 2.5 * (2 if count > 272_000 else 1)
+                 + output * 10 * (1.5 if count > 272_000 else 1)) / 1e6
+        upper = math.ceil(upper * 1.01 * 1e6) / 1e6
+        reservation = self.ledger.reserve(upper, self.label)
+        try:
+            raw = self._post(body)
+        except urllib.error.HTTPError as e:
+            # Rejections before generation are safe to release. Timeouts, conflicts and server errors
+            # may have generated a billable response; those reservations stay held for reconciliation.
+            if 400 <= e.code < 500 and e.code not in (408, 409):
+                self.ledger.add(0, reservation=reservation)
+            raise
+        usage = raw.get('usage') or {}
+        if any(type(usage.get(k)) is not int or usage[k] < 0 for k in ('input_tokens', 'output_tokens')):
+            raise BudgetExceeded('API usage is missing; its maximum-cost reservation remains held.')
+        detail = usage.get('input_tokens_details') or {}
+        cached, written = detail.get('cached_tokens', 0), detail.get('cache_write_tokens', 0)
+        if (type(cached) is not int or type(written) is not int or min(cached, written) < 0
+                or cached + written > usage['input_tokens'] or usage['input_tokens'] > count
+                or usage['output_tokens'] > output or raw.get('service_tier', 'default') != 'default'):
+            raise BudgetExceeded('API usage exceeded the verified request bounds; its reservation remains held.')
+        raw['_budget_reservation'] = reservation
+        return raw
+
     async def _request(self, body):
         waited = 0  # seconds spent waiting for credit (auto-reload catching up), as for Claude
         attempt = 0
         while attempt < 10:
             try:
-                return await asyncio.get_running_loop().run_in_executor(HTTP_POOL, self._post, body)
+                return await asyncio.get_running_loop().run_in_executor(HTTP_POOL, self._reserved_post, body)
             except urllib.error.HTTPError as e:
                 detail = e.read().decode(errors='replace')[:2000]
                 credit = e.code == 402 or 'insufficient_quota' in detail or 'credit' in detail.lower()
@@ -422,7 +469,8 @@ class OpenAIConversation(_Base):
                 priced = {k: v * 2 for k, v in usage.items() if k.endswith('input_tokens')}
                 priced['output_tokens'] = usage['output_tokens'] * 1.5
             spent = cost(self.model, priced, 0.5 if raw.get('service_tier') == 'flex' else 1.0)
-            self.ledger.add(spent, label=self.label)
+            self.ledger.add(spent, label=self.label, **({'reservation': raw['_budget_reservation']}
+                                                      if '_budget_reservation' in raw else {}))
             output = raw.get('output') or []
             thinking = '\n'.join(s.get('text', '') for item in output if item.get('type') == 'reasoning'
                                  for s in item.get('summary') or [])

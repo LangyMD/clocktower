@@ -123,6 +123,18 @@ plainly. When the user asks for readers, spin up several subagents on separate q
 
 # Part 2 — dated session notes
 
+## 2026-11-05: hard daily house budget
+- Clocktower's Fly configuration uses US$30 per day, resetting at midnight Asia/Singapore. Each house-paid
+  GPT-6.1 Sol attempt counts input via Responses input_tokens, reserves worst-case Standard-tier cost in
+  SQLite before sending, and reconciles reported usage. This includes parallel seats, probes and retries.
+- Unknown network outcomes and interrupted requests retain their reservation across restarts and midnight;
+  reconcile these against provider usage before releasing them. The dedicated house key must only be used
+  by this backend; using it elsewhere bypasses the app's accounting. Other providers/models require own keys
+  until their request cost bounds are implemented. No game rules or benchmark protocol changed.
+- Tests in tests/test_budget.py cover independent SQLite connections, game caps, rollover, migration,
+  retries and missing usage. OpenAI's account-level hard limits are monthly, with possible enforcement lag;
+  they cannot supply the requested daily cap by themselves.
+
 ## 2026-11-04: gui-redesign branch (site + play table restyle; local, not merged or deployed)
 - Branch `gui-redesign`: the site and the play table restyled to match the video essay, then simplified at the
   user's request ("much more minimal and straightforward… hard to find things"). Read `HANDOFF.md` at the repo root.

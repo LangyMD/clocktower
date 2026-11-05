@@ -13,6 +13,7 @@ primary_region = "iad"
   PLAY_PROXY_HOPS = "1"
   PLAY_FREE_MODELS = "gpt-6.1-sol"
   PLAY_DAILY_BUDGET = "30"
+  PLAY_BUDGET_TIMEZONE = "Asia/Singapore"
   PLAY_GAME_BUDGET = "5"
   PLAY_MAX_GAMES = "20"
 

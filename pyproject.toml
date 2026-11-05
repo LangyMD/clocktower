@@ -11,6 +11,7 @@ dependencies = [
     "anthropic>=1.8",         # Claude conversations (OpenAI and OpenRouter use the standard library)
     "huggingface_hub>=0.30",  # fetching game logs
     "numpy>=1.26",            # ratings, allocation, mixed-team analysis
+    "tzdata>=2025.2",         # daily budget boundaries in minimal hosting images
 ]
 
 [project.optional-dependencies]

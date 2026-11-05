@@ -29,9 +29,17 @@ Everything lives under `PLAY_DATA_DIR` (mount a persistent volume there):
 - **Free games:** only the models in `PLAY_FREE_MODELS` (default GPT-6.1 Sol, about $0.11 per seat per game, so
   roughly $1–1.50 a game), on the server's key. Each free game stops at `PLAY_GAME_BUDGET`. A new free game
   starts only if today's spend + the unspent caps of free games already running + one more cap fit within
-  `PLAY_DAILY_BUDGET`, so the day's spend can't pass it. With the defaults ($30, $5) at most 6 free games
+  `PLAY_DAILY_BUDGET`. Before each API attempt (including probes and retries), the server counts input tokens
+  and atomically reserves the maximum input/cache-write and output cost in SQLite, then replaces that reserve
+  with reported usage. This also enforces the daily limit on games continuing across midnight. Verified house
+  pricing currently supports GPT-6.1 Sol only, using Standard service tier; other models require own keys.
+  With the defaults ($30, $5) at most 6 free games
   run at once. When the day is used up, the page says so and offers practice bots or the player's own key.
-  The day resets at 00:00 UTC.
+  The day resets at midnight in `PLAY_BUDGET_TIMEZONE` (UTC by default; Asia/Singapore in `fly.toml`).
+  An uncertain network outcome or crash keeps its maximum-cost reservation, including on later days, until
+  an operator reconciles it with provider usage. This can stop games early but cannot silently free money
+  that may already have been spent. Keep the dedicated house key server-side and use it only in this app:
+  calls made directly with the same key bypass this app's cap. Review prices before changing model or tier.
 - **Own-key games:** the host pastes an Anthropic and/or OpenAI key at the table (lobby → "Use your own API key").
   Every AI seat in that game then runs on the host's keys (any model in the list, including GPT-6.1 Sol), up to
   `PLAY_BYO_GAME_BUDGET` per game. The key is checked once against the provider's free model-list endpoint,
@@ -63,13 +71,14 @@ and pages are served with a strict Content-Security-Policy (scripts from the ser
 | Variable | Needed | Meaning |
 |---|---|---|
 | `OPENAI_API_KEY` | for free games | the house key that pays for free GPT-6.1 Sol seats |
-| `ANTHROPIC_API_KEY` (+ `ANTHROPIC_WORKSPACE_ID`) | only if a Claude model is free | the house Anthropic key |
+| `ANTHROPIC_API_KEY` (+ `ANTHROPIC_WORKSPACE_ID`) | no | used by local benchmark runs; hosted Claude seats require the player's own key |
 | `PLAY_DATA_DIR` | yes | persistent directory (Docker image: `/data`) |
 | `PLAY_PUBLIC_URL` | yes | `https://play.clocktowerbench.com`: invite links, and the origin allowed to post |
 | `PLAY_PROXY_HOPS` | yes behind a proxy | `1` on Render and Fly (client IP = last `X-Forwarded-For` hop); `0` = socket address |
 | `PLAY_ALLOWED_ORIGINS` | no | extra origins allowed to post (comma-separated) |
-| `PLAY_FREE_MODELS` | no | default `gpt-6.1-sol`; `all` = every model the server has a key for (handy at home) |
-| `PLAY_DAILY_BUDGET` | no | USD per UTC day for free games, default 30 |
+| `PLAY_FREE_MODELS` | no | default `gpt-6.1-sol`; only models with verified request cost bounds can use the house key (currently GPT-6.1 Sol) |
+| `PLAY_DAILY_BUDGET` | no | USD per budget day for free games, default 30 |
+| `PLAY_BUDGET_TIMEZONE` | no | IANA timezone for midnight reset, default UTC; Fly uses Asia/Singapore |
 | `PLAY_GAME_BUDGET` | no | USD per free game, default 5 |
 | `PLAY_BYO_GAME_BUDGET` | no | USD per own-key game, default 50 |
 | `PLAY_MAX_GAMES`, `PLAY_MAX_TABLES`, `PLAY_TABLES_PER_HOUR`, `PLAY_IDLE_MINUTES` | no | limits above |

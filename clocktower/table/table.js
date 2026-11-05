@@ -249,7 +249,7 @@ async function home() {
     const f = I.free;
     $('free-note').innerHTML = (f.models.length
       ? (f.open ? `Free games use <b>${f.models.map(esc).join(', ')}</b> for the AI players, paid by Clocktower Bench ($${f.left_today.toFixed(0)} of today's $${f.daily_cap} left). `
-        : 'Today\'s free AI budget is used up (it resets at midnight UTC). ') : '')
+        : `Today's free AI budget is used up (it resets at midnight ${esc(f.budget_timezone || 'UTC')}). `) : '')
       + 'Practice bots are always free, and a host can bring an Anthropic or OpenAI key to play any model.'
       + (I.games >= I.max_games ? ' <b>Every game slot is busy right now.</b>' : '');
   } catch { /* the note is optional */ }
