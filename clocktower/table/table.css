@@ -492,7 +492,7 @@ details summary em { font: italic 400 14px var(--serif); color: var(--faint); }
   .turnflag { font-size: 14px; padding: 8px 10px; }
   #feed { padding: 10px 10px 18px; }
   .say .body { max-width: 92%; }
-  #dock { --dock-pb: calc(10px + env(safe-area-inset-bottom)); padding: 10px 12px var(--dock-pb); max-height: 78dvh; }
+  #dock { --dock-pb: calc(10px + env(safe-area-inset-bottom)); padding: 10px 12px var(--dock-pb); }
   .picks { margin: 10px 0 8px; }
   .head { font-size: 17px; }
 }
