@@ -9,7 +9,7 @@ primary_region = "iad"
 [env]
   PORT = "8080"
   PLAY_DATA_DIR = "/data"
-  PLAY_PUBLIC_URL = "https://clocktower-play.fly.dev"
+  PLAY_PUBLIC_URL = "https://play.clocktowerbench.com"
   PLAY_PROXY_HOPS = "1"
   PLAY_FREE_MODELS = "gpt-6.1-sol"
   PLAY_DAILY_BUDGET = "2000"
