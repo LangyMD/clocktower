@@ -13,7 +13,7 @@
   const seat = Object.fromEntries(G.seats.map((s) => [s.n, s]));
   // Every player gets a colour by seat (style.css .p0 … .p11); names are underlined in it wherever they appear.
   const seatIdx = Object.fromEntries(G.seats.map((s, i) => [s.n, i]));
-  const pn = (n) => (n in seatIdx ? `<span class="nm p${seatIdx[n]}">${esc(n)}</span>` : esc(n));
+  const pn = (n) => (n in seatIdx ? `<span class="pnm p${seatIdx[n]}">${esc(n)}</span>` : esc(n));
   const nameRe = G.seats.length ? new RegExp('\\b(' + G.seats.map((s) => s.n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'g') : null;
   const rich = (text) => (nameRe ? esc(text).replace(nameRe, (m) => pn(m)) : esc(text));  // escaped text, names marked
   const modelOf = (n) => (seat[n] && seat[n].m >= 0 ? G.models[seat[n].m] : null);
@@ -213,7 +213,7 @@
       const c = d ? roleOn(s.n, d) : s.c;
       const cls = [dead.has(s.n) ? 'dead' : '', S.follow === s.n ? 'on' : ''].join(' ');
       const role = S.secrets ? `<span class="pc ${s.e ? 'evil' : 'good'}">${esc(c)}${multi && modelOf(s.n) ? ` <span class="muted">· ${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</span>` : '<span class="pc"></span>';
-      return `<tr class="${cls}"><td><button type="button" data-seat="${esc(s.n)}" aria-pressed="${S.follow === s.n}" title="See the game as ${esc(s.n)}"><span class="pn nm p${seatIdx[s.n]}">${esc(s.n)}</span>${role}<span class="ps">${dead.has(s.n) ? 'dead' : ''}</span></button></td></tr>`;
+      return `<tr class="${cls}"><td><button type="button" data-seat="${esc(s.n)}" aria-pressed="${S.follow === s.n}" title="See the game as ${esc(s.n)}"><span class="pn pnm p${seatIdx[s.n]}">${esc(s.n)}</span>${role}<span class="ps">${dead.has(s.n) ? 'dead' : ''}</span></button></td></tr>`;
     }).join('');
     const seats = `<table class="players"><tbody>${rows}</tbody></table><p class="small muted" style="margin:8px 0 0">Tap a player to see the game as they saw it${S.secrets ? '' : ' (reveals secrets)'}.</p>`;
     let belief = '';

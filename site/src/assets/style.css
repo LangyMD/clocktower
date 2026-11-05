@@ -172,7 +172,7 @@ table.board .barcell { width: 32%; min-width: 140px; }
 .bar .fill { position: absolute; left: 0; top: 4px; bottom: 4px; opacity: .85; }
 .bar .fill.Anthropic { background: var(--anth-lt); } .bar .fill.OpenAI { background: var(--oai-lt); } .bar .fill.Mixed { background: var(--mixed-lt); }
 .bar .ci { position: absolute; top: 50%; height: 1.5px; margin-top: -.75px; background: var(--text-2); }
-.bar .ci::before, .bar .ci::after { content: ""; position: absolute; top: -4px; width: 1.5px; height: 9px; background: var(--text-2); }
+.bar .ci::before, .bar .ci::after { content: ""; position: absolute; top: -2px; width: 1.5px; height: 5px; background: var(--text-2); }
 .bar .ci::before { left: 0; } .bar .ci::after { right: 0; }
 .board-wrap { background: var(--surface); border: 1px solid var(--rule); padding: 4px 8px 10px; }
 .board-note { font-size: .85rem; color: var(--faint); margin: 10px 2px 0; }
@@ -363,7 +363,7 @@ table.h2h td.self { color: var(--faint); }
 .beat-h { font: 600 .75rem/1 var(--sans); color: var(--faint); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
 /* Player names: a thin, half-transparent underline in a colour fixed per seat, wherever the name appears (viewer.js
    pn/rich). Soft hues in the palette's register so gold stays the accent and the team colours keep their meaning. */
-.nm { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--pc, var(--rule-2)) 55%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-skip-ink: none; }
+.pnm { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--pc, var(--rule-2)) 55%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-skip-ink: none; }
 .p0 { --pc: #e48a63; } .p1 { --pc: #5cb8cb; } .p2 { --pc: #ad91d4; } .p3 { --pc: #9fc26b; } .p4 { --pc: #d98fb3; } .p5 { --pc: #6fb9a0; }
 .p6 { --pc: #c9a66b; } .p7 { --pc: #8aa7e8; } .p8 { --pc: #e5a062; } .p9 { --pc: #b7bd63; } .p10 { --pc: #c48ad6; } .p11 { --pc: #a3c4d9; }
 .msg { padding: 9px 0 10px 14px; border-left: 2px solid var(--rule-2); margin-bottom: 10px; }
