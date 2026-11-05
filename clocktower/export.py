@@ -29,6 +29,7 @@ import shutil
 from collections import defaultdict
 from pathlib import Path
 
+from . import characters
 from .ratings import BATCHES, DROPPED
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -51,6 +52,36 @@ MODELS = {
     'gpt-6.1-sol': ('GPT-6.1 Sol', 'OpenAI'),
 }
 MIXED_ID = 'mixed:claude-opus-5-5+gpt-5.6-sol'
+
+# Game vocabulary beyond the characters, for the hover glossary (data/glossary.json). Characters come from
+# characters.ABILITY. Keys are matched as whole words, case-sensitively, with an optional plural s.
+TERMS = {
+    'Demon': ('Demon', 'evil', 'The lead evil player: kills one player each night. Good wins when the Demon dies. '
+                               'In Trouble Brewing the Demon is the Imp.'),
+    'Minion': ('Minion', 'evil', "The Demon's helpers. Minions start the game knowing who the Demon is and who each other are. "
+                                 'In Trouble Brewing: Poisoner, Spy, Scarlet Woman, Baron.'),
+    'Townsfolk': ('Townsfolk', 'good', 'Good characters whose ability helps the town: most of the table.'),
+    'Outsider': ('Outsider', 'good', 'Good characters whose ability is a handicap: Butler, Drunk, Recluse, Saint.'),
+    'Storyteller': (None, None, 'The referee: deals the characters, runs the nights and decides what ambiguous abilities '
+                                'show. In this eval the Storyteller is a fixed script, not a model.'),
+    'Grimoire': (None, None, "The Storyteller's record of every player's true character and status. Only the Spy sees it."),
+    'poisoned': (None, None, "A poisoned player's ability does not work and any information it gives may be false, "
+                             'and they are not told.'),
+    'ghost vote': (None, None, 'A dead player keeps one vote for the rest of the game, usable once.'),
+    'red herring': (None, None, 'A good player who registers as the Demon to the Fortune Teller for the whole game.'),
+    'Demon bluff': (None, None, 'A good character not in play, shown to the Demon at the start, so evil can claim it safely.'),
+}
+
+
+def glossary():
+    """{term: {k: kind, team: 'good'|'evil', x: text}} for every character and general term."""
+    out = {}
+    for c, text in characters.ABILITY.items():
+        out[c] = {'k': characters.kind(c), 'team': 'evil' if characters.is_evil_character(c) else 'good', 'x': text}
+    for t, (k, team, text) in TERMS.items():
+        out[t] = {'k': k, 'team': team, 'x': text}
+    return out
+
 
 # Anything that looks like a credential must never reach the published data.
 SECRET = re.compile(r'sk-ant-[A-Za-z0-9_-]{8,}|sk-(?:proj-)?[A-Za-z0-9]{20,}|hf_[A-Za-z0-9]{20,}|'
@@ -366,6 +397,8 @@ def build(games_root=ROOT / 'games', out=SITE / 'dist', src=SITE / 'src', conten
         shutil.rmtree(out / 'assets', ignore_errors=True)
         shutil.copytree(src / 'assets', out / 'assets')
         (out / 'config.js').write_text('window.CT_CONFIG = ' + json.dumps(config, indent=2) + ';\n')
+        (out / 'data').mkdir(exist_ok=True)
+        (out / 'data' / 'glossary.json').write_text(json.dumps(glossary(), separators=(',', ':'), ensure_ascii=False))
         render_pages(src, out, config)
         print(f'Rendered pages into {out}')
         return None
@@ -396,6 +429,7 @@ def build(games_root=ROOT / 'games', out=SITE / 'dist', src=SITE / 'src', conten
         m = json.loads(mixed.read_text())
         charts['mixed'] = {k: m[k] for k in ('combined', 'detection', 'deception', 'record_by_opponent', 'p_effect_negative')}
     (out / 'data' / 'charts.json').write_text(json.dumps(charts, separators=(',', ':')))
+    (out / 'data' / 'glossary.json').write_text(json.dumps(glossary(), separators=(',', ':'), ensure_ascii=False))
 
     # Media: the explainer video and its poster, when a local copy is given.
     (out / 'media').mkdir()

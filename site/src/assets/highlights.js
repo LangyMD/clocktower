@@ -14,4 +14,5 @@
       <div class="links">${h.seq ? `<a href="${moment(h)}">Jump to the moment${h.day ? ` (day ${h.day})` : ''} →</a>` : ''}<a href="game.html?g=${encodeURIComponent(h.id)}">Read from the start</a></div>
       <details><summary>The story</summary><div class="story">${h.story.map((p) => `<p>${esc(p)}</p>`).join('')}${h.quote ? `<blockquote>“${esc(h.quote)}…”</blockquote>` : ''}<p><b>Why it's hard:</b> ${esc(h.why)}</p></div></details>
     </div></li>`).join('');
+  CT.markTerms($('#hl'));
 })();

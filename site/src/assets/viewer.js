@@ -47,6 +47,7 @@
     twin ? `<a href="game.html?g=${encodeURIComponent(twin.id)}">Twin game</a> (sides swapped: ${twin.winner} won)` : '',
     `<span class="muted">${esc(G.id)} · seed ${G.seed}</span>`,
   ].filter(Boolean).join(' · ');
+  CT.markTerms($('#g-meta'));
 
   /* ---------- controls ---------- */
   $('#toolbar').hidden = false;
@@ -266,6 +267,7 @@
     const box = $('#day'); box.className = '';
     box.innerHTML = S.day === 0 ? renderSetup() : renderDay(S.day);
     renderAside(S.day);
+    CT.markTerms(box); CT.markTerms($('#aside'));
     $$('#day [data-go]').forEach((b) => b.addEventListener('click', () => { S.day = +b.dataset.go; S.target = 0; render(true); }));
     $$('#day [data-reveal]').forEach((b) => b.addEventListener('click', () => { S.secrets = true; render(false); }));
     syncUrl();

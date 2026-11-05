@@ -76,6 +76,41 @@
   };
   document.addEventListener('click', () => CT.tip(null));
 
+  /* ---------- game vocabulary: hover (or tap) a character or term for what it means (data/glossary.json) ---------- */
+  let terms = null, termRe = null, termsLoading = null;
+  const loadTerms = () => termsLoading || (termsLoading = CT.json('data/glossary.json').catch(() => ({})).then((g) => {
+    terms = g;
+    const keys = Object.keys(g).sort((a, b) => b.length - a.length);
+    termRe = keys.length ? new RegExp('\\b(' + keys.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')(s?)\\b', 'g') : null;
+  }));
+  const termTip = (t) => { const g = terms[t]; return `<b>${CT.esc(t)}</b>${g.k ? ` · ${CT.esc(g.k)}${g.team ? ', ' + g.team : ''}` : ''}<br>${CT.esc(g.x)}`; };
+  /** Wrap every glossary term in root's text in <span class="term">, leaving attributes and existing marks alone. */
+  CT.markTerms = async (root) => {
+    if (!root) return;
+    await loadTerms();
+    if (!termRe || !root.isConnected) return;
+    const skip = (n) => n.parentNode && n.parentNode.closest && n.parentNode.closest('.term, script, style, option, textarea');
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    for (let n; (n = walker.nextNode());) { termRe.lastIndex = 0; if (!skip(n) && termRe.test(n.nodeValue)) nodes.push(n); }
+    for (const n of nodes) {
+      const s = n.nodeValue, frag = document.createDocumentFragment();
+      let last = 0, m; termRe.lastIndex = 0;
+      while ((m = termRe.exec(s))) {
+        frag.append(s.slice(last, m.index));
+        const el = document.createElement('span'); el.className = 'term'; el.dataset.t = m[1]; el.textContent = m[0];
+        frag.append(el); last = m.index + m[0].length;
+      }
+      frag.append(s.slice(last));
+      n.replaceWith(frag);
+    }
+  };
+  const termAt = (e) => { const t = e.target && e.target.closest && e.target.closest('.term'); return t && terms && terms[t.dataset.t] ? t.dataset.t : null; };
+  document.addEventListener('pointerover', (e) => { const t = termAt(e); if (t) CT.tip(termTip(t), e); });
+  document.addEventListener('pointermove', (e) => { const t = termAt(e); if (t) CT.tip(termTip(t), e); });
+  document.addEventListener('pointerout', (e) => { if (termAt(e)) CT.tip(null); });
+  document.addEventListener('click', (e) => { const t = termAt(e); if (t) CT.tip(termTip(t), e); });  // after the hide-on-click above, so a tap shows it
+
   /* ---------- SVG helpers ---------- */
   const NS = 'http://www.w3.org/2000/svg';
   function svgIn(host, W, H, label) {

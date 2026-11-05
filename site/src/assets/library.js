@@ -94,6 +94,7 @@
     $('#count').innerHTML = `<b>${list.length}</b> game${list.length === 1 ? '' : 's'} · good won ${good}, evil won ${list.length - good}`;
     const shown = list.slice((page - 1) * PAGE, page * PAGE);
     $('#glist').innerHTML = `<div class="glist" role="table" aria-label="Games">${head(v.sort)}${shown.map(row).join('')}</div>`;
+    CT.markTerms($('#glist'));
     $$('#glist [data-cyc]').forEach((b) => b.addEventListener('click', () => {
       const cyc = b.dataset.cyc.split(' '), i = cyc.indexOf($('#f-sort').value);
       $('#f-sort').value = i === 0 ? cyc[1] : i === 1 ? '' : cyc[0];
