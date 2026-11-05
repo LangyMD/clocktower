@@ -4,7 +4,7 @@
   "youtubeChannelId": "",
   "playUrl": "https://play.clocktowerbench.com",
   "postUrl": "https://www.dwarkesh.com/p/clocktower",
-  "githubUrl": "",
+  "githubUrl": "https://github.com/dwarkeshsp/clocktower",
   "datasetUrl": "https://huggingface.co/datasets/dwarkesh/clocktower-games",
   "explainerVideo": "media/explainer-three-tricks.mp4",
   "explainerFallback": "https://huggingface.co/datasets/dwarkesh/clocktower-games/resolve/main/media/explainer-three-tricks.mp4",
