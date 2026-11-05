@@ -11,6 +11,11 @@
   catch (e) { $('#day').innerHTML = `Couldn't load this game (${esc(e.message)}). <a href="games.html">Back to the library.</a>`; return; }
 
   const seat = Object.fromEntries(G.seats.map((s) => [s.n, s]));
+  // Every player gets a colour by seat (style.css .p0 … .p11); names are underlined in it wherever they appear.
+  const seatIdx = Object.fromEntries(G.seats.map((s, i) => [s.n, i]));
+  const pn = (n) => (n in seatIdx ? `<span class="nm p${seatIdx[n]}">${esc(n)}</span>` : esc(n));
+  const nameRe = G.seats.length ? new RegExp('\\b(' + G.seats.map((s) => s.n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'g') : null;
+  const rich = (text) => (nameRe ? esc(text).replace(nameRe, (m) => pn(m)) : esc(text));  // escaped text, names marked
   const modelOf = (n) => (seat[n] && seat[n].m >= 0 ? G.models[seat[n].m] : null);
   const isOpenAI = (n) => /^gpt|^o\d/.test(modelOf(n) || '');
   const teamName = (t) => CT.name(R, t);
@@ -55,14 +60,14 @@
   fol.addEventListener('change', () => { S.follow = fol.value; if (S.follow) S.secrets = true; render(false); });
 
   /* ---------- text helpers ---------- */
-  const md = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  const md = (s) => rich(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   const roleTag = (n, day) => {
     if (!S.secrets || !seat[n]) return '';
     const c = roleOn(n, day), evil = seat[n].e;
     return `<span class="rtag ${evil ? 'evil' : 'good'}">${esc(c)}${seat[n].s && c === seat[n].c ? ` (thinks ${esc(seat[n].s)})` : ''}</span>`;
   };
   const modelTag = (n) => (S.secrets && G.models.length > 2 && modelOf(n) ? `<span class="small muted">${esc(CT.name(R, modelOf(n)))}</span>` : '');
-  const who = (n, day, dead) => `<span>${esc(n)}</span>${roleTag(n, day)}${modelTag(n)}${dead && dead.has(n) ? '<span class="dead">(dead)</span>' : ''}`;
+  const who = (n, day, dead) => `<span>${pn(n)}</span>${roleTag(n, day)}${modelTag(n)}${dead && dead.has(n) ? '<span class="dead">(dead)</span>' : ''}`;
   const reasoning = (n, text, open) => {
     if (!S.secrets || !text) return '';
     if (S.follow && S.follow !== n) return '';
@@ -85,22 +90,22 @@
   function msg(it, day, dead) {
     const id = `e${it.s}`;
     switch (it.k) {
-      case 'say': return `<div class="msg" id="${id}"><div class="who">${who(it.p, day, dead)}</div><div class="txt">${esc(it.x)}</div>${reasoning(it.p, it.t)}</div>`;
+      case 'say': return `<div class="msg" id="${id}"><div class="who">${who(it.p, day, dead)}</div><div class="txt">${rich(it.x)}</div>${reasoning(it.p, it.t)}</div>`;
       case 'w': {
         const evilChat = S.secrets && seat[it.p] && seat[it.p].e && it.to.every((t) => seat[t] && seat[t].e);
-        return `<div class="msg whisper${evilChat ? ' evilchat' : ''}" id="${id}"><div class="who">${who(it.p, day, dead)}<span class="to">→ ${it.to.map((t) => esc(t)).join(' & ')}</span>${evilChat ? '<span class="small evil">evil team</span>' : ''}</div><div class="txt">${esc(it.x)}</div>${reasoning(it.p, it.t)}</div>`;
+        return `<div class="msg whisper${evilChat ? ' evilchat' : ''}" id="${id}"><div class="who">${who(it.p, day, dead)}<span class="to">→ ${it.to.map((t) => pn(t)).join(' & ')}</span>${evilChat ? '<span class="small evil">evil team</span>' : ''}</div><div class="txt">${rich(it.x)}</div>${reasoning(it.p, it.t)}</div>`;
       }
-      case 'th': return `<div class="think-only" id="${id}">${esc(it.p)} ${it.why === 'nominate' ? 'chose not to nominate' : it.why === 'vote' ? 'thought before voting' : 'passed this turn'}.${reasoning(it.p, it.x)}</div>`;
-      case 'nc': return `<div class="msg secret" id="${id}"><b>${esc(it.p)}</b> (${esc(it.r)}) chose ${it.n.length ? it.n.map(esc).join(' and ') : 'nobody'}.${reasoning(it.p, it.t)}</div>`;
-      case 'info': return `<div class="msg secret" id="${id}"><b>${(it.to || []).map(esc).join(', ')}</b> learns: ${esc(it.x.replace(/^Night \d+ — /, ''))}</div>`;
-      case 'death': return `<div class="msg secret" id="${id}">${esc(it.p)} dies (${esc(it.x)}).</div>`;
-      case 'bec': return `<div class="msg secret" id="${id}"><b>${esc(it.p)}</b> becomes the <b>${esc(it.c)}</b>.</div>`;
-      case 'note': return `<div class="msg ${it.to ? 'secret' : 'sys'}" id="${id}">${it.to ? `<b>${it.to.map(esc).join(', ')}</b> is told: ` : ''}${esc(it.x)}</div>`;
-      case 'sl': return `<div class="verdict" id="${id}">${esc(it.p)} claims the Slayer's power and shoots ${esc(it.n)}. ${it.died ? `<b>${esc(it.n)} dies!</b>` : 'Nothing happens.'}${reasoning(it.p, it.t)}</div>`;
-      case 'vg': return `<div class="verdict exec" id="${id}">${esc(it.p)} nominated the Virgin and is executed on the spot. The day ends.</div>`;
-      case 'ex': return `<div class="verdict exec" id="${id}">${esc(it.p)} is executed.${it.died ? '' : ' (They were already dead.)'}${S.secrets && seat[it.p] ? ` They were the <b>${esc(roleOn(it.p, day + 1))}</b>.` : ''}</div>`;
+      case 'th': return `<div class="think-only" id="${id}">${pn(it.p)} ${it.why === 'nominate' ? 'chose not to nominate' : it.why === 'vote' ? 'thought before voting' : 'passed this turn'}.${reasoning(it.p, it.x)}</div>`;
+      case 'nc': return `<div class="msg secret" id="${id}"><b>${pn(it.p)}</b> (${esc(it.r)}) chose ${it.n.length ? it.n.map(pn).join(' and ') : 'nobody'}.${reasoning(it.p, it.t)}</div>`;
+      case 'info': return `<div class="msg secret" id="${id}"><b>${(it.to || []).map(pn).join(', ')}</b> learns: ${rich(it.x.replace(/^Night \d+ — /, ''))}</div>`;
+      case 'death': return `<div class="msg secret" id="${id}">${pn(it.p)} dies (${rich(it.x)}).</div>`;
+      case 'bec': return `<div class="msg secret" id="${id}"><b>${pn(it.p)}</b> becomes the <b>${esc(it.c)}</b>.</div>`;
+      case 'note': return `<div class="msg ${it.to ? 'secret' : 'sys'}" id="${id}">${it.to ? `<b>${it.to.map(pn).join(', ')}</b> is told: ` : ''}${rich(it.x)}</div>`;
+      case 'sl': return `<div class="verdict" id="${id}">${pn(it.p)} claims the Slayer's power and shoots ${pn(it.n)}. ${it.died ? `<b>${pn(it.n)} dies!</b>` : 'Nothing happens.'}${reasoning(it.p, it.t)}</div>`;
+      case 'vg': return `<div class="verdict exec" id="${id}">${pn(it.p)} nominated the Virgin and is executed on the spot. The day ends.</div>`;
+      case 'ex': return `<div class="verdict exec" id="${id}">${pn(it.p)} is executed.${it.died ? '' : ' (They were already dead.)'}${S.secrets && seat[it.p] ? ` They were the <b>${esc(roleOn(it.p, day + 1))}</b>.` : ''}</div>`;
       case 'noex': return `<div class="verdict" id="${id}">Nobody is executed today.</div>`;
-      case 'end': return `<div class="gameover" id="${id}"><p class="eyebrow">Game over</p><h3 class="${it.w}">${it.w === 'good' ? 'Good' : 'Evil'} wins</h3><p class="muted sans" style="margin:0">${esc(it.x)}</p></div>`;
+      case 'end': return `<div class="gameover" id="${id}"><p class="eyebrow">Game over</p><h3 class="${it.w}">${it.w === 'good' ? 'Good' : 'Evil'} wins</h3><p class="muted sans" style="margin:0">${rich(it.x)}</p></div>`;
       case 'dawn': return '';
       default: return '';
     }
@@ -119,16 +124,16 @@
       if (!g.nom) return visible(g) ? msg(g, day, dead) : '';
       const n = g.nom;
       const rest = g.rest.filter(visible).map((it) => it.k === 'def'
-        ? `<div class="msg" id="e${it.s}"><div class="who">${who(it.p, day, dead)}<span class="small muted">defends</span></div><div class="txt">${it.x ? esc(it.x) : '<i class="muted">says nothing</i>'}</div>${reasoning(it.p, it.t)}</div>`
+        ? `<div class="msg" id="e${it.s}"><div class="who">${who(it.p, day, dead)}<span class="small muted">defends</span></div><div class="txt">${it.x ? rich(it.x) : '<i class="muted">says nothing</i>'}</div>${reasoning(it.p, it.t)}</div>`
         : msg(it, day, dead)).join('');
-      const votes = g.votes.map((v) => `<span class="vote${v.y ? ' yes' : ''}${v.g ? ' ghost' : ''}" id="e${v.s}" title="${esc(v.p)}: ${v.y ? 'yes' : 'no'}${v.g ? ' (ghost vote)' : ''}${v.x ? ' — ' + esc(v.x) : ''}">${esc(v.p)} ${v.y ? '✓' : '·'}</span>`).join('');
+      const votes = g.votes.map((v) => `<span class="vote${v.y ? ' yes' : ''}${v.g ? ' ghost' : ''}" id="e${v.s}" title="${esc(v.p)}: ${v.y ? 'yes' : 'no'}${v.g ? ' (ghost vote)' : ''}${v.x ? ' — ' + esc(v.x) : ''}">${pn(v.p)} ${v.y ? '✓' : '·'}</span>`).join('');
       const remarks = g.votes.filter((v) => v.x || (S.secrets && v.t && (!S.follow || S.follow === v.p)));
       const remarkHtml = remarks.length ? `<details class="think"><summary>Vote remarks${S.secrets ? ' and reasoning' : ''} (${remarks.length})</summary><div style="margin-top:6px">${remarks.map((v) =>
-        `<div class="msg" style="margin-bottom:4px"><div class="who">${who(v.p, day, dead)}<span class="small muted">votes ${v.y ? 'yes' : 'no'}</span></div>${v.x ? `<div class="txt">${esc(v.x)}</div>` : ''}${reasoning(v.p, v.t)}</div>`).join('')}</div></details>` : '';
+        `<div class="msg" style="margin-bottom:4px"><div class="who">${who(v.p, day, dead)}<span class="small muted">votes ${v.y ? 'yes' : 'no'}</span></div>${v.x ? `<div class="txt">${rich(v.x)}</div>` : ''}${reasoning(v.p, v.t)}</div>`).join('')}</div></details>` : '';
       const r = g.res;
-      const tally = r ? `<div class="tally ${r.o === 'block' ? 'block' : ''}">${r.c} vote${r.c === 1 ? '' : 's'}, ${r.need} needed. ${{ block: `${esc(r.n)} is about to be executed.`, tie: 'A tie with the leader: nobody is about to be executed.', short: 'Not enough.' }[r.o] || ''}</div>` : '';
-      return `<div class="nom" id="e${n.s}"><div class="head">${esc(n.p)}${roleTag(n.p, day)} <span class="arrow">nominates</span> ${esc(n.n)}${roleTag(n.n, day)}</div>
-        ${n.x ? `<div class="txt" style="margin-bottom:8px">${esc(n.x)}</div>` : ''}${reasoning(n.p, n.t)}${rest}
+      const tally = r ? `<div class="tally ${r.o === 'block' ? 'block' : ''}">${r.c} vote${r.c === 1 ? '' : 's'}, ${r.need} needed. ${{ block: `${pn(r.n)} is about to be executed.`, tie: 'A tie with the leader: nobody is about to be executed.', short: 'Not enough.' }[r.o] || ''}</div>` : '';
+      return `<div class="nom" id="e${n.s}"><div class="head">${pn(n.p)}${roleTag(n.p, day)} <span class="arrow">nominates</span> ${pn(n.n)}${roleTag(n.n, day)}</div>
+        ${n.x ? `<div class="txt" style="margin-bottom:8px">${rich(n.x)}</div>` : ''}${reasoning(n.p, n.t)}${rest}
         ${votes ? `<div class="votes" aria-label="Votes in order">${votes}</div>` : ''}${tally}${remarkHtml}</div>`;
     }).join('');
   }
@@ -154,7 +159,7 @@
     if (nightItems.length) html += nightItems.map((it) => msg(it, d, dead)).join('');
     else if (!S.secrets) html += `<div class="collapsed">The town sleeps. ${d === 1 ? 'Information roles learn their first clues.' : 'The Demon chooses a victim.'} <button type="button" data-reveal>Reveal secrets</button> to see every night action and what each player learned.</div>`;
     const dw = dawn && dawn.it.find((x) => x.k === 'dawn');
-    if (dw) html += `<div class="dawn" style="margin-top:12px" id="e${dw.s}">${dw.x ? `<div class="narr">${esc(dw.x)}</div>` : ''}<div class="deaths">${dw.dd.length ? `Died in the night: ${dw.dd.map(esc).join(', ')}${S.secrets ? ` (${dw.dd.map((p) => esc(roleOn(p, d))).join(', ')})` : ''}.` : 'Nobody died in the night.'}</div></div>`;
+    if (dw) html += `<div class="dawn" style="margin-top:12px" id="e${dw.s}">${dw.x ? `<div class="narr">${rich(dw.x)}</div>` : ''}<div class="deaths">${dw.dd.length ? `Died in the night: ${dw.dd.map(pn).join(', ')}${S.secrets ? ` (${dw.dd.map((p) => esc(roleOn(p, d))).join(', ')})` : ''}.` : 'Nobody died in the night.'}</div></div>`;
     if (dawn) html += dawn.it.filter((x) => x.k !== 'dawn' && visible(x)).map((it) => msg(it, d, dead)).join('');
     html += '</div>';
     // Private time
@@ -166,7 +171,7 @@
       if (!items.length) continue;
       html += `<div class="beat"><div class="beat-h">Round ${s.b}</div>${items.map((it) => msg(it, d, dead)).join('')}</div>`;
     }
-    if (S.secrets && S.follow && !privShown) html += `<div class="collapsed">${esc(S.follow)} sent and received no whispers today.</div>`;
+    if (S.secrets && S.follow && !privShown) html += `<div class="collapsed">${pn(S.follow)} sent and received no whispers today.</div>`;
     html += '</div>';
     // Town square
     const sq = D.secs.filter((s) => s.t === 'square');
@@ -191,9 +196,9 @@
     let html = `<div class="section"><h2>${ICON.square}The table</h2><p class="lede" style="font-size:1.08rem">${G.players} players sit in a circle. ${G.seats.filter((s) => !s.e).length} are good and ${G.seats.filter((s) => s.e).length} are evil: one Demon (the Imp) and ${G.seats.filter((s) => s.e).length - 1} Minions. One model, ${esc(teamName(G.good))}, plays every good seat; ${esc(teamName(G.evil))} plays every evil seat.</p>`;
     if (!S.secrets) html += `<div class="collapsed">Roles are hidden, just as the players see it. <button type="button" data-reveal>Reveal secrets</button> to see the Grimoire: every character, the Demon's bluffs and what each player was told.</div>`;
     else {
-      html += `<div class="setup-list">${G.seats.map((s) => `<div><b>${esc(s.n)}</b>: <span class="${s.e ? 'evil' : 'good'}">${esc(s.c)}</span>${s.s ? ` (thinks they are the ${esc(s.s)})` : ''}${s.f ? ` → later the ${esc(s.f)}` : ''}${s.n === G.rh ? ' · the Fortune Teller\'s red herring' : ''}${modelOf(s.n) ? ` <span class="small muted">${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</div>`).join('')}</div>
+      html += `<div class="setup-list">${G.seats.map((s) => `<div><b>${pn(s.n)}</b>: <span class="${s.e ? 'evil' : 'good'}">${esc(s.c)}</span>${s.s ? ` (thinks they are the ${esc(s.s)})` : ''}${s.f ? ` → later the ${esc(s.f)}` : ''}${s.n === G.rh ? ' · the Fortune Teller\'s red herring' : ''}${modelOf(s.n) ? ` <span class="small muted">${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</div>`).join('')}</div>
         <p class="sans small" style="margin-top:10px">Demon bluffs (three good characters not in play, shown to the Demon): <b>${G.bluffs.map(esc).join(', ')}</b></p>`;
-      if (Object.keys(G.intros || {}).length) html += `<h3 style="margin-top:22px">What each player was told</h3>` + G.seats.filter((s) => !S.follow || s.n === S.follow).map((s) => `<div class="sans small"><b>${esc(s.n)}</b></div><div class="intro-text">${esc((G.intros || {})[s.n] || '')}</div>`).join('');
+      if (Object.keys(G.intros || {}).length) html += `<h3 style="margin-top:22px">What each player was told</h3>` + G.seats.filter((s) => !S.follow || s.n === S.follow).map((s) => `<div class="sans small"><b>${pn(s.n)}</b></div><div class="intro-text">${rich((G.intros || {})[s.n] || '')}</div>`).join('');
     }
     html += `</div><div class="daypager"><span></span><button class="btn primary" data-go="1">Night 1 →</button></div>`;
     return html;
@@ -207,7 +212,7 @@
       const c = d ? roleOn(s.n, d) : s.c;
       const cls = [dead.has(s.n) ? 'dead' : '', S.follow === s.n ? 'on' : ''].join(' ');
       const role = S.secrets ? `<span class="pc ${s.e ? 'evil' : 'good'}">${esc(c)}${multi && modelOf(s.n) ? ` <span class="muted">· ${esc(CT.name(R, modelOf(s.n)))}</span>` : ''}</span>` : '<span class="pc"></span>';
-      return `<tr class="${cls}"><td><button type="button" data-seat="${esc(s.n)}" aria-pressed="${S.follow === s.n}" title="See the game as ${esc(s.n)}"><span class="pn">${esc(s.n)}</span>${role}<span class="ps">${dead.has(s.n) ? 'dead' : ''}</span></button></td></tr>`;
+      return `<tr class="${cls}"><td><button type="button" data-seat="${esc(s.n)}" aria-pressed="${S.follow === s.n}" title="See the game as ${esc(s.n)}"><span class="pn nm p${seatIdx[s.n]}">${esc(s.n)}</span>${role}<span class="ps">${dead.has(s.n) ? 'dead' : ''}</span></button></td></tr>`;
     }).join('');
     const seats = `<table class="players"><tbody>${rows}</tbody></table><p class="small muted" style="margin:8px 0 0">Tap a player to see the game as they saw it${S.secrets ? '' : ' (reveals secrets)'}.</p>`;
     let belief = '';
@@ -226,7 +231,7 @@
       belief = `<details class="panel" id="p-belief"${S.beliefOpen ? ' open' : ''}><summary><h3>Who does the town suspect?</h3>${S.beliefOpen ? '' : ` <span class="small muted sans">top on day ${cur.d}: ${esc(sorted[0])} ${cur.v[sorted[0]]}%</span>`}</summary>
         <p class="small muted sans" style="margin:0 0 10px">Before each day's votes, every good player privately estimates the chance that each player is the Demon (out of game; nobody sees the answers). Average of the living good players, in %.${S.secrets ? ' <span style="color:var(--evil-ink)">Red: the real Demon that day.</span>' : ''}</p>
         <div class="scroll-x"><table class="data" style="font-size:.78rem"><thead><tr><th></th>${cols.map((b) => `<th class="num" style="${b.d === cur.d ? 'color:var(--accent-2)' : ''}">D${b.d}</th>`).join('')}</tr></thead>
-        <tbody>${sorted.map((n) => `<tr><td style="white-space:nowrap;padding:5px 6px${dead.has(n) ? ';color:var(--faint)' : ''}">${esc(n)}</td>${cols.map((b) => cell(b, n)).join('')}</tr>`).join('')}</tbody></table></div>
+        <tbody>${sorted.map((n) => `<tr><td style="white-space:nowrap;padding:5px 6px${dead.has(n) ? ';color:var(--faint)' : ''}">${pn(n)}</td>${cols.map((b) => cell(b, n)).join('')}</tr>`).join('')}</tbody></table></div>
         <p class="small muted sans" style="margin:8px 0 0">Sorted by Day ${cur.d}. Tap a number for who believed it most.</p></details>`;
     }
     $('#aside').innerHTML = `<details class="panel" id="p-seats"${S.seatsOpen ? ' open' : ''}><summary><h3>Players</h3><span class="small muted">${G.players}${S.secrets ? '' : ' · roles hidden'}${d ? ` · as of day ${d}` : ''}</span></summary>${seats}</details>${belief}`;
@@ -240,7 +245,7 @@
     $$('#aside td[data-b]').forEach((td) => CT.hover(td, () => {
       const b = G.belief.find((x) => x.d === +td.dataset.b), n = td.dataset.n;
       const by = Object.entries(b.by || {}).filter(([p]) => p !== n && b.by[p][n] != null).sort((x, y) => y[1][n] - x[1][n]).slice(0, 3);
-      return `<b>${esc(n)}</b>, day ${b.d}: village average ${b.v[n]}% (${b.n} good players)${by.length ? '<br>Most suspicious: ' + by.map(([p, v]) => `${esc(p)} ${v[n]}%`).join(', ') : ''}`;
+      return `<b>${pn(n)}</b>, day ${b.d}: village average ${b.v[n]}% (${b.n} good players)${by.length ? '<br>Most suspicious: ' + by.map(([p, v]) => `${pn(p)} ${v[n]}%`).join(', ') : ''}`;
     }));
   }
 
