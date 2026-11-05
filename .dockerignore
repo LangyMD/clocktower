@@ -1,0 +1,6 @@
+# The play server image copies only pyproject.toml and clocktower/ (Dockerfile); keep everything else out of the
+# build context that fly deploy uploads (game logs alone are hundreds of MB).
+*
+!pyproject.toml
+!clocktower/
+clocktower/**/__pycache__/

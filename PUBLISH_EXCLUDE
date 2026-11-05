@@ -15,4 +15,4 @@ PUBLISH_EXCLUDE
 scripts/publish_snapshot.sh
 
 # Matt's deploy script (his hosts)
-scripts/deploy-matt.sh
+scripts/deploy.sh
