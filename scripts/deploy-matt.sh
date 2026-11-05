@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Deploy Matt's instances: the static site to the devbox (botc.mattstuchlik.com) and Cloudflare Pages
-# (clocktowerbench.pages.dev), and the play server to Fly (clocktower-play.fly.dev).
+# Deploy Matt's instances: the static site to Cloudflare Pages (clocktowerbench.pages.dev) and the play server
+# to Fly (clocktower-play.fly.dev).
 #
-#   scripts/deploy-matt.sh              # everything: rebuild the site pages, push the site to both hosts, fly deploy
-#   scripts/deploy-matt.sh site         # only the site (devbox + Cloudflare Pages)
+#   scripts/deploy-matt.sh              # everything: rebuild the site pages, upload to Pages, fly deploy
+#   scripts/deploy-matt.sh site         # only the site (Cloudflare Pages)
 #   scripts/deploy-matt.sh play         # only the play server
 #   scripts/deploy-matt.sh site --full  # full site build (game logs must be on disk) instead of a pages-only re-render
 #   DRY_RUN=1 scripts/deploy-matt.sh    # print the commands instead of running them
 #
-# Needs: ssh host "devbox" (~/.ssh/config), flyctl logged in, and CLOUDFLARE_API_TOKEN in the environment for
-# Pages (skipped with a note when it is unset). CLOUDFLARE_ACCOUNT_ID defaults to Matt's account.
+# Needs: flyctl logged in, and CLOUDFLARE_API_TOKEN in the environment (a token with Pages edit rights).
+# CLOUDFLARE_ACCOUNT_ID defaults to Matt's account.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -22,12 +22,10 @@ run() { echo "+ $*"; [ "${DRY_RUN:-0}" = 1 ] || "$@"; }
 site() {
   if [ "$full" = 1 ]; then run env PYTHONPATH="$PWD" "$PY" -m clocktower.export --games games
   else run env PYTHONPATH="$PWD" "$PY" -m clocktower.export --pages-only; fi
-  run rsync -az --delete site/dist/ devbox:/var/www/botc/
-  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
-    ( export CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID   # exported, not echoed: the token never appears in the output
-      run npx -y wrangler@latest pages deploy site/dist --project-name clocktowerbench --branch main --commit-dirty=true )
-  else echo "note: CLOUDFLARE_API_TOKEN not set; skipped Cloudflare Pages"; fi
-  [ "${DRY_RUN:-0}" = 1 ] || curl -s -o /dev/null -m 20 -w "botc.mattstuchlik.com: HTTP %{http_code}\n" https://botc.mattstuchlik.com/
+  [ -n "${CLOUDFLARE_API_TOKEN:-}" ] || { echo "error: CLOUDFLARE_API_TOKEN is not set" >&2; exit 1; }
+  ( export CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID   # exported, not echoed: the token never appears in the output
+    run npx -y wrangler@latest pages deploy site/dist --project-name clocktowerbench --branch main --commit-dirty=true )
+  [ "${DRY_RUN:-0}" = 1 ] || curl -s -o /dev/null -m 20 -w "clocktowerbench.pages.dev: HTTP %{http_code}\n" https://clocktowerbench.pages.dev/
 }
 
 play() {
