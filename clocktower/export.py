@@ -10,8 +10,7 @@ the data the pages read:
     data/games/<id>.json.gz  one compact game per file for the replay viewer (gzip; the page inflates it)
 
 Which games: every game in the 2026 rating fit (`ratings.BATCHES` minus `ratings.DROPPED`), the 20 Opus 4.8
-v16 games the fit drops (shown, marked unrated), the mixed-team games (v17/b1-*, v17/b2-*), and the first games
-of the project (protocols v1-v3, Sept 2026; `ARCHIVE`), shown as an archive when their logs are on disk.
+v16 games the fit drops (shown, marked unrated), and the mixed-team games (v17/b1-*, v17/b2-*).
 
     python -m clocktower.export --games /home/user/clocktower/games          # full build into site/dist
     python -m clocktower.export --games ... --limit 20                       # a quick build with 20 games
@@ -35,10 +34,6 @@ from .ratings import BATCHES, DROPPED
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / 'site'
 MIXED_BATCHES = ['v17/b1-*', 'v17/b2-*']
-# The project's first games (Sept 27 2026, LLM Storyteller in v1-v2, one model on both sides). Their logs were in the
-# repository's first commit; the paths are game directories (some batches are a single game).
-ARCHIVE = ['v1/batch-*/game-*', 'v1/full-*', 'v1/human-001', 'v1/smoke-001', 'v2/*/game-*', 'v3/phased-10/game-*',
-           'v3/smoke-phased']
 EVIL = {'Imp', 'Poisoner', 'Spy', 'Scarlet Woman', 'Baron'}
 MINIONS = ['Poisoner', 'Spy', 'Scarlet Woman', 'Baron']
 
@@ -114,12 +109,10 @@ def twin_of(gid):
 
 
 def select(games_root):
-    """[(game id, group)] with group 'rated', 'unrated' (Opus 4.8's v16 games), 'mixed' or 'archive' (v1-v3)."""
+    """[(game id, group)] with group 'rated', 'unrated' (Opus 4.8's v16 games) or 'mixed'."""
     out = []
-    patterns = ([(b + '/game-*', 'rated') for b in BATCHES] + [(b + '/game-*', 'mixed') for b in MIXED_BATCHES]
-                + [(b, 'archive') for b in ARCHIVE])
-    for pattern, group in patterns:
-        for d in sorted(glob.glob(f'{games_root}/{pattern}')):
+    for pattern, group in [(b, 'rated') for b in BATCHES] + [(b, 'mixed') for b in MIXED_BATCHES]:
+        for d in sorted(glob.glob(f'{games_root}/{pattern}/game-*')):
             if not os.path.exists(d + '/result.json') or not os.path.exists(d + '/events.jsonl'):
                 continue
             if _json(d + '/result.json').get('winner') not in ('good', 'evil'):
