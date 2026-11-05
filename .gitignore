@@ -18,3 +18,9 @@ games/demo/
 games/smoke/
 .wrangler/
 scripts/deploy.sh
+
+# Private: kept locally, out of the public repo
+CLAUDE.md
+.claude/
+docs/blog/
+games/ledger.jsonl

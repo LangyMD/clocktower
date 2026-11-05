@@ -1,5 +1,0 @@
-{
-  "permissions": {
-    "allow": ["Bash(hf upload dwarkesh/clocktower-games:*)"]
-  }
-}
