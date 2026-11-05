@@ -350,7 +350,7 @@ table.h2h td.self { color: var(--faint); }
 .players .pc { color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .players .pc.good { color: var(--good); } .players .pc.evil { color: var(--evil); }
 .players .ps { color: var(--faint); font-size: .78rem; white-space: nowrap; }
-.players tr.dead .pn { color: var(--faint); text-decoration-line: line-through underline; }
+.players tr.dead .pn { color: var(--faint); text-decoration: line-through; }
 .section { margin-bottom: 34px; }
 .section > h2 { display: flex; align-items: center; gap: 10px; font: 600 1.15rem/1.2 var(--sans); padding-bottom: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
 .section > h2 svg { width: 19px; height: 19px; flex: none; color: var(--faint); }
@@ -360,9 +360,10 @@ table.h2h td.self { color: var(--faint); }
 .collapsed button:hover { text-decoration: underline; }
 .beat { margin-bottom: 18px; }
 .beat-h { font: 600 .75rem/1 var(--sans); color: var(--faint); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
-/* Player names: underlined in a colour fixed per seat, wherever the name appears (viewer.js pn/rich). Soft hues in the
-   palette's register so gold stays the accent and the team colours keep their meaning. */
-.nm { text-decoration: underline; text-decoration-color: var(--pc, var(--rule-2)); text-decoration-thickness: 2px; text-underline-offset: 3px; text-decoration-skip-ink: none; }
+/* Player names: a small dot in a colour fixed per seat before the name, wherever it appears (viewer.js pn/rich). Soft
+   hues in the palette's register so gold stays the accent and the team colours keep their meaning. */
+.nm { white-space: nowrap; }
+.nm::before { content: ""; display: inline-block; width: .42em; height: .42em; border-radius: 50%; background: var(--pc, var(--rule-2)); margin-right: .28em; vertical-align: .12em; }
 .p0 { --pc: #e48a63; } .p1 { --pc: #5cb8cb; } .p2 { --pc: #ad91d4; } .p3 { --pc: #9fc26b; } .p4 { --pc: #d98fb3; } .p5 { --pc: #6fb9a0; }
 .p6 { --pc: #c9a66b; } .p7 { --pc: #8aa7e8; } .p8 { --pc: #e5a062; } .p9 { --pc: #b7bd63; } .p10 { --pc: #c48ad6; } .p11 { --pc: #a3c4d9; }
 .msg { padding: 9px 0 10px 14px; border-left: 2px solid var(--rule-2); margin-bottom: 10px; }
