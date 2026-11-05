@@ -81,7 +81,7 @@
   const loadTerms = () => termsLoading || (termsLoading = CT.json('data/glossary.json').catch(() => ({})).then((g) => {
     terms = g;
     const keys = Object.keys(g).sort((a, b) => b.length - a.length);
-    termRe = keys.length ? new RegExp('\\b(' + keys.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')(s?)\\b', 'g') : null;
+    termRe = keys.length ? new RegExp('\\b(' + keys.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')(s|es|ed|ing)?\\b', 'g') : null;  // "Minions", "starpassed", "bussing"
   }));
   const termTip = (t) => { const g = terms[t]; return `<b>${CT.esc(t)}</b>${g.k ? ` · ${CT.esc(g.k)}${g.team ? ', ' + g.team : ''}` : ''}<br>${CT.esc(g.x)}`; };
   /** Wrap every glossary term in root's text in <span class="term">, leaving attributes and existing marks alone. */

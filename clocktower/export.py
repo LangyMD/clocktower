@@ -70,7 +70,12 @@ TERMS = {
     'ghost vote': (None, None, 'A dead player keeps one vote for the rest of the game, usable once.'),
     'red herring': (None, None, 'A good player who registers as the Demon to the Fortune Teller for the whole game.'),
     'Demon bluff': (None, None, 'A good character not in play, shown to the Demon at the start, so evil can claim it safely.'),
+    'starpass': (None, None, 'The Imp kills itself at night so a Minion becomes the Imp. The town usually reads a night '
+                             'death as proof of good, so the Demon moves to someone already trusted.'),
+    'bus': (None, None, 'Evil voting to execute one of its own, to look good or to spend a Minion and save the Demon.'),
 }
+TERMS['star-pass'] = TERMS['star pass'] = TERMS['starpass']   # spellings the models use
+TERMS['buss'] = TERMS['bus']                                   # "bussed", "bussing"
 
 
 def glossary():
