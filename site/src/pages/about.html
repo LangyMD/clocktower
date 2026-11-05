@@ -44,7 +44,7 @@
       <li><b>Equal settings.</b> Every model plays at its lab's "high" reasoning effort, with the same 8,000-token ceiling per turn and the same word limits (150 words to speak or whisper). All text reaches other players in one plain typography, so formatting can't give a team away.</li>
       <li><b>Memory like a person's.</b> Each seat remembers only what it saw and what it said and thought itself. There are no notes and no summaries.</li>
       <li><b>Belief probes.</b> Before each day's votes, every good player is asked, outside the game, how likely each other player is to be the Demon. The answers never enter the game; they show how the town's beliefs move. The replay viewer charts them day by day.</li>
-      <li><b>Ratings.</b> One Bradley–Terry fit over all rated games gives each model an Elo rating, plus separate detection and deception ratings. <a href="leaderboard.html">See the leaderboard.</a></li>
+      <li><b>Ratings.</b> One Bradley–Terry fit over all rated games gives each model an Elo rating, plus separate detection and deception ratings. <a href="./#leaderboard">See the leaderboard.</a></li>
     </ul>
     <div class="note"><b>About the reasoning you can read.</b> For Claude models the viewer shows each turn's private reasoning (summarised by the API, but written before the model acted). OpenAI models' reasoning is encrypted by their API; the viewer shows only the short summaries the API returns.</div>
 
@@ -87,7 +87,7 @@ python -m clocktower.export --games games  # rebuild this website from them</cod
     </ul>
 
     <h2 id="data">The data</h2>
-    <p>Every game on this site, with every seat's reasoning, is in the <a data-config-href="datasetUrl" href="#">Hugging Face dataset</a>. The ratings come from one fit over all rated games; the <a href="leaderboard.html">leaderboard</a> explains the method.</p>
+    <p>Every game on this site, with every seat's reasoning, is in the <a data-config-href="datasetUrl" href="#">Hugging Face dataset</a>. The ratings come from one fit over all rated games; the <a href="./#leaderboard">leaderboard</a> explains the method.</p>
 
     <h2 id="credits">Credits</h2>
     <p>Clocktower Bench was made by <b>Dwarkesh Patel</b>, with the harness, experiments and analysis built together with Claude.</p>

@@ -1,30 +1,130 @@
-<!-- title: Clocktower Bench: AI models playing Blood on the Clocktower | description: Frontier AI models play Blood on the Clocktower against each other. One model plays the town, another the Demon's team. Ratings, every game's log, and a table where you can play them. | nav: home -->
+<!-- title: Clocktower Bench: AI models playing Blood on the Clocktower | description: Frontier AI models play Blood on the Clocktower against each other. One model plays the town, another the Demon's team. Ratings, every game's log, and a table where you can play them. | nav: leaderboard -->
 <section class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="wrap">
     <h1>Clocktower Bench</h1>
     <p class="lede">AI models play the social deduction game <a href="about.html#rules"><b>Blood on the Clocktower</b></a> against each other: one model plays the town, another the Demon's team, hiding among them. Who catches liars, and who lies best?</p>
-    <div class="btns">
-      <a class="btn primary" href="highlights.html">Read a highlight</a>
-      <a class="btn" href="games.html">Browse games</a>
-      <a class="btn" href="play.html">Play against the AIs</a>
+  </div>
+</section>
+
+<section class="block tight feature">
+  <div class="wrap">
+    <div class="feature-grid">
+      <div class="video feature-video" id="essay" hidden></div>
+      <div class="feature-links">
+        <a class="feature-card" data-config-href="videoUrl" href="#" id="fc-video"><span class="fc-kicker">Video</span><b>Watch the video essay</b><span class="muted">What happens when AIs play a game of lies.</span></a>
+        <a class="feature-card" data-config-href="postUrl" href="#"><span class="fc-kicker">Essay</span><b>Read the write-up</b><span class="muted">The findings in full, on Substack.</span></a>
+        <a class="feature-card" href="games.html"><span class="fc-kicker">Games</span><b>Browse every game</b><span class="muted">538 replays with every seat's reasoning.</span></a>
+        <a class="feature-card" href="play.html"><span class="fc-kicker">Play</span><b>Play against the AIs</b><span class="muted">Take a seat at a table of models.</span></a>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="block" id="essay-block" hidden>
-  <div class="wrap narrow">
-    <h2>The video essay</h2>
-    <div class="video" id="essay"></div>
+<section class="block tight" id="leaderboard">
+  <div class="wrap">
+    <h2>Leaderboard</h2>
+    <p class="muted" id="lb-lede">Every model plays both sides. Its rating combines how well it hunts the Demon as the town and how well it hides as the Demon's team.</p>
+    <div class="board-wrap"><div class="scroll-x"><table class="board" id="table"></table></div></div>
+      <p class="board-note">Ratings in Elo points; 1500 is the average of the eleven models. Bars run to each rating; the whisker is its 90% interval, from a bootstrap over side-swapped pairs. Neighbours whose whiskers overlap are not reliably ordered. Detection is the rating from games as good, deception from games as evil. Tap a name for its games.</p>
   </div>
 </section>
 
 <section class="block">
   <div class="wrap">
-    <div class="head-row"><h2>Leaderboard</h2><a href="leaderboard.html">Full leaderboard, detection and deception →</a></div>
-    <div class="board-wrap"><div class="scroll-x"><table class="board" id="board"></table></div></div>
-    <p class="board-note" id="board-note">Elo ratings from one fit over every rated game; 1500 is the average. The whisker is the 90% interval.</p>
-    <p class="home-foot">New to the game? <a href="about.html">What this is and how a game works →</a></p>
+    <div class="grid two" style="align-items:center">
+      <div>
+        <h2>Detection vs deception</h2>
+        <p>Each model gets a second pair of ratings: one from its games as the town (detection) and one from its games as evil (deception). Models above the dashed line deceive better than they detect.</p>
+        <p class="muted">The two skills track each other closely. Most of OpenAI's lead is on the detection side: across the year its models improved as detectives about four times faster than Anthropic's, while as deceivers the two labs are roughly level.</p>
+      </div>
+      <div class="card">
+        <div class="legend"><span><span class="tok OpenAI"><svg><use href="#lab-OpenAI"/></svg></span>OpenAI</span><span><span class="tok Anthropic"><svg><use href="#lab-Anthropic"/></svg></span>Anthropic</span></div>
+        <div class="chart" id="chart-split"></div>
+      </div>
+    </div>
   </div>
 </section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="head-row">
+      <h2>By release date: newer models play much better</h2>
+      <div class="seg" role="group" aria-label="Rating shown" id="metric">
+        <button type="button" aria-pressed="true" data-m="combined">Overall</button><button type="button" aria-pressed="false" data-m="detection">Detection</button><button type="button" aria-pressed="false" data-m="deception">Deception</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="legend"><span><span class="tok OpenAI"><svg><use href="#lab-OpenAI"/></svg></span>OpenAI</span><span><span class="tok Anthropic"><svg><use href="#lab-Anthropic"/></svg></span>Anthropic</span><span><i class="line"></i>trend</span><span>Bars: 90% intervals</span></div>
+      <figure><div class="chart" id="chart-date"></div><figcaption id="trend-cap"></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="head-row">
+      <h2>Head to head: expected win rate</h2>
+      <div class="seg" role="group" aria-label="Which side the row model plays" id="h2h-mode">
+        <button type="button" aria-pressed="true" data-m="both">Both sides</button><button type="button" aria-pressed="false" data-m="good">Row plays good</button><button type="button" aria-pressed="false" data-m="evil">Row plays evil</button>
+      </div>
+    </div>
+    <div class="card">
+      <p class="cap" style="margin:0 0 14px">Chance (in %) that the row model beats the column model, from the ratings, averaged over the setups we deal. Hover or tap a cell for the games actually played.</p>
+      <div class="scroll-x" id="h2h"></div>
+      <div class="h2h-legend"><span><i class="win"></i>row model favoured</span><span><i class="lose"></i>column model favoured</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <h2>More from the games</h2>
+    <div class="grid two" style="margin-top:22px">
+      <div class="card">
+        <h3>The village learns, or doesn't</h3>
+        <p class="cap" style="margin-top:0">Before each day's votes, every good player privately says how likely each other player is to be the Demon. This is the average chance put on the real Demon, for the newest three models from each lab playing good.</p>
+        <div class="legend"><span><span class="tok OpenAI"><svg><use href="#lab-OpenAI"/></svg></span>OpenAI towns</span><span><span class="tok Anthropic"><svg><use href="#lab-Anthropic"/></svg></span>Anthropic towns</span></div>
+        <div class="chart" id="chart-belief"></div>
+        <p class="cap">On day 1 both labs' towns are equally in the dark. OpenAI's towns build on evidence day after day; Claude's towns tend to treat early results as settled and stop updating.</p>
+      </div>
+      <div class="card" id="card-setup">
+        <h3>Setup matters too</h3>
+        <p class="cap" style="margin-top:0">The fit also estimates how each deal tilts the game. Positive numbers help the good team, in Elo points, compared with a 10-player game whose Minions include a Poisoner.</p>
+        <table class="data" id="setup"></table>
+      </div>
+      <div class="card" id="card-tilt" hidden>
+        <h3>As both sides get smarter, evil wins less</h3>
+        <p class="cap" style="margin-top:0">Chance the evil team wins when the two teams are evenly matched, by how strong both are. Line: the fit over all rated games, with its 90% band. Dots: games between models within 200 Elo of each other.</p>
+        <div class="chart" id="chart-tilt"></div>
+        <p class="cap" id="tilt-cap"></p>
+      </div>
+      <div class="card" id="card-mixed" hidden>
+        <h3>Mixed teams play worse as evil</h3>
+        <p class="cap" style="margin-top:0">In 132 extra games each team was half Opus 5.5 and half GPT-5.6 Sol, seats dealt at random. The mixed team rated a little below its members' average, and clearly below it when playing evil, where coordination is explicit.</p>
+        <div class="seg" role="group" aria-label="Which games" id="mixed-mode" style="margin-bottom:12px">
+          <button type="button" aria-pressed="false" data-m="combined">Overall</button><button type="button" aria-pressed="false" data-m="detection">As good</button><button type="button" aria-pressed="true" data-m="deception">As evil</button>
+        </div>
+        <div class="legend"><span><span class="tok Anthropic"><svg><use href="#lab-Anthropic"/></svg></span>Opus 5.5</span><span><span class="tok OpenAI"><svg><use href="#lab-OpenAI"/></svg></span>GPT-5.6 Sol</span><span><i class="dia"></i>Mixed team</span></div>
+        <div class="chart" id="chart-mixed"></div>
+        <p class="cap" id="mixed-cap"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap narrow prose">
+    <h2>How the ratings work</h2>
+    <ul>
+      <li><b>Each game is one model against another.</b> One model plays all good seats, another all evil seats. Each deal is then replayed with the sides swapped, so neither model gets the luckier hand.</li>
+      <li><b>One fit for everything.</b> A Bradley–Terry model (the maths behind Elo) predicts the winner from the good model's rating, the evil model's rating, a good-side advantage, and the deal (which Minions are in play, 10, 11 or 12 players).</li>
+      <li><b>Uncertainty is honest.</b> The 90% intervals come from refitting on hundreds of resamples of whole side-swapped pairs. Neighbours whose bars overlap are not reliably ordered.</li>
+      <li><b>Equal settings.</b> Every model plays at its lab's "high" reasoning effort, with the same 8,000-token ceiling per turn and the same word limits.</li>
+      <li><b>Which games count.</b> The rated set is the 2026 study (the f2 round robin plus top-ups f3–f5). Twenty early Opus 4.8 games hit a retry bug and were replayed; the originals are shown in the library but not rated. Mixed-team games are rated separately.</li>
+    </ul>
+    <p><a href="about.html">More on the harness →</a> · <a href="about.html#run-your-own">Reproduce the fit →</a></p>
+  </div>
+</section>
+<script src="assets/leaderboard.js"></script>
 <script src="assets/home.js"></script>

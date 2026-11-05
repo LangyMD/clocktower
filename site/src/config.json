@@ -1,13 +1,13 @@
 {
   "domain": "clocktowerbench.com",
-  "youtubeVideoId": "",
+  "youtubeVideoId": "1NQwfImTseU",
   "youtubeChannelId": "",
   "playUrl": "https://play.clocktowerbench.com",
-  "postUrl": "",
+  "postUrl": "https://www.dwarkesh.com/p/clocktower-bench",
   "githubUrl": "",
   "datasetUrl": "https://huggingface.co/datasets/dwarkesh/clocktower-games",
   "explainerVideo": "media/explainer-three-tricks.mp4",
   "explainerFallback": "https://huggingface.co/datasets/dwarkesh/clocktower-games/resolve/main/media/explainer-three-tricks.mp4",
   "gameDataBase": "data/games/",
-  "videoUrl": ""
+  "videoUrl": "https://youtu.be/1NQwfImTseU"
 }
