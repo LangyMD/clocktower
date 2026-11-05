@@ -743,6 +743,7 @@ function renderDock() {
   dock.className = 'turn ' + (f.mode === 'whisper' ? 'private' : f.mode === 'night' ? 'night' : f.mode === 'vote' || f.mode === 'nominate' || f.mode === 'defense' ? 'blood' : 'public');
   let h = `<div class="ask"><div class="what"><div class="kind"><span class="yt">Your turn</span>${kindLabel}</div>
     <div class="head">${headline(p, f)}</div><div class="prompt" role="button" tabindex="0" aria-expanded="${!!f.promptOpen}">${esc(stripPrompt(p.prompt))}</div></div>${timerHTML()}</div>`;
+  let foot = '';  // the action buttons: rendered outside the scrolling body so they are always in view
   const picks = (list, cls = '') => `<div class="picks" role="group" aria-label="Players">${list.map((n) => {
     const dead = !T.players.find((x) => x.name === n)?.alive;
     const on = f.picks.includes(n);
@@ -758,31 +759,31 @@ function renderDock() {
   };
   if (f.mode === 'night') {
     h += picks(p.options);
-    h += `<div class="actions"><button class="primary" id="go" ${f.picks.length === f.max ? '' : 'disabled'}>Choose ${f.max === 2 ? (f.picks.length === 2 ? esc(f.picks.join(' and ')) : 'two') : f.picks[0] ? esc(f.picks[0] === T.me.seat ? 'yourself' : f.picks[0]) : ''}</button></div>`;
+    foot = `<div class="actions"><button class="primary" id="go" ${f.picks.length === f.max ? '' : 'disabled'}>Choose ${f.max === 2 ? (f.picks.length === 2 ? esc(f.picks.join(' and ')) : 'two') : f.picks[0] ? esc(f.picks[0] === T.me.seat ? 'yourself' : f.picks[0]) : ''}</button></div>`;
   } else if (f.mode === 'whisper') {
     h += picks(f.pickable);
     h += textarea(f.picks.length ? `Only ${f.picks.join(' and ')} will see this` : 'Pick one or two players, then whisper…', p.whisper_words, 2);
-    h += `<div class="actions"><button class="primary violet" id="go" ${f.picks.length && words(f.text) ? '' : 'disabled'}>${f.picks.length ? `Whisper to ${esc(f.picks.join(' & '))}` : 'Whisper'}</button><button class="ghost" id="pass">Stay silent</button></div>`;
+    foot = `<div class="actions"><button class="primary violet" id="go" ${f.picks.length && words(f.text) ? '' : 'disabled'}>${f.picks.length ? `Whisper to ${esc(f.picks.join(' & '))}` : 'Whisper'}</button><button class="ghost" id="pass">Stay silent</button></div>`;
   } else if (f.mode === 'nominate') {
     h += picks(p.options);
     h += textarea(f.picks[0] ? `Why ${f.picks[0]}? (your accusation)` : 'Pick a player to nominate, or pass', p.words, 2);
-    h += `<div class="actions"><button class="primary blood" id="go" ${f.picks.length ? '' : 'disabled'}>${f.picks[0] ? 'Nominate ' + esc(f.picks[0] === T.me.seat ? 'yourself' : f.picks[0]) : 'Nominate'}</button><button class="ghost" id="pass">Pass</button></div>`;
+    foot = `<div class="actions"><button class="primary blood" id="go" ${f.picks.length ? '' : 'disabled'}>${f.picks[0] ? 'Nominate ' + esc(f.picks[0] === T.me.seat ? 'yourself' : f.picks[0]) : 'Nominate'}</button><button class="ghost" id="pass">Pass</button></div>`;
     h += slayer();
   } else if (f.mode === 'vote') {
     h += f.remark ? textarea('A short remark (optional)', p.words, 1) : '<div class="slayer-row"><button class="linkish" id="remark">Add a remark…</button></div>';
-    h += `<div class="vote-btns"><button class="primary blood" id="yes">${ICON.hand}Raise hand</button><button class="ghost" id="no">Keep it down</button></div>`;
+    foot = `<div class="vote-btns"><button class="primary blood" id="yes">${ICON.hand}Raise hand</button><button class="ghost" id="no">Keep it down</button></div>`;
   } else if (f.mode === 'defense') {
     h += textarea('Your defense, to the whole town', p.words, 3);
-    h += `<div class="actions"><button class="primary" id="go">Defend</button><button class="ghost" id="pass">Say nothing</button></div>`;
+    foot = `<div class="actions"><button class="primary" id="go">Defend</button><button class="ghost" id="pass">Say nothing</button></div>`;
   } else {
     h += textarea(p.kind === 'comment' ? 'Speak before the vote (or stay quiet)' : 'Speak to the whole town…', p.words, 2);
-    h += `<div class="actions"><button class="primary" id="go" ${words(f.text) || f.shot ? '' : 'disabled'}>${f.shot && !words(f.text) ? 'Shoot' : 'Speak'}</button><button class="ghost" id="pass">Stay quiet</button></div>`;
+    foot = `<div class="actions"><button class="primary" id="go" ${words(f.text) || f.shot ? '' : 'disabled'}>${f.shot && !words(f.text) ? 'Shoot' : 'Speak'}</button><button class="ghost" id="pass">Stay quiet</button></div>`;
     h += slayer();
   }
-  if (f.err) h += `<p class="err" role="alert">${esc(f.err)}</p>`;
+  if (f.err) foot = `<p class="err" role="alert">${esc(f.err)}</p>` + foot;
   const fresh = dock.dataset.turn !== String(p.turn);
   dock.dataset.turn = p.turn;
-  dock.innerHTML = h;
+  dock.innerHTML = `<div class="dock-body">${h}</div><div class="dock-foot">${foot}</div>`;  // the body scrolls, the buttons stay
   if (fresh && !REDUCED.matches) { dock.classList.add('arrive'); setTimeout(() => dock.classList.remove('arrive'), 400); }
 
   const pr = dock.querySelector('.ask .prompt');
