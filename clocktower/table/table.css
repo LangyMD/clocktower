@@ -366,7 +366,7 @@ details summary em { font: italic 400 14px var(--serif); color: var(--faint); }
 .over-ev em { font: italic 400 17px var(--serif); color: var(--text-2); }
 
 /* ---------- the dock: what you can do right now ---------- */
-#dock { flex: none; position: relative; z-index: 3; border-top: 1px solid var(--rule); background: var(--bg); padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); max-height: 72dvh; overflow-y: auto; }
+#dock { --dock-pb: calc(12px + env(safe-area-inset-bottom)); flex: none; position: relative; z-index: 3; border-top: 1px solid var(--rule); background: var(--bg); padding: 12px 14px var(--dock-pb); max-height: 72dvh; overflow-y: auto; }
 #dock.turn { border-top: 3px solid var(--gold); background: var(--surface); box-shadow: 0 -12px 28px rgba(0,0,0,.45); }
 #dock.idle, #dock.over { padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
 #dock.arrive { animation: dockin .26s cubic-bezier(0, 0, .2, 1); }
@@ -399,9 +399,14 @@ details summary em { font: italic 400 14px var(--serif); color: var(--faint); }
 .count { position: absolute; right: 10px; bottom: 7px; font: 500 12px/1 var(--sans); color: var(--faint); font-variant-numeric: tabular-nums; }
 .count.over { color: var(--evil); }
 .actions { display: flex; gap: 10px; }
+/* On a tall turn (many player picks + a text box) the dock scrolls; the buttons stay pinned to its bottom edge so
+   they are never cut off on a phone. The negative bottom offset and margin let them sit flush with the dock's own
+   bottom padding, which they carry themselves while stuck. */
+#dock.turn .actions, #dock.turn .vote-btns { position: sticky; bottom: calc(-1 * var(--dock-pb)); z-index: 1; background: var(--surface); padding: 8px 0 var(--dock-pb); margin-bottom: calc(-1 * var(--dock-pb)); box-shadow: 0 -10px 10px -8px var(--surface); }
+#dock.turn .actions + .slayer-row, #dock.turn .actions + .err { padding-top: calc(var(--dock-pb) + 2px); }
 .actions .primary { flex: 1; }
 .actions .ghost { flex: none; }
-.vote-btns { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; margin-top: 12px; }
+.vote-btns { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10px; margin-top: 4px; }
 .vote-btns .primary, .vote-btns .ghost { min-height: 56px; font-size: 17px; }
 .vote-btns svg.i { width: 22px; height: 22px; stroke-width: 2; }
 .slayer-row { margin-top: 2px; }
@@ -487,7 +492,7 @@ details summary em { font: italic 400 14px var(--serif); color: var(--faint); }
   .turnflag { font-size: 14px; padding: 8px 10px; }
   #feed { padding: 10px 10px 18px; }
   .say .body { max-width: 92%; }
-  #dock { padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
+  #dock { --dock-pb: calc(10px + env(safe-area-inset-bottom)); padding: 10px 12px var(--dock-pb); max-height: 78dvh; }
   .picks { margin: 10px 0 8px; }
   .head { font-size: 17px; }
 }
