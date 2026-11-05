@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import glob
 import gzip
+import hashlib
 import json
 import os
 import re
@@ -343,7 +344,18 @@ def render_pages(src, out, config):
                 .replace('{{page}}', meta.get('nav', page.stem))
                 .replace('{{canonical}}', f"https://{config.get('domain', '')}/{'' if page.stem == 'index' else page.name}")
                 .replace('{{body}}', body.strip()))
-        (out / page.name).write_text(html)
+        (out / page.name).write_text(stamp_assets(html, out))
+
+
+def stamp_assets(html, out):
+    """Append ?v=<content hash> to each local script and stylesheet link, so browsers fetch changed assets after a
+    deploy instead of serving a cached copy (the hosts send no cache headers)."""
+    def tag(m):
+        path = out / m.group(2)
+        if not path.exists():
+            return m.group(0)
+        return f'{m.group(1)}="{m.group(2)}?v={hashlib.sha1(path.read_bytes()).hexdigest()[:8]}"'
+    return re.sub(r'(src|href)="((?:assets/[^"?]+\.(?:css|js))|config\.js)"', tag, html)
 
 
 def build(games_root=ROOT / 'games', out=SITE / 'dist', src=SITE / 'src', content=SITE / 'content',
