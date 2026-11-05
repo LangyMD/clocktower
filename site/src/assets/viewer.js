@@ -38,7 +38,7 @@
   const twin = index.find((g) => g.id === G.twin);
   $('#g-meta').innerHTML = [
     `${G.players} players`, G.minions.length ? `Minions: ${G.minions.map(esc).join(', ')}` : '',
-    G.group === 'mixed' ? 'Mixed-team game' : G.group === 'unrated' ? '<span title="Opus 4.8\'s first games hit a retry bug and were replayed under v17">Not rated</span>' : '',
+    G.group === 'mixed' ? 'Mixed-team game' : G.group === 'unrated' ? '<span title="Opus 4.8\'s first games hit a retry bug and were replayed under v17">Not rated</span>' : G.group === 'archive' ? `<span title="One of the project\'s first games (Sept 2026), before the rules were settled: not rated">Early game${G.protocol ? ' · protocol ' + esc(G.protocol) : ''}</span>` : '',
     twin ? `<a href="game.html?g=${encodeURIComponent(twin.id)}">Twin game</a> (sides swapped: ${twin.winner} won)` : '',
     `<span class="muted">${esc(G.id)} · seed ${G.seed}</span>`,
   ].filter(Boolean).join(' · ');

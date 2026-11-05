@@ -10,7 +10,8 @@ the data the pages read:
     data/games/<id>.json.gz  one compact game per file for the replay viewer (gzip; the page inflates it)
 
 Which games: every game in the 2026 rating fit (`ratings.BATCHES` minus `ratings.DROPPED`), the 20 Opus 4.8
-v16 games the fit drops (shown, marked unrated), and the mixed-team games (v17/b1-*, v17/b2-*).
+v16 games the fit drops (shown, marked unrated), the mixed-team games (v17/b1-*, v17/b2-*), and the first games
+of the project (protocols v1-v3, Sept 2026; `ARCHIVE`), shown as an archive when their logs are on disk.
 
     python -m clocktower.export --games /home/user/clocktower/games          # full build into site/dist
     python -m clocktower.export --games ... --limit 20                       # a quick build with 20 games
@@ -32,6 +33,10 @@ from .ratings import BATCHES, DROPPED
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / 'site'
 MIXED_BATCHES = ['v17/b1-*', 'v17/b2-*']
+# The project's first games (Sept 27 2026, LLM Storyteller in v1-v2, one model on both sides). Their logs were in the
+# repository's first commit; the paths are game directories (some batches are a single game).
+ARCHIVE = ['v1/batch-*/game-*', 'v1/full-*', 'v1/human-001', 'v1/smoke-001', 'v2/*/game-*', 'v3/phased-10/game-*',
+           'v3/smoke-phased']
 EVIL = {'Imp', 'Poisoner', 'Spy', 'Scarlet Woman', 'Baron'}
 MINIONS = ['Poisoner', 'Spy', 'Scarlet Woman', 'Baron']
 
@@ -57,6 +62,8 @@ def _json(path):
 
 def team_id(models):
     """One id per team: a model id, or MIXED_ID for the Opus 5.5 + GPT-5.6 Sol mixed team."""
+    if not models:
+        return 'unknown'
     ms = sorted(set(models.split(',')))
     return ms[0] if len(ms) == 1 else 'mixed:' + '+'.join(ms)
 
@@ -70,10 +77,12 @@ def twin_of(gid):
 
 
 def select(games_root):
-    """[(game id, group)] with group 'rated', 'unrated' (Opus 4.8's v16 games) or 'mixed'."""
+    """[(game id, group)] with group 'rated', 'unrated' (Opus 4.8's v16 games), 'mixed' or 'archive' (v1-v3)."""
     out = []
-    for pattern, group in [(b, 'rated') for b in BATCHES] + [(b, 'mixed') for b in MIXED_BATCHES]:
-        for d in sorted(glob.glob(f'{games_root}/{pattern}/game-*')):
+    patterns = ([(b + '/game-*', 'rated') for b in BATCHES] + [(b + '/game-*', 'mixed') for b in MIXED_BATCHES]
+                + [(b, 'archive') for b in ARCHIVE])
+    for pattern, group in patterns:
+        for d in sorted(glob.glob(f'{games_root}/{pattern}')):
             if not os.path.exists(d + '/result.json') or not os.path.exists(d + '/events.jsonl'):
                 continue
             if _json(d + '/result.json').get('winner') not in ('good', 'evil'):
@@ -89,7 +98,7 @@ def select(games_root):
 
 ACTOR = {'say': 'speaker', 'whisper': 'from', 'vote': 'voter', 'nomination': 'nominator', 'defense': 'nominee',
          'night_choice': 'player', 'slayer': 'shooter'}
-SECTION = re.compile(r'Day (\d+) · (private time|town square) (\d+)')
+SECTION = re.compile(r'Day (\d+) · (private time|town square|beat) (\d+)')  # v1-v2 had one kind of round: 'beat'
 
 
 def item(ev):
@@ -180,7 +189,11 @@ def export_game(d, gid, group=None):
     config = json.loads((d / 'config.json').read_text())
     result = json.loads((d / 'result.json').read_text())
     events = [json.loads(l) for l in (d / 'events.jsonl').read_text().splitlines() if l.strip()]
-    setup = next(e['data'] for e in events if e['kind'] == 'setup')
+    setup = next((e['data'] for e in events if e['kind'] == 'setup'), None)
+    if setup is None:  # the first games (v1-v2) logged the Grimoire only in result.json; seats are in seating order
+        setup = {'seats': [{'name': n, 'character': c, 'shown': result.get('drunk_as') or c if c == 'Drunk' else c}
+                           for n, c in (result.get('starting') or {}).items()],
+                 'bluffs': result.get('bluffs') or [], 'red_herring': result.get('red_herring')}
     models = result.get('models') or {}
     final = result.get('final') or {}
     mids = sorted(set(models.values()))
@@ -196,7 +209,7 @@ def export_game(d, gid, group=None):
     inplay = {s['c'] for s in seats}
     intros = {e['to'][0]: e['data']['text'] for e in events if e['kind'] == 'intro' and isinstance(e['to'], list)}
 
-    days, sec, pending = {}, None, {}
+    days, sec, wsec, pending = {}, None, None, {}  # wsec: where whispers go when a v1-v2 'beat' mixes both
 
     def day_of(n):
         if n not in days:
@@ -204,10 +217,12 @@ def export_game(d, gid, group=None):
         return days[n]
 
     def open_section(n, t, b=0):
-        nonlocal sec
+        nonlocal sec, wsec
         sec = {'t': t, 'b': b, 'it': []}
         day_of(n)['secs'].append(sec)
+        wsec = None
         pending.clear()
+        return sec
 
     for ev in events:
         k, n = ev['kind'], ev['day']
@@ -218,6 +233,10 @@ def export_game(d, gid, group=None):
             m = SECTION.match(text)
             if text.startswith('Night'):
                 open_section(n, 'night')
+            elif m and m.group(2) == 'beat':  # whispers and public speech shared one round: split them
+                w = open_section(n, 'private', int(m.group(3)))
+                open_section(n, 'square', int(m.group(3)))
+                wsec = w
             elif m:
                 open_section(n, 'private' if m.group(2) == 'private time' else 'square', int(m.group(3)))
             continue
@@ -232,19 +251,21 @@ def export_game(d, gid, group=None):
             p = ev['data']['player']
             th = {'k': 'th', 's': ev['seq'], 'p': p, 'x': ev['data']['text'], 'why': ev['data'].get('kind', ''), 'a': 1}
             sec['it'].append(th)
-            pending[p] = th
+            pending[p] = (th, sec)
             continue
         it = item(ev)
         if it is None:
             continue
         actor = ev['data'].get(ACTOR.get(k, ''), None)
         if actor and actor in pending:  # this turn's private reasoning travels with the move it led to
-            th = pending.pop(actor)
+            th, where = pending.pop(actor)
             it['t'] = th['x']
-            sec['it'].remove(th)
-        sec['it'].append(it)
+            where['it'].remove(th)
+        (wsec if wsec is not None and it['k'] == 'w' else sec)['it'].append(it)
 
-    good, evil = config['good_model'], config['evil_model']
+    # v1-v3 configs name one model for both sides (`model`); later ones name each side.
+    good = config.get('good_model') or config.get('model')
+    evil = config.get('evil_model') or config.get('model')
     return {
         'id': gid, 'batch': gid.rsplit('/', 1)[0], 'group': group,
         'good': team_id(good), 'evil': team_id(evil), 'models': mids,
@@ -265,7 +286,7 @@ def summary(g, available):
     whispers = sum(1 for day in g['days_'] for sec in day['secs'] for it in sec['it'] if it['k'] == 'w')
     return {'id': g['id'], 'batch': g['batch'], 'group': g['group'], 'good': g['good'], 'evil': g['evil'],
             'winner': g['winner'], 'reason': g['reason'], 'days': g['days'], 'players': g['players'],
-            'minions': g['minions'], 'twin': g['twin'] if g['twin'] in available else None,
+            'minions': g['minions'], 'twin': g['twin'] if g['twin'] in available else None, 'protocol': g['protocol'],
             'whispers': whispers, 'demonBelief': b_last}
 
 

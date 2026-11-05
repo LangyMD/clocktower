@@ -16,7 +16,7 @@ W, H, FPS = 1920, 1080, 30
 C = dict(bg=(13, 16, 23), panel=(24, 29, 40), ink=(238, 241, 246), muted=(139, 149, 168), dim=(92, 101, 118),
          line=(44, 52, 67), good=(134, 184, 255), evil=(255, 95, 95), poison=(180, 140, 255), amber=(255, 194, 77),
          secret=(52, 22, 28), think=(36, 28, 54), tok=(28, 35, 49), tokborder=(62, 72, 92))
-FONTDIR = "/usr/share/fonts/opentype/inter/"
+FONTDIR = os.environ.get("CLOCKTOWER_FONTDIR", "/usr/share/fonts/opentype/inter/")  # Inter + InterDisplay .otf files
 CX, CY, R, D = 560, 528, 300, 96
 PX, PY, PW = 1100, 168, 770                      # right-hand panel
 ENC = ["-c:v", "libx264", "-preset", "veryfast", "-profile:v", "high", "-pix_fmt", "yuv420p", "-r", str(FPS),

@@ -29,7 +29,7 @@
   showMore(MORE.some((k) => params.get(k)));
 
   const side = (t, team, g) => `<span class="side ${team === 'good' ? 'g' : 'e'}${g.winner === team ? '' : ' lost'}"><span class="who ${team}">${team}</span>${CT.token(R, t, 'sm')}<span>${esc(CT.name(R, t))}</span></span>`;
-  const tag = (g) => (g.group === 'mixed' ? '<span class="tag">Mixed teams</span>' : g.group === 'unrated' ? '<span class="tag" title="An early game that hit a retry bug and was replayed">Not rated</span>' : '');
+  const tag = (g) => (g.group === 'mixed' ? '<span class="tag">Mixed teams</span>' : g.group === 'unrated' ? '<span class="tag" title="An early game that hit a retry bug and was replayed">Not rated</span>' : g.group === 'archive' ? `<span class="tag" title="One of the project's first games (Sept 2026), before the rules were settled: not rated">Early${g.protocol ? ' · ' + esc(g.protocol) : ''}</span>` : '');
   const row = (g) => {
     const twin = g.twin && ids.has(g.twin) ? `<a class="twin" href="game.html?g=${encodeURIComponent(g.twin)}" title="The same deal with the sides swapped">Twin</a>` : '<span class="twin"></span>';
     const label = `${CT.name(R, g.good)} (good) against ${CT.name(R, g.evil)} (evil): ${g.winner} won on day ${g.days}`;
