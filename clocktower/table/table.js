@@ -71,6 +71,7 @@ async function busy(btn, work) {
 }
 
 // ================================================================== lobby
+let configInFlight = 0;  // config saves in flight (table size changes are shown before the server confirms)
 let lobbyTimer = null, lobbyState = null, joinTeam = 'good';
 
 function allegiance(box, current, onPick) {
@@ -86,6 +87,7 @@ async function pollLobby() {
   clearTimeout(lobbyTimer);
   try {
     const L = await api('lobby');
+    if (configInFlight && lobbyState) L.config.players = lobbyState.config.players;  // keep the host's click while its save is in flight
     lobbyState = L;
     L.models.forEach((m) => { models[m.id] = m.name; });
     if (token && !L.me) setToken(null);
@@ -191,10 +193,16 @@ function wireLobby() {
     } catch (e) { $('join-err').textContent = e.message; $('join-name').focus(); }
   });
   $('join-name').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('join-go').click(); });
-  const set = (cfg) => api('config', cfg).then(pollLobby).catch((e) => { $('start-err').textContent = e.message; });
+  const set = (cfg) => { configInFlight++; return api('config', cfg).then(pollLobby).catch((e) => { $('start-err').textContent = e.message; }).finally(() => { configInFlight--; }); };
   const sizes = () => lobbyState.sizes || [10, 11, 12];
-  $('size-minus').onclick = () => set({ players: Math.max(sizes()[0], lobbyState.config.players - 1) });
-  $('size-plus').onclick = () => set({ players: Math.min(sizes()[sizes().length - 1], lobbyState.config.players + 1) });
+  // The table size updates on screen at once; the server confirms it (or the next poll reverts it).
+  const bump = (d) => {
+    const s = sizes(), n = Math.max(s[0], Math.min(s[s.length - 1], lobbyState.config.players + d));
+    if (n === lobbyState.config.players) return;
+    lobbyState.config.players = n; renderLobby(lobbyState); set({ players: n });
+  };
+  $('size-minus').onclick = () => bump(-1);
+  $('size-plus').onclick = () => bump(+1);
   $('good-model').onchange = (e) => set({ good_model: e.target.value });
   $('evil-model').onchange = (e) => set({ evil_model: e.target.value });
   $('timer').onchange = (e) => set({ timer: +e.target.value });
