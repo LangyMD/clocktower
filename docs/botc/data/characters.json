@@ -1,0 +1,4409 @@
+{
+ "about": "Blood on the Clocktower characters. Summaries and tags are this repo's own words; structural fields mirror the official toolmaker data (see docs/botc/data/README.md). Night order values are positions in night-order.json.",
+ "editions": {
+  "tb": "Trouble Brewing",
+  "bmr": "Bad Moon Rising",
+  "snv": "Sects & Violets",
+  "carousel": "Experimental",
+  "fabled": "Fabled",
+  "loric": "Loric"
+ },
+ "characters": [
+  {
+   "id": "chef",
+   "name": "Chef",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Night 1: learns how many adjacent pairs of evil players sit around the circle (a run of three evil counts as two pairs).",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 54,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Chef"
+  },
+  {
+   "id": "empath",
+   "name": "Empath",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Each night: learns how many of their two nearest living neighbours are evil (0, 1 or 2).",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": 55,
+   "other_nights": 75,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Empath"
+  },
+  {
+   "id": "fortuneteller",
+   "name": "Fortune Teller",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Each night: picks two players and learns whether either is the Demon. One good player (the red herring) reads as a Demon to them all game.",
+   "tags": [
+    "info-nightly",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 56,
+   "other_nights": 76,
+   "reminders": [
+    "Red Herring"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Fortune_Teller"
+  },
+  {
+   "id": "investigator",
+   "name": "Investigator",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Night 1: shown a Minion character and two players, one of whom has it.",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 53,
+   "other_nights": null,
+   "reminders": [
+    "Minion",
+    "Wrong"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Investigator"
+  },
+  {
+   "id": "librarian",
+   "name": "Librarian",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Night 1: shown an Outsider character and two players, one of whom has it; or told no Outsiders are in play.",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 52,
+   "other_nights": null,
+   "reminders": [
+    "Outsider",
+    "Wrong"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Librarian"
+  },
+  {
+   "id": "mayor",
+   "name": "Mayor",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "If three players are alive and the day ends with no execution, good wins. If the Mayor would die at night, the Storyteller may kill someone else instead.",
+   "tags": [
+    "win-condition",
+    "death-redirect"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Mayor"
+  },
+  {
+   "id": "monk",
+   "name": "Monk",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Each night except the first: picks another player, who cannot be killed by the Demon that night.",
+   "tags": [
+    "protection",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 23,
+   "reminders": [
+    "Safe"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Monk"
+  },
+  {
+   "id": "ravenkeeper",
+   "name": "Ravenkeeper",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "If killed at night, wakes and picks a player to learn their character.",
+   "tags": [
+    "info-on-death",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 74,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Ravenkeeper"
+  },
+  {
+   "id": "slayer",
+   "name": "Slayer",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Once per game, in public during the day, names a player; if that player is the Demon, they die.",
+   "tags": [
+    "once-per-game",
+    "day-action",
+    "kill"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "lleech"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Slayer"
+  },
+  {
+   "id": "soldier",
+   "name": "Soldier",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Cannot be killed by the Demon.",
+   "tags": [
+    "protection"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Soldier"
+  },
+  {
+   "id": "undertaker",
+   "name": "Undertaker",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Each night except the first: learns the character of the player executed that day, if any.",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 77,
+   "reminders": [
+    "Died Today"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Undertaker"
+  },
+  {
+   "id": "virgin",
+   "name": "Virgin",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "The first time they are nominated, if the nominator is a Townsfolk, the nominator is executed on the spot (and the day's execution is used up).",
+   "tags": [
+    "nomination-trigger"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Virgin"
+  },
+  {
+   "id": "washerwoman",
+   "name": "Washerwoman",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Night 1: shown a Townsfolk character and two players; one of the two has that character.",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 51,
+   "other_nights": null,
+   "reminders": [
+    "Townsfolk",
+    "Wrong"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Washerwoman"
+  },
+  {
+   "id": "chambermaid",
+   "name": "Chambermaid",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Each night picks two other living players and learns how many of them woke that night because of their own ability.",
+   "tags": [
+    "info-nightly",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 75,
+   "other_nights": 94,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "mathematician"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Chambermaid"
+  },
+  {
+   "id": "courtier",
+   "name": "Courtier",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Once per game at night, names a character; that character is drunk for three nights and three days.",
+   "tags": [
+    "droison",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": 34,
+   "other_nights": 17,
+   "reminders": [
+    "Drunk 3",
+    "Drunk 2",
+    "Drunk 1",
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "summoner",
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Courtier"
+  },
+  {
+   "id": "exorcist",
+   "name": "Exorcist",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Each night except the first picks a player (not the same as last night); if it is the Demon, the Demon learns who the Exorcist is and does not act that night.",
+   "tags": [
+    "protection",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 35,
+   "reminders": [
+    "Chosen"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot",
+    "yaggababble"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Exorcist"
+  },
+  {
+   "id": "fool",
+   "name": "Fool",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Survives the first time they would die.",
+   "tags": [
+    "protection"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Fool"
+  },
+  {
+   "id": "gambler",
+   "name": "Gambler",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Each night except the first guesses a player's character; a wrong guess kills the Gambler.",
+   "tags": [
+    "info-nightly",
+    "self-risk",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 20,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Gambler"
+  },
+  {
+   "id": "gossip",
+   "name": "Gossip",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Each day may make a public claim; if the claim is true, someone dies that night (Storyteller's choice).",
+   "tags": [
+    "day-action",
+    "kill"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 57,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Gossip"
+  },
+  {
+   "id": "grandmother",
+   "name": "Grandmother",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Night 1: learns a good player and their character. If the Demon kills that player, the Grandmother dies too.",
+   "tags": [
+    "info-start",
+    "death-link"
+   ],
+   "setup": false,
+   "first_night": 58,
+   "other_nights": 72,
+   "reminders": [
+    "Grandchild",
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Grandmother"
+  },
+  {
+   "id": "innkeeper",
+   "name": "Innkeeper",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Each night except the first picks two players who cannot die that night; one of them is drunk until dusk.",
+   "tags": [
+    "protection",
+    "droison",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 18,
+   "reminders": [
+    "Safe",
+    "Safe",
+    "Drunk"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Innkeeper"
+  },
+  {
+   "id": "minstrel",
+   "name": "Minstrel",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "When a Minion is executed, everyone else (not Travellers) is drunk until dusk the next day.",
+   "tags": [
+    "droison"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Everyone Is Drunk"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "legion"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Minstrel"
+  },
+  {
+   "id": "pacifist",
+   "name": "Pacifist",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Good players who are executed may survive (Storyteller's choice).",
+   "tags": [
+    "execution-modifier"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Pacifist"
+  },
+  {
+   "id": "professor",
+   "name": "Professor",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Once per game at night (not the first) picks a dead player; if they are a Townsfolk they come back to life.",
+   "tags": [
+    "resurrection",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 64,
+   "reminders": [
+    "Alive",
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Professor"
+  },
+  {
+   "id": "sailor",
+   "name": "Sailor",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Each night picks a living player; either the Sailor or that player is drunk until dusk. The Sailor cannot die (unless drunk).",
+   "tags": [
+    "protection",
+    "droison",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 25,
+   "other_nights": 12,
+   "reminders": [
+    "Drunk"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Sailor"
+  },
+  {
+   "id": "tealady",
+   "name": "Tea Lady",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "While both living neighbours are good, those neighbours cannot die.",
+   "tags": [
+    "protection"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Cannot Die",
+    "Cannot Die"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Tea_Lady"
+  },
+  {
+   "id": "artist",
+   "name": "Artist",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Once per game, during the day, asks the Storyteller any yes-or-no question privately.",
+   "tags": [
+    "info-day",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Artist"
+  },
+  {
+   "id": "clockmaker",
+   "name": "Clockmaker",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Night 1: learns how many seats separate the Demon from its nearest Minion.",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 59,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Clockmaker"
+  },
+  {
+   "id": "dreamer",
+   "name": "Dreamer",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Each night picks another player (not a Traveller) and is shown one good and one evil character; one is that player's.",
+   "tags": [
+    "info-nightly",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 60,
+   "other_nights": 78,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Dreamer"
+  },
+  {
+   "id": "flowergirl",
+   "name": "Flowergirl",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Each night except the first learns whether the Demon voted that day.",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 79,
+   "reminders": [
+    "Demon Voted",
+    "Demon Not Voted"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Flowergirl"
+  },
+  {
+   "id": "juggler",
+   "name": "Juggler",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "On their first day, publicly guesses up to five players' characters; that night learns how many guesses were right.",
+   "tags": [
+    "info-once"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 83,
+   "reminders": [
+    "Correct",
+    "Correct",
+    "Correct",
+    "Correct",
+    "Correct"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "cannibal"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Juggler"
+  },
+  {
+   "id": "mathematician",
+   "name": "Mathematician",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Each night learns how many players' abilities malfunctioned since dawn because of another character's ability.",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": 76,
+   "other_nights": 95,
+   "reminders": [
+    "Abnormal",
+    "Abnormal",
+    "Abnormal",
+    "Abnormal",
+    "Abnormal"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "chambermaid",
+    "drunk",
+    "lunatic",
+    "marionette"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Mathematician"
+  },
+  {
+   "id": "oracle",
+   "name": "Oracle",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Each night except the first learns how many dead players are evil.",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 81,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Oracle"
+  },
+  {
+   "id": "philosopher",
+   "name": "Philosopher",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Once per game at night picks a good character and gains its ability; if that character is in play, its owner becomes drunk.",
+   "tags": [
+    "copy-ability",
+    "droison",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": 13,
+   "other_nights": 10,
+   "reminders": [
+    "Drunk"
+   ],
+   "reminders_global": [
+    "Is The Philosopher"
+   ],
+   "app_special": [
+    "replace-character"
+   ],
+   "jinxed_with": [
+    "bountyhunter"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Philosopher"
+  },
+  {
+   "id": "sage",
+   "name": "Sage",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "If the Demon kills the Sage, the Sage learns the Demon is one of two players.",
+   "tags": [
+    "info-on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 62,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "recluse",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Sage"
+  },
+  {
+   "id": "savant",
+   "name": "Savant",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Each day may privately ask the Storyteller for two statements: one true, one false.",
+   "tags": [
+    "info-day"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Savant"
+  },
+  {
+   "id": "seamstress",
+   "name": "Seamstress",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Once per game at night picks two other players and learns whether they share an alignment.",
+   "tags": [
+    "info-once",
+    "once-per-game",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 61,
+   "other_nights": 82,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Seamstress"
+  },
+  {
+   "id": "snakecharmer",
+   "name": "Snake Charmer",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Each night picks a living player; if it is the Demon, they swap characters and alignments, and the new (former Snake Charmer) Demon is poisoned.",
+   "tags": [
+    "alignment-change",
+    "character-change",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 36,
+   "other_nights": 22,
+   "reminders": [
+    "Poisoned"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Snake_Charmer"
+  },
+  {
+   "id": "towncrier",
+   "name": "Town Crier",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "Each night except the first learns whether a Minion nominated that day.",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 80,
+   "reminders": [
+    "Minions Not Nominated",
+    "Minion Nominated"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Town_Crier"
+  },
+  {
+   "id": "acrobat",
+   "name": "Acrobat",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night except the first picks a player; if that player is or becomes drunk or poisoned that night, the Acrobat dies.",
+   "tags": [
+    "self-risk",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 21,
+   "reminders": [
+    "Dead",
+    "Chosen"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Acrobat"
+  },
+  {
+   "id": "alchemist",
+   "name": "Alchemist",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Has the ability of a Minion character not in play (Storyteller picks it); the Storyteller may ask them to choose again when using it.",
+   "tags": [
+    "copy-ability"
+   ],
+   "setup": false,
+   "first_night": 14,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [
+    "Is The Alchemist"
+   ],
+   "app_special": [
+    "replace-character"
+   ],
+   "jinxed_with": [
+    "boffin",
+    "marionette",
+    "mastermind",
+    "organgrinder",
+    "spy",
+    "summoner",
+    "widow",
+    "wraith"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Alchemist"
+  },
+  {
+   "id": "alsaahir",
+   "name": "Alsaahir",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each day may publicly name who the Minions and Demons are; if fully correct, good wins.",
+   "tags": [
+    "win-condition",
+    "day-action"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Alsaahir"
+  },
+  {
+   "id": "amnesiac",
+   "name": "Amnesiac",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Does not know their own ability (the Storyteller invents one). Each day privately guesses it and learns how close they are.",
+   "tags": [
+    "hidden-ability",
+    "info-day"
+   ],
+   "setup": false,
+   "first_night": 50,
+   "other_nights": 68,
+   "reminders": [
+    "?",
+    "?",
+    "?"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Amnesiac"
+  },
+  {
+   "id": "atheist",
+   "name": "Atheist",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Setup: no evil characters at all. The Storyteller may break rules; if the Atheist is executed (even dead), good wins.",
+   "tags": [
+    "setup-modifier",
+    "win-condition"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "evil-duplicate",
+    "good-duplicate"
+   ],
+   "jinxed_with": [
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Atheist",
+   "setup_modifier": {
+    "note": "No Minions or Demon are in play; everyone is good."
+   }
+  },
+  {
+   "id": "balloonist",
+   "name": "Balloonist",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night learns a player whose character type differs from the previous night's. Setup: may add one Outsider.",
+   "tags": [
+    "info-nightly",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 65,
+   "other_nights": 84,
+   "reminders": [
+    "Know"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "marionette"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Balloonist",
+   "setup_modifier": {
+    "outsiders": [
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "id": "banshee",
+   "name": "Banshee",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "If the Demon kills the Banshee, everyone learns it, and from then on the Banshee may nominate twice per day and vote twice per nomination.",
+   "tags": [
+    "voting-modifier",
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 63,
+   "reminders": [
+    "Has Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot",
+    "vortox"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Banshee"
+  },
+  {
+   "id": "bountyhunter",
+   "name": "Bounty Hunter",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Night 1: learns an evil player; when that player dies, learns another that night. Setup: one Townsfolk is evil.",
+   "tags": [
+    "info-start",
+    "info-on-death",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 68,
+   "other_nights": 87,
+   "reminders": [
+    "Know"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "kazali",
+    "philosopher"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Bounty_Hunter",
+   "setup_modifier": {
+    "note": "One Townsfolk is evil (and knows it)."
+   }
+  },
+  {
+   "id": "cannibal",
+   "name": "Cannibal",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Has the ability of the most recently executed player; if that player was evil, the Cannibal is poisoned until a good player is executed.",
+   "tags": [
+    "copy-ability",
+    "droison"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Poisoned",
+    "Lunch"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "butler",
+    "juggler",
+    "princess",
+    "zealot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Cannibal"
+  },
+  {
+   "id": "choirboy",
+   "name": "Choirboy",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "If the Demon kills the King, learns which player is the Demon. Setup: adds the King.",
+   "tags": [
+    "info-on-death",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": 65,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Choirboy",
+   "setup_modifier": {
+    "adds": [
+     "king"
+    ]
+   }
+  },
+  {
+   "id": "cultleader",
+   "name": "Cult Leader",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night takes the alignment of a living neighbour. If every good player chooses to join the cult, the Cult Leader's team wins.",
+   "tags": [
+    "alignment-change",
+    "win-condition"
+   ],
+   "setup": false,
+   "first_night": 70,
+   "other_nights": 89,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "boffin",
+    "pithag"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Cult_Leader"
+  },
+  {
+   "id": "engineer",
+   "name": "Engineer",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Once per game at night, chooses which Minion characters or which Demon character are in play (the evil players change accordingly).",
+   "tags": [
+    "character-change",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": 27,
+   "other_nights": 13,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "legion",
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Engineer"
+  },
+  {
+   "id": "farmer",
+   "name": "Farmer",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "When the Farmer dies at night, a living good player becomes a Farmer.",
+   "tags": [
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 69,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Farmer"
+  },
+  {
+   "id": "fisherman",
+   "name": "Fisherman",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Once per game, during the day, visits the Storyteller for advice on how to win.",
+   "tags": [
+    "info-day",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Fisherman"
+  },
+  {
+   "id": "general",
+   "name": "General",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night learns which team the Storyteller thinks is winning (good, evil or neither).",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": 74,
+   "other_nights": 93,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/General"
+  },
+  {
+   "id": "highpriestess",
+   "name": "High Priestess",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night learns which player the Storyteller thinks they should talk to most.",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": 73,
+   "other_nights": 92,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/High_Priestess"
+  },
+  {
+   "id": "huntsman",
+   "name": "Huntsman",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Once per game at night picks a living player; if it is the Damsel, the Damsel becomes a Townsfolk not in play. Setup: adds the Damsel.",
+   "tags": [
+    "once-per-game",
+    "character-change",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 48,
+   "other_nights": 66,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "marionette"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Huntsman",
+   "setup_modifier": {
+    "adds": [
+     "damsel"
+    ]
+   }
+  },
+  {
+   "id": "king",
+   "name": "King",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night, once the dead are at least as many as the living, learns one living character. The Demon knows who the King is.",
+   "tags": [
+    "info-nightly"
+   ],
+   "setup": false,
+   "first_night": 24,
+   "other_nights": 86,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "leviathan",
+    "riot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/King"
+  },
+  {
+   "id": "knight",
+   "name": "Knight",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Night 1: learns two players who are not the Demon.",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 63,
+   "other_nights": null,
+   "reminders": [
+    "Know",
+    "Know"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Knight"
+  },
+  {
+   "id": "lycanthrope",
+   "name": "Lycanthrope",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night except the first picks a living player; if good, they die and the Demon does not kill. One good player reads as evil.",
+   "tags": [
+    "kill",
+    "misregistration",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 36,
+   "reminders": [
+    "Faux Paw",
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Lycanthrope"
+  },
+  {
+   "id": "magician",
+   "name": "Magician",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "The Demon thinks the Magician is a Minion, and the Minions think the Magician is the Demon.",
+   "tags": [
+    "misregistration",
+    "evil-info-scramble"
+   ],
+   "setup": false,
+   "first_night": 17,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "legion",
+    "lilmonsta",
+    "marionette",
+    "spy",
+    "vizier",
+    "widow",
+    "wraith"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Magician"
+  },
+  {
+   "id": "nightwatchman",
+   "name": "Nightwatchman",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Once per game at night picks a player, who learns who the Nightwatchman is.",
+   "tags": [
+    "once-per-game",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 69,
+   "other_nights": 88,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Nightwatchman"
+  },
+  {
+   "id": "noble",
+   "name": "Noble",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Night 1: learns three players, exactly one of whom is evil.",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 64,
+   "other_nights": null,
+   "reminders": [
+    "Know",
+    "Know",
+    "Know"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Noble"
+  },
+  {
+   "id": "pixie",
+   "name": "Pixie",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Night 1: learns an in-play Townsfolk. If they stay \"mad\" about being that character, they gain its ability when its owner dies.",
+   "tags": [
+    "info-start",
+    "copy-ability",
+    "madness"
+   ],
+   "setup": false,
+   "first_night": 47,
+   "other_nights": null,
+   "reminders": [
+    "Mad",
+    "Has Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Pixie"
+  },
+  {
+   "id": "poppygrower",
+   "name": "Poppy Grower",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "While the Poppy Grower lives, evil players do not learn who each other are; when it dies, they learn that night.",
+   "tags": [
+    "evil-info-scramble"
+   ],
+   "setup": false,
+   "first_night": 15,
+   "other_nights": 11,
+   "reminders": [
+    "Evil Wakes"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "lilmonsta",
+    "spy",
+    "summoner",
+    "widow"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Poppy_Grower"
+  },
+  {
+   "id": "preacher",
+   "name": "Preacher",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night picks a player; a Minion picked learns it and loses its ability for the rest of the game.",
+   "tags": [
+    "droison",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 28,
+   "other_nights": 14,
+   "reminders": [
+    "No Ability",
+    "No Ability",
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "legion",
+    "summoner",
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Preacher"
+  },
+  {
+   "id": "princess",
+   "name": "Princess",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "If, on their first day, they nominate a player who is then executed, the Demon does not kill that night.",
+   "tags": [
+    "protection"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 37,
+   "reminders": [
+    "Doesn't Kill"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "alhadikhia",
+    "cannibal"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Princess"
+  },
+  {
+   "id": "shugenja",
+   "name": "Shugenja",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Night 1: learns whether their nearest evil player is clockwise or anticlockwise (arbitrary if tied).",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 66,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Shugenja"
+  },
+  {
+   "id": "steward",
+   "name": "Steward",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Night 1: learns one good player.",
+   "tags": [
+    "info-start"
+   ],
+   "setup": false,
+   "first_night": 62,
+   "other_nights": null,
+   "reminders": [
+    "Know"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Steward"
+  },
+  {
+   "id": "villageidiot",
+   "name": "Village Idiot",
+   "team": "townsfolk",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each night picks a player and learns their alignment. Setup: up to two extra Village Idiots, one of the extras drunk.",
+   "tags": [
+    "info-nightly",
+    "setup-modifier",
+    "choose-players"
+   ],
+   "setup": true,
+   "first_night": 67,
+   "other_nights": 85,
+   "reminders": [
+    "Drunk"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "bag-duplicate"
+   ],
+   "jinxed_with": [
+    "boffin",
+    "pithag"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Village_Idiot",
+   "setup_modifier": {
+    "note": "0 to 2 extra Village Idiots replace other Townsfolk; if any extras, one of them is drunk."
+   }
+  },
+  {
+   "id": "butler",
+   "name": "Butler",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Each night picks a master (not themselves); the next day they may only vote when their master votes.",
+   "tags": [
+    "voting-restriction",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 57,
+   "other_nights": 90,
+   "reminders": [
+    "Master"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "cannibal",
+    "organgrinder"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Butler"
+  },
+  {
+   "id": "drunk",
+   "name": "Drunk",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "Believes they are a Townsfolk (the Storyteller shows them a Townsfolk token) but has no ability; their information is unreliable. Not added to the bag directly.",
+   "tags": [
+    "setup-modifier",
+    "droison",
+    "false-identity"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [
+    "Is The Drunk"
+   ],
+   "app_special": [
+    "bag-disabled",
+    "replace-character"
+   ],
+   "jinxed_with": [
+    "boffin",
+    "mathematician"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Drunk",
+   "setup_modifier": {
+    "note": "Not put in the bag; the Storyteller swaps a Townsfolk token for the Drunk and shows that player a Townsfolk."
+   }
+  },
+  {
+   "id": "recluse",
+   "name": "Recluse",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "May register as evil, and as a Minion or Demon, to other abilities, even when dead. Storyteller decides each time.",
+   "tags": [
+    "misregistration"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "ogre",
+    "sage"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Recluse"
+  },
+  {
+   "id": "saint",
+   "name": "Saint",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "tb",
+   "summary": "If the Saint is executed, good loses.",
+   "tags": [
+    "loss-condition"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Saint"
+  },
+  {
+   "id": "goon",
+   "name": "Goon",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Each night, the first player whose ability targets the Goon is drunk until dusk, and the Goon switches to that player's alignment.",
+   "tags": [
+    "droison",
+    "alignment-change"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Drunk"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "boffin",
+    "pithag"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Goon"
+  },
+  {
+   "id": "lunatic",
+   "name": "Lunatic",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "Believes they are the Demon and is shown fake Minions and bluffs. The real Demon learns who the Lunatic is and whom they \"attack\" each night.",
+   "tags": [
+    "false-identity"
+   ],
+   "setup": false,
+   "first_night": 21,
+   "other_nights": 34,
+   "reminders": [
+    "Chosen",
+    "Chosen",
+    "Chosen"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "mathematician"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Lunatic"
+  },
+  {
+   "id": "moonchild",
+   "name": "Moonchild",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "When they learn they have died, publicly picks a living player; if that player is good, they die that night.",
+   "tags": [
+    "kill",
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 71,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Moonchild"
+  },
+  {
+   "id": "tinker",
+   "name": "Tinker",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "bmr",
+   "summary": "May die at any time, whenever the Storyteller chooses.",
+   "tags": [
+    "self-risk"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 70,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Tinker"
+  },
+  {
+   "id": "barber",
+   "name": "Barber",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "If the Barber died that day or night, the Demon may swap the characters of two players (not another Demon).",
+   "tags": [
+    "character-change",
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 59,
+   "reminders": [
+    "Haircuts Tonight"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Barber"
+  },
+  {
+   "id": "klutz",
+   "name": "Klutz",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "When they learn they have died, publicly picks a living player; if that player is evil, good loses.",
+   "tags": [
+    "loss-condition",
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Klutz"
+  },
+  {
+   "id": "mutant",
+   "name": "Mutant",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "An Outsider who must not be \"mad\" about being an Outsider; if they are, the Storyteller may execute them.",
+   "tags": [
+    "madness"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Mutant"
+  },
+  {
+   "id": "sweetheart",
+   "name": "Sweetheart",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "snv",
+   "summary": "When the Sweetheart dies, one player becomes drunk for the rest of the game.",
+   "tags": [
+    "droison",
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 60,
+   "reminders": [
+    "Drunk"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Sweetheart"
+  },
+  {
+   "id": "damsel",
+   "name": "Damsel",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "All Minions know a Damsel is in play. If a Minion publicly guesses the Damsel (one guess only), good loses.",
+   "tags": [
+    "loss-condition"
+   ],
+   "setup": false,
+   "first_night": 49,
+   "other_nights": 67,
+   "reminders": [
+    "Guess Used"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "pithag",
+    "spy",
+    "widow"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Damsel"
+  },
+  {
+   "id": "golem",
+   "name": "Golem",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "May nominate only once per game; when they do, the nominee dies unless it is the Demon.",
+   "tags": [
+    "kill",
+    "once-per-game",
+    "nomination-restriction"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "May Not Nominate"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Golem"
+  },
+  {
+   "id": "hatter",
+   "name": "Hatter",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "If the Hatter died that day or night, the Minions and Demon may each pick new Minion or Demon characters.",
+   "tags": [
+    "character-change",
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 58,
+   "reminders": [
+    "Tea Party Tonight"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "legion",
+    "leviathan",
+    "lilmonsta",
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Hatter"
+  },
+  {
+   "id": "heretic",
+   "name": "Heretic",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Inverts the result: the winning team loses and the losing team wins, even if the Heretic is dead.",
+   "tags": [
+    "win-condition"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "baron",
+    "boffin",
+    "godfather",
+    "lleech",
+    "pithag",
+    "spy",
+    "widow"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Heretic"
+  },
+  {
+   "id": "hermit",
+   "name": "Hermit",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Has every Outsider ability on the script. Setup: may remove one Outsider.",
+   "tags": [
+    "setup-modifier",
+    "copy-ability"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "1",
+    "2",
+    "3"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Hermit",
+   "setup_modifier": {
+    "outsiders": [
+     -1,
+     0
+    ]
+   }
+  },
+  {
+   "id": "ogre",
+   "name": "Ogre",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Night 1 picks another player and silently joins that player's alignment (without knowing which), even if drunk or poisoned.",
+   "tags": [
+    "alignment-change"
+   ],
+   "setup": false,
+   "first_night": 72,
+   "other_nights": null,
+   "reminders": [
+    "Friend"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "boffin",
+    "pithag",
+    "recluse",
+    "spy"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Ogre"
+  },
+  {
+   "id": "plaguedoctor",
+   "name": "Plague Doctor",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "When the Plague Doctor dies, the Storyteller gains a Minion ability.",
+   "tags": [
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 61,
+   "reminders": [
+    "Storyteller Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "baron",
+    "boomdandy",
+    "eviltwin",
+    "fearmonger",
+    "goblin",
+    "marionette",
+    "scarletwoman",
+    "spy",
+    "wraith"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Plague_Doctor"
+  },
+  {
+   "id": "politician",
+   "name": "Politician",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "If they were the player most responsible for their team losing, they switch alignment and win, even if dead.",
+   "tags": [
+    "win-condition"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "boffin",
+    "legion",
+    "pithag",
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Politician"
+  },
+  {
+   "id": "puzzlemaster",
+   "name": "Puzzlemaster",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "One player is permanently drunk. If the Puzzlemaster guesses who (one guess), they learn the Demon; a wrong guess gives false information.",
+   "tags": [
+    "droison",
+    "info-day"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Drunk",
+    "Guess Used"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Puzzlemaster"
+  },
+  {
+   "id": "snitch",
+   "name": "Snitch",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "Each Minion receives three not-in-play bluffs.",
+   "tags": [
+    "bluffs"
+   ],
+   "setup": false,
+   "first_night": 20,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Snitch"
+  },
+  {
+   "id": "zealot",
+   "name": "Zealot",
+   "team": "outsider",
+   "alignment": "good",
+   "edition": "carousel",
+   "summary": "While five or more players live, must vote for every nomination.",
+   "tags": [
+    "voting-restriction"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "cannibal",
+    "legion",
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Zealot"
+  },
+  {
+   "id": "baron",
+   "name": "Baron",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "tb",
+   "summary": "Adds two Outsiders to the setup in place of two Townsfolk.",
+   "tags": [
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "heretic",
+    "plaguedoctor"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Baron",
+   "setup_modifier": {
+    "outsiders": [
+     2
+    ]
+   }
+  },
+  {
+   "id": "poisoner",
+   "name": "Poisoner",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "tb",
+   "summary": "Each night picks a player who is poisoned for that night and the following day.",
+   "tags": [
+    "droison",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 32,
+   "other_nights": 16,
+   "reminders": [
+    "Poisoned"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Poisoner"
+  },
+  {
+   "id": "scarletwoman",
+   "name": "Scarlet Woman",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "tb",
+   "summary": "If the Demon dies while five or more players are alive (not counting Travellers), the Scarlet Woman becomes the Demon.",
+   "tags": [
+    "demon-succession"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 32,
+   "reminders": [
+    "Is The Demon"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "alhadikhia",
+    "fanggu",
+    "lilmonsta",
+    "plaguedoctor"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Scarlet_Woman"
+  },
+  {
+   "id": "spy",
+   "name": "Spy",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "tb",
+   "summary": "Sees the whole Grimoire each night. May register as good and as a Townsfolk or Outsider, even when dead.",
+   "tags": [
+    "grimoire",
+    "misregistration"
+   ],
+   "setup": false,
+   "first_night": 71,
+   "other_nights": 91,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "grimoire"
+   ],
+   "jinxed_with": [
+    "alchemist",
+    "damsel",
+    "heretic",
+    "magician",
+    "ogre",
+    "plaguedoctor",
+    "poppygrower"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Spy"
+  },
+  {
+   "id": "assassin",
+   "name": "Assassin",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "Once per game at night (not the first) kills a player, ignoring any protection.",
+   "tags": [
+    "kill",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 55,
+   "reminders": [
+    "Dead",
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Assassin"
+  },
+  {
+   "id": "devilsadvocate",
+   "name": "Devil's Advocate",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "Each night picks a living player (not the same as last night); if that player is executed the next day, they survive.",
+   "tags": [
+    "protection",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 39,
+   "other_nights": 25,
+   "reminders": [
+    "Survives Execution"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Devil's_Advocate"
+  },
+  {
+   "id": "godfather",
+   "name": "Godfather",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "Night 1: learns which Outsiders are in play. On a night after an Outsider died that day, kills a player. Setup: one Outsider more or one fewer.",
+   "tags": [
+    "info-start",
+    "kill",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 37,
+   "other_nights": 56,
+   "reminders": [
+    "Died Today",
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "heretic"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Godfather",
+   "setup_modifier": {
+    "outsiders": [
+     -1,
+     1
+    ]
+   }
+  },
+  {
+   "id": "mastermind",
+   "name": "Mastermind",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "If the Demon is executed and that would end the game, play continues one more day; if someone is executed that day, that player's team loses.",
+   "tags": [
+    "game-ending"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "alchemist",
+    "alhadikhia",
+    "lleech",
+    "vigormortis"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Mastermind"
+  },
+  {
+   "id": "cerenovus",
+   "name": "Cerenovus",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Each night picks a player and a good character; that player must be \"mad\" about being that character the next day or may be executed.",
+   "tags": [
+    "madness",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 42,
+   "other_nights": 27,
+   "reminders": [
+    "Mad"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "goblin"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Cerenovus"
+  },
+  {
+   "id": "eviltwin",
+   "name": "Evil Twin",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Knows a good \"twin\" who knows them. If the good twin is executed, evil wins; good cannot win while both twins live.",
+   "tags": [
+    "info-start",
+    "win-condition",
+    "loss-condition"
+   ],
+   "setup": false,
+   "first_night": 40,
+   "other_nights": null,
+   "reminders": [
+    "Twin"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "plaguedoctor"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Evil_Twin"
+  },
+  {
+   "id": "pithag",
+   "name": "Pit-Hag",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Each night except the first turns a player into a character not in play. Creating a Demon makes that night's deaths arbitrary.",
+   "tags": [
+    "character-change",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 28,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "cultleader",
+    "damsel",
+    "goon",
+    "heretic",
+    "leviathan",
+    "ogre",
+    "politician",
+    "summoner",
+    "villageidiot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Pit-Hag"
+  },
+  {
+   "id": "witch",
+   "name": "Witch",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Each night curses a player; if that player nominates the next day, they die. Loses the ability when only three players live.",
+   "tags": [
+    "kill",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 41,
+   "other_nights": 26,
+   "reminders": [
+    "Cursed"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Witch"
+  },
+  {
+   "id": "boffin",
+   "name": "Boffin",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "The Demon also has the ability of a good character not in play; Boffin and Demon both know which.",
+   "tags": [
+    "copy-ability"
+   ],
+   "setup": false,
+   "first_night": 12,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "alchemist",
+    "cultleader",
+    "drunk",
+    "goon",
+    "heretic",
+    "ogre",
+    "politician",
+    "villageidiot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Boffin"
+  },
+  {
+   "id": "boomdandy",
+   "name": "Boomdandy",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "If executed, everyone but three players dies; then after a countdown the player pointed at by most dies.",
+   "tags": [
+    "kill",
+    "on-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "pointing"
+   ],
+   "jinxed_with": [
+    "plaguedoctor"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Boomdandy"
+  },
+  {
+   "id": "fearmonger",
+   "name": "Fearmonger",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Each night picks a player (all players learn when it is a new one); if the Fearmonger nominates and executes that player, the target's team loses.",
+   "tags": [
+    "loss-condition",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 43,
+   "other_nights": 29,
+   "reminders": [
+    "Fear"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "plaguedoctor",
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Fearmonger"
+  },
+  {
+   "id": "goblin",
+   "name": "Goblin",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "If the Goblin publicly claims to be the Goblin when nominated and is executed that day, evil wins.",
+   "tags": [
+    "win-condition"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Claimed"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "cerenovus",
+    "plaguedoctor"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Goblin"
+  },
+  {
+   "id": "harpy",
+   "name": "Harpy",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Each night picks two players; the next day the first must be \"mad\" that the second is evil, or one or both may die.",
+   "tags": [
+    "madness",
+    "kill",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": 44,
+   "other_nights": 30,
+   "reminders": [
+    "Mad",
+    "2nd"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Harpy"
+  },
+  {
+   "id": "marionette",
+   "name": "Marionette",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Believes they are a good character but is a Minion; the Demon knows them. Setup: sits next to the Demon. Not added to the bag directly.",
+   "tags": [
+    "false-identity",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 26,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [
+    "Is The Marionette"
+   ],
+   "app_special": [
+    "bag-disabled",
+    "replace-character"
+   ],
+   "jinxed_with": [
+    "alchemist",
+    "balloonist",
+    "huntsman",
+    "kazali",
+    "lilmonsta",
+    "magician",
+    "mathematician",
+    "plaguedoctor",
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Marionette",
+   "setup_modifier": {
+    "note": "Not put in the bag; a good token is given to a player sitting next to the Demon, who is really the Marionette."
+   }
+  },
+  {
+   "id": "mezepheles",
+   "name": "Mezepheles",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Night 1: learns a secret word. The first good player to say it turns evil that night.",
+   "tags": [
+    "alignment-change"
+   ],
+   "setup": false,
+   "first_night": 45,
+   "other_nights": 31,
+   "reminders": [
+    "Turns Evil",
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Mezepheles"
+  },
+  {
+   "id": "organgrinder",
+   "name": "Organ Grinder",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Votes are cast with eyes closed and the tally is secret. Each night chooses whether to be drunk until dusk.",
+   "tags": [
+    "voting-modifier",
+    "droison"
+   ],
+   "setup": false,
+   "first_night": 38,
+   "other_nights": 24,
+   "reminders": [
+    "About To Die",
+    "Drunk"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "hidden"
+   ],
+   "jinxed_with": [
+    "alchemist",
+    "butler"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Organ_Grinder"
+  },
+  {
+   "id": "psychopath",
+   "name": "Psychopath",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Each day before nominations may publicly kill a player. If executed, the Psychopath dies only if they lose a game of rock-paper-scissors.",
+   "tags": [
+    "kill",
+    "day-action"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "lilmonsta"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Psychopath"
+  },
+  {
+   "id": "summoner",
+   "name": "Summoner",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Gets three bluffs. On night 3 picks a player who becomes an evil Demon of the Summoner's choosing. Setup: no Demon at the start.",
+   "tags": [
+    "bluffs",
+    "setup-modifier",
+    "character-change"
+   ],
+   "setup": true,
+   "first_night": 22,
+   "other_nights": 33,
+   "reminders": [
+    "Night 1",
+    "Night 2",
+    "Night 3"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "alchemist",
+    "clockmaker",
+    "courtier",
+    "engineer",
+    "hatter",
+    "kazali",
+    "legion",
+    "lordoftyphon",
+    "marionette",
+    "pithag",
+    "poppygrower",
+    "preacher",
+    "pukka",
+    "zombuul"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Summoner",
+   "setup_modifier": {
+    "note": "No Demon at the start; the Summoner creates one on night 3."
+   }
+  },
+  {
+   "id": "vizier",
+   "name": "Vizier",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Everyone knows who the Vizier is. Cannot die by day. If any good player voted, the Vizier may execute the nominee at once.",
+   "tags": [
+    "execution-modifier"
+   ],
+   "setup": false,
+   "first_night": 79,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "alsaahir",
+    "courtier",
+    "fearmonger",
+    "investigator",
+    "lilmonsta",
+    "magician",
+    "politician",
+    "preacher",
+    "zealot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Vizier"
+  },
+  {
+   "id": "widow",
+   "name": "Widow",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Night 1: sees the Grimoire and poisons a player. One good player learns that a Widow is in play.",
+   "tags": [
+    "grimoire",
+    "droison"
+   ],
+   "setup": false,
+   "first_night": 33,
+   "other_nights": null,
+   "reminders": [
+    "Poisoned",
+    "Know"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "grimoire"
+   ],
+   "jinxed_with": [
+    "alchemist",
+    "damsel",
+    "heretic",
+    "magician",
+    "poppygrower"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Widow"
+  },
+  {
+   "id": "wizard",
+   "name": "Wizard",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Once per game may make a wish to the Storyteller; if granted it may carry a cost and leave a hint.",
+   "tags": [
+    "wish",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": 35,
+   "other_nights": 19,
+   "reminders": [
+    "?",
+    "?"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Wizard"
+  },
+  {
+   "id": "wraith",
+   "name": "Wraith",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "May open their eyes at night and wakes whenever other evil players wake.",
+   "tags": [
+    "night-eyes"
+   ],
+   "setup": false,
+   "first_night": 5,
+   "other_nights": 3,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "open-eyes"
+   ],
+   "jinxed_with": [
+    "alchemist",
+    "magician",
+    "plaguedoctor"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Wraith"
+  },
+  {
+   "id": "xaan",
+   "name": "Xaan",
+   "team": "minion",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "On night X, where X is the number of Outsiders in play, every Townsfolk is poisoned until dusk. Setup: Storyteller may vary the Outsider count.",
+   "tags": [
+    "droison",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 31,
+   "other_nights": 15,
+   "reminders": [
+    "Night 1",
+    "Night 2",
+    "Night 3",
+    "X"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Xaan",
+   "setup_modifier": {
+    "note": "The Outsider count may be set to any value X; that number is the night the Xaan acts."
+   }
+  },
+  {
+   "id": "imp",
+   "name": "Imp",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "tb",
+   "summary": "Each night except the first kills a player. If the Imp kills themselves, a living Minion becomes the new Imp (the \"starpass\").",
+   "tags": [
+    "kill",
+    "demon-succession"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 39,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Imp"
+  },
+  {
+   "id": "po",
+   "name": "Po",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "Each night except the first may kill one player or skip; after skipping, it kills three players the next time.",
+   "tags": [
+    "kill"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 43,
+   "reminders": [
+    "Dead",
+    "Dead",
+    "Dead",
+    "3 Attacks"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Po"
+  },
+  {
+   "id": "pukka",
+   "name": "Pukka",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "Each night poisons a player; the player it poisoned the previous night dies and recovers from the poison.",
+   "tags": [
+    "kill",
+    "droison"
+   ],
+   "setup": false,
+   "first_night": 46,
+   "other_nights": 41,
+   "reminders": [
+    "Poisoned",
+    "Poisoned",
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Pukka"
+  },
+  {
+   "id": "shabaloth",
+   "name": "Shabaloth",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "Each night except the first kills two players. A player it killed the previous night may be brought back by the Storyteller.",
+   "tags": [
+    "kill",
+    "resurrection"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 42,
+   "reminders": [
+    "Dead",
+    "Dead",
+    "Alive"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Shabaloth"
+  },
+  {
+   "id": "zombuul",
+   "name": "Zombuul",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "bmr",
+   "summary": "Each night except the first, only if nobody died that day, kills a player. The first time the Zombuul dies, it survives but appears dead.",
+   "tags": [
+    "kill",
+    "false-death"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 40,
+   "reminders": [
+    "Died Today",
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Zombuul"
+  },
+  {
+   "id": "fanggu",
+   "name": "Fang Gu",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Each night except the first kills a player. The first time it attacks an Outsider, that Outsider instead becomes an evil Fang Gu and the old one dies. Setup: one extra Outsider.",
+   "tags": [
+    "kill",
+    "alignment-change",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": 44,
+   "reminders": [
+    "Dead",
+    "Once"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "scarletwoman"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Fang_Gu",
+   "setup_modifier": {
+    "outsiders": [
+     1
+    ]
+   }
+  },
+  {
+   "id": "nodashii",
+   "name": "No Dashii",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Each night except the first kills a player. Its nearest Townsfolk neighbour on each side is poisoned.",
+   "tags": [
+    "kill",
+    "droison"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 45,
+   "reminders": [
+    "Dead",
+    "Poisoned",
+    "Poisoned"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/No_Dashii"
+  },
+  {
+   "id": "vigormortis",
+   "name": "Vigormortis",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Each night except the first kills a player. Minions it kills keep their abilities and poison a Townsfolk neighbour. Setup: one fewer Outsider.",
+   "tags": [
+    "kill",
+    "droison",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": 48,
+   "reminders": [
+    "Dead",
+    "Has Ability",
+    "Has Ability",
+    "Has Ability",
+    "Poisoned",
+    "Poisoned",
+    "Poisoned"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "mastermind"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Vigormortis",
+   "setup_modifier": {
+    "outsiders": [
+     -1
+    ]
+   }
+  },
+  {
+   "id": "vortox",
+   "name": "Vortox",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "snv",
+   "summary": "Each night except the first kills a player. All Townsfolk information is false. If a day passes with no execution, evil wins.",
+   "tags": [
+    "kill",
+    "false-info",
+    "game-ending"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 46,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "banshee"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Vortox"
+  },
+  {
+   "id": "alhadikhia",
+   "name": "Al-Hadikhia",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Each night except the first may pick three players (named publicly); each silently chooses to live or die, but if all three choose life, all three die.",
+   "tags": [
+    "kill",
+    "choose-players"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 50,
+   "reminders": [
+    "1",
+    "2",
+    "3"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "mastermind",
+    "princess",
+    "scarletwoman"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Al-Hadikhia"
+  },
+  {
+   "id": "kazali",
+   "name": "Kazali",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Each night except the first kills a player. Setup: the Kazali picks which players become which Minions, and may change the Outsider count.",
+   "tags": [
+    "kill",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 7,
+   "other_nights": 54,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "bountyhunter",
+    "marionette",
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Kazali",
+   "setup_modifier": {
+    "outsiders": "any",
+    "note": "The Kazali picks which players become which Minions on night 1."
+   }
+  },
+  {
+   "id": "legion",
+   "name": "Legion",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Most players are Legion. A player may die each night. Executions fail if only evil players voted. Legion also registers as a Minion.",
+   "tags": [
+    "kill",
+    "setup-modifier",
+    "misregistration"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": 38,
+   "reminders": [
+    "Dead",
+    "About To Die"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "bag-duplicate"
+   ],
+   "jinxed_with": [
+    "engineer",
+    "hatter",
+    "magician",
+    "minstrel",
+    "politician",
+    "preacher",
+    "summoner",
+    "zealot"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Legion",
+   "setup_modifier": {
+    "note": "Most players are Legion; the rest are good (Minions are usually absent)."
+   }
+  },
+  {
+   "id": "leviathan",
+   "name": "Leviathan",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Everyone knows a Leviathan is in play. If more than one good player is executed, evil wins; after day 5, evil wins.",
+   "tags": [
+    "win-condition",
+    "game-ending"
+   ],
+   "setup": false,
+   "first_night": 78,
+   "other_nights": 98,
+   "reminders": [
+    "Day 1",
+    "Day 2",
+    "Day 3",
+    "Day 4",
+    "Day 5",
+    "Good Player Executed"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "banshee",
+    "exorcist",
+    "farmer",
+    "grandmother",
+    "hatter",
+    "innkeeper",
+    "king",
+    "mayor",
+    "monk",
+    "pithag",
+    "ravenkeeper",
+    "sage",
+    "soldier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Leviathan"
+  },
+  {
+   "id": "lilmonsta",
+   "name": "Lil' Monsta",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "The Minions each night choose who holds Lil' Monsta and counts as the Demon; a player may die each night. Setup: one extra Minion instead of a Demon player.",
+   "tags": [
+    "kill",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 29,
+   "other_nights": 52,
+   "reminders": [],
+   "reminders_global": [
+    "Is The Demon",
+    "Dead"
+   ],
+   "app_special": [
+    "bag-disabled",
+    "pointing"
+   ],
+   "jinxed_with": [
+    "hatter",
+    "magician",
+    "marionette",
+    "poppygrower",
+    "psychopath",
+    "scarletwoman",
+    "vizier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Lil'_Monsta",
+   "setup_modifier": {
+    "minions": [
+     1
+    ],
+    "demons": [
+     -1
+    ],
+    "note": "Lil' Monsta is not a player; an extra Minion takes its place."
+   }
+  },
+  {
+   "id": "lleech",
+   "name": "Lleech",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Night 1 picks a host who is poisoned. Each night except the first kills a player. The Lleech dies only when its host dies.",
+   "tags": [
+    "kill",
+    "droison"
+   ],
+   "setup": false,
+   "first_night": 30,
+   "other_nights": 51,
+   "reminders": [
+    "Dead",
+    "Poisoned"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "heretic",
+    "mastermind",
+    "slayer"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Lleech"
+  },
+  {
+   "id": "lordoftyphon",
+   "name": "Lord of Typhon",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Each night except the first kills a player. Setup: evil sits in a contiguous line with the Lord of Typhon in the middle; one extra Minion; Outsider count may change.",
+   "tags": [
+    "kill",
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": 6,
+   "other_nights": 47,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "summoner"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Lord_of_Typhon",
+   "setup_modifier": {
+    "minions": [
+     1
+    ],
+    "outsiders": "any",
+    "note": "All evil players sit in one contiguous line with the Lord of Typhon in the middle."
+   }
+  },
+  {
+   "id": "ojo",
+   "name": "Ojo",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Each night except the first names a character; that player dies. If the character is not in play, the Storyteller picks who dies.",
+   "tags": [
+    "kill"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 49,
+   "reminders": [
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Ojo"
+  },
+  {
+   "id": "riot",
+   "name": "Riot",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "On day 3, the Minions become Riot; every nominee dies and must immediately nominate a living player. This must happen.",
+   "tags": [
+    "kill",
+    "game-ending"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 96,
+   "reminders": [
+    "Day 1",
+    "Day 2",
+    "Day 3"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "atheist",
+    "banshee",
+    "exorcist",
+    "farmer",
+    "grandmother",
+    "innkeeper",
+    "king",
+    "mayor",
+    "monk",
+    "ravenkeeper",
+    "sage",
+    "soldier"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Riot"
+  },
+  {
+   "id": "yaggababble",
+   "name": "Yaggababble",
+   "team": "demon",
+   "alignment": "evil",
+   "edition": "carousel",
+   "summary": "Night 1: learns a secret phrase. Each time they say it publicly that day, a player may die.",
+   "tags": [
+    "kill"
+   ],
+   "setup": false,
+   "first_night": 16,
+   "other_nights": 53,
+   "reminders": [
+    "Dead",
+    "Dead",
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [
+    "exorcist"
+   ],
+   "wiki": "https://wiki.bloodontheclocktower.com/Yaggababble"
+  },
+  {
+   "id": "beggar",
+   "name": "Beggar",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "tb",
+   "summary": "Traveller. Can only vote with a vote token another player hands them; if a dead player gives one, the Beggar learns that player's alignment. Immune to drunkenness and poison.",
+   "tags": [
+    "voting-restriction",
+    "info-day"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Beggar"
+  },
+  {
+   "id": "bureaucrat",
+   "name": "Bureaucrat",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "tb",
+   "summary": "Traveller. Each night picks another player whose vote counts as three votes the next day.",
+   "tags": [
+    "voting-modifier"
+   ],
+   "setup": false,
+   "first_night": 10,
+   "other_nights": 6,
+   "reminders": [
+    "3 Votes"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "multiplier"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Bureaucrat"
+  },
+  {
+   "id": "gunslinger",
+   "name": "Gunslinger",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "tb",
+   "summary": "Traveller. Each day, after the first vote is counted, may shoot a player who voted in it.",
+   "tags": [
+    "kill",
+    "day-action"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Gunslinger"
+  },
+  {
+   "id": "scapegoat",
+   "name": "Scapegoat",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "tb",
+   "summary": "Traveller. If a player on the Scapegoat's team is executed, the Storyteller may execute the Scapegoat instead.",
+   "tags": [
+    "execution-modifier"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Scapegoat"
+  },
+  {
+   "id": "thief",
+   "name": "Thief",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "tb",
+   "summary": "Traveller. Each night picks another player whose vote counts as minus one the next day.",
+   "tags": [
+    "voting-modifier"
+   ],
+   "setup": false,
+   "first_night": 11,
+   "other_nights": 7,
+   "reminders": [
+    "Negative Vote"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "multiplier"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Thief"
+  },
+  {
+   "id": "apprentice",
+   "name": "Apprentice",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "bmr",
+   "summary": "Traveller. Night 1: gains a Townsfolk ability if good or a Minion ability if evil, chosen by the Storyteller.",
+   "tags": [
+    "copy-ability"
+   ],
+   "setup": false,
+   "first_night": 8,
+   "other_nights": null,
+   "reminders": [
+    "Is The Apprentice"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "grimoire"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Apprentice"
+  },
+  {
+   "id": "bishop",
+   "name": "Bishop",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "bmr",
+   "summary": "Traveller. Only the Storyteller nominates, and must nominate at least one player of the opposite team to the Bishop each day.",
+   "tags": [
+    "nomination-restriction"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Nominate Good",
+    "Nominate Evil"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Bishop"
+  },
+  {
+   "id": "judge",
+   "name": "Judge",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "bmr",
+   "summary": "Traveller. Once per game, when someone else nominated, may force that vote to pass or fail.",
+   "tags": [
+    "execution-modifier",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Judge"
+  },
+  {
+   "id": "matron",
+   "name": "Matron",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "bmr",
+   "summary": "Traveller. Each day may swap up to three pairs of players' seats. Players may not leave their seats to talk privately.",
+   "tags": [
+    "social-restriction"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Matron"
+  },
+  {
+   "id": "voudon",
+   "name": "Voudon",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "bmr",
+   "summary": "Traveller. Only the Voudon and dead players vote; the dead need no vote token and no majority is required.",
+   "tags": [
+    "voting-restriction"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Voudon"
+  },
+  {
+   "id": "barista",
+   "name": "Barista",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "snv",
+   "summary": "Traveller. Each night, one player either becomes sober and healthy with true information, or has their ability work twice, until dusk. They learn which.",
+   "tags": [
+    "droison-cure"
+   ],
+   "setup": false,
+   "first_night": 9,
+   "other_nights": 5,
+   "reminders": [
+    "Sober & Healthy",
+    "Acts Twice",
+    "?",
+    "?"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Barista"
+  },
+  {
+   "id": "bonecollector",
+   "name": "Bone Collector",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "snv",
+   "summary": "Traveller. Once per game at night (not the first) picks a dead player who regains their ability until dusk.",
+   "tags": [
+    "copy-ability",
+    "once-per-game"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 9,
+   "reminders": [
+    "No Ability",
+    "Has Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Bone_Collector"
+  },
+  {
+   "id": "butcher",
+   "name": "Butcher",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "snv",
+   "summary": "Traveller. After the day's first execution, may nominate again.",
+   "tags": [
+    "nomination-modifier"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Butcher"
+  },
+  {
+   "id": "deviant",
+   "name": "Deviant",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "snv",
+   "summary": "Traveller. If they were funny that day, they cannot die by exile.",
+   "tags": [
+    "execution-modifier"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Deviant"
+  },
+  {
+   "id": "harlot",
+   "name": "Harlot",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "snv",
+   "summary": "Traveller. Each night except the first, asks a living player; if they accept, the Harlot learns their character but both may die.",
+   "tags": [
+    "info-nightly",
+    "self-risk"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 8,
+   "reminders": [
+    "Dead",
+    "Dead"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Harlot"
+  },
+  {
+   "id": "cacklejack",
+   "name": "Cacklejack",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "carousel",
+   "summary": "Traveller. Each day picks a player; a different player changes character that night.",
+   "tags": [
+    "character-change"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 4,
+   "reminders": [
+    "Not Me"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Cacklejack"
+  },
+  {
+   "id": "gangster",
+   "name": "Gangster",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "carousel",
+   "summary": "Traveller. Once per day may kill a living neighbour if their other living neighbour agrees.",
+   "tags": [
+    "kill"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Gangster"
+  },
+  {
+   "id": "gnome",
+   "name": "Gnome",
+   "team": "traveller",
+   "alignment": null,
+   "edition": "carousel",
+   "summary": "Traveller. Everyone learns a player on the Gnome's team; the Gnome may kill anyone who nominates that player.",
+   "tags": [
+    "info-start",
+    "kill"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Amigo"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Gnome"
+  },
+  {
+   "id": "deusexfiasco",
+   "name": "Deus ex Fiasco",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "carousel",
+   "summary": "At least once a game the Storyteller makes a mistake, corrects it and admits it publicly.",
+   "tags": [
+    "storyteller-error"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Whoopsie"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Deus_ex_Fiasco",
+   "setup_modifier": {
+    "note": "The Storyteller plans at least one deliberate, publicly corrected mistake."
+   }
+  },
+  {
+   "id": "ferryman",
+   "name": "Ferryman",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "carousel",
+   "summary": "On the final day every dead player gets their vote token back.",
+   "tags": [
+    "voting-modifier"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "ghost-votes"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Ferryman"
+  },
+  {
+   "id": "angel",
+   "name": "Angel",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Whoever is most responsible for the death of a new player may suffer a penalty.",
+   "tags": [
+    "protection",
+    "social"
+   ],
+   "setup": false,
+   "first_night": 1,
+   "other_nights": null,
+   "reminders": [
+    "Protected",
+    "Protected",
+    "Something Bad"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Angel"
+  },
+  {
+   "id": "buddhist",
+   "name": "Buddhist",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "For the first two minutes of each day, experienced players may not speak.",
+   "tags": [
+    "social"
+   ],
+   "setup": false,
+   "first_night": 2,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Buddhist"
+  },
+  {
+   "id": "djinn",
+   "name": "Djinn",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Announces the special rule (jinx) between characters on the script; everyone knows it.",
+   "tags": [
+    "jinx"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Djinn"
+  },
+  {
+   "id": "doomsayer",
+   "name": "Doomsayer",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "While four or more live, each living player may once publicly have a player of their own team die.",
+   "tags": [
+    "kill"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Doomsayer"
+  },
+  {
+   "id": "duchess",
+   "name": "Duchess",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Each day up to three players visit the Duchess; that night each learns how many visitors are evil, but one gets false information.",
+   "tags": [
+    "info-nightly",
+    "social"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": 1,
+   "reminders": [
+    "Visitor",
+    "Visitor",
+    "False Info"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Duchess"
+  },
+  {
+   "id": "fibbin",
+   "name": "Fibbin",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Once per game one good player may receive wrong information.",
+   "tags": [
+    "false-info"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No Ability"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Fibbin"
+  },
+  {
+   "id": "fiddler",
+   "name": "Fiddler",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Once per game the Demon names a player of the other team, and everyone votes on which of the two players' teams wins.",
+   "tags": [
+    "game-ending"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "pointing"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Fiddler"
+  },
+  {
+   "id": "hellslibrarian",
+   "name": "Hell's Librarian",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Whoever speaks when the Storyteller has asked for silence may suffer a penalty.",
+   "tags": [
+    "social"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Something Bad"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Hell's_Librarian"
+  },
+  {
+   "id": "revolutionary",
+   "name": "Revolutionary",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Two neighbouring players are publicly known to share an alignment; once per game one of them may register falsely.",
+   "tags": [
+    "info-start",
+    "misregistration"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Register Falsely?",
+    "Aligned",
+    "Aligned"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Revolutionary"
+  },
+  {
+   "id": "sentinel",
+   "name": "Sentinel",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "The Outsider count may be one higher or lower than normal.",
+   "tags": [
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Sentinel",
+   "setup_modifier": {
+    "outsiders": [
+     -1,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "id": "spiritofivory",
+   "name": "Spirit of Ivory",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "Caps extra evil players at one (limits alignment-changing chains).",
+   "tags": [
+    "balance"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "No More Evil"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Spirit_of_Ivory"
+  },
+  {
+   "id": "toymaker",
+   "name": "Toymaker",
+   "team": "fabled",
+   "alignment": null,
+   "edition": "fabled",
+   "summary": "The Demon may skip a kill and must do so at least once; evil gets normal starting info. Used for beginner-friendly or small games.",
+   "tags": [
+    "balance"
+   ],
+   "setup": false,
+   "first_night": 3,
+   "other_nights": 2,
+   "reminders": [
+    "Final Night: No Attack"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Toymaker"
+  },
+  {
+   "id": "bigwig",
+   "name": "Big Wig",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "Each nominee picks a speaker; until voting only that speaker talks, and they must be \"mad\" the nominee is good or may die.",
+   "tags": [
+    "madness",
+    "social"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Big_Wig"
+  },
+  {
+   "id": "bootlegger",
+   "name": "Bootlegger",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "Flags that the script uses homebrew characters or house rules, which are listed for everyone.",
+   "tags": [
+    "homebrew"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "?",
+    "?"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Bootlegger",
+   "setup_modifier": {
+    "note": "House rules or homebrew characters are listed for everyone."
+   }
+  },
+  {
+   "id": "gardener",
+   "name": "Gardener",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "The Storyteller assigns characters instead of a random draw.",
+   "tags": [
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "distribute-roles"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Gardener",
+   "setup_modifier": {
+    "note": "The Storyteller assigns characters instead of a random draw."
+   }
+  },
+  {
+   "id": "godofug",
+   "name": "God of Ug",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "One player wears the \"Ug hat\": speaks one sound at a time but votes twice; failing passes the hat on.",
+   "tags": [
+    "voting-modifier",
+    "social"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Hat"
+   ],
+   "reminders_global": [],
+   "app_special": [
+    "multiplier",
+    "public"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/God_of_Ug"
+  },
+  {
+   "id": "hindu",
+   "name": "Hindu",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "The first four players to die return as Travellers of the same alignment.",
+   "tags": [
+    "resurrection"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Hindu"
+  },
+  {
+   "id": "knaves",
+   "name": "Knaves",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "Two Storytellers run the game: one always lies, one tells the truth, and they may swap once at dusk.",
+   "tags": [
+    "storyteller-error"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Knaves"
+  },
+  {
+   "id": "pope",
+   "name": "Pope",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "Duplicate good characters may be in play, and may also be bluffs.",
+   "tags": [
+    "setup-modifier"
+   ],
+   "setup": true,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [
+    "evil-duplicate",
+    "good-duplicate"
+   ],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Pope",
+   "setup_modifier": {
+    "note": "Duplicate good characters may be dealt."
+   }
+  },
+  {
+   "id": "stormcatcher",
+   "name": "Storm Catcher",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "Names a good character; if in play it can only die by execution, but evil learns who it is.",
+   "tags": [
+    "protection"
+   ],
+   "setup": false,
+   "first_night": 4,
+   "other_nights": null,
+   "reminders": [
+    "Stormcaught"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Storm_Catcher"
+  },
+  {
+   "id": "tor",
+   "name": "Tor",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "Players do not know their character or alignment until they die.",
+   "tags": [
+    "hidden-ability"
+   ],
+   "setup": true,
+   "first_night": 18,
+   "other_nights": 73,
+   "reminders": [],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Tor",
+   "setup_modifier": {
+    "note": "Players are not told their character or alignment."
+   }
+  },
+  {
+   "id": "ventriloquist",
+   "name": "Ventriloquist",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "A nominee who is \"mad\" about being a new character during their nomination may survive execution that day.",
+   "tags": [
+    "madness",
+    "execution-modifier"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Mad"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Ventriloquist"
+  },
+  {
+   "id": "zenomancer",
+   "name": "Zenomancer",
+   "team": "loric",
+   "alignment": null,
+   "edition": "loric",
+   "summary": "One or more players have secret goals; achieving one earns a piece of true information.",
+   "tags": [
+    "info-reward"
+   ],
+   "setup": false,
+   "first_night": null,
+   "other_nights": null,
+   "reminders": [
+    "Goal",
+    "Goal",
+    "Goal"
+   ],
+   "reminders_global": [],
+   "app_special": [],
+   "jinxed_with": [],
+   "wiki": "https://wiki.bloodontheclocktower.com/Zenomancer"
+  }
+ ]
+}

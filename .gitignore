@@ -24,3 +24,6 @@ CLAUDE.md
 .claude/
 docs/blog/
 games/ledger.jsonl
+
+# Official BotC toolmaker data, downloaded by scripts/botc_data.py fetch (not committed)
+docs/botc/data/official/
