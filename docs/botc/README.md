@@ -1,8 +1,9 @@
 # Blood on the Clocktower knowledge base
 
 Reference material about the game itself, collected to help turn this benchmark (which plays only Trouble
-Brewing with a scripted Storyteller) into a fuller game with multiple scripts and an AI Storyteller. Everything
-is summarised in our own words; [sources.md](sources.md) lists where it comes from.
+Brewing with a scripted Storyteller) into a fuller game with multiple scripts and an AI Storyteller. The official
+ability text, night reminders and jinx rulings are included as rules text in [data/](data/); everything else
+is in our own words, and [sources.md](sources.md) lists where it comes from.
 
 > Blood on the Clocktower is a trademark of The Pandemonium Institute. This is unofficial fan material.
 

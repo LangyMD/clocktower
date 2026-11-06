@@ -2,10 +2,11 @@
 
 The Pandemonium Institute publishes character data for toolmakers in the botc-release repository
 (https://github.com/ThePandemoniumInstitute/botc-release, resources/data/), under its Community Created Content
-Policy. This script downloads that data into docs/botc/data/official/ (git-ignored, so the official ability text
-is never committed here) and refreshes the structural fields of docs/botc/data/characters.json from it: names,
-types, editions, setup flags, reminder tokens, night order and jinx pairs. Our own fields (summary, tags, setup
-notes) are kept as they are; a character that is new upstream gets a stub with an empty summary to fill in.
+Policy. This script downloads that data into docs/botc/data/official/ (git-ignored, since the raw files also hold
+flavour text we do not redistribute) and refreshes the official fields of docs/botc/data/characters.json from
+it: names, types, editions, ability text, night reminders, setup flags, reminder tokens, night order and jinx
+rulings. Our own fields (summary, tags, setup notes) are kept as they are; a character that is new upstream gets
+a stub with an empty summary to fill in.
 
     python scripts/botc_data.py fetch     # download the official files (needs network)
     python scripts/botc_data.py build     # refresh characters.json, night-order.json, jinxes.json
@@ -62,11 +63,14 @@ def build():
             'team': role['team'],
             'alignment': {'townsfolk': 'good', 'outsider': 'good', 'minion': 'evil', 'demon': 'evil'}.get(role['team']),
             'edition': role['edition'],
+            'ability': role['ability'],
             'summary': mine.get('summary', ''),
             'tags': mine.get('tags', []),
             'setup': bool(role.get('setup')),
             'first_night': night['firstNight'].index(rid) if rid in night['firstNight'] else None,
             'other_nights': night['otherNight'].index(rid) if rid in night['otherNight'] else None,
+            'first_night_reminder': role.get('firstNightReminder', ''),
+            'other_night_reminder': role.get('otherNightReminder', ''),
             'reminders': role.get('reminders', []),
             'reminders_global': role.get('remindersGlobal', []),
             'app_special': sorted({s['name'] for s in role.get('special', [])}),
@@ -79,12 +83,11 @@ def build():
             print('new upstream character, write a summary:', rid, file=sys.stderr)
         out.append(entry)
     by_id = {c['id']: c for c in out}
-    pairs = []
+    rulings = {}
     for item in jinxes:
         for other in item['jinx']:
-            pair = sorted([item['id'], other['id']])
-            if pair not in pairs:
-                pairs.append(pair)
+            rulings.setdefault(tuple(sorted([item['id'], other['id']])), other['reason'])
+    pairs = sorted(rulings)
     for a, b in pairs:
         for x, y in ((a, b), (b, a)):
             if x in by_id:
@@ -92,16 +95,16 @@ def build():
     for c in out:
         c['jinxed_with'].sort()
     dump(DATA / 'characters.json', {
-        'about': 'Blood on the Clocktower characters. Summaries and tags are this repo\'s own words; structural '
-                 'fields mirror the official toolmaker data (see docs/botc/data/README.md). Night order values are '
-                 'positions in night-order.json.',
+        'about': 'Blood on the Clocktower characters. ability and the night reminders are the official text '
+                 '(The Pandemonium Institute); summary and tags are this repo\'s own. See docs/botc/data/README.md. '
+                 'Night order values are positions in night-order.json.',
         'editions': EDITIONS,
         'characters': out,
     })
     dump(DATA / 'night-order.json', {'first_night': night['firstNight'], 'other_nights': night['otherNight']})
-    dump(DATA / 'jinxes.json', {'about': 'Pairs of characters with an official jinx. The ruling text is in '
-                                         'official/jinxes.json after `python scripts/botc_data.py fetch`.',
-                                'pairs': sorted(pairs)})
+    dump(DATA / 'jinxes.json', {'about': 'Official jinx rulings (The Pandemonium Institute): when both characters '
+                                         'are on a script, the ruling replaces their normal interaction.',
+                                'jinxes': [{'characters': list(pair), 'ruling': rulings[pair]} for pair in pairs]})
     print(f'{len(out)} characters, {len(pairs)} jinx pairs')
 
 
@@ -118,6 +121,8 @@ def check():
             problems.append(f"{c['id']}: unknown team {c['team']}")
         if not c['summary']:
             problems.append(f"{c['id']}: empty summary")
+        if not c['ability']:
+            problems.append(f"{c['id']}: empty ability text")
         for other in c['jinxed_with']:
             if other not in known:
                 problems.append(f"{c['id']}: jinx with unknown character {other}")

@@ -77,6 +77,6 @@ These are not dealt to players. The Storyteller puts them on the table, publicly
 ## Jinxes
 
 Two characters on the same script are **jinxed** when they interact badly; TPI publishes a special ruling for
-each pair, and the Djinn (Fabled) announces them. Our [jinxes.json](../data/jinxes.json) lists the 131 pairs;
-`python scripts/botc_data.py fetch` downloads the official ruling text. A script builder must check jinxes, and
+each pair, and the Djinn (Fabled) announces them. Our [jinxes.json](../data/jinxes.json) holds the 131 pairs
+with their official rulings. A script builder must check jinxes, and
 an AI Storyteller must apply the ruling instead of either character's normal text.

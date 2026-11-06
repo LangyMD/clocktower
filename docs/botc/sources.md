@@ -1,6 +1,7 @@
 # Sources
 
-Everything in this folder is written in our own words. Where it summarises rules or advice, these are the sources.
+The prose in this folder is written in our own words; the official ability text, night reminders and jinx rulings
+in [data/](data/) are TPI's. Where the docs summarise rules or advice, these are the sources.
 
 ## Official
 
@@ -8,7 +9,8 @@ Everything in this folder is written in our own words. Where it summarises rules
   "Tips & Tricks" and "Bluffing as" sections, script pages, Storyteller advice). Each character's page is linked
   from `wiki` in [data/characters.json](data/characters.json).
 - TPI toolmaker resources: <https://github.com/ThePandemoniumInstitute/botc-release> (character data, night
-  sheet, jinxes, script JSON schema). Used for the structural fields in [data/](data/).
+  sheet, jinxes, script JSON schema). Source of the official ability text, night reminders, jinx rulings and
+  structural fields in [data/](data/).
 - Script tool: <https://script.bloodontheclocktower.com/>.
 - Publisher site and Community Created Content Policy: <https://bloodontheclocktower.com/>.
 
